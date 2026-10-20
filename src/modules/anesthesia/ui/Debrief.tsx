@@ -6,6 +6,7 @@
  * directive feedback is the framework's core sequence.
  */
 
+import { NcjmmCoverageList } from './NcjmmCoverageList';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Badge, Button, CitationLink, Panel } from '@platform/ui';
 import { Timeline } from '@platform/ui';
@@ -419,6 +420,9 @@ export function Debrief(props: DebriefProps) {
               </li>
             ))}
           </ul>
+          {props.moduleId === 'medical-surgical-nursing' && (
+            <NcjmmCoverageList scenario={props.scenario} findings={findings} />
+          )}
           <p className="reading__aside">
             There is no overall score, no pass or fail, and no comparison with anyone else. Nothing
             about this session has left the device. Any comparison below uses only your own prior

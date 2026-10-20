@@ -78,3 +78,39 @@ export function ncjmmMappings(scenarios: readonly Scenario[]): NcjmmMapping[] {
     return { scenarioId: scenario.metadata.id, objectiveId: objective.id, steps, evidence: objective.measure };
   }));
 }
+
+export type NcjmmCoverageStatus = 'evidenced' | 'exercised' | 'not-exercised';
+
+export interface NcjmmCoverage {
+  readonly step: NcjmmStep;
+  readonly label: string;
+  readonly status: NcjmmCoverageStatus;
+  /** Why it was not exercised: the learner's run, or a step no lesson reaches. */
+  readonly note: string;
+}
+
+/**
+ * This session's evidence for each step, from its own objective outcomes.
+ * Evidenced: an objective carrying the step was met. Exercised: one was
+ * attempted but not met. Not exercised: nothing carrying it happened. There is
+ * deliberately no total, ratio, or rank across the six.
+ */
+export function ncjmmCoverage(
+  scenario: Scenario,
+  findings: readonly { readonly objectiveId: string; readonly outcome: string }[],
+): NcjmmCoverage[] {
+  const outcome = new Map(findings.map((finding) => [finding.objectiveId, finding.outcome]));
+  const mappings = ncjmmMappings([scenario]);
+  return NCSBN_NCJMM.domains.map((domain) => {
+    const step = domain.id as NcjmmStep;
+    const outcomes = mappings.filter((mapping) => mapping.steps.includes(step))
+      .map((mapping) => outcome.get(mapping.objectiveId) ?? 'not-exercised');
+    const status: NcjmmCoverageStatus = outcomes.includes('met') ? 'evidenced'
+      : outcomes.some((value) => value === 'partly-met' || value === 'not-met') ? 'exercised'
+        : 'not-exercised';
+    const note = outcomes.length === 0
+      ? NCJMM_NOT_EXERCISED_REASON[step] ?? 'This lesson has no objective for this step.'
+      : status === 'not-exercised' ? 'The objectives for this step were not reached in this run.' : '';
+    return { step, label: domain.label, status, note };
+  });
+}

@@ -25,8 +25,12 @@
   each with its own measure as evidence; an objective the convention cannot place fails the build.
   Evaluate outcomes is honestly not exercised, with the reason: every lesson ends at the decision.
   The mapping shows in each nursing facilitator guide and in each briefing's structured data.
-- [ ] Show NCJMM coverage (exercised / evidenced / not exercised) in the nursing debrief; no
-  composite; quote the NCSBN scope statement with citation.
+- [x] Show NCJMM coverage (exercised / evidenced / not exercised) in the nursing debrief; no
+  composite; quote the NCSBN scope statement with citation. The nursing debrief summary lists all
+  six steps with this run's status from its own objective outcomes, with no total, ratio, or rank,
+  and Evaluate outcomes always shows its structural reason. It cites the 2026 NCLEX-RN Test Plan
+  by link rather than quoting it, because the document's reproduction terms are restrictive, and
+  states that the mapping is this project's reading and predicts nothing about an examination.
 
 ## 3. Catalog and exports
 

@@ -1,12 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import { MEDICAL_SURGICAL_NURSING_SCENARIOS } from '../../src/modules/medical-surgical-nursing/scenarios';
 import {
-  NCJMM_BY_VERB, NCJMM_NOT_EXERCISED_REASON, NCSBN_NCJMM, ncjmmMappings,
+  NCJMM_BY_VERB, NCJMM_NOT_EXERCISED_REASON, NCSBN_NCJMM, ncjmmCoverage, ncjmmMappings,
 } from '../../src/modules/medical-surgical-nursing/curriculum';
 import { frameworkRecordProblems } from '@platform/curriculum/framework-records';
 import { educationalAlignmentFor } from '@platform/docs/structured-data';
 import { facilitatorGuide } from '@platform/facilitation/guide';
 import { FACILITATED_SCENARIOS } from '@platform/facilitation/scenario-catalog';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { createElement } from 'react';
+import { NcjmmCoverageList } from '@anesthesia/ui/NcjmmCoverageList';
 
 describe('NCJMM mapping for the nursing lessons', () => {
   const mappings = ncjmmMappings(MEDICAL_SURGICAL_NURSING_SCENARIOS);
@@ -48,5 +51,35 @@ describe('NCJMM mapping for the nursing lessons', () => {
       expect(section.items.find((item) => item.label === 'NCJMM: Evaluate outcomes')?.text).toMatch(/^Not exercised\./);
       expect(educationalAlignmentFor('medical-surgical-nursing', entry.scenario.metadata.id).length).toBeGreaterThan(0);
     }
+  });
+});
+
+describe('NCJMM coverage in the nursing debrief', () => {
+  const scenario = MEDICAL_SURGICAL_NURSING_SCENARIOS[0]!;
+  const findingsWith = (outcome: string, except?: { id: string; outcome: string }) =>
+    scenario.metadata.objectives.map((objective) => ({
+      objectiveId: objective.id, outcome: except?.id === objective.id ? except.outcome : outcome,
+    }));
+  const byStep = (findings: ReturnType<typeof findingsWith>) =>
+    Object.fromEntries(ncjmmCoverage(scenario, findings).map((entry) => [entry.step, entry.status]));
+
+  it('reads evidenced, exercised, or not exercised from the run\'s own outcomes', () => {
+    expect(byStep(findingsWith('met'))).toMatchObject({ 'recognize-cues': 'evidenced', 'take-action': 'evidenced' });
+    expect(byStep(findingsWith('partly-met'))).toMatchObject({ 'recognize-cues': 'exercised' });
+    expect(byStep(findingsWith('not-exercised'))).toMatchObject({ 'recognize-cues': 'not-exercised' });
+  });
+
+  it('always shows Evaluate outcomes as not exercised, with the structural reason', () => {
+    const evaluate = ncjmmCoverage(scenario, findingsWith('met')).find((entry) => entry.step === 'evaluate-outcomes')!;
+    expect(evaluate).toMatchObject({ status: 'not-exercised', note: NCJMM_NOT_EXERCISED_REASON['evaluate-outcomes'] });
+  });
+
+  it('renders all six steps with no total, and says the reading is not NCSBN\'s', () => {
+    const markup = renderToStaticMarkup(createElement(NcjmmCoverageList, { scenario, findings: findingsWith('met') as never }));
+    for (const step of NCSBN_NCJMM.domains) expect(markup).toContain(step.label);
+    expect(markup).toContain('There is no total across the steps');
+    expect(markup).toContain('NCSBN has not');
+    const visible = markup.replace(/<[^>]+>/g, ' ');
+    expect(visible).not.toMatch(/\d+\s*(?:of|\/)\s*6|\d\s*%|\bscore\b/i);
   });
 });
