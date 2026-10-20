@@ -9,6 +9,7 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { EN_MESSAGES } from '@platform/i18n/messages';
 import {
   DEMONSTRATION_HREF, DEMONSTRATION_SCENARIO_ID, DEMONSTRATION_SECONDS, INDUCTION_DEMONSTRATION,
   beatAt, beatsToFire, demonstrationRequested,
@@ -315,8 +316,12 @@ describe('the narration survives the layout reflowing', () => {
   it('names the region instead, which reflow cannot invalidate', () => {
     const bar = readFileSync(join(process.cwd(), 'src/modules/anesthesia/ui/DemonstrationBar.tsx'), 'utf8');
     const labels = bar.slice(bar.indexOf('const FOCUS_LABEL'), bar.indexOf('export function'));
-    expect(labels).not.toMatch(DIRECTIONS);
-    expect(labels).toContain("monitor: 'the monitor'");
+    expect(labels).toContain("monitor: 'demo.focus-monitor'");
+    // The names themselves are catalog text now; that is where a direction would creep in.
+    for (const key of ['demo.focus-monitor', 'demo.focus-analysis', 'demo.focus-actions'] as const) {
+      expect(EN_MESSAGES[key].text, key).not.toMatch(DIRECTIONS);
+    }
+    expect(EN_MESSAGES['demo.focus-monitor'].text).toBe('the monitor');
   });
 
   it('still points somewhere for all but the closing beat', () => {

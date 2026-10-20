@@ -27,7 +27,9 @@
   stay typed data), the validation report's own words (43; its figures, rows, and sources stay
   generated), the cockpit status bar (18: patient summary units, transport, speed, overflow), and the
   debrief's shared shell (45: phase headings, controls, outcome words, and the sentences that frame
-  computed findings; scenario-specific framing and episode labels stay clinical content) read from `src/platform/i18n/messages.ts` and render the same English.
+  computed findings; scenario-specific framing and episode labels stay clinical content), and the private
+  tutor's prompt card and the worked-example narration bar (21; the narration itself stays authored
+  content) read from `src/platform/i18n/messages.ts` and render the same English.
   `tests/unit/externalised-strings.test.ts` is the hard-coded-string test, applied to each surface
   once it is externalised; every other surface remains.
 - [x] Generate the coverage report at build; publish `/translation-status` as a trust document.

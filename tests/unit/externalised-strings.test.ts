@@ -24,6 +24,8 @@ const EXTERNALISED: readonly { readonly path: string; readonly region?: readonly
   { path: 'src/platform/governance/GovernanceBody.tsx' },
   { path: 'src/platform/docs/ValidationBody.tsx' },
   { path: 'src/modules/anesthesia/ui/StatusBar.tsx' },
+  { path: 'src/modules/anesthesia/ui/TutorRegion.tsx' },
+  { path: 'src/modules/anesthesia/ui/DemonstrationBar.tsx' },
   { path: 'src/modules/anesthesia/ui/Debrief.tsx', region: ['  return (\n    <>\n      <a className="skip-link"', '\n}\n'] },
   { path: 'src/modules/anesthesia/ui/GoalRecommendation.tsx', region: ['return (', '\n}\n'] },
   { path: 'src/platform/offline/UpdateNotice.tsx', region: ['  return (\n    <div className={`update-notice', '\n}\n'] },

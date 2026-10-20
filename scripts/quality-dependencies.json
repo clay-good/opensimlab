@@ -522,7 +522,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/DemonstrationBar.tsx",
-        "sha256": "44cc7371c91dbfe20a7846c9f9c4c04b9f1d28f45df1b9d42be2e41eea4e717b"
+        "sha256": "5e3ad20388a9a9b2b2876f4aae2b75baaa1c9a967006e1eb07338eccfce755ba"
       },
       {
         "path": "src/modules/anesthesia/ui/Prebrief.tsx",

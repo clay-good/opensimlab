@@ -13,6 +13,7 @@
 import { useEffect, useRef } from 'react';
 import { Button } from '@platform/ui';
 import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
+import { t, type MessageKey } from '@platform/i18n/messages';
 
 export interface DemonstrationBarProps {
   readonly beat: DemonstrationBeat | null;
@@ -31,24 +32,25 @@ export interface DemonstrationBarProps {
  * A direction that is wrong on a phone is worse than no direction at all,
  * particularly for the reader who has only this text to go on.
  */
-const FOCUS_LABEL: Record<DemonstrationBeat['focus'], string> = {
-  monitor: 'the monitor',
-  analysis: 'the concentration plot',
-  actions: 'the action cockpit',
-  none: '',
+const FOCUS_LABEL: Record<DemonstrationBeat['focus'], MessageKey | null> = {
+  monitor: 'demo.focus-monitor',
+  analysis: 'demo.focus-analysis',
+  actions: 'demo.focus-actions',
+  none: null,
 };
 
 export function DemonstrationBar({ beat, progress, onTakeControls, onAdvance, awaitingAdvance }: DemonstrationBarProps) {
   const narration = useRef<HTMLDivElement>(null);
   useEffect(() => { if (narration.current) narration.current.scrollTop = 0; }, [beat?.narration]);
   if (!beat) return null;
-  const where = FOCUS_LABEL[beat.focus];
+  const focus = FOCUS_LABEL[beat.focus];
+  const where = focus ? t(focus) : '';
   return (
     <aside className="demo-bar" data-focus={beat.focus}>
       <div
         className="demo-bar__progress"
         role="progressbar"
-        aria-label="Demonstration progress"
+        aria-label={t('demo.progress')}
         aria-valuemin={0}
         aria-valuemax={100}
         aria-valuenow={Math.round(progress * 100)}
@@ -56,22 +58,22 @@ export function DemonstrationBar({ beat, progress, onTakeControls, onAdvance, aw
         <span style={{ width: `${progress * 100}%` }} />
       </div>
       <div className="demo-bar__body">
-        <div className="demo-bar__narration" role="region" aria-label="Worked example narration" tabIndex={0} ref={narration}>
-          <p className="demo-bar__label">{awaitingAdvance ? 'Paused to read' : 'Demonstration'}</p>
+        <div className="demo-bar__narration" role="region" aria-label={t('demo.narration')} tabIndex={0} ref={narration}>
+          <p className="demo-bar__label">{t(awaitingAdvance ? 'demo.paused' : 'demo.label')}</p>
           {/* Polite, not assertive: a narration line that interrupted whatever a
               screen-reader user was reading would make the demonstration worse
               for them than no demonstration at all. */}
           <p className="demo-bar__text" aria-live="polite">
             {beat.narration}
-            {where ? <span className="visually-hidden"> Look at {where}.</span> : null}
+            {where ? <span className="visually-hidden"> {t('demo.look-at', { where })}</span> : null}
           </p>
         </div>
         <div className="demo-bar__controls" onKeyDown={(event) => {
           // Space activates these buttons; it must not also toggle the cockpit clock.
           if (event.key === ' ') event.stopPropagation();
         }}>
-          {awaitingAdvance !== undefined && <Button aria-disabled={!awaitingAdvance} onClick={awaitingAdvance ? onAdvance : undefined}>Continue example</Button>}
-          <Button variant="primary" onClick={onTakeControls}>Take the controls</Button>
+          {awaitingAdvance !== undefined && <Button aria-disabled={!awaitingAdvance} onClick={awaitingAdvance ? onAdvance : undefined}>{t('demo.continue')}</Button>}
+          <Button variant="primary" onClick={onTakeControls}>{t('demo.take-controls')}</Button>
         </div>
       </div>
     </aside>

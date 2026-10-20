@@ -1,5 +1,6 @@
 import { Banner, Button } from '@platform/ui';
 import type { Prompt } from '../tutor/guidance';
+import { t } from '@platform/i18n/messages';
 
 export const TUTOR_INTRODUCTION_PREFERENCE = 'tutor-introduction-dismissed';
 
@@ -14,17 +15,13 @@ export function TutorIntroduction({ onDismissPermanently }: TutorIntroductionPro
         kind="advisory"
         actions={(
           <Button compact variant="ghost" onClick={onDismissPermanently}>
-            Don't show this again
+            {t('tutor.dont-show')}
           </Button>
         )}
       >
-        <strong>Your private tutor</strong>
+        <strong>{t('tutor.intro-title')}</strong>
         <br />
-        <span className="field__hint">
-          It reads only this fictional run, works entirely on this device, and never changes the
-          patient. Collapse any prompt to keep the monitor clear; reopen this introduction from
-          More options.
-        </span>
+        <span className="field__hint">{t('tutor.intro')}</span>
       </Banner>
     </div>
   );
@@ -48,7 +45,7 @@ export function TutorPromptCard({
     return (
       <div className="tutor-prompt tutor-prompt--collapsed" role="status">
         <Button compact onClick={onToggleCollapsed} aria-expanded="false">
-          Private tutor · {assistanceLabel}
+          {t('tutor.collapsed', { level: assistanceLabel })}
         </Button>
       </div>
     );
@@ -61,12 +58,12 @@ export function TutorPromptCard({
         actions={(
           <>
             <Button compact variant="ghost" onClick={onToggleCollapsed} aria-expanded="true">
-              Collapse
+              {t('tutor.collapse')}
             </Button>
             <Button compact variant="ghost" onClick={onToggleWhy} aria-expanded={whyOpen}>
-              {whyOpen ? 'Hide why' : 'Why this now?'}
+              {t(whyOpen ? 'tutor.hide-why' : 'tutor.why')}
             </Button>
-            <Button compact variant="ghost" onClick={onDismiss}>Dismiss</Button>
+            <Button compact variant="ghost" onClick={onDismiss}>{t('tutor.dismiss')}</Button>
           </>
         )}
       >
@@ -79,15 +76,19 @@ export function TutorPromptCard({
         )}
         <br />
         <span className="field__hint">
-          {assistanceLabel} · {prompt.maturity[0]?.toUpperCase()}{prompt.maturity.slice(1)} · rule {prompt.ruleVersion}
+          {t('tutor.provenance', {
+            level: assistanceLabel,
+            maturity: `${prompt.maturity[0]?.toUpperCase()}${prompt.maturity.slice(1)}`,
+            rule: prompt.ruleVersion,
+          })}
         </span>
         {prompt.concept && (
           <>
             {' '}
-            <Button variant="ghost" compact onClick={onOpenSource}>Full source</Button>
+            <Button variant="ghost" compact onClick={onOpenSource}>{t('tutor.full-source')}</Button>
           </>
         )}
-        {!prompt.concept && prompt.sourceHref && <>{' '}<a href={prompt.sourceHref} target="_blank" rel="noreferrer" aria-label="Full source (opens in a new tab)">Full source</a></>}
+        {!prompt.concept && prompt.sourceHref && <>{' '}<a href={prompt.sourceHref} target="_blank" rel="noreferrer" aria-label={t('tutor.full-source-new-tab')}>{t('tutor.full-source')}</a></>}
       </Banner>
     </div>
   );

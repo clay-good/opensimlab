@@ -176,6 +176,7 @@ describe('Requirement: Tutor and reporting boundaries are structural', () => {
     expect(EN_MESSAGES['debrief.no-score'].text)
       .toContain('There is no overall score, no pass or fail, and no comparison with anyone else.');
     expect(review).toContain('There is no ranking of learners here and there will not be one');
-    expect(tutor).toContain('works entirely on this device');
+    expect(tutor).toContain("t('tutor.intro')");
+    expect(EN_MESSAGES['tutor.intro'].text).toContain('works entirely on this device');
   });
 });
