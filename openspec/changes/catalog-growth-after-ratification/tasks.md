@@ -19,17 +19,28 @@
 
 ## 2. The breadth test
 
-- [ ] Define the module proposal document format and a validator (eight scenario proposals,
+- [x] Define the module proposal document format and a validator (eight scenario proposals,
   training-value rule, formulary sources, review domains, negative-transfer analysis, status).
-- [ ] Wire status to the module registry: planned only with breadth-test-passed and first
-  evidence briefs; the landing page reads status from the registry.
-- [ ] Register a planned module's review domains with governance coverage.
+  `docs/module-proposals/README.md` states the format; `scripts/module-proposals.ts` judges each
+  document and refuses any status it has not earned. A scenario proposal counts only with
+  Actions, Choices, Consequences, and Debrief lines and when it does not read as a calculator,
+  lookup, or checklist answer; a section that says "Not yet written" counts as missing.
+- [x] Wire status to the module registry: planned only with breadth-test-passed and first
+  evidence briefs; the landing page reads status from the registry. A registry module marked
+  planned without a planned proposal fails `tests/unit/module-proposals.test.ts`; the landing
+  and About pages already read status from the registry.
+- [ ] Register a planned module's review domains with governance coverage. Not yet: no proposal
+  is planned, so there is nothing to register, and the governance coverage list has no hook for
+  a module that has no scenarios. Build this with the first proposal that earns planned.
 
 ## 3. Candidates
 
-- [ ] Write proposal documents for prehospital/EMS, office-based procedural sedation, acute care
+- [x] Write proposal documents for prehospital/EMS, office-based procedural sedation, acute care
   of older adults, and psychiatric emergencies with medical physiology, each at status proposed
-  with its needs listed; add the "proposed, not planned" section to the About page.
+  with its needs listed; add the "proposed, not planned" section to the About page. Each states
+  only what the design states and marks every unwritten section as not yet written, so each
+  honestly earns `proposed` and nothing more. About lists them from a typed mirror that the test
+  holds in step with the documents.
 
 ## 4. Computed counts
 

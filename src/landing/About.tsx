@@ -13,6 +13,7 @@
 import './landing.css';
 import { Disclosure } from '@platform/ui';
 import { MODULES, RELEASE_FEED_URL } from '@platform/modules/registry';
+import { MODULE_PROPOSALS } from '@platform/modules/proposals';
 import { moduleProse } from '@platform/modules/module-prose';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { HONEST_STATUS } from '@platform/governance/status';
@@ -74,6 +75,23 @@ export function About() {
             </a>
             . No email address is collected.
           </p>
+        </section>
+
+        <section aria-labelledby="proposed-heading">
+          <h2 id="proposed-heading">Proposed, not planned</h2>
+          <p className="landing__module-note">
+            Candidates the catalog could grow into. None is a promise: each must first pass a
+            stated breadth test, including eight scenario proposals that each have real choices
+            and consequences, before it can even be listed as planned.
+          </p>
+          <ul>
+            {MODULE_PROPOSALS.filter((proposal) => proposal.status !== 'planned').map((proposal) => (
+              <li key={proposal.id}>
+                <strong>{proposal.title}</strong> ({proposal.status}). Needs {proposal.needs}.{' '}
+                {proposal.scenarioProposals} of 8 scenario proposals written.
+              </li>
+            ))}
+          </ul>
         </section>
 
         {/* Nine questions and nine answers were eighteen stacked blocks of text
