@@ -33,6 +33,14 @@ export const EN_MESSAGES = {
   'sitebar.validation': { class: 'interface', text: 'Validation' },
   'sitebar.governance': { class: 'interface', text: 'Governance' },
   'sitebar.limitations': { class: 'interface', text: 'Limitations' },
+  'documents.review-status': { class: 'interface', text: 'Review status' },
+  'documents.corrections': { class: 'interface', text: 'Corrections' },
+  'documents.privacy': { class: 'interface', text: 'Privacy' },
+  'documents.content-review': { class: 'interface', text: 'Review the content' },
+  'documents.heading-fallback': { class: 'interface', text: 'Document' },
+  'documents.footer.home': { class: 'interface', text: 'Back to the front page' },
+  'documents.footer.about': { class: 'interface', text: 'About Open Sim Lab' },
+  'documents.footer.simulator': { class: 'interface', text: 'Open the simulator' },
 } as const satisfies Readonly<Record<string, SourceMessage>>;
 
 export type MessageKey = keyof typeof EN_MESSAGES;

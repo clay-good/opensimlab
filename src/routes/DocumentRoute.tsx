@@ -23,7 +23,7 @@ import {
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { APP_VERSION } from '@platform/governance/status';
 import { FRAMEWORKS } from '@anesthesia/curriculum/frameworks';
-import { EN_MESSAGES, LOCALE_CATALOGS } from '@platform/i18n/messages';
+import { EN_MESSAGES, LOCALE_CATALOGS, t } from '@platform/i18n/messages';
 import { coverage, pseudoLocale, type SourceMessage } from '@platform/i18n/catalog';
 import { MODULES } from '@platform/modules/registry';
 import { FRAMEWORK_REVIEW_MONTHS, overdueFrameworks } from '@platform/curriculum/framework-records';
@@ -59,10 +59,10 @@ const VERDICT_SUMMARY: Record<string, string> = {
  * that are specific to a reader working through the documents are added here.
  */
 const DOCUMENT_EXTRAS: readonly { href: string; label: string }[] = [
-  { href: '/review-status', label: 'Review status' },
-  { href: '/corrections', label: 'Corrections' },
-  { href: '/privacy', label: 'Privacy' },
-  { href: '/content-review', label: 'Review the content' },
+  { href: '/review-status', label: t('documents.review-status') },
+  { href: '/corrections', label: t('documents.corrections') },
+  { href: '/privacy', label: t('documents.privacy') },
+  { href: '/content-review', label: t('documents.content-review') },
 ];
 
 export function DocumentRoute({ path }: { path: string }) {
@@ -74,7 +74,7 @@ export function DocumentRoute({ path }: { path: string }) {
       <SiteBar current={path} extra={DOCUMENT_EXTRAS} />
 
       <main className="reading" id="main">
-        <h1>{metadata?.heading ?? 'Document'}</h1>
+        <h1>{metadata?.heading ?? t('documents.heading-fallback')}</h1>
         {path === '/validation' && <ValidationBody />}
         {path === '/governance' && <GovernanceBody />}
         {path === '/review-status' && <ReviewStatusBody />}
@@ -86,9 +86,9 @@ export function DocumentRoute({ path }: { path: string }) {
       </main>
 
       <footer className="document__foot">
-        <a href="/">Back to the front page</a>
-        <a href="/about">About Open Sim Lab</a>
-        <a href="/anesthesia">Open the simulator</a>
+        <a href="/">{t('documents.footer.home')}</a>
+        <a href="/about">{t('documents.footer.about')}</a>
+        <a href="/anesthesia">{t('documents.footer.simulator')}</a>
       </footer>
     </div>
   );
