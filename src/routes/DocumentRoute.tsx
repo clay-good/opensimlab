@@ -13,7 +13,7 @@ import { buildValidationReport } from '@platform/docs/validation-report';
 import { EDITORIAL_BOARD, HONEST_STATUS, reviewableItems } from '@platform/governance/records';
 import { reportCoverage } from '@platform/governance/review-gate';
 import { ReviewStatusBody } from '@platform/governance/ReviewStatusBody';
-import { LIMITATIONS, LIMITATION_GROUPS } from '@platform/docs/limitations';
+import { LimitationsBody } from '@platform/docs/LimitationsBody';
 import { SOURCES, formatSource, requireSource } from '@platform/docs/sources';
 import { VERIFIED_CONSTANTS, confirmedCount } from '@platform/docs/verified-constants';
 import { PRIVACY_CLAIMS } from '@platform/docs/privacy-claims';
@@ -412,62 +412,6 @@ function FrameworkReadings() {
 
 
 
-/**
- * The limitations register.
- *
- * Every entry carries a one-line `headline` and three paragraphs, and this page
- * used to print all four parts of all 707 of them as a flat run of 707 `h2`s: a
- * 125,000-pixel scroll with no grouping, no summary, and no way to reach the
- * entries for one specialty. A register that cannot be navigated is a file
- * printed at a reader, and the honest effect of it was that nobody read the one
- * document on this site whose whole job is to say what the simulator gets wrong.
- *
- * The headline is the summary and the three paragraphs are the detail, which is
- * the shape the data already had. Modules group it, `The simulator itself` opens
- * first because it applies everywhere, and the count is on every group so the
- * page never reports a total without the list behind it.
- */
-function LimitationsBody() {
-  return (
-    <>
-      <p>
-        Every entry names one simplification, where it would mislead you, and the correct clinical
-        understanding. This is a register, not a disclaimer: nothing here is hidden behind a
-        summary figure.
-      </p>
-      <div className="figures">
-        <KeyFigure value={LIMITATIONS.length} label="Simplifications on record" />
-        <KeyFigure value={LIMITATION_GROUPS.length} label="Groups, by module" />
-      </div>
-      {LIMITATION_GROUPS.map((group, index) => (
-        <Disclosure
-          key={group.label}
-          className="disclosure--group"
-          summary={group.label}
-          meta={`${group.entries.length} ${group.entries.length === 1 ? 'entry' : 'entries'}`}
-          /* The engine-wide group is open on arrival, because it is true of every
-             scenario a reader might go on to open and it is eleven lines long. The
-             specialty groups stay closed; opening 103 anaesthesia entries at
-             someone is the behaviour this page is being rescued from. */
-          open={index === 0}
-        >
-          {group.entries.map((limitation) => (
-            <Disclosure key={limitation.id} summary={limitation.headline}>
-              <dl>
-                <dt>The simplification</dt>
-                <dd>{limitation.simplification}</dd>
-                <dt>Where it would mislead you</dt>
-                <dd>{limitation.whereItMisleads}</dd>
-                <dt>The correct understanding</dt>
-                <dd>{limitation.correctUnderstanding}</dd>
-              </dl>
-            </Disclosure>
-          ))}
-        </Disclosure>
-      ))}
-    </>
-  );
-}
 
 function PrivacyBody() {
   const [attemptCount, setAttemptCount] = useState(() => loadPracticeHistory().length);

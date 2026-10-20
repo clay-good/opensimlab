@@ -287,6 +287,13 @@ export const EN_MESSAGES = {
   'rs.not-tell-heading': { class: 'root-prose', text: 'What this page does not tell you' },
   'rs.not-tell': { class: 'root-prose', text: 'A maturity status records that an item passed the gates the build can check. It does not record that a clinician agrees with it. Two of the eight preview gates, the completion contract and the full quality-record set, are computed and reported but do not block publication, because no item has ever passed them and a channel nothing can pass is not a channel. The per-module audits behind those two gates are published as JSON alongside the build.' },
   'rs.limitations-link': { class: 'root-prose', text: 'The limitations register names what the simulation deliberately does not model.' },
+  'lim.intro': { class: 'root-prose', text: 'Every entry names one simplification, where it would mislead you, and the correct clinical understanding. This is a register, not a disclaimer: nothing here is hidden behind a summary figure.' },
+  'lim.count': { class: 'root-prose', text: 'Simplifications on record' },
+  'lim.groups': { class: 'root-prose', text: 'Groups, by module' },
+  'lim.entries': { class: 'root-prose', text: '{count, plural, one {# entry} other {# entries}}' },
+  'lim.simplification': { class: 'root-prose', text: 'The simplification' },
+  'lim.misleads': { class: 'root-prose', text: 'Where it would mislead you' },
+  'lim.correct': { class: 'root-prose', text: 'The correct understanding' },
 } as const satisfies Readonly<Record<string, SourceMessage>>;
 
 export type MessageKey = keyof typeof EN_MESSAGES;

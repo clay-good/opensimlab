@@ -21,8 +21,8 @@
   (9), the shared briefing's section headings and facilitator link (7), and the not-found page (19,
   now one list that the static 404 and the client view both render, after the two had drifted), and
   the practice-history controls on `/privacy` (16, plurals as messages), and the `/corrections` page's
-  own words (16, root prose; its policy, triage, and entries stay typed data), and `/review-status`
-  (16, root prose) read from `src/platform/i18n/messages.ts` and render the same English.
+  own words (16, root prose; its policy, triage, and entries stay typed data), `/review-status`
+  (16, root prose), and the limitations register's own words (7) read from `src/platform/i18n/messages.ts` and render the same English.
   `tests/unit/externalised-strings.test.ts` is the hard-coded-string test, applied to each surface
   once it is externalised; every other surface remains.
 - [x] Generate the coverage report at build; publish `/translation-status` as a trust document.
