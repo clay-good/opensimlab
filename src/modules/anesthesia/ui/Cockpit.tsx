@@ -130,18 +130,20 @@ import { getDrugCard } from '@anesthesia/content/drug-cards';
 import type { DrugConcentration } from '@platform/kernel/protocol';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import type { SonificationEngine } from '@platform/audio/sonification';
-import { HAPTICS_UNSUPPORTED_REASON, HapticEngine, hapticsSupported } from '@platform/audio/haptics';
+import { HapticEngine, hapticsSupported } from '@platform/audio/haptics';
 import { duePausePoint } from '@platform/facilitation/pause-points';
 import { RapidCyclePanel } from './RapidCyclePanel';
 import { PausePointPanel } from './PausePointPanel';
-import { REASONING_NOTE_LIMIT, useReasoningNotes } from '@platform/session/reasoning-notes';
+import { SessionPreferences } from './SessionPreferences';
+import { t } from '@platform/i18n/messages';
+import { useReasoningNotes } from '@platform/session/reasoning-notes';
 import type { ScenarioPausePoint, ScenarioRapidCycle } from '../scenarios/types';
 import type { RapidCycleStatus } from '../catalog/rapid-cycle';
 import {
-  DEFAULT_NARRATION_SETTINGS, NARRATION_RATES, NarrationEngine, isNarrationSettings,
-  type NarrationSource, type SpeechTarget, type UtteranceLike,
+  DEFAULT_NARRATION_SETTINGS, NarrationEngine, isNarrationSettings,
+  type SpeechTarget, type UtteranceLike,
 } from '@platform/audio/narration';
-import { NO_LOCAL_VOICE_REASON, selectVoices, voicesWhenReady, type VoiceLike } from '@platform/audio/narration-voices';
+import { selectVoices, voicesWhenReady, type VoiceLike } from '@platform/audio/narration-voices';
 import { ManualCrisisInjector } from './ManualCrisisInjector';
 import { MaturityMarker } from '@platform/governance/MaturityMarker';
 import type { ContentMaturity, MaturitySubjectKind } from '@platform/catalog/maturity';
@@ -2211,98 +2213,17 @@ export function Cockpit({
             and cue is also shown.
           </p>
         </div>
-        <div className="overflow-menu__sound">
-          <label className="field" htmlFor="reasoning-note">
-            <span className="field__label">Note your reasoning (optional)</span>
-            <textarea id="reasoning-note" className="field__input" rows={2} maxLength={REASONING_NOTE_LIMIT}
-              value={noteDraft} onChange={(event) => setNoteDraft(event.target.value)} />
-            <span className="field__hint">
-              Attached to this moment and shown back to you in the debrief. Never scored, read by the
-              tutor, or included in a problem report.
-            </span>
-          </label>
-          <Button compact disabled={noteDraft.trim().length === 0} onClick={() => {
+        <SessionPreferences
+          note={{ draft: noteDraft, saved: noteSaved, onDraft: setNoteDraft, onSave: () => {
             if (useReasoningNotes.getState().add(noteDraft, session.tick)) {
               setNoteDraft('');
-              setNoteSaved(`Saved at ${session.elapsed}.`);
+              setNoteSaved(t('prefs.note.saved', { elapsed: session.elapsed }));
             }
-          }}>Save note</Button>
-          {noteSaved && <p className="field__hint" role="status">{noteSaved}</p>}
-        </div>
-        <div className="overflow-menu__sound">
-          <Toggle
-            checked={classroom}
-            describedBy="classroom-hint"
-            onChange={toggleClassroom}
-            label={classroom ? 'Classroom mode on' : 'Classroom mode off'}
-          />
-          <p className="field__hint" id="classroom-hint">
-            For running this with a group. Turns guidance off for this session and pauses at the
-            scenario&apos;s pause points{scenario.pausePoints?.length ? '' : ' (this scenario declares none yet)'}.
-          </p>
-        </div>
-        <div className="overflow-menu__sound">
-          <Toggle
-            checked={hapticsOn && hapticsSupported(vibration)}
-            disabled={!hapticsSupported(vibration)}
-            describedBy="haptics-hint"
-            onChange={(next: boolean) => setHapticsOn(next)}
-            label={hapticsOn && hapticsSupported(vibration) ? 'Alarm vibration on' : 'Alarm vibration off'}
-          />
-          <p className="field__hint" id="haptics-hint">
-            {hapticsSupported(vibration)
-              ? 'High-priority alarms vibrate in threes, medium in a slow pulse, low once. Silencing or pausing stops it.'
-              : HAPTICS_UNSUPPORTED_REASON}
-          </p>
-        </div>
-        <div className="overflow-menu__sound">
-          <Toggle
-            checked={narration.enabled && voiceChoice.preferred !== null}
-            disabled={voiceChoice.preferred === null}
-            describedBy="narration-hint"
-            onChange={(next: boolean) => setNarration({ ...narration, enabled: next })}
-            label={narration.enabled && voiceChoice.preferred !== null ? 'Narration on' : 'Narration off'}
-          />
-          <p className="field__hint" id="narration-hint">
-            {voiceChoice.preferred === null
-              ? NO_LOCAL_VOICE_REASON
-              : 'Reads aloud what the screen shows, with an on-device voice. It pauses with the clock.'}
-          </p>
-          {narration.enabled && voiceChoice.preferred !== null && (
-            <fieldset className="field">
-              <legend className="field__label">What to read</legend>
-              {([['beat', 'Worked-example steps'], ['tutor', 'Tutor prompts'], ['alarm', 'Alarm announcements'],
-                ['summary', 'State summary on request']] as const).map(([source, label]: readonly [NarrationSource, string]) => (
-                <label key={source} className="field__hint">
-                  <input type="checkbox" checked={narration.sources[source]}
-                    onChange={(event) => setNarration({ ...narration,
-                      sources: { ...narration.sources, [source]: event.target.checked } })} />{' '}
-                  {label}
-                </label>
-              ))}
-              <label className="field__hint">
-                <input type="checkbox" checked={narration.screenReader}
-                  onChange={(event) => setNarration({ ...narration, screenReader: event.target.checked })} />{' '}
-                I use a screen reader (it already reads alarms and the summary, so narration skips them)
-              </label>
-              <label className="field__hint">
-                Speed{' '}
-                <select value={narration.rate}
-                  onChange={(event) => setNarration({ ...narration, rate: Number(event.target.value) })}>
-                  {NARRATION_RATES.map((rate) => <option key={rate} value={rate}>{rate}×</option>)}
-                </select>
-              </label>
-              <label className="field__hint">
-                Voice{' '}
-                <select value={narrationVoice?.name ?? ''}
-                  onChange={(event) => setNarration({ ...narration, voiceName: event.target.value || null })}>
-                  {[voiceChoice.preferred, ...voiceChoice.others].filter((voice): voice is VoiceLike => voice !== null)
-                    .map((voice) => <option key={voice.name} value={voice.name}>{voice.name} ({voice.lang})</option>)}
-                </select>
-              </label>
-            </fieldset>
-          )}
-        </div>
+          } }}
+          classroom={{ on: classroom, pausePoints: scenario.pausePoints?.length ?? 0, onChange: toggleClassroom }}
+          vibration={{ on: hapticsOn, supported: hapticsSupported(vibration), onChange: setHapticsOn }}
+          narration={{ settings: narration, choice: voiceChoice, voice: narrationVoice, onChange: setNarration }}
+        />
         {scenario.metadata.id !== 'adrenal-crisis-treatment-before-tests' && scenario.metadata.id !== 'thyroid-storm-hemodynamic-risk' && scenario.metadata.id !== 'myxedema-coma-ventilation-and-steroid-sequence' && !observedStateDemoSupported && <Button onClick={() => {
           setShortcutsOpen(false);
           setTutorIntroductionOpen(true);
