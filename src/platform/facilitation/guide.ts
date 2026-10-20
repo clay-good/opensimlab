@@ -17,7 +17,7 @@ import {
   NCJMM_NOT_EXERCISED_REASON, NCSBN_NCJMM, ncjmmMappings,
 } from '../../modules/medical-surgical-nursing/curriculum';
 import type { FacilitatedScenario } from './scenario-catalog';
-import { t } from '@platform/i18n/messages';
+import { t, type MessageKey } from '@platform/i18n/messages';
 
 export interface GuideItem {
   readonly label?: string;
@@ -59,14 +59,14 @@ function patientItems(scenario: Scenario): GuideItem[] {
   const { patient } = scenario;
   const list = (values: readonly string[] | undefined) => values?.length ? values.join('; ') : null;
   const items: (GuideItem | null)[] = [
-    { label: 'Profile', text: `${patient.ageYears} years, ${patient.sex}, ${patient.weightKg} kg, ${patient.heightCm} cm` },
-    { label: 'Working problem', text: patient.diagnosis },
-    { label: 'Setting or procedure', text: patient.procedure },
-    list(patient.comorbidities) === null ? null : { label: 'History', text: list(patient.comorbidities)! },
-    list(patient.medications) === null ? null : { label: 'Medications', text: list(patient.medications)! },
-    list(patient.allergies) === null ? null : { label: 'Allergies', text: list(patient.allergies)! },
-    patient.fasting === undefined ? null : { label: 'Fasting', text: patient.fasting },
-    patient.airway.assessment === undefined ? null : { label: 'Airway', text: patient.airway.assessment },
+    { label: t('guide.label.profile'), text: t('guide.profile', { age: patient.ageYears, sex: patient.sex, weight: patient.weightKg, height: patient.heightCm }) },
+    { label: t('guide.label.working-problem'), text: patient.diagnosis },
+    { label: t('guide.label.setting'), text: patient.procedure },
+    list(patient.comorbidities) === null ? null : { label: t('guide.label.history'), text: list(patient.comorbidities)! },
+    list(patient.medications) === null ? null : { label: t('guide.label.medications'), text: list(patient.medications)! },
+    list(patient.allergies) === null ? null : { label: t('guide.label.allergies'), text: list(patient.allergies)! },
+    patient.fasting === undefined ? null : { label: t('guide.label.fasting'), text: patient.fasting },
+    patient.airway.assessment === undefined ? null : { label: t('guide.label.airway'), text: patient.airway.assessment },
   ];
   return items.filter((item): item is GuideItem => item !== null);
 }
@@ -74,8 +74,8 @@ function patientItems(scenario: Scenario): GuideItem[] {
 function timelineItems(scenario: Scenario): GuideItem[] {
   return scenario.timeline.map((event) => {
     const at = event.atTick !== undefined
-      ? (event.atTick === 0 ? 'At start' : `Tick ${event.atTick}`)
-      : event.when !== undefined ? `When ${event.when}` : 'Unscheduled';
+      ? (event.atTick === 0 ? t('guide.at-start') : t('guide.tick', { tick: event.atTick }))
+      : event.when !== undefined ? t('guide.when', { when: event.when }) : 'Unscheduled';
     const what = event.message ?? `${event.type}${event.target === undefined ? '' : `: ${event.target}`}`;
     return { label: at, text: what };
   });
@@ -143,50 +143,50 @@ export function facilitatorGuide(entry: FacilitatedScenario): readonly GuideSect
   const signed = metadata.clinicalReview.reviewer !== UNSIGNED;
   return [
     present('at-a-glance', t('guide.section.at-a-glance'), [
-      { label: 'Module', text: moduleName },
-      { label: 'Duration', text: `About ${metadata.estimatedMinutes} minutes` },
-      { label: 'Difficulty', text: metadata.difficulty },
-      { label: 'Published as', text: MATURITY_LABELS[metadata.maturity] },
-    ], 'The scenario declares no metadata.'),
+      { label: t('guide.label.module'), text: moduleName },
+      { label: t('guide.label.duration'), text: t('guide.duration', { minutes: metadata.estimatedMinutes }) },
+      { label: t('guide.label.difficulty'), text: metadata.difficulty },
+      { label: t('guide.label.published-as'), text: MATURITY_LABELS[metadata.maturity] },
+    ], t('guide.absent.metadata')),
     present('objectives', t('guide.section.objectives'),
       metadata.objectives.map((objective) => ({ label: objective.statement, text: objective.measure })),
-      'The scenario declares no objectives.'),
+      t('guide.absent.objectives')),
     present('frameworks', t('guide.section.frameworks'), frameworkItems(entry),
-      'No framework mapping exists for this scenario yet. Mapped frameworks are listed on /curriculum.'),
-    present('patient', t('guide.section.patient'), patientItems(scenario), 'The scenario declares no patient.'),
+      t('guide.absent.frameworks')),
+    present('patient', t('guide.section.patient'), patientItems(scenario), t('guide.absent.patient')),
     present('prebrief', t('guide.section.prebrief'), [
       { text: GUIDE_TEMPLATES.fiction },
       { text: GUIDE_TEMPLATES.confidentiality },
-      { label: GUIDE_TEMPLATES.monitoring, text: scenario.equipment.monitoring.join(', ') || 'none declared' },
-    ], 'No prebrief could be built.'),
+      { label: GUIDE_TEMPLATES.monitoring, text: scenario.equipment.monitoring.join(', ') || t('guide.none-declared') },
+    ], t('guide.absent.prebrief')),
     present('timeline', t('guide.section.timeline'), scenario.timeline.length === 0 ? []
       : [{ text: GUIDE_TEMPLATES.timelineLead }, ...timelineItems(scenario)],
-    'The scenario declares no timeline events.'),
+    t('guide.absent.timeline')),
     absent('expected-actions', t('guide.section.expected-actions'),
-      'Accepted actions, windows, and order are not yet read from the expert transcript.'),
+      t('guide.absent.expected-actions')),
     absent('error-and-recovery', t('guide.section.error-and-recovery'),
-      'The common-error and recovery transcripts are not yet summarized here.'),
+      t('guide.absent.error-and-recovery')),
     present('debrief', t('guide.section.debrief'), debriefItems(scenario),
-      'The scenario declares no debrief rubric.'),
+      t('guide.absent.debrief')),
     present('pause-points', t('guide.section.pause-points'), (scenario.pausePoints ?? []).map((point) => ({
-      label: point.atTick !== undefined ? (point.atTick === 0 ? 'At start' : `Tick ${point.atTick}`) : `When ${point.when}`,
-      text: `${point.question} (look at the ${point.region} region)`,
-    })), 'This scenario declares no pause points yet. A facilitator can pause the clock at any time.'),
+      label: point.atTick !== undefined ? (point.atTick === 0 ? t('guide.at-start') : t('guide.tick', { tick: point.atTick })) : t('guide.when', { when: point.when ?? '' }),
+      text: t('guide.pause-item', { question: point.question, region: t(`region.${point.region}` as MessageKey) }),
+    })), t('guide.absent.pause-points')),
     present('limitations', t('guide.section.limitations'),
       (metadata.limitations ?? []).map((text) => ({ text })),
-      'The scenario declares no limitations of its own; module limitations are on /limitations.'),
+      t('guide.absent.limitations')),
     present('sources', t('guide.section.sources'),
       metadata.clinicalReview.sources.map((text) => ({ text })),
-      'The scenario declares no sources.'),
+      t('guide.absent.sources')),
     present('provenance', t('guide.section.provenance'), [
-      { label: 'Scenario', text: `${metadata.id}, content version ${metadata.version}` },
-      { label: 'Licence', text: metadata.license },
-      { label: 'Author', text: metadata.author },
-      { label: 'Review', text: signed
-        ? `${metadata.clinicalReview.reviewer}, ${metadata.clinicalReview.credential}, reviewed ${metadata.clinicalReview.reviewedOn}`
+      { label: t('guide.label.scenario'), text: t('guide.scenario-version', { id: metadata.id, version: metadata.version }) },
+      { label: t('guide.label.licence'), text: metadata.license },
+      { label: t('guide.label.author'), text: metadata.author },
+      { label: t('guide.label.review'), text: signed
+        ? t('guide.reviewed', { reviewer: metadata.clinicalReview.reviewer, credential: metadata.clinicalReview.credential, date: metadata.clinicalReview.reviewedOn })
         : GUIDE_TEMPLATES.unsigned },
-      { label: 'Problems', text: GUIDE_TEMPLATES.report },
-    ], 'No provenance could be built.'),
+      { label: t('guide.label.problems'), text: GUIDE_TEMPLATES.report },
+    ], t('guide.absent.provenance')),
   ];
 }
 
