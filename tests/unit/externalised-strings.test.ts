@@ -41,6 +41,7 @@ const EXTERNALISED: readonly { readonly path: string; readonly region?: readonly
   { path: 'src/routes/Prerendered.tsx' },
   { path: 'src/platform/ui/ErrorBoundary.tsx' },
   { path: 'src/platform/governance/FlagControl.tsx' },
+  { path: 'src/platform/reporting/ScenarioProblemReport.tsx' },
   // The shell's markup. Its screen-reader announcements describe clinical state and stay
   // with the engine's own wording.
   { path: 'src/modules/anesthesia/ui/Cockpit.tsx' },

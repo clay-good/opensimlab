@@ -10,6 +10,19 @@ import {
   type ReportServiceConfig, type TurnstileApi,
 } from './client';
 import './reporting.css';
+import { t, type MessageKey } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
+
+/** What each category is called on screen; the ids are the report contract and stay fixed. */
+const CATEGORY_LABEL: Readonly<Record<ReportCategory, MessageKey>> = {
+  'clinical-content': 'report.category.clinical-content',
+  'patient-behavior': 'report.category.patient-behavior',
+  'tutor-debrief': 'report.category.tutor-debrief',
+  controls: 'report.category.controls',
+  accessibility: 'report.category.accessibility',
+  'outdated-source': 'report.category.outdated-source',
+  other: 'report.category.other',
+};
 
 export function ScenarioProblemReport({ context, openRequest, onOpen, onClose, floating = false }: {
   readonly context: ScenarioReportContext;
@@ -64,19 +77,19 @@ export function ScenarioProblemReport({ context, openRequest, onOpen, onClose, f
   useEffect(() => {
     if (!open || sent) return undefined;
     let active = true;
-    setStatus('Preparing secure submission…');
+    setStatus(t('report.preparing'));
     void reportConfig().then(async (config) => [config, await loadTurnstile()] as const).then(([config, api]) => {
       if (!active || !turnstileHost.current) return;
       setService(config);
       const id = renderTurnstile(api, turnstileHost.current, config.sitekey, {
-        ready: (value) => { if (active) { setToken(value); setStatus('Ready to send.'); } },
-        expired: () => { if (active) { setToken(''); setStatus('Security check expired. Please try it again.'); } },
-        error: () => { if (active) { setToken(''); setStatus('Security check unavailable. Please try again later.'); } },
+        ready: (value) => { if (active) { setToken(value); setStatus(t('report.ready')); } },
+        expired: () => { if (active) { setToken(''); setStatus(t('report.expired')); } },
+        error: () => { if (active) { setToken(''); setStatus(t('report.check-unavailable')); } },
       });
       widget.current = { api, id };
-      setStatus('Complete the security check to send.');
+      setStatus(t('report.complete-check'));
     }).catch(() => {
-      if (active) setStatus('Reporting is unavailable on this host. Your practice session still works normally.');
+      if (active) setStatus(t('report.unavailable'));
     });
     return () => {
       active = false;
@@ -103,25 +116,25 @@ export function ScenarioProblemReport({ context, openRequest, onOpen, onClose, f
 
   const remainingNoteCharacters = REPORT_NOTE_LIMIT - note.length;
   const noteAnnouncement = remainingNoteCharacters === 0
-    ? `No characters remaining. The note is at its ${REPORT_NOTE_LIMIT} character limit.`
-    : remainingNoteCharacters === 20 ? '20 characters remaining.' : '';
+    ? t('report.no-characters', { limit: REPORT_NOTE_LIMIT })
+    : remainingNoteCharacters === 20 ? t('report.twenty-left') : '';
 
   const send = async () => {
     if (!token || !category || sending || noteMayContainRealPatientInformation(note)) return;
     setSending(true);
-    setStatus('Sending report…');
+    setStatus(t('report.sending-status'));
     try {
       const queued = await submitScenarioReport(
         buildScenarioReportRequest(context, category, note, token, recentContext));
       setSending(false);
       setSent(true);
       setStatus(queued
-        ? 'Thank you. This is in the weekly review queue, and every correction that lands is published in the corrections log.'
-        : 'Thanks. This one did not join the queue, either because it matches a report already filed today or because the queue is full. Nothing is wrong on your side. If it still looks wrong tomorrow, please send it again.');
+        ? t('report.queued')
+        : t('report.not-queued'));
     } catch {
       setToken('');
       setSending(false);
-      setStatus('Report not sent. Please try again later.');
+      setStatus(t('report.failed'));
       if (widget.current) {
         try { widget.current.api.reset(widget.current.id); } catch { /* Keep send disabled. */ }
       }
@@ -134,24 +147,24 @@ export function ScenarioProblemReport({ context, openRequest, onOpen, onClose, f
           is. Every correction that arrives here is the only mechanism by which an
           unsigned corpus gets better, and the people who can send one are
           colleagues rather than customers. The control says so. */}
-      <Button compact variant="ghost" aria-label="Help us improve this"
+      <Button compact variant="ghost" aria-label={t('report.title')}
         onClick={() => { setOpen(true); onOpen?.(); }}>
-        <span className="problem-report__label-long">Help us improve this</span>
-        <span className="problem-report__label-short" aria-hidden="true">Improve</span>
+        <span className="problem-report__label-long">{t('report.title')}</span>
+        <span className="problem-report__label-short" aria-hidden="true">{t('report.short')}</span>
       </Button>
       <Modal
         open={open}
         cornerClose
-        title="Help us improve this"
+        title={t('report.title')}
         onClose={close}
         dismissible={!sending}
         footer={sent
-          ? <Button variant="primary" onClick={close}>Done</Button>
+          ? <Button variant="primary" onClick={close}>{t('report.done')}</Button>
           : <>
-              <Button onClick={close} disabled={sending}>Cancel</Button>
+              <Button onClick={close} disabled={sending}>{t('action.cancel')}</Button>
               <Button variant="primary" onClick={() => { void send(); }}
                 disabled={!token || !category || sending || noteMayContainRealPatientInformation(note)}>
-                {sending ? 'Sending…' : 'Send report'}
+                {t(sending ? 'report.sending' : 'report.send')}
               </Button>
             </>}
       >
@@ -160,41 +173,34 @@ export function ScenarioProblemReport({ context, openRequest, onOpen, onClose, f
         <p role="status" aria-live="polite" className="field__hint">{status}</p>
         {sent ? null : (
           <div className="problem-report__form">
-            <p>
-              This is an open-source simulator and you are the review it has not had yet. Tell us
-              what looks wrong in this fictional scenario.
-            </p>
+            <p>{t('report.intro')}</p>
             {/* The one sentence that changes what arrives here.
                 A report saying "the pressure is wrong" cannot be acted on. A
                 report saying "it should be nearer 60 and here is the paper" can
                 be, and can be shown to have been. Asking for the number and the
                 source is the difference between a complaint and a correction. */}
-            <p className="problem-report__invitation">
-              If you know the value it should be, or how a real patient would behave, put it in the
-              note with a source if you have one. That is what lets us change the model and show
-              why, in public, with your citation as the reason.
-            </p>
+            <p className="problem-report__invitation">{t('report.invitation')}</p>
             <p className="field__hint">
-              Do not include a patient name or any real clinical information.{' '}
+              {t('report.no-patient')}{' '}
               <a href={service?.privacyUrl ?? '/privacy#problem-reports'}>
-                How reports stay private
+                {t('report.privacy-link')}
               </a>.
             </p>
-            {service && <p className="field__hint">Reviewed by {service.maintainer}.</p>}
+            {service && <p className="field__hint">{t('report.reviewed-by', { maintainer: service.maintainer })}</p>}
             <label className="field" htmlFor="problem-report-category">
-              <span className="field__label">Kind of problem</span>
+              <span className="field__label">{t('report.kind')}</span>
               <select
                 id="problem-report-category"
                 className="select"
                 value={category}
                 onChange={(event) => setCategory(event.target.value as ReportCategory)}
               >
-                <option value="" disabled>Choose one</option>
-                {REPORT_CATEGORIES.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                <option value="" disabled>{t('report.choose')}</option>
+                {REPORT_CATEGORIES.map(([value]) => <option key={value} value={value}>{t(CATEGORY_LABEL[value])}</option>)}
               </select>
             </label>
             <label className="field" htmlFor="problem-report-note">
-              <span className="field__label" id="problem-report-note-label">What should it be? (optional)</span>
+              <span className="field__label" id="problem-report-note-label">{t('report.note')}</span>
               <textarea
                 id="problem-report-note"
                 className="field__input"
@@ -210,14 +216,14 @@ export function ScenarioProblemReport({ context, openRequest, onOpen, onClose, f
                 aria-describedby="problem-report-count"
                 value={note}
                 onChange={(event) => setNote(event.target.value.slice(0, REPORT_NOTE_LIMIT))}
-                placeholder="e.g. closer to 60 mmHg. Reves 2010, table 2."
+                placeholder={t('report.note-placeholder')}
               />
               <span id="problem-report-count" className="field__hint problem-report__count">
                 {note.length} / {REPORT_NOTE_LIMIT}
               </span>
               {noteMayContainRealPatientInformation(note) && (
                 <span className="field__hint problem-report__warning" role="alert">
-                  This may describe a real patient or include contact information. Remove it before sending.
+                  {t('report.real-patient')}
                 </span>
               )}
               {/* Running out of room is silent otherwise: the textarea simply stops accepting
@@ -233,24 +239,24 @@ export function ScenarioProblemReport({ context, openRequest, onOpen, onClose, f
                   onChange={(event) => setRecentContext(event.target.checked
                     ? context.collectRecentContext?.() ?? null : null)}
                 />
-                Include the last 20 simulated actions and a bounded patient/equipment snapshot
+                {t('report.include-context')}
               </label>
             )}
             <details className="problem-report__preview">
-              <summary>Review what will be sent</summary>
+              <summary>{t('report.preview')}</summary>
               <dl>
-                <div><dt>Scenario</dt><dd>{context.scenarioId}</dd></div>
-                <div><dt>Version</dt><dd>{context.contentVersion}</dd></div>
-                <div><dt>Where</dt><dd>{context.surface}</dd></div>
-                <div><dt>Simulated tick</dt><dd>{context.simulatedTick}</dd></div>
-                <div><dt>Category</dt><dd>{category || 'Not chosen'}</dd></div>
-                <div><dt>Reviewed by</dt><dd>{service?.maintainer ?? 'Unavailable until this host is verified'}</dd></div>
-                <div><dt>Recent context</dt><dd>{recentContext ? 'Included' : 'Not included'}</dd></div>
+                <div><dt>{t('report.f-scenario')}</dt><dd>{context.scenarioId}</dd></div>
+                <div><dt>{t('report.f-version')}</dt><dd>{context.contentVersion}</dd></div>
+                <div><dt>{t('report.f-where')}</dt><dd>{context.surface}</dd></div>
+                <div><dt>{t('report.f-tick')}</dt><dd>{context.simulatedTick}</dd></div>
+                <div><dt>{t('report.f-category')}</dt><dd>{category || t('report.not-chosen')}</dd></div>
+                <div><dt>{t('report.f-reviewer')}</dt><dd>{service?.maintainer ?? t('report.unverified')}</dd></div>
+                <div><dt>{t('report.f-context')}</dt><dd>{t(recentContext ? 'report.included' : 'report.not-included')}</dd></div>
               </dl>
               {recentContext && (
                 <pre className="problem-report__context-preview">{JSON.stringify(recentContext, null, 2)}</pre>
               )}
-              <p className="field__hint">No debrief writing, practice history, identity, browser details, or real-world time is included.</p>
+              <p className="field__hint">{t('report.excluded')}</p>
             </details>
             <div ref={turnstileHost} className="problem-report__turnstile" />
           </div>

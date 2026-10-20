@@ -79,9 +79,10 @@
     the cockpit's equipment announcements describe clinical state and stay English.
   - The error boundary (12; the copyable report stays English, because it is for the maintainer)
     and the review flag control (12), both in the core because every page can show them.
-  - Still to move, found by scanning every non-module file for literal markup text: the problem
-    report dialog (21), the anaesthesia route (10), and a few monitor, component, and router
-    labels (6).
+  - The problem report dialog (48: its status messages, form, preview fields, and category names;
+    the category ids stay the report contract in `contracts.ts`).
+  - Still to move, found by scanning every non-module file for literal markup text: the
+    anaesthesia route (10), and a few monitor, component, and router labels (6).
 - [x] Generate the coverage report at build; publish `/translation-status` as a trust document.
   Its sentence claiming the test locales ran on every build was untrue and is corrected: they are
   applied by hand in development until CI runs them. The prerendered page computes coverage from the catalogs at build: languages offered (none),
