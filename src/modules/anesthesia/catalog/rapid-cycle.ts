@@ -9,11 +9,10 @@
  * because a directive line is a direct intervention.
  */
 import type { ScenarioRapidCycle } from '../scenarios/types';
+import { EN_MESSAGES } from '@platform/i18n/messages';
 
 /** The one sentence of evidence the rehearsal carries, and no more than the review claims. */
-export const RAPID_CYCLE_EVIDENCE =
-  'In a 2024 ILCOR systematic review, rapid cycle deliberate practice shortened time to '
-  + 'defibrillation and to epinephrine in simulated resuscitation, at very low certainty of evidence.';
+export const RAPID_CYCLE_EVIDENCE = EN_MESSAGES['rapid-cycle.evidence'].text;
 
 export type RapidCycleStatus = 'waiting' | 'landed' | 'missed';
 

@@ -204,6 +204,15 @@ export const EN_MESSAGES = {
   'ack.unreviewed': { class: 'root-prose', text: 'The editorial board is empty and published as empty, and every item here is labeled “Educational use only. Not clinically reviewed”.' },
   'ack.review-status-link': { class: 'root-prose', text: 'The review-status page lists every item and the label it carries.' },
   'ack.local': { class: 'root-prose', text: 'This is asked once on this device and the answer is stored here. Nothing about it is sent anywhere.' },
+  'notes.title': { class: 'interface', text: 'What you wrote at the time' },
+  'notes.beside': { class: 'interface', text: 'Beside your {action} at {time}.' },
+  'notes.before-any': { class: 'interface', text: 'Before any action.' },
+  'notes.followed': { class: 'interface', text: 'The engine attributed the change that followed mostly to {term}.' },
+  'notes.aside': { class: 'interface', text: 'Your notes are shown back to you as written. Nothing reads, scores, or sends them.' },
+  'rapid-cycle.offer-title': { class: 'interface', text: 'Rapid-cycle rehearsal' },
+  'rapid-cycle.offer': { class: 'interface', text: 'Rehearse one timed step up to {cap} times from {time}, at normal speed. If the window closes, you see one directive line and try again.' },
+  'rapid-cycle.start': { class: 'interface', text: 'Start rapid-cycle rehearsal' },
+  'rapid-cycle.evidence': { class: 'interface', text: 'In a 2024 ILCOR systematic review, rapid cycle deliberate practice shortened time to defibrillation and to epinephrine in simulated resuscitation, at very low certainty of evidence.' },
 } as const satisfies Readonly<Record<string, SourceMessage>>;
 
 export type MessageKey = keyof typeof EN_MESSAGES;

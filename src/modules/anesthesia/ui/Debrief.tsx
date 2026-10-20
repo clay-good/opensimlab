@@ -6,7 +6,8 @@
  * directive feedback is the framework's core sequence.
  */
 
-import { offeredRapidCycle, RAPID_CYCLE_EVIDENCE } from '@anesthesia/catalog/rapid-cycle';
+import { offeredRapidCycle } from '@anesthesia/catalog/rapid-cycle';
+import { t } from '@platform/i18n/messages';
 import type { ScenarioRapidCycle } from '@anesthesia/scenarios/types';
 import { NcjmmCoverageList } from './NcjmmCoverageList';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -408,7 +409,7 @@ export function Debrief(props: DebriefProps) {
           )}
 
           {(props.reasoningNotes?.length ?? 0) > 0 && (
-            <Panel title="What you wrote at the time">
+            <Panel title={t('notes.title')}>
               <ul>
                 {props.reasoningNotes!.map((note) => {
                   const action = [...props.actions].filter((entry) => entry.tick <= note.tick)
@@ -419,14 +420,14 @@ export function Debrief(props: DebriefProps) {
                       <span className="numeric">{formatElapsed(note.tick)}</span>: &ldquo;{note.text}&rdquo;
                       <br />
                       <span className="field__hint">
-                        {action ? `Beside your ${action.type.replace(/-/g, ' ')} at ${formatElapsed(action.tick)}.` : 'Before any action.'}
-                        {followed ? ` The engine attributed the change that followed mostly to ${followed}.` : ''}
+                        {action ? t('notes.beside', { action: action.type.replace(/-/g, ' '), time: formatElapsed(action.tick) }) : t('notes.before-any')}
+                        {followed ? ` ${t('notes.followed', { term: followed })}` : ''}
                       </span>
                     </li>
                   );
                 })}
               </ul>
-              <p className="reading__aside">Your notes are shown back to you as written. Nothing reads, scores, or sends them.</p>
+              <p className="reading__aside">{t('notes.aside')}</p>
             </Panel>
           )}
 
@@ -496,15 +497,11 @@ export function Debrief(props: DebriefProps) {
           <h2>Where this goes next</h2>
           {rapidCycle && props.onRapidCycle && (
             <Panel>
-              <strong>Rapid-cycle rehearsal</strong>
-              <p>
-                Rehearse one timed step up to {rapidCycle.cycleCap} times from{' '}
-                {formatElapsed(rapidCycle.atTick)}, at normal speed. If the window closes, you see one
-                directive line and try again.
-              </p>
-              <p className="reading__aside">{RAPID_CYCLE_EVIDENCE}</p>
+              <strong>{t('rapid-cycle.offer-title')}</strong>
+              <p>{t('rapid-cycle.offer', { cap: rapidCycle.cycleCap, time: formatElapsed(rapidCycle.atTick) })}</p>
+              <p className="reading__aside">{t('rapid-cycle.evidence')}</p>
               <Button onClick={() => props.onRapidCycle?.(rapidCycle)}>
-                Start rapid-cycle rehearsal
+                {t('rapid-cycle.start')}
               </Button>
             </Panel>
           )}
