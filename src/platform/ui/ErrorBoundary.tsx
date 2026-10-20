@@ -19,6 +19,7 @@
  */
 
 import { Component, type ErrorInfo, type ReactNode } from 'react';
+import { t } from '@platform/i18n/messages';
 
 interface Props {
   readonly children: ReactNode;
@@ -68,49 +69,40 @@ export class ErrorBoundary extends Component<Props, State> {
     return (
       <div className="document">
         <header className="document__bar">
-          <a className="document__home" href="/">Open Sim Lab</a>
+          <a className="document__home" href="/">{t('landing.name')}</a>
         </header>
         <main className="reading" id="main">
-          <h1>Something in the {this.props.surface} broke</h1>
-          <p>
-            This is a defect in Open Sim Lab, not something you did. The patient was never real
-            and nothing has been lost that was not already only on this device.
-          </p>
-          <h2>What to try</h2>
+          <h1>{t('error.heading', { surface: this.props.surface })}</h1>
+          <p>{t('error.defect')}</p>
+          <h2>{t('error.try-heading')}</h2>
           <ul>
-            <li>Reload the page. Most render errors do not survive one.</li>
-            <li>
-              If it happens again, clear this site&rsquo;s stored settings below. That resets your
-              preferences and any saved session, and nothing else.
-            </li>
+            <li>{t('error.try-reload')}</li>
+            <li>{t('error.try-clear')}</li>
           </ul>
           <div className="error-actions">
             <button type="button" className="button button--primary" onClick={() => location.reload()}>
-              Reload the page
+              {t('error.reload')}
             </button>
             <button type="button" className="button" onClick={this.reset}>
-              Try that screen again
+              {t('error.retry')}
             </button>
             <button type="button" className="button" onClick={this.clearAndReload}>
-              Clear stored settings and reload
+              {t('error.clear')}
             </button>
           </div>
 
-          <h2>What to send if you report it</h2>
-          <p>
-            Copying this and saying what you were doing is genuinely the most useful thing you can
-            do with a broken build. Nothing here has been sent anywhere.
-          </p>
+          <h2>{t('error.send-heading')}</h2>
+          <p>{t('error.send')}</p>
           <pre className="error-details">{details}</pre>
           <p>
             <a href="https://github.com/clay-good/opensimlab/issues" rel="noreferrer noopener">
-              Open an issue on the public repository
+              {t('error.issue')}
             </a>
           </p>
         </main>
         <footer className="document__foot">
-          <a href="/">Back to the front page</a>
-          <a href="/anesthesia">The simulator</a>
+          <a href="/">{t('documents.footer.home')}</a>
+          <a href="/anesthesia">{t('error.simulator')}</a>
         </footer>
       </div>
     );

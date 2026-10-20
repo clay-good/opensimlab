@@ -39,6 +39,8 @@ const EXTERNALISED: readonly { readonly path: string; readonly region?: readonly
   { path: 'src/routes/PlannedModuleRoute.tsx' },
   { path: 'src/routes/ContentReviewRoute.tsx' },
   { path: 'src/routes/Prerendered.tsx' },
+  { path: 'src/platform/ui/ErrorBoundary.tsx' },
+  { path: 'src/platform/governance/FlagControl.tsx' },
   // The shell's markup. Its screen-reader announcements describe clinical state and stay
   // with the engine's own wording.
   { path: 'src/modules/anesthesia/ui/Cockpit.tsx' },
@@ -60,7 +62,8 @@ function literalText(source: string): string[] {
   return [...markup.matchAll(/>([^<>{}]*[A-Za-z][^<>{}]*)</g)]
     .map((match) => match[1]!.trim())
     // A ternary's branches and a .map call sit between tags too; they are code, not text.
-    .filter((text) => text.length > 0 && !/^[=&|?:)]/.test(text) && !text.includes('.map(')
+    .filter((text) => text.length > 0 && !/^[=&|?:)]/.test(text) && !/^\d+\s*(&&|\|\||\?)/.test(text)
+      && !text.includes('.map(')
       && !text.includes(';') && !text.includes('return ('));
 }
 
@@ -82,6 +85,8 @@ describe('the check itself', () => {
     expect(literalText('</p>\n      ) : (\n        ITEMS.map((entry) => (\n          <section>')).toEqual([]);
     expect(literalText('const n = items.filter((x) => x.count > 0);\n  return (\n    <>')).toEqual([]);
     expect(literalText('{/* links to /<module>/scenario/<id> */}<li>')).toEqual([]);
+    // A comparison's `>` is not a tag end: `length > 0 && (` is code.
+    expect(literalText('{existing.length > 0 && !open && (\n  <p>')).toEqual([]);
     expect(literalText('<a href="/">Back to the front page</a>')).toEqual(['Back to the front page']);
     expect(literalText("<a href=\"/\">{t('documents.footer.home')}</a>")).toEqual([]);
   });

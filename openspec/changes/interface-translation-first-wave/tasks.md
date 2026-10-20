@@ -77,9 +77,11 @@
     state summary's alarm line, the same ternary in 22 lessons' branches and now one helper (2).
     Parameter labels, alarm messages, each lesson's spoken state, the waveform descriptions, and
     the cockpit's equipment announcements describe clinical state and stay English.
+  - The error boundary (12; the copyable report stays English, because it is for the maintainer)
+    and the review flag control (12), both in the core because every page can show them.
   - Still to move, found by scanning every non-module file for literal markup text: the problem
-    report dialog (21), the error boundary (12), the anaesthesia route (10), the review flag
-    control (8), and a few monitor, component, and router labels (6).
+    report dialog (21), the anaesthesia route (10), and a few monitor, component, and router
+    labels (6).
 - [x] Generate the coverage report at build; publish `/translation-status` as a trust document.
   Its sentence claiming the test locales ran on every build was untrue and is corrected: they are
   applied by hand in development until CI runs them. The prerendered page computes coverage from the catalogs at build: languages offered (none),

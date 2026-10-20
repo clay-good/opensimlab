@@ -14,6 +14,7 @@ import {
   NOTE_SEVERITIES, addNote, loadNotes, notesFor, removeNote, saveNotes,
   type NoteSeverity, type ReviewNote,
 } from './review-notes';
+import { t } from '@platform/i18n/messages';
 
 export interface FlagControlProps {
   /** Stable key for the content item, e.g. `drug-card:propofol`. */
@@ -58,25 +59,25 @@ export function FlagControl(props: FlagControlProps) {
     <div className="flag">
       {existing.length > 0 && !open && (
         <p className="flag__existing">
-          You flagged this as <strong>{NOTE_SEVERITIES.find((s) => s.id === existing[0]!.severity)?.label}</strong>.
+          {t('flag.existing')} <strong>{NOTE_SEVERITIES.find((s) => s.id === existing[0]!.severity)?.label}</strong>.
         </p>
       )}
 
       {!open ? (
         <div className="flag__actions">
           <Button compact onClick={() => setOpen(true)}>
-            {existing.length > 0 ? 'Edit this note' : 'Something here is wrong'}
+            {t(existing.length > 0 ? 'flag.edit' : 'flag.open')}
           </Button>
           {existing.length > 0 && (
             <Button compact variant="ghost" onClick={() => commit(removeNote(notes, existing[0]!.id))}>
-              Remove note
+              {t('flag.remove')}
             </Button>
           )}
         </div>
       ) : (
         <div className="flag__form">
           <label className="field">
-            <span className="field__label">How serious is it?</span>
+            <span className="field__label">{t('flag.severity')}</span>
             <select
               className="select"
               value={severity}
@@ -92,37 +93,34 @@ export function FlagControl(props: FlagControlProps) {
           </label>
 
           <label className="field">
-            <span className="field__label">What is wrong</span>
+            <span className="field__label">{t('flag.what')}</span>
             <textarea
               className="field__input"
               rows={3}
               value={whatIsWrong}
-              placeholder="The number, the mechanism, or the lesson a learner would take from this."
+              placeholder={t('flag.what-placeholder')}
               onChange={(event) => setWhatIsWrong(event.target.value)}
             />
           </label>
 
           <label className="field">
-            <span className="field__label">What it should say, if you know</span>
+            <span className="field__label">{t('flag.correction')}</span>
             <textarea
               className="field__input"
               rows={2}
               value={correction}
-              placeholder="Optional. A source is more useful than a correction, if you have one."
+              placeholder={t('flag.correction-placeholder')}
               onChange={(event) => setCorrection(event.target.value)}
             />
           </label>
 
           <div className="flag__actions">
             <Button compact variant="primary" onClick={save} disabled={!whatIsWrong.trim()}>
-              Save this note
+              {t('flag.save')}
             </Button>
-            <Button compact variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
+            <Button compact variant="ghost" onClick={() => setOpen(false)}>{t('flag.cancel')}</Button>
           </div>
-          <p className="field__hint">
-            Saved on this device only. Nothing is sent anywhere; you export the notes as one
-            file when you are finished.
-          </p>
+          <p className="field__hint">{t('flag.saved-locally')}</p>
         </div>
       )}
     </div>
