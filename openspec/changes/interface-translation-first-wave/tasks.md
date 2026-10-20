@@ -21,7 +21,10 @@
     limitations register (7), `/privacy` (29, plus its practice-history controls, 16),
     `/governance` (28; board, coverage, framework records stay typed data), `/validation` (43;
     figures, rows, sources stay generated), and a planned module's page (12).
-  - Cockpit: the status bar (18), the session menu's note, classroom, vibration, and narration
+  - Cockpit: the shell (44: the skip link, rehearsal-branch notice, mobile buttons, overflow
+    menu, sound toggle, shortcuts heading, stopped-engine and hidden-tab dialogs, drug-card headings,
+    review markers, confidence badges, and resize handles; its screen-reader announcements of
+    clinical state stay engine wording), the status bar (18), the session menu's note, classroom, vibration, and narration
     controls (22), the rapid-cycle and classroom pause panels (11), the private tutor's card and
     the worked-example bar (21; narration stays authored), the analysis region and patient profile
     with the monitor's morphology heading (36; ASA categories and waveform descriptions stay
@@ -59,7 +62,8 @@
   - Prerendered pages: each module's index and each scenario's static briefing (10; sixteen
     hand-typed headings that were each a module's name and "simulator" are now one message;
     text identical to the previous build).
-  - Still to move: the cockpit shell and its action controls.
+  - Still to move: the action cockpit's controls (`ActionCockpit.tsx` and each module's tray),
+    the keyboard shortcut descriptions, and the cockpit's screen-reader announcements.
 - [x] Generate the coverage report at build; publish `/translation-status` as a trust document.
   Its sentence claiming the test locales ran on every build was untrue and is corrected: they are
   applied by hand in development until CI runs them. The prerendered page computes coverage from the catalogs at build: languages offered (none),

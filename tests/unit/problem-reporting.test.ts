@@ -1026,7 +1026,8 @@ describe('scenario report contract', () => {
     expect(route).toContain("requestReport('source')");
     expect(prebrief).toContain("t('briefing.report-limitations')");
     expect(EN_MESSAGES['briefing.report-limitations'].text).toBe('Help us improve these limitations');
-    expect(cockpit.match(/Help us improve this source/g)).toHaveLength(2);
+    expect(cockpit.match(/t\('cockpit\.report-source'\)/g)).toHaveLength(2);
+    expect(EN_MESSAGES['cockpit.report-source'].text).toBe('Help us improve this source');
     expect(route).toContain("sourceOpen ? 'source'");
     expect(cockpit).toContain('onSourceVisibilityChange?.(explainerId !== null || drugCardId !== null)');
   });

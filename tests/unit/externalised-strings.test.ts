@@ -39,6 +39,9 @@ const EXTERNALISED: readonly { readonly path: string; readonly region?: readonly
   { path: 'src/routes/PlannedModuleRoute.tsx' },
   { path: 'src/routes/ContentReviewRoute.tsx' },
   { path: 'src/routes/Prerendered.tsx' },
+  // The shell's markup. Its screen-reader announcements describe clinical state and stay
+  // with the engine's own wording.
+  { path: 'src/modules/anesthesia/ui/Cockpit.tsx' },
   // From the limitations section to the end: the per-module orientation above it is authored
   // clinical framing and stays with the scenarios.
   { path: 'src/modules/anesthesia/ui/Prebrief.tsx', region: ['      {/* Sentences from the register', '\n}\n'] },

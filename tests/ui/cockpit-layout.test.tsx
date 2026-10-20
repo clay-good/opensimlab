@@ -485,7 +485,8 @@ describe('Requirement: Reflow To A Phone Without Sideways Scrolling', () => {
     expect(overflow).toContain('SPEED_MULTIPLIERS');
     expect(overflow).toContain('scenario.patient.procedure');
     expect(overflow).toContain('session.singleStep');
-    expect(overflow).toContain('Reset the scenario');
+    // The same message the status bar's reset uses, so the two cannot drift.
+    expect(overflow).toContain("t('status.reset')");
   });
 });
 

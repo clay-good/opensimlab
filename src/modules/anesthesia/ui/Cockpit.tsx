@@ -195,8 +195,8 @@ export function depthConfidenceFor(
 ) {
   const propofol = concentrations.find((drug) => drug.drugId === 'propofol');
   return propofol?.modelId === 'propofol-paedfusor-2005'
-    ? { label: 'Teaching model', kind: 'teaching' as const }
-    : { label: 'Predicted', kind: 'default' as const };
+    ? { label: t('debrief.teaching-model'), kind: 'teaching' as const }
+    : { label: t('cockpit.predicted'), kind: 'default' as const };
 }
 
 export function monitorUnavailableParameters(
@@ -1237,7 +1237,7 @@ export function Cockpit({
 
   const actionHeight = useResizableRegion({
     storageKey: 'opensimlab.action-height',
-    label: 'Height of the action region',
+    label: t('cockpit.resize-actions'),
     axis: 'row',
     min: LAYOUT.actionCockpitMinPx,
     max: LAYOUT.actionCockpitMaxPx,
@@ -1248,7 +1248,7 @@ export function Cockpit({
 
   const analysisWidth = useResizableRegion({
     storageKey: 'opensimlab.analysis-width',
-    label: 'Width of the analysis region',
+    label: t('cockpit.resize-analysis'),
     axis: 'column',
     min: 280,
     max: 900,
@@ -1329,10 +1329,10 @@ export function Cockpit({
     const confidence = session.concentrations.find((drug) => drug.drugId === 'rocuronium')?.confidence;
     if (!confidence) return undefined;
     return confidence === 'teaching'
-      ? { label: 'Teaching model', kind: 'teaching' as const }
+      ? { label: t('debrief.teaching-model'), kind: 'teaching' as const }
       : confidence === 'out-of-range'
-        ? { label: 'Out of range', kind: 'out-of-range' as const }
-        : { label: confidence === 'published' ? 'Published' : 'Pending check', kind: 'default' as const };
+        ? { label: t('conc.out-of-range'), kind: 'out-of-range' as const }
+        : { label: t(confidence === 'published' ? 'conc.published' : 'cockpit.pending-check'), kind: 'default' as const };
   }, [session.concentrations]);
   const depthModelConfidence = useMemo(() => {
     return depthConfidenceFor(session.concentrations);
@@ -1728,7 +1728,7 @@ export function Cockpit({
       {...(demonstration.beat ? { 'data-demo-focus': demonstration.beat.focus } : {})}
       {...(pausePoint ? { 'data-pause-focus': pausePoint.region } : {})}
     >
-      <a className="skip-link" href="#monitor-region">Skip to the monitor</a>
+      <a className="skip-link" href="#monitor-region">{t('cockpit.skip')}</a>
 
       <DemonstrationBar
         beat={demonstration.beat}
@@ -1763,13 +1763,12 @@ export function Cockpit({
       {branchNoticeOpen && session.rehearsalBranch && rehearsalPoint && (
         <div className="rehearsal-branch" role="status">
           <span>
-            <strong>Targeted repetition · {rehearsalPoint.label}</strong>
+            <strong>{t('cockpit.branch-title', { label: rehearsalPoint.label })}</strong>
             <br />
-            Rebuilt from your original run at {formatElapsed(session.rehearsalBranch.decisionTick)}.
-            New actions form a separate branch.
+            {t('cockpit.branch', { time: formatElapsed(session.rehearsalBranch.decisionTick) })}
           </span>
           <Button compact variant="ghost" onClick={() => setBranchNoticeOpen(false)}>
-            Dismiss
+            {t('tutor.dismiss')}
           </Button>
         </div>
       )}
@@ -2054,9 +2053,9 @@ export function Cockpit({
       {/* Small screens: the Analysis region and the Action Cockpit open as overlays. */}
       <div className="mobile-actions">
         <Button onClick={() => setAnalysisOpen((open) => !open)}>
-          {moduleId === 'emergency-medicine' ? 'Review' : 'Analysis'}
+          {t(moduleId === 'emergency-medicine' ? 'cockpit.review' : 'analysis.label')}
         </Button>
-        <Button variant="primary" onClick={() => setActionsOpen((open) => !open)}>Actions</Button>
+        <Button variant="primary" onClick={() => setActionsOpen((open) => !open)}>{t('cockpit.actions')}</Button>
       </div>
 
       {/* Guidance. Non-blocking, dismissible, and never shown during an alarm. */}
@@ -2143,9 +2142,9 @@ export function Cockpit({
               <p key={index}>{paragraph}</p>
             ))}
             <p className="reading__aside">{getExplainer(explainerId).diagram.caption}</p>
-            <p className="reading__aside">Reflects: {getExplainer(explainerId).reflects}</p>
+            <p className="reading__aside">{t('cockpit.reflects', { what: getExplainer(explainerId).reflects })}</p>
             {onReportSource && (
-              <Button compact variant="ghost" onClick={onReportSource}>Help us improve this source</Button>
+              <Button compact variant="ghost" onClick={onReportSource}>{t('cockpit.report-source')}</Button>
             )}
             <UnreviewedMarker
               status={getExplainer(explainerId).maturity}
@@ -2172,30 +2171,30 @@ export function Cockpit({
           <>
             <DrugCardBody drugId={drugCardId} reviewMode={reviewMode} />
             {onReportSource && (
-              <Button compact variant="ghost" onClick={onReportSource}>Help us improve this source</Button>
+              <Button compact variant="ghost" onClick={onReportSource}>{t('cockpit.report-source')}</Button>
             )}
           </>
         )}
       </Drawer>
 
-      <Modal open={shortcutsOpen} title="More options" onClose={() => setShortcutsOpen(false)}
-        footer={<Button onClick={() => setShortcutsOpen(false)}>Close</Button>}>
+      <Modal open={shortcutsOpen} title={t('status.more')} onClose={() => setShortcutsOpen(false)}
+        footer={<Button onClick={() => setShortcutsOpen(false)}>{t('cockpit.close')}</Button>}>
         {/* Speed, step, and reset leave the status bar under its phone sacrifice
             order. Every removal stays reachable here at every width. */}
         <div className="overflow-menu__speed">
           <SegmentedControl<SpeedMultiplier>
-            label="Simulation speed"
+            label={t('status.speed')}
             value={session.speed}
             onChange={(speed: SpeedMultiplier) => session.setSpeed(speed)}
             options={SPEED_MULTIPLIERS.map((multiplier) => ({
               value: multiplier,
-              label: `${multiplier}×`,
-              srLabel: `${multiplier} times speed`,
+              label: t('status.speed-option', { multiplier }),
+              srLabel: t('status.speed-option-sr', { multiplier }),
             }))}
           />
           <p className="field__hint">{scenario.patient.procedure}</p>
-          <Button onClick={session.singleStep}>Advance one simulated second</Button>
-          <Button onClick={resetScenario}>Reset the scenario</Button>
+          <Button onClick={session.singleStep}>{t('status.step')}</Button>
+          <Button onClick={resetScenario}>{t('status.reset')}</Button>
         </div>
         <UpdateNotice surface="session" />
         <div className="overflow-menu__sound">
@@ -2206,13 +2205,9 @@ export function Cockpit({
               // Web Audio needs a user gesture to start, and this click is one.
               if (next) void audio.enable();
             }}
-            label={soundOn ? 'Sound on' : 'Sound off'}
+            label={t(soundOn ? 'cockpit.sound-on' : 'cockpit.sound-off')}
           />
-          <p className="field__hint">
-            The pulse tone falls in pitch as saturation falls, which is how clinicians track
-            saturation while looking somewhere else. Sound is never the only channel: every alarm
-            and cue is also shown.
-          </p>
+          <p className="field__hint">{t('cockpit.sound-hint')}</p>
         </div>
         <SessionPreferences
           note={{ draft: noteDraft, saved: noteSaved, onDraft: setNoteDraft, onSave: () => {
@@ -2229,9 +2224,9 @@ export function Cockpit({
           setShortcutsOpen(false);
           setTutorIntroductionOpen(true);
         }}>
-          Show private tutor introduction
+          {t('cockpit.tutor-intro')}
         </Button>}
-        <h3>Keyboard shortcuts</h3>
+        <h3>{t('cockpit.shortcuts')}</h3>
         <dl style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 'var(--space-2) var(--space-4)' }}>
           {SHORTCUTS.filter((shortcut) => moduleId === 'anesthesia'
             || !['G', 'V', 'L', 'C', 'E', 'D'].includes(shortcut.keys)).map((shortcut) => (
@@ -2242,15 +2237,15 @@ export function Cockpit({
             </div>
           ))}
         </dl>
-        <Button onClick={onEnd}>End the session and open the debrief</Button>
+        <Button onClick={onEnd}>{t('cockpit.end')}</Button>
         {moduleId === 'anesthesia' && (
           <Button onClick={() => { setShortcutsOpen(false); setCrisisInjectorOpen(true); }}>
-            Open manual crisis injector
+            {t('cockpit.open-injector')}
           </Button>
         )}
       </Modal>
 
-      <Drawer open={crisisInjectorOpen} title="Manual crisis injector"
+      <Drawer open={crisisInjectorOpen} title={t('cockpit.injector')}
         onClose={() => setCrisisInjectorOpen(false)}>
         <ManualCrisisInjector
           injectedCrisisIds={equipment?.injectedCrisisIds ?? []}
@@ -2271,43 +2266,33 @@ export function Cockpit({
           Hard worker death already had a surface; this is the soft path, and it
           says the same true thing: the patient on screen is no longer live. */}
       {session.error && session.phase !== 'worker-lost' && (
-        <Modal open title="The simulation stopped computing" dismissible={false}
-          footer={<Button variant="primary" onClick={session.resetSession}>Start this scenario again</Button>}>
+        <Modal open title={t('cockpit.error-title')} dismissible={false}
+          footer={<Button variant="primary" onClick={session.resetSession}>{t('cockpit.restart')}</Button>}>
           <p>
-            The physiology engine reported an error and has stopped advancing.{' '}
-            <strong>The patient on screen is frozen, not stable.</strong> Nothing shown after this
-            point reflects a running simulation, so please do not read a clinical conclusion from it.
+            {t('cockpit.error-before')}{' '}
+            <strong>{t('cockpit.error-frozen')}</strong> {t('cockpit.error-after')}
           </p>
-          <p className="field__hint">Reported as: {session.error.code}. {session.error.message}</p>
+          <p className="field__hint">{t('cockpit.error-reported', { code: session.error.code, message: session.error.message })}</p>
         </Modal>
       )}
 
       {session.phase === 'worker-lost' && (
-        <Modal open title="The simulation engine stopped" dismissible={false}
-          footer={<Button variant="primary" onClick={session.resumeAfterWorkerLoss}>Resume from the transcript</Button>}>
-          <p>
-            The background worker running the physiology terminated unexpectedly. The simulation is
-            paused and your session transcript is intact.
-          </p>
-          <p>
-            Resuming replays every action you took into a fresh worker, which reproduces the session
-            exactly, because the engine is deterministic.
-          </p>
+        <Modal open title={t('cockpit.lost-title')} dismissible={false}
+          footer={<Button variant="primary" onClick={session.resumeAfterWorkerLoss}>{t('cockpit.lost-resume')}</Button>}>
+          <p>{t('cockpit.lost')}</p>
+          <p>{t('cockpit.lost-replay')}</p>
         </Modal>
       )}
 
       {session.catchUpNotice && (
-        <Modal open title="The simulation was paused while this tab was hidden" onClose={() => { /* the notice is dismissed by resuming */ }}
+        <Modal open title={t('cockpit.hidden-title')} onClose={() => { /* the notice is dismissed by resuming */ }}
           footer={
             <>
-              <Button variant="primary" onClick={session.play}>Resume</Button>
-              <Button onClick={session.resetSession}>Reset</Button>
+              <Button variant="primary" onClick={session.play}>{t('cockpit.resume')}</Button>
+              <Button onClick={session.resetSession}>{t('cockpit.reset-short')}</Button>
             </>
           }>
-          <p>
-            Browsers throttle hidden tabs, so the clock was capped rather than fast-forwarding the
-            patient by however long you were away. At most five simulated seconds were caught up.
-          </p>
+          <p>{t('cockpit.hidden')}</p>
         </Modal>
       )}
     </div>
@@ -2321,24 +2306,24 @@ function DrugCardBody({ drugId, reviewMode }: { drugId: string; reviewMode: bool
     <div className="reading" style={{ padding: 0 }}>
       <p className="field__label">{card.drugClass}</p>
       <p>{card.mechanism}</p>
-      <h3>Dosing</h3>
-      <p>Induction: {card.inductionDose}</p>
-      <p>Maintenance: {card.maintenanceDose}</p>
+      <h3>{t('card.dosing')}</h3>
+      <p>{t('card.induction', { dose: card.inductionDose })}</p>
+      <p>{t('card.maintenance', { dose: card.maintenanceDose })}</p>
       {/* Where these figures came from, and where they differ from the label.
           A dose is the most consequential thing on this card and was the only
           clinical content in the application a reader could not check. */}
       <p className="field__hint">
-        Checked against {card.dosing.sourceTitle}.{' '}
+        {t('card.checked', { source: card.dosing.sourceTitle })}{' '}
         {card.dosing.comparedWithLabel}
       </p>
-      <h3>Onset and duration</h3>
+      <h3>{t('card.onset')}</h3>
       <p>{card.onset}</p>
       <p>{card.duration}</p>
-      <h3>What to anticipate</h3>
+      <h3>{t('card.anticipate')}</h3>
       <ul>{card.adverseEffects.map((effect) => <li key={effect}>{effect}</li>)}</ul>
-      <h3>Contraindications and cautions</h3>
+      <h3>{t('card.contraindications')}</h3>
       <ul>{card.contraindications.map((item) => <li key={item}>{item}</li>)}</ul>
-      <h3>What to watch on the monitor</h3>
+      <h3>{t('card.watch')}</h3>
       <p>{card.watchFor}</p>
       <UnreviewedMarker
         status={card.maturity}
@@ -2350,7 +2335,7 @@ function DrugCardBody({ drugId, reviewMode }: { drugId: string; reviewMode: bool
       {reviewMode && (
         <FlagControl
           itemKey={`drug-card:${card.drugId}`}
-          itemLabel={`${card.name} drug card`}
+          itemLabel={t('card.flag-label', { name: card.name })}
           contentVersion={card.review.contentVersion}
           appVersion={APP_VERSION}
           now={() => new Date().toISOString()}
@@ -2380,11 +2365,11 @@ export function UnreviewedMarker({
 }: UnreviewedMarkerProps) {
   const reviewNotice = isUnreviewed(review) ? (
     <p className="reading__aside" data-unreviewed="true">
-      <strong>Not clinically reviewed.</strong> {UNREVIEWED_NOTICE}
+      <strong>{t('cockpit.unreviewed')}</strong> {UNREVIEWED_NOTICE}
     </p>
   ) : (
       <p className="reading__aside">
-        Reviewed by {review.reviewer} on {review.reviewedOn}.
+        {t('cockpit.reviewed', { reviewer: review.reviewer, date: review.reviewedOn })}
       </p>
   );
   return (
