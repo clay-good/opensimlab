@@ -7,18 +7,16 @@
  * a document cannot claim something the code does not do.
  */
 
-import { useState } from 'react';
-import { Badge, Button, CitationLink, Disclosure, KeyFigure, Panel, SiteBar } from '@platform/ui';
+import { Badge, CitationLink, Disclosure, KeyFigure, Panel, SiteBar } from '@platform/ui';
 import { buildValidationReport } from '@platform/docs/validation-report';
 import { EDITORIAL_BOARD, HONEST_STATUS, reviewableItems } from '@platform/governance/records';
 import { reportCoverage } from '@platform/governance/review-gate';
 import { ReviewStatusBody } from '@platform/governance/ReviewStatusBody';
 import { LimitationsBody } from '@platform/docs/LimitationsBody';
+import { PrivacyBody } from '@platform/docs/PrivacyBody';
 import { SOURCES, formatSource, requireSource } from '@platform/docs/sources';
 import { VERIFIED_CONSTANTS, confirmedCount } from '@platform/docs/verified-constants';
-import { PRIVACY_CLAIMS } from '@platform/docs/privacy-claims';
 import { CorrectionsBody } from '@platform/docs/CorrectionsBody';
-import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { APP_VERSION } from '@platform/governance/status';
 import { FRAMEWORKS } from '@anesthesia/curriculum/frameworks';
 import { t } from '@platform/i18n/messages';
@@ -26,13 +24,6 @@ import { TranslationStatusBody } from '@platform/i18n/TranslationStatusBody';
 import { FRAMEWORK_REVIEW_MONTHS, overdueFrameworks } from '@platform/curriculum/framework-records';
 import { VerificationQueueBody } from '@anesthesia/ui/VerificationQueueBody';
 import { routeFor } from './routes';
-import {
-  importProgressFile,
-  loadPracticeHistory,
-  practiceHistoryExport,
-  PRACTICE_HISTORY_KEY,
-} from '@anesthesia/catalog/practice-history';
-import { eraseOne } from '@platform/offline/local-data';
 
 /**
  * What each gate verdict means, said once for the whole group rather than
@@ -412,154 +403,6 @@ function FrameworkReadings() {
 
 
 
-
-function PrivacyBody() {
-  const [attemptCount, setAttemptCount] = useState(() => loadPracticeHistory().length);
-  const [historyMessage, setHistoryMessage] = useState('');
-  const [historyImport, setHistoryImport] = useState('');
-  const downloadHistory = () => {
-    const blob = new Blob([practiceHistoryExport(loadPracticeHistory())], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement('a');
-    anchor.href = url;
-    anchor.download = 'opensimlab-practice-history.json';
-    anchor.click();
-    URL.revokeObjectURL(url);
-  };
-  const importHistory = (mode: 'merge' | 'replace') => {
-    try {
-      const result = importProgressFile(historyImport, mode);
-      setAttemptCount(result.history.length);
-      setHistoryImport('');
-      const moved = result.changes.map((change) =>
-        `${change.scenarioId} ${change.objectiveId}: ${change.previous ?? t('history.none')} → ${change.current ?? t('history.none')}`);
-      const counts = { added: result.added, duplicates: result.duplicates, stored: result.history.length };
-      setHistoryMessage(`${t(mode === 'merge' ? 'history.merged' : 'history.replaced', counts)} `
-        + (moved.length === 0 ? t('history.no-change')
-          : t('history.changed', { count: moved.length, changes: moved.join('; ') })));
-    } catch (error) {
-      setHistoryMessage(error instanceof Error ? error.message : t('history.import-failed'));
-    }
-  };
-  return (
-    <>
-      {/* The three facts a privacy page is read for. They are all in the prose
-          below and always were, which is exactly the problem: a reader deciding
-          whether to send their students here should not have to find them. */}
-      <div className="figures">
-        <KeyFigure value="0" label="Accounts, trackers, and analytics" />
-        <KeyFigure value="0 bytes" label="Practice data that leaves your device" />
-        <KeyFigure value="30 days" label="Maximum retention, and only for a report you choose to send" />
-      </div>
-      <p>
-        Practicing in Open Sim Lab is unobservable. There is no login, account, analytics, learner
-        telemetry, or remote practice history. The one deliberate exception is an anonymous
-        problem report: nothing is sent unless you open its dialog, review the bounded fields, and
-        choose to send it.
-      </p>
-      <h2>What is stored, and where</h2>
-      <ul>
-        <li>Your preferences, in this browser&apos;s local storage on this device.</li>
-        <li>Your acknowledgement of the not-for-clinical-use statement, in the same place.</li>
-        <li>The expiry of any goal-path or return suggestion you hide for 7 days.</li>
-        <li>Your newest 50 bounded practice-attempt summaries, in the same place.</li>
-        <li>Session transcripts, if you save them, in the same place.</li>
-        <li>Offline application files in this browser&apos;s cache, plus local browser-client IDs
-          mapped to release hashes so an update in one tab does not break another. These are not
-          learner identifiers, contain no practice content, and are never transmitted. Closed-client
-          records are removed after the browser confirms those clients have closed; a later update
-          removes unused releases. Keeping older tabs open can retain more than one release on
-          this device. Clearing this site&apos;s browser
-          data removes the offline files and these records.</li>
-      </ul>
-      <p>To prepare for offline practice, let the offline download finish, then reload once while
-        online. Browser storage eviction or clearing site data requires another download.</p>
-      <p id="problem-reports">
-        A problem report you deliberately send is kept in a private correction queue for at most
-        30 days. Abuse-prevention counters are kept for at most 14 days. The client does not attach
-        your account, email, cookies, browser identity, or device time. The optional note is text you
-        supply, so please do not put sensitive information in it. Raw network addresses are not stored.
-      </p>
-
-      <h2>What leaves the device</h2>
-      <p>
-        Your simulation, tutor, debrief writing, and practice history do not leave. If you open
-        <strong> Help us improve this</strong>, Cloudflare Turnstile loads for abuse prevention. If you
-        then send, the previewed scenario/version, public practice context, category, and optional
-        160-character note go to the isolated correction service. Recent simulated actions and a
-        bounded patient/equipment snapshot are included only if you turn that option on and review
-        the exact fields. Canceling sends no report.
-      </p>
-
-      <h2>Your private practice history</h2>
-      <p>
-        <strong>{attemptCount}</strong> bounded {attemptCount === 1 ? 'attempt summary is' : 'attempt summaries are'} stored on this device.
-        Each contains only the scenario and content version, selected public goal, simulated
-        duration, completion time, and objective outcome words.
-      </p>
-      <p>
-        Progress never syncs. Exporting this file and importing it on another device is the only
-        way it moves, and the exported file keeps each attempt&apos;s calendar day, not its time.
-      </p>
-      <p className="field__hint">
-        No reflection, action list, physiology trace, patient data, identity, or overall score is
-        included. The newest 50 summaries are kept; older ones fall away locally.
-      </p>
-      <label className="field" htmlFor="practice-history-import">
-        <span className="field__label">{t('history.import-label')}</span>
-        <textarea
-          id="practice-history-import"
-          aria-label={t('history.import-label')}
-          className="field__input"
-          rows={5}
-          value={historyImport}
-          onChange={(event) => setHistoryImport(event.target.value)}
-          placeholder={t('history.import-placeholder')}
-        />
-        <span className="field__hint">{t('history.import-hint')}</span>
-      </label>
-      <div className="phase-nav">
-        <Button onClick={downloadHistory}>{t('history.export')}</Button>
-        <Button onClick={() => importHistory('merge')}>{t('history.merge')}</Button>
-        <Button variant="ghost" onClick={() => {
-          if (!confirm(t('history.replace-confirm'))) return;
-          importHistory('replace');
-        }}>{t('history.replace')}</Button>
-        <Button variant="danger" onClick={() => {
-          if (!confirm(t('history.erase-confirm'))) return;
-          try { eraseOne(localStorage, PRACTICE_HISTORY_KEY); } catch { /* Storage may be blocked. */ }
-          setAttemptCount(0);
-          setHistoryMessage(t('history.erased'));
-        }}>
-          {t('history.erase')}
-        </Button>
-      </div>
-      {historyMessage && <p role="status" className="field__hint">{historyMessage}</p>}
-
-      <h2>What the host necessarily sees</h2>
-      <p>
-        The static host serving these files sees requests for those files and the network address
-        they came from, as any web server does. It retains no per-request identity and stores no
-        state about you. After the first load, ordinary practice makes no application API request;
-        only the problem-report flow makes the declared requests above.
-      </p>
-
-      <h2>Each claim, and the test that enforces it</h2>
-      <table>
-        <thead><tr><th>Claim</th><th>Enforced by</th></tr></thead>
-        <tbody>
-          {PRIVACY_CLAIMS.map((claim) => (
-            <tr key={claim.claim}>
-              <td>{claim.claim}</td>
-              <td><code>{claim.test}</code></td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <p className="reading__aside">{NOT_FOR_CLINICAL_USE}</p>
-    </>
-  );
-}
 
 export function DocumentPanel({ title, children }: { title: string; children: React.ReactNode }) {
   return <Panel title={title}>{children}</Panel>;
