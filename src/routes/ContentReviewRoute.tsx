@@ -119,6 +119,12 @@ export function ContentReviewRoute() {
           reviewed or make you responsible for what you did not flag. Signing off content is a
           separate, named act.
         </p>
+        <p>
+          Not a clinician, but able to read a pharmacokinetics table? There is a smaller ask that
+          needs no licence: check one model&apos;s parameters against a second source, in an
+          afternoon, on <a href="/verification-queue">the verification queue</a>. A check is
+          recorded as a check and never as a clinical review.
+        </p>
 
         <h2>How it works</h2>
         <ol>

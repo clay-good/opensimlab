@@ -56,5 +56,8 @@
 
 ## 5. Outreach
 
-- [ ] Add the queue to the front door's single reviewer invitation page target and to the
-  outreach note, so the one ask the project makes can be answered in an afternoon.
+- [x] Add the queue to the front door's single reviewer invitation page target and to the
+  outreach note, so the one ask the project makes can be answered in an afternoon. The outreach
+  note points pharmacologists to the queue (`docs/outreach/first-contact.md`), and
+  `/content-review`, where reviewers land, offers it as the smaller ask that needs no licence.
+  The front door's invitation itself stays one sentence, as its test requires.

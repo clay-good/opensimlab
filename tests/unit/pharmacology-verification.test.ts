@@ -117,3 +117,12 @@ describe('Requirement: A Public Verification Queue Lists Every Unchecked Paramet
     expect(markup).toContain('a clinical review');
   });
 });
+
+describe('the queue is offered where reviewers land', () => {
+  it('links from the content-review page as the ask that needs no licence', async () => {
+    const { ContentReviewRoute } = await import('@routes/ContentReviewRoute');
+    const markup = renderToStaticMarkup(createElement(ContentReviewRoute));
+    expect(markup).toContain('href="/verification-queue"');
+    expect(markup).toContain('never as a clinical review');
+  });
+});
