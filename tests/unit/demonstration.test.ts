@@ -325,6 +325,12 @@ describe('the narration survives the layout reflowing', () => {
     expect(EN_MESSAGES['demo.focus-monitor'].text).toBe('the monitor');
   });
 
+  it('keeps the briefing orientation free of directions too', () => {
+    // The anaesthesia briefing said the monitor was on the right and the controls
+    // along the bottom, which is one layout of three; it names the regions now.
+    expect(EN_MESSAGES['briefing.orientation'].text).not.toMatch(DIRECTIONS);
+  });
+
   it('still points somewhere for all but the closing beat', () => {
     const pointed = INDUCTION_DEMONSTRATION.filter((beat) => beat.focus !== 'none');
     expect(pointed.length).toBe(INDUCTION_DEMONSTRATION.length - 1);

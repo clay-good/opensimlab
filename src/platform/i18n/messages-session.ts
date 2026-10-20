@@ -232,6 +232,23 @@ export const SESSION_MESSAGES = {
   'crisis.select': { class: 'interface', text: 'Select {crisis}' },
   'crisis.inject': { class: 'interface', text: 'Inject {crisis}' },
   'crisis.cancel': { class: 'interface', text: 'Cancel' },
+  'briefing.assignment': { class: 'interface', text: 'Assignment: {label}' },
+  'briefing.orientation': { class: 'interface', text: 'Everything is on one screen: the monitor, the concentration plot and the log, and your controls for drugs, the ventilator and the airway. The clock only runs when you press play, and you can pause at any moment to look at anything.' },
+  'briefing.region': { class: 'interface', text: 'Practice region:' },
+  'briefing.region-tci': { class: 'interface', text: 'Target-controlled infusion is a first-class control here.' },
+  'briefing.region-manual': { class: 'interface', text: 'Manual weight-based infusion is the default here.' },
+  'briefing.limitations-link': { class: 'interface', text: 'The limitations register explains where each of these would mislead you, and what the correct understanding is.' },
+  'briefing.report-limitations': { class: 'interface', text: 'Help us improve these limitations' },
+  'briefing.guidance-hint': { class: 'interface', text: 'Guidance changes how much you are prompted. It does not change the patient at all: the same actions produce the same physiology at every level.' },
+  'briefing.guided': { class: 'interface', text: 'Guided — prompt me' },
+  'briefing.coached': { class: 'interface', text: 'Coached — prompt me rarely' },
+  'briefing.unassisted': { class: 'interface', text: 'Unassisted — say nothing' },
+  'briefing.unreviewed': { class: 'interface', text: 'This scenario has not been clinically reviewed.' },
+  'briefing.start': { class: 'interface', text: 'Start the scenario' },
+  'briefing.watch-example': { class: 'interface', text: 'Watch a worked example' },
+  'briefing.example-hint': { class: 'interface', text: 'The worked example pauses before each decision so you can read. Choose “Continue example” when ready; observation periods run at 60× speed. Reading time does not advance the patient.' },
+  'briefing.demo-hint': { class: 'interface', text: 'The demonstration runs this scenario at five times speed and explains what to look at.' },
+  'briefing.take-over': { class: 'interface', text: 'You can take the controls at any point and carry on from where it got to.' },
 } as const satisfies Readonly<Record<string, SourceMessage>>;
 
 registerMessages(SESSION_MESSAGES);

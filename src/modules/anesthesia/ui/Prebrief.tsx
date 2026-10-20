@@ -89,7 +89,7 @@ export function Prebrief({
       <SiteBar />
       <main className="reading prebrief" id="main">
       {assignmentLabel && (
-        <p className="field__label">Assignment: {assignmentLabel}</p>
+        <p className="field__label">{t('briefing.assignment', { label: assignmentLabel })}</p>
       )}
       {assignmentNotices.map((notice) => (
         <p key={notice.text} className="field__hint" role="note">
@@ -412,16 +412,10 @@ export function Prebrief({
           </>
         ) : (
           <>
+            <p>{t('briefing.orientation')}</p>
             <p>
-              The monitor is on the right, the concentration plot and the log on the left, and your
-              drugs, the ventilator and the airway are along the bottom. The clock only runs when you
-              press play, and you can pause at any moment to look at anything.
-            </p>
-            <p>
-              Practice region: <strong>{region.name}</strong>.{' '}
-              {region.targetControlledInfusion.routine
-                ? 'Target-controlled infusion is a first-class control here.'
-                : 'Manual weight-based infusion is the default here.'}
+              {t('briefing.region')} <strong>{region.name}</strong>.{' '}
+              {t(region.targetControlledInfusion.routine ? 'briefing.region-tci' : 'briefing.region-manual')}
             </p>
             <MaturityMarker
               compact
@@ -447,12 +441,11 @@ export function Prebrief({
             ))}
           </ul>
           <p className="field__hint">
-            <a href="/limitations">The limitations register explains where each of these would
-            mislead you, and what the correct understanding is.</a>
+            <a href="/limitations">{t('briefing.limitations-link')}</a>
           </p>
           {onReportLimitation && (
             <Button compact variant="ghost" onClick={onReportLimitation}>
-              Help us improve these limitations
+              {t('briefing.report-limitations')}
             </Button>
           )}
         </section>
@@ -465,10 +458,7 @@ export function Prebrief({
 
       <section>
         <h2>{t('briefing.guidance')}</h2>
-        <p className="field__hint">
-          Guidance changes how much you are prompted. It does not change the patient at all: the
-          same actions produce the same physiology at every level.
-        </p>
+        <p className="field__hint">{t('briefing.guidance-hint')}</p>
         <div className="phase-nav">
           {(['guided', 'coached', 'unassisted'] as const).map((level) => (
             <Button
@@ -477,7 +467,7 @@ export function Prebrief({
               onClick={() => onGuidance(level)}
               aria-pressed={guidance === level}
             >
-              {level === 'guided' ? 'Guided — prompt me' : level === 'coached' ? 'Coached — prompt me rarely' : 'Unassisted — say nothing'}
+              {t(level === 'guided' ? 'briefing.guided' : level === 'coached' ? 'briefing.coached' : 'briefing.unassisted')}
             </Button>
           ))}
         </div>
@@ -498,7 +488,7 @@ export function Prebrief({
       {/* The scenario's own review record, before the learner starts, not after. */}
       {isUnreviewed(scenario.metadata.clinicalReview) && (
         <p className="reading__aside" data-unreviewed="true">
-          <strong>This scenario has not been clinically reviewed.</strong> {UNREVIEWED_NOTICE}
+          <strong>{t('briefing.unreviewed')}</strong> {UNREVIEWED_NOTICE}
         </p>
       )}
 
@@ -515,15 +505,14 @@ export function Prebrief({
       {/* Two ways in, and the passive one is offered second: someone who came
           here to practise should not have to decline a video first. */}
       <div className="prebrief__start">
-        <Button variant="primary" onClick={onStart}>Start the scenario</Button>
+        <Button variant="primary" onClick={onStart}>{t('briefing.start')}</Button>
         {onWatch && (
-          <Button onClick={onWatch}>{workedExample ? 'Watch a worked example' : 'Watch a 90-second demonstration'}</Button>
+          <Button onClick={onWatch}>{t(workedExample ? 'briefing.watch-example' : 'landing.watch')}</Button>
         )}
       </div>
       {onWatch && (
         <p className="field__hint">
-          {workedExample ? 'The worked example pauses before each decision so you can read. Choose “Continue example” when ready; observation periods run at 60× speed. Reading time does not advance the patient. ' : 'The demonstration runs this scenario at five times speed and explains what to look at. '}
-          You can take the controls at any point and carry on from where it got to.
+          {t(workedExample ? 'briefing.example-hint' : 'briefing.demo-hint')} {t('briefing.take-over')}
         </p>
       )}
       </main>

@@ -38,6 +38,9 @@ const EXTERNALISED: readonly { readonly path: string; readonly region?: readonly
   { path: 'src/landing/About.tsx' },
   { path: 'src/routes/PlannedModuleRoute.tsx' },
   { path: 'src/routes/ContentReviewRoute.tsx' },
+  // From the limitations section to the end: the per-module orientation above it is authored
+  // clinical framing and stays with the scenarios.
+  { path: 'src/modules/anesthesia/ui/Prebrief.tsx', region: ['      {/* Sentences from the register', '\n}\n'] },
   // Its crisis names and boundaries above the component are clinical content and stay data.
   { path: 'src/modules/anesthesia/ui/ManualCrisisInjector.tsx', region: ['export function ManualCrisisInjector', '\n}\n'] },
   { path: 'src/modules/anesthesia/ui/Debrief.tsx', region: ['  return (\n    <>\n      <a className="skip-link"', '\n}\n'] },

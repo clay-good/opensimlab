@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
+import { EN_MESSAGES } from '@platform/i18n/all-messages';
 import {
   REPORT_CONTEXT_JSON_LIMIT, REPORT_NOTE_LIMIT, buildScenarioReportRequest,
   noteMayContainRealPatientInformation,
@@ -1023,7 +1024,8 @@ describe('scenario report contract', () => {
     expect(route.match(/<ScenarioProblemReport/g)).toHaveLength(1);
     expect(route).toContain("requestReport('limitation')");
     expect(route).toContain("requestReport('source')");
-    expect(prebrief).toContain('Help us improve these limitations');
+    expect(prebrief).toContain("t('briefing.report-limitations')");
+    expect(EN_MESSAGES['briefing.report-limitations'].text).toBe('Help us improve these limitations');
     expect(cockpit.match(/Help us improve this source/g)).toHaveLength(2);
     expect(route).toContain("sourceOpen ? 'source'");
     expect(cockpit).toContain('onSourceVisibilityChange?.(explainerId !== null || drugCardId !== null)');

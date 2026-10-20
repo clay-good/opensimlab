@@ -1,5 +1,6 @@
 /** Acceptance tests for platform/clinical-governance and learning/knowledge-layer. */
 import { describe, expect, it } from 'vitest';
+import { EN_MESSAGES } from '@platform/i18n/all-messages';
 import {
   OVERDUE_GRACE_DAYS, UNREVIEWED_NOTICE, UNSIGNED_MARKER, gate, isUnreviewed,
   needsCoSignature, needsPendingMarker, reportCoverage, uncoveredDomains, type ReviewableItem,
@@ -232,7 +233,8 @@ describe('Requirement: Unreviewed Content Is Marked Where It Is Used', () => {
     const prebrief = readFileSync(join(process.cwd(), 'src/modules/anesthesia/ui/Prebrief.tsx'), 'utf8');
     // The drug card drawer, the explainer drawer and the scenario briefing.
     expect((cockpit.match(/<UnreviewedMarker/g) ?? []).length).toBeGreaterThanOrEqual(2);
-    expect(prebrief).toContain('has not been clinically reviewed');
+    expect(prebrief).toContain("t('briefing.unreviewed')");
+    expect(EN_MESSAGES['briefing.unreviewed'].text).toContain('has not been clinically reviewed');
   });
 });
 
