@@ -286,8 +286,10 @@ body:has([aria-modal='true']) .update-notice--page { visibility: hidden; }
   content: '';
   inline-size: var(--space-2);
   block-size: var(--space-2);
-  border-inline-end: 1px solid currentColor;
-  border-block-end: 1px solid currentColor;
+  /* Physical sides on purpose: the chevron points down or up, which does not
+     mirror. Logical sides turned it sideways under right-to-left. */
+  border-right: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
   transform: rotate(45deg);
 }
 .document__browse[open] > .document__browse-toggle::after { transform: rotate(225deg); }

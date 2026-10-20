@@ -172,7 +172,7 @@
       },
       {
         "path": "src/platform/tokens/base.css",
-        "sha256": "89a2209b806005404e477fafb658e9dfad695f2f291f0863c43d8fede3875669"
+        "sha256": "139dc7b15f33f63798a8652750507722bb97639beb05d6139463222bdeb8a670"
       },
       {
         "path": "src/routes/AnesthesiaRoute.tsx",
@@ -429,7 +429,7 @@
       },
       {
         "path": "src/platform/tokens/base.css",
-        "sha256": "89a2209b806005404e477fafb658e9dfad695f2f291f0863c43d8fede3875669"
+        "sha256": "139dc7b15f33f63798a8652750507722bb97639beb05d6139463222bdeb8a670"
       },
       {
         "path": "src/platform/transcript/transcript.ts",
@@ -702,7 +702,7 @@
       },
       {
         "path": "src/platform/tokens/base.css",
-        "sha256": "89a2209b806005404e477fafb658e9dfad695f2f291f0863c43d8fede3875669"
+        "sha256": "139dc7b15f33f63798a8652750507722bb97639beb05d6139463222bdeb8a670"
       },
       {
         "path": "src/routes/AnesthesiaRoute.tsx",

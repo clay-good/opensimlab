@@ -22,8 +22,9 @@
   labels are read when shown rather than at module load. In development, `?pseudo=en-XA` or
   `?pseudo=en-XB` (which also sets right-to-left) applies one. Checked in a browser at 320 px on
   `/governance`: under en-XA every externalised string lengthens with no horizontal scroll and no
-  element past the edge; under en-XB the bar mirrors with no overflow. Found: the Browse chevron
-  does not flip under right-to-left. Remaining: running these as automated browser checks in CI,
+  element past the edge; under en-XB the bar mirrors with no overflow. Found and fixed: the Browse
+  chevron turned sideways under right-to-left; it now uses physical sides, since up and down do
+  not mirror. Remaining: running these as automated browser checks in CI,
   and covering surfaces as they are externalised.
 - [x] Fail the build on a clinical-content key in an interface catalog. `catalogProblems` refuses
   it, along with unknown keys, changed placeholders, an anonymous catalog, and any provenance but
