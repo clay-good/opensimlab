@@ -209,6 +209,12 @@ export function EducatorsRoute() {
           limits, and provenance. Where a scenario cannot yet fill a section, such as expected
           actions or pause points, the guide says so instead of leaving a gap that reads as complete.
         </p>
+        <p>
+          In a session, the menu&apos;s classroom mode turns the tutor off for that session, so it
+          never answers the room&apos;s question for them, and stops the clock at any pause points
+          the scenario declares, showing the question with a single Resume control. Turning it off
+          restores the guidance level the learner chose.
+        </p>
 
         <h2>Curriculum documentation</h2>
         <p>

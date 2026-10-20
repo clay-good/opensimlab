@@ -78,6 +78,8 @@ export interface SessionState {
   readonly frame: (elapsedMs: number) => void;
   readonly markLogRead: () => void;
   readonly setGuidance: (level: GuidanceLevel) => void;
+  /** Classroom mode: record that a pause point fired, and stop the clock for the room. */
+  readonly markPausePoint: (id: string) => void;
   readonly end: () => void;
   readonly exportTranscript: () => Promise<Transcript>;
   readonly resumeAfterWorkerLoss: () => void;
@@ -278,6 +280,10 @@ export const useSession = create<SessionState>((set, get) => ({
   markLogRead() { set({ unreadLog: false }); },
 
   setGuidance(level) { set({ guidance: level }); },
+  markPausePoint(id) {
+    internals.recorder?.markPause(id, get().tick);
+    get().pause();
+  },
 
   end() {
     internals.clock.pause();

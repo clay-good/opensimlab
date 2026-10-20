@@ -131,6 +131,8 @@ import type { DrugConcentration } from '@platform/kernel/protocol';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import type { SonificationEngine } from '@platform/audio/sonification';
 import { HAPTICS_UNSUPPORTED_REASON, HapticEngine, hapticsSupported } from '@platform/audio/haptics';
+import { duePausePoint } from '@platform/facilitation/pause-points';
+import type { ScenarioPausePoint } from '../scenarios/types';
 import {
   DEFAULT_NARRATION_SETTINGS, NARRATION_RATES, NarrationEngine, isNarrationSettings,
   type NarrationSource, type SpeechTarget, type UtteranceLike,
@@ -1371,6 +1373,33 @@ export function Cockpit({
     if (soundOn && highest) audio.alarm(highest.priority);
   }, [session.alarms, session.tick, audio, soundOn]);
 
+  // Classroom mode is a facilitator's setting for this session only. It forces
+  // unassisted guidance, so the tutor never answers the room's question, and it
+  // arms the scenario's pause points; turning it off restores the guidance level.
+  const [classroom, setClassroom] = useState(false);
+  const guidanceBeforeClassroom = useRef<typeof session.guidance | null>(null);
+  const firedPauses = useRef(new Set<string>());
+  const [pausePoint, setPausePoint] = useState<ScenarioPausePoint | null>(null);
+  const toggleClassroom = (next: boolean) => {
+    if (next) {
+      guidanceBeforeClassroom.current = session.guidance;
+      session.setGuidance('unassisted');
+    } else {
+      if (guidanceBeforeClassroom.current) session.setGuidance(guidanceBeforeClassroom.current);
+      setPausePoint(null);
+    }
+    setClassroom(next);
+  };
+  useEffect(() => {
+    if (!classroom || session.transport !== 'running' || !session.state) return;
+    const due = duePausePoint(scenario.pausePoints, session.tick,
+      session.state as unknown as Readonly<Record<string, number>>, firedPauses.current);
+    if (!due) return;
+    firedPauses.current.add(due.id);
+    setPausePoint(due);
+    session.markPausePoint(due.id);
+  }, [classroom, session.transport, session.tick, session.state, scenario.pausePoints, session]);
+
   // Vibration mirrors the tone: the same unsilenced alarm, stopped at once on
   // silence, on pause, or when the learner turns it off.
   useEffect(() => {
@@ -2037,6 +2066,15 @@ export function Cockpit({
         />
       ) : null}
 
+      {pausePoint && (
+        <aside className="panel" aria-labelledby="pause-point-heading" role="complementary">
+          <h2 id="pause-point-heading">Pause for the room</h2>
+          <p>{pausePoint.question}</p>
+          <p className="field__hint">Look at the {pausePoint.region} region. The clock is paused.</p>
+          <Button variant="primary" onClick={() => { setPausePoint(null); session.play(); }}>Resume</Button>
+        </aside>
+      )}
+
       {/* The live regions. Polite for ordinary change, assertive for critical. */}
       <div className="visually-hidden" aria-live="polite" aria-atomic="true">{announcement}</div>
       <div className="visually-hidden" role="alert">{criticalAnnouncement}</div>
@@ -2156,6 +2194,18 @@ export function Cockpit({
             The pulse tone falls in pitch as saturation falls, which is how clinicians track
             saturation while looking somewhere else. Sound is never the only channel: every alarm
             and cue is also shown.
+          </p>
+        </div>
+        <div className="overflow-menu__sound">
+          <Toggle
+            checked={classroom}
+            describedBy="classroom-hint"
+            onChange={toggleClassroom}
+            label={classroom ? 'Classroom mode on' : 'Classroom mode off'}
+          />
+          <p className="field__hint" id="classroom-hint">
+            For running this with a group. Turns guidance off for this session and pauses at the
+            scenario&apos;s pause points{scenario.pausePoints?.length ? '' : ' (this scenario declares none yet)'}.
           </p>
         </div>
         <div className="overflow-menu__sound">

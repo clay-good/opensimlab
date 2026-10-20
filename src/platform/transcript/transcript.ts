@@ -67,6 +67,11 @@ export interface Transcript {
   readonly ticks: number;
   /** SHA-256 of the serialized state trace, recorded at capture time. */
   readonly stateTraceHash: string;
+  /**
+   * Classroom-mode pauses that fired, so a review knows where the room stopped.
+   * Present only when one fired. A pause changes no state, so replay ignores it.
+   */
+  readonly facilitatorPauses?: readonly { readonly id: string; readonly tick: number }[];
 }
 
 export interface TranscriptDraft {
@@ -81,6 +86,7 @@ export interface TranscriptDraft {
 /** Accumulates a transcript while a session runs. */
 export class TranscriptRecorder {
   private readonly actions: LearnerAction[] = [];
+  private readonly pauses: { id: string; tick: number }[] = [];
   private ticks = 0;
 
   constructor(private readonly draft: TranscriptDraft, initialActions: readonly LearnerAction[] = []) {
@@ -93,6 +99,11 @@ export class TranscriptRecorder {
 
   setTicks(ticks: number): void {
     this.ticks = ticks;
+  }
+
+  /** Record a classroom pause point once; it is a marker, not an input. */
+  markPause(id: string, tick: number): void {
+    if (!this.pauses.some((pause) => pause.id === id)) this.pauses.push({ id, tick });
   }
 
   /** Create an independent branch containing only actions before the decision tick. */
@@ -115,6 +126,7 @@ export class TranscriptRecorder {
       actions: [...this.actions].sort((a, b) => a.tick - b.tick),
       ticks: this.ticks,
       stateTraceHash,
+      ...(this.pauses.length === 0 ? {} : { facilitatorPauses: [...this.pauses] }),
     };
   }
 }

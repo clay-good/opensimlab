@@ -74,7 +74,7 @@ describe('Renal hypernatremia reports through the shared centered form and exact
       rehearseFromDecisionPoint: vi.fn((pointId, decisionTick) => update({ phase: 'running', transport: 'paused', tick: decisionTick,
         rehearsalBranch: { pointId, decisionTick, parentTicks: 24 } })),
       act: vi.fn(), frame: vi.fn(), markLogRead: vi.fn(), setGuidance: vi.fn(),
-      end: vi.fn(() => update({ phase: 'ended', transport: 'paused' })), exportTranscript: vi.fn(), resumeAfterWorkerLoss: vi.fn(),
+      end: vi.fn(() => update({ phase: 'ended', transport: 'paused' })), exportTranscript: vi.fn(), resumeAfterWorkerLoss: vi.fn(), markPausePoint: vi.fn(),
     };
     fetchMock.mockClear(); vi.stubGlobal('fetch', fetchMock);
     window.turnstile = { render: (_host, options) => { (options.callback as (token: string) => void)('local-test-token'); return 'local-widget'; },

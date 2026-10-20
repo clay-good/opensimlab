@@ -38,9 +38,15 @@
   `duePausePoint` in `src/platform/facilitation/pause-points.ts` says which one is due, once each.
   The facilitator guide lists declared points, and the author guide documents the field. No
   scenario declares any yet, and nothing fires them until classroom mode exists.
-- [ ] Implement classroom mode as an instructor setting that forces Unassisted and enables pause
-  points; restore guidance level on exit.
-- [ ] Fire once, record in transcript, assert state hash unchanged across the pause; replay test.
+- [x] Implement classroom mode as an instructor setting that forces Unassisted and enables pause
+  points; restore guidance level on exit. A per-session toggle in the session menu, deliberately
+  not remembered on the device, so forced Unassisted guidance can never persist by accident.
+- [x] Fire once, record in transcript, assert state hash unchanged across the pause; replay test.
+  A due pause point fires once, stops the clock, and shows its question beside the monitor with a
+  Resume control. The transcript gains an optional `facilitatorPauses` list, present only when a
+  pause fired, which is a marker and never an action, so the state trace and its hash are
+  untouched and replay ignores it (`tests/unit/classroom-pauses.test.ts`). Highlighting the named
+  region on screen is not done yet; the panel names it in words.
 - [ ] Author at least two pause points per scenario, placed at the authored teaching moments.
 
 ## 3. Bookmarks and scrubbing
