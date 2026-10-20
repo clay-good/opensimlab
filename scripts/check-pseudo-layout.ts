@@ -13,6 +13,8 @@ import { chromium } from '@playwright/test';
 
 const PORT = 5299;
 const PAGES = ['/governance', '/translation-status', '/verification-queue', '/privacy',
+  '/validation', '/limitations', '/corrections', '/review-status',
+  '/for-educators', '/curriculum', '/review',
   '/facilitator/anesthesia/scenario/persistent-vf-cardiac-arrest'];
 const LOCALES = ['en-XA', 'en-XB'] as const;
 

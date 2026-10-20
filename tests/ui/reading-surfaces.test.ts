@@ -103,6 +103,14 @@ describe('Requirement: A Prose Page Is As Wide As The Window', () => {
   });
 });
 
+describe('Requirement: Code In Prose Wraps', () => {
+  it('lets a path or identifier in a paragraph or list item break, so it cannot widen the page', () => {
+    // The pseudo-locale layout check caught /for-educators scrolling sideways at
+    // 320 px on its facilitator-guide path, in English as well as en-XA and en-XB.
+    expect(componentsCss).toContain('.reading p code, .reading li code { overflow-wrap: anywhere; }');
+  });
+});
+
 describe('Requirement: A Field In Prose Reads As A Field', () => {
   it('puts the label on its own line above its control', () => {
     // `<label>` is inline. The debrief's `Your account` label sat on the same

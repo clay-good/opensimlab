@@ -8,37 +8,37 @@
   ICU-style placeholders and plurals; a translation that is missing, stale (its English changed),
   unfillable, or clinical falls back to English, and English that cannot be filled throws.
 - [ ] Externalise every interface, educator-documentation, and root-prose string; make the
-  hard-coded-string test pass. Started: the site bar (26 strings), the trust documents' shared
-  chrome (8 strings), and the cockpit's rapid-cycle and classroom pause panels (11 strings), and
-  the session menu's note, classroom, vibration and narration controls (22 strings), each now its
-  own component, the return suggestion (10, its reason one plural message rather than fragments),
-  the nursing debrief's NCJMM list (7, classed educator), and the facilitator guide (71 strings,
-  educator: page, headings, item labels, absent reasons, and its fixed prebrief and debrief
-  templates), `/translation-status` (12 strings, root prose), `/verification-queue` (16, root prose), each now its
-  own component, the goal-path recommendation (3), the update notice (5), and the first-visit
-  acknowledgement (7, root prose; the not-for-clinical-use statement itself stays one constant
-  because every export carries it), and the debrief's reasoning-notes panel and rapid-cycle offer
-  (9), the shared briefing's section headings and facilitator link (7), and the not-found page (19,
-  now one list that the static 404 and the client view both render, after the two had drifted), and
-  the practice-history controls on `/privacy` (16, plurals as messages), and the `/corrections` page's
-  own words (16, root prose; its policy, triage, and entries stay typed data), `/review-status`
-  (16, root prose), the limitations register's own words (7), the privacy statement's prose
-  (29), the governance dashboard's own words (28; its board, coverage, and framework records
-  stay typed data), the validation report's own words (43; its figures, rows, and sources stay
-  generated), the cockpit status bar (18: patient summary units, transport, speed, overflow), and the
-  debrief's shared shell (45: phase headings, controls, outcome words, and the sentences that frame
-  computed findings; scenario-specific framing and episode labels stay clinical content), and the private
-  tutor's prompt card and the worked-example narration bar (21; the narration itself stays authored
-  content), and the analysis region with its patient profile and the monitor's morphology heading
-  (36; the ASA monitoring categories and waveform descriptions stay clinical content), and the
-  concentration and Why panels (30; model notes, citations, and attribution terms stay data, and the
-  CSV header stays a fixed format), and the `/curriculum` page with the educator pages' shared
-  navigation, now one list instead of three copies (16, educator; framework names, domains, and the
-  mapping disclaimer stay records), and the `/for-educators` page with its assignment builder
-  (59, educator; its markup renders byte-identical), and the `/review` page (14, educator; outcome
-  words shared with the debrief) read from `src/platform/i18n/messages.ts` and render the same English.
-  `tests/unit/externalised-strings.test.ts` is the hard-coded-string test, applied to each surface
-  once it is externalised; every other surface remains.
+  hard-coded-string test pass. `tests/unit/externalised-strings.test.ts` is that test, applied to
+  each surface once it moves; every surface it does not list remains. Each surface below reads from
+  `src/platform/i18n/messages.ts` and renders the same English (count, then what stays data):
+  - Shared chrome: the site bar (26), the trust documents' chrome (8), the not-found page (19, one
+    list the static 404 and the client view both render, after the two had drifted), the update
+    notice (5), the first-visit acknowledgement (7; the not-for-clinical-use statement stays one
+    constant because every export carries it), the educator pages' navigation (one list, not three
+    copies).
+  - Trust documents, root prose: `/translation-status` (12), `/verification-queue` (16),
+    `/corrections` (16; policy, triage, entries stay typed data), `/review-status` (16), the
+    limitations register (7), `/privacy` (29, plus its practice-history controls, 16),
+    `/governance` (28; board, coverage, framework records stay typed data), `/validation` (43;
+    figures, rows, sources stay generated).
+  - Cockpit: the status bar (18), the session menu's note, classroom, vibration, and narration
+    controls (22), the rapid-cycle and classroom pause panels (11), the private tutor's card and
+    the worked-example bar (21; narration stays authored), the analysis region and patient profile
+    with the monitor's morphology heading (36; ASA categories and waveform descriptions stay
+    clinical), the concentration and Why panels (30; model notes, citations, attribution terms, and
+    the CSV header stay data), the return suggestion (10), the goal-path recommendation (3).
+  - Briefing and debrief: the briefing's section headings and facilitator link (7), the debrief's
+    shared shell (45; scenario framing and episode labels stay clinical), its reasoning-notes panel
+    and rapid-cycle offer (9), the nursing NCJMM list (7, educator).
+  - Educator pages: the facilitator guide (71, with its prebrief and debrief templates),
+    `/for-educators` (59, markup byte-identical), `/curriculum` (16), `/review` (14, outcome words
+    shared with the debrief).
+  - Out of scope by design: `/gallery` and `/frame-budget` are noindex development surfaces whose
+    text is component names, sample data, and a device measurement, not interface a learner or
+    educator reads.
+  - Still to move: the landing and `/about` pages, the prebrief's remaining text, the cockpit shell
+    and its action controls, the crisis injector's own words, `/content-review`, the planned-module
+    page, and the prerendered scenario briefing.
 - [x] Generate the coverage report at build; publish `/translation-status` as a trust document.
   Its sentence claiming the test locales ran on every build was untrue and is corrected: they are
   applied by hand in development until CI runs them. The prerendered page computes coverage from the catalogs at build: languages offered (none),
@@ -47,14 +47,17 @@
 - [x] Add `en-XA` (40% expansion) and `en-XB` (mirrored) to the CI matrix; run layout-shift,
   truncation, 320 px reflow, and mirroring tests under both. `npm run layout:pseudo`
   (`scripts/check-pseudo-layout.ts`) starts the development server, where `?pseudo=` applies a
-  test locale, and with Playwright 1.63.0 (pinned, about six weeks old) loads five pages using
-  externalised strings at 320 px under each locale. It fails on sideways scroll, a site-bar or
+  test locale, and with Playwright 1.63.0 (pinned, about six weeks old) loads twelve pages using
+  externalised strings at 320 px under each locale: every trust document, the three educator pages,
+  and a facilitator guide. It fails on sideways scroll, a site-bar or
   footer element past the edge, a raw `{placeholder}`, a missing direction, or a locale that did
   not apply. It runs in `npm run ci` and as its own step in the GitHub workflow, which installs
   Chromium. Its first run found that the en-XA padding was one unbroken run of dots that could
   not wrap and scrolled three pages sideways; real translations wrap, so the padding now comes
-  in short space-separated groups, and all five pages are clean. Layout shift is not measured
-  yet; a surface joins the page list when it is externalised.
+  in short space-separated groups, and all five pages were clean. Widening it to twelve found
+  `/for-educators` scrolling sideways at 320 px in English too, on an inline code path with no break
+  points; code in reading prose now wraps. Layout shift is not measured yet, and the cockpit and
+  debrief, which need a running session, are not in the page list.
 - [x] Fail the build on a clinical-content key in an interface catalog. `catalogProblems` refuses
   it, along with unknown keys, changed placeholders, an anonymous catalog, and any provenance but
   human; `tests/unit/i18n-catalog.test.ts` runs it over every shipped catalog.

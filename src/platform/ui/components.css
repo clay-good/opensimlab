@@ -700,6 +700,10 @@ button.vital-tile__value {
 .reading h2 { font: var(--type-title); letter-spacing: var(--type-title-tracking); }
 .reading h3 { font: var(--type-subtitle); }
 .reading p, .reading li { color: var(--text-secondary); }
+/* A path or identifier in prose has no break points of its own. Unwrapped,
+ * `/facilitator/<module>/scenario/<scenario>` made /for-educators scroll
+ * sideways on a 320 px phone in plain English. */
+.reading p code, .reading li code { overflow-wrap: anywhere; }
 .reading ul, .reading ol { padding-inline-start: var(--space-5); display: grid; gap: var(--space-2); }
 .reading__aside {
   border-inline-start: 2px solid var(--line-strong);
