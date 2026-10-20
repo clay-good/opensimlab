@@ -22,30 +22,33 @@ export interface SiteBarLink {
   readonly label: string;
 }
 
+/** A link whose label is read from the catalog when it is shown, not when this module loads. */
+const link = (href: string, key: string): SiteBarLink => ({ href, get label() { return t(key as MessageKey); } });
+
 /** The destinations every page offers, in the order they are worth offering. */
 export const SITE_BAR_LINKS: readonly SiteBarLink[] = [
-  { href: '/anesthesia', label: t('sitebar.anesthesia' as MessageKey) },
-  { href: '/emergency-medicine', label: t('sitebar.emergency-medicine' as MessageKey) },
-  { href: '/critical-care', label: t('sitebar.critical-care' as MessageKey) },
-  { href: '/cardiology', label: t('sitebar.cardiology' as MessageKey) },
-  { href: '/respiratory-medicine', label: t('sitebar.respiratory-medicine' as MessageKey) },
-  { href: '/pediatrics', label: t('sitebar.pediatrics' as MessageKey) },
-  { href: '/neurology', label: t('sitebar.neurology' as MessageKey) },
-  { href: '/toxicology', label: t('sitebar.toxicology' as MessageKey) },
-  { href: '/obstetrics', label: t('sitebar.obstetrics' as MessageKey) },
-  { href: '/neonatology', label: t('sitebar.neonatology' as MessageKey) },
-  { href: '/endocrine-metabolic', label: t('sitebar.endocrine-metabolic' as MessageKey) },
-  { href: '/renal-electrolyte', label: t('sitebar.renal-electrolyte' as MessageKey) },
-  { href: '/infectious-disease', label: t('sitebar.infectious-disease' as MessageKey) },
-  { href: '/medical-surgical-nursing', label: t('sitebar.medical-surgical-nursing' as MessageKey) },
-  { href: '/oncology', label: t('sitebar.oncology' as MessageKey) },
-  { href: '/surgery-trauma', label: t('sitebar.surgery-trauma' as MessageKey) },
-  { href: '/about', label: t('sitebar.about' as MessageKey) },
-  { href: '/for-educators', label: t('sitebar.for-educators' as MessageKey) },
-  { href: '/curriculum', label: t('sitebar.curriculum' as MessageKey) },
-  { href: '/validation', label: t('sitebar.validation' as MessageKey) },
-  { href: '/governance', label: t('sitebar.governance' as MessageKey) },
-  { href: '/limitations', label: t('sitebar.limitations' as MessageKey) },
+  link('/anesthesia', 'sitebar.anesthesia'),
+  link('/emergency-medicine', 'sitebar.emergency-medicine'),
+  link('/critical-care', 'sitebar.critical-care'),
+  link('/cardiology', 'sitebar.cardiology'),
+  link('/respiratory-medicine', 'sitebar.respiratory-medicine'),
+  link('/pediatrics', 'sitebar.pediatrics'),
+  link('/neurology', 'sitebar.neurology'),
+  link('/toxicology', 'sitebar.toxicology'),
+  link('/obstetrics', 'sitebar.obstetrics'),
+  link('/neonatology', 'sitebar.neonatology'),
+  link('/endocrine-metabolic', 'sitebar.endocrine-metabolic'),
+  link('/renal-electrolyte', 'sitebar.renal-electrolyte'),
+  link('/infectious-disease', 'sitebar.infectious-disease'),
+  link('/medical-surgical-nursing', 'sitebar.medical-surgical-nursing'),
+  link('/oncology', 'sitebar.oncology'),
+  link('/surgery-trauma', 'sitebar.surgery-trauma'),
+  link('/about', 'sitebar.about'),
+  link('/for-educators', 'sitebar.for-educators'),
+  link('/curriculum', 'sitebar.curriculum'),
+  link('/validation', 'sitebar.validation'),
+  link('/governance', 'sitebar.governance'),
+  link('/limitations', 'sitebar.limitations'),
 ];
 
 export interface SiteBarProps {

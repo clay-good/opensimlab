@@ -51,7 +51,17 @@ export type MessageKey = keyof typeof EN_MESSAGES;
  */
 export const LOCALE_CATALOGS: readonly LocaleCatalog[] = [];
 
+let activeCatalog: LocaleCatalog | undefined;
+
+/**
+ * Switch the catalog `t` reads by default. Nothing in production calls this
+ * yet, because no locale is offered; development uses it for the pseudo-locales.
+ */
+export function setActiveCatalog(catalog: LocaleCatalog | undefined): void {
+  activeCatalog = catalog;
+}
+
 /** The interface string for a key, in English until a locale is offered. */
-export function t(key: MessageKey, params?: Params, catalog?: LocaleCatalog): string {
+export function t(key: MessageKey, params?: Params, catalog: LocaleCatalog | undefined = activeCatalog): string {
   return translate(EN_MESSAGES, key, params, catalog);
 }

@@ -10,6 +10,20 @@ import { createRoot, hydrateRoot } from 'react-dom/client';
 import { App } from '@routes/App';
 import { registerServiceWorker } from '@platform/offline/register';
 
+// Development only: `?pseudo=en-XA` lengthens every externalised string and
+// `?pseudo=en-XB` mirrors the page, so layout can be checked before a real
+// translation exists. A production build never reads this.
+if (import.meta.env.DEV) {
+  const pseudo = new URLSearchParams(window.location.search).get('pseudo');
+  if (pseudo === 'en-XA' || pseudo === 'en-XB') {
+    const [{ pseudoLocale }, { EN_MESSAGES, setActiveCatalog }] = await Promise.all([
+      import('@platform/i18n/catalog'), import('@platform/i18n/messages'),
+    ]);
+    setActiveCatalog(pseudoLocale(EN_MESSAGES, pseudo));
+    if (pseudo === 'en-XB') document.documentElement.dir = 'rtl';
+  }
+}
+
 const root = document.getElementById('root');
 if (!root) throw new Error('The root element is missing from the document.');
 

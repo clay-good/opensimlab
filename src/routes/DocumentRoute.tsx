@@ -59,10 +59,10 @@ const VERDICT_SUMMARY: Record<string, string> = {
  * that are specific to a reader working through the documents are added here.
  */
 const DOCUMENT_EXTRAS: readonly { href: string; label: string }[] = [
-  { href: '/review-status', label: t('documents.review-status') },
-  { href: '/corrections', label: t('documents.corrections') },
-  { href: '/privacy', label: t('documents.privacy') },
-  { href: '/content-review', label: t('documents.content-review') },
+  { href: '/review-status', get label() { return t('documents.review-status'); } },
+  { href: '/corrections', get label() { return t('documents.corrections'); } },
+  { href: '/privacy', get label() { return t('documents.privacy'); } },
+  { href: '/content-review', get label() { return t('documents.content-review'); } },
 ];
 
 export function DocumentRoute({ path }: { path: string }) {

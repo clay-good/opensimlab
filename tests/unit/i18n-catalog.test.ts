@@ -103,3 +103,17 @@ describe('the externalised site bar and the status page', () => {
     expect(markup).toContain('stays in English');
   });
 });
+
+describe('the active catalog', () => {
+  it('switches what the site bar renders, then switches back, with no label captured at load', async () => {
+    const { setActiveCatalog } = await import('@platform/i18n/messages');
+    try {
+      setActiveCatalog(pseudoLocale(EN_MESSAGES, 'en-XA'));
+      expect(SITE_BAR_LINKS[0]?.label).toMatch(/^\[Anesthesia·+\]$/);
+      expect(renderToStaticMarkup(createElement(SiteBar))).toMatch(/>\[Browse·+\]<\/summary>/);
+    } finally {
+      setActiveCatalog(undefined);
+    }
+    expect(SITE_BAR_LINKS[0]?.label).toBe('Anesthesia');
+  });
+});

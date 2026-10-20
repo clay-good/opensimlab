@@ -17,9 +17,14 @@
   interface strings so far, each contributed locale's translated and stale counts, the two test
   locales, and that clinical content stays English in every module.
 - [ ] Add `en-XA` (40% expansion) and `en-XB` (mirrored) to the CI matrix; run layout-shift,
-  truncation, 320 px reflow, and mirroring tests under both. Started: `pseudoLocale` generates
-  both, marked `pseudo` so they can never ship, and a test renders through `en-XA`. The layout
-  tests under each, which need an active-locale switch, remain.
+  truncation, 320 px reflow, and mirroring tests under both. Mostly done: `pseudoLocale` generates
+  both, marked `pseudo` so they can never ship; `setActiveCatalog` switches what `t` renders, and
+  labels are read when shown rather than at module load. In development, `?pseudo=en-XA` or
+  `?pseudo=en-XB` (which also sets right-to-left) applies one. Checked in a browser at 320 px on
+  `/governance`: under en-XA every externalised string lengthens with no horizontal scroll and no
+  element past the edge; under en-XB the bar mirrors with no overflow. Found: the Browse chevron
+  does not flip under right-to-left. Remaining: running these as automated browser checks in CI,
+  and covering surfaces as they are externalised.
 - [x] Fail the build on a clinical-content key in an interface catalog. `catalogProblems` refuses
   it, along with unknown keys, changed placeholders, an anonymous catalog, and any provenance but
   human; `tests/unit/i18n-catalog.test.ts` runs it over every shipped catalog.
