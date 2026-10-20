@@ -33,7 +33,8 @@
     and rapid-cycle offer (9), the nursing NCJMM list (7, educator).
   - Educator pages: the facilitator guide (71, with its prebrief and debrief templates),
     `/for-educators` (59, markup byte-identical), `/curriculum` (16), `/review` (14, outcome words
-    shared with the debrief).
+    shared with the debrief), `/content-review` (34, markup byte-identical; item titles stay the
+    content they name).
   - Front door, root prose: the landing page and `/about`'s own words (18), and their copy in
     `src/landing/content.ts` (66: the tagline, three facts, seven sections, nine questions, the
     reviewer invitation, footer labels), which keeps its exports and reads the catalog through
@@ -52,7 +53,7 @@
     text is component names, sample data, and a device measurement, not interface a learner or
     educator reads.
   - Still to move: the prebrief's remaining text, the cockpit shell
-    and its action controls, `/content-review`, and the prerendered scenario briefing.
+    and its action controls, and the prerendered scenario briefing.
 - [x] Generate the coverage report at build; publish `/translation-status` as a trust document.
   Its sentence claiming the test locales ran on every build was untrue and is corrected: they are
   applied by hand in development until CI runs them. The prerendered page computes coverage from the catalogs at build: languages offered (none),
@@ -61,9 +62,9 @@
 - [x] Add `en-XA` (40% expansion) and `en-XB` (mirrored) to the CI matrix; run layout-shift,
   truncation, 320 px reflow, and mirroring tests under both. `npm run layout:pseudo`
   (`scripts/check-pseudo-layout.ts`) starts the development server, where `?pseudo=` applies a
-  test locale, and with Playwright 1.63.0 (pinned, about six weeks old) loads twelve pages using
+  test locale, and with Playwright 1.63.0 (pinned, about six weeks old) loads thirteen pages using
   externalised strings at 320 px under each locale: every trust document, the three educator pages,
-  and a facilitator guide. It fails on sideways scroll, a site-bar or
+  the clinical review index, and a facilitator guide. It fails on sideways scroll, a site-bar or
   footer element past the edge, a raw `{placeholder}`, a missing direction, or a locale that did
   not apply. It runs in `npm run ci` and as its own step in the GitHub workflow, which installs
   Chromium. Its first run found that the en-XA padding was one unbroken run of dots that could
