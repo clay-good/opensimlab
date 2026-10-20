@@ -29,7 +29,8 @@
   debrief's shared shell (45: phase headings, controls, outcome words, and the sentences that frame
   computed findings; scenario-specific framing and episode labels stay clinical content), and the private
   tutor's prompt card and the worked-example narration bar (21; the narration itself stays authored
-  content) read from `src/platform/i18n/messages.ts` and render the same English.
+  content), and the analysis region with its patient profile and the monitor's morphology heading
+  (36; the ASA monitoring categories and waveform descriptions stay clinical content) read from `src/platform/i18n/messages.ts` and render the same English.
   `tests/unit/externalised-strings.test.ts` is the hard-coded-string test, applied to each surface
   once it is externalised; every other surface remains.
 - [x] Generate the coverage report at build; publish `/translation-status` as a trust document.

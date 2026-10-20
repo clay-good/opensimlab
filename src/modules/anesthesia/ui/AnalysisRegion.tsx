@@ -17,6 +17,7 @@ import { ConcentrationPanel } from './ConcentrationPanel';
 import { EXPLAINERS } from '@anesthesia/content/explainers';
 import { ASA_MONITORING_EXPLAINER } from './tracks';
 import { HONEST_STATUS } from '@platform/governance/status';
+import { t } from '@platform/i18n/messages';
 
 export type AnalysisTab = 'concentrations' | 'log' | 'patient' | 'learn';
 
@@ -52,17 +53,17 @@ export function AnalysisRegion(props: AnalysisRegionProps) {
   return (
     <div className={`analysis ${props.wide ? 'analysis--wide' : ''}`}>
       <Tabs
-        label="Analysis"
+        label={t('analysis.label')}
         active={tab}
         onSelect={(id) => {
           setTab(id as AnalysisTab);
           if (id === 'log') props.onMarkLogRead();
         }}
         tabs={[
-          { id: 'concentrations', label: 'Concentrations' },
-          { id: 'log', label: 'Log', unread: props.unreadLog },
-          { id: 'patient', label: 'Patient' },
-          { id: 'learn', label: 'Learn' },
+          { id: 'concentrations', label: t('analysis.tab-concentrations') },
+          { id: 'log', label: t('analysis.tab-log'), unread: props.unreadLog },
+          { id: 'patient', label: t('analysis.tab-patient') },
+          { id: 'learn', label: t('analysis.tab-learn') },
         ]}
       />
       <div className="analysis__body">
@@ -81,7 +82,7 @@ export function AnalysisRegion(props: AnalysisRegionProps) {
         <TabPanel id="log" active={tab}>
           <div style={{ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap', marginBlockEnd: 'var(--space-3)' }}>
             <Button compact variant={severityFilter === 'all' ? 'primary' : 'ghost'} onClick={() => setSeverityFilter('all')}>
-              All
+              {t('analysis.filter-all')}
             </Button>
             {SEVERITIES.map((severity) => (
               <Button
@@ -96,8 +97,8 @@ export function AnalysisRegion(props: AnalysisRegionProps) {
           </div>
           <p className="field__hint" role="status">
             {severityFilter === 'all'
-              ? `${props.log.length} entries`
-              : `Filtered to ${severityFilter}: ${filtered.length} of ${props.log.length} entries`}
+              ? t('analysis.entries', { count: props.log.length })
+              : t('analysis.entries-filtered', { severity: severityFilter, shown: filtered.length, count: props.log.length })}
           </p>
           <LogList entries={filtered} onSelect={props.onSelectTick} selectedTick={props.selectedTick} />
         </TabPanel>
@@ -118,19 +119,19 @@ function PatientPanel({ scenario, moduleId }: { scenario: Scenario; moduleId?: s
   const patient = scenario.patient;
   const perioperativeProfile = moduleId !== 'respiratory-medicine' && moduleId !== 'pediatrics' && moduleId !== 'neonatology' && moduleId !== 'endocrine-metabolic';
   const rows: [string, string][] = [
-    ['Age', patient.ageYears === 0 ? 'Newborn' : `${patient.ageYears} years`],
-    ['Sex', patient.sex],
-    ['Height', `${patient.heightCm} cm`],
-    ['Weight', `${patient.weightKg} kg`],
-    ['Body mass index', (patient.weightKg / (patient.heightCm / 100) ** 2).toFixed(1)],
-    ...(perioperativeProfile ? [['ASA physical status', String(patient.asaClass)] as [string, string]] : []),
-    ['Diagnosis', patient.diagnosis],
-    ['Procedure', patient.procedure],
-    ['Comorbidities', (patient.comorbidities ?? []).join(', ') || 'None recorded'],
-    ['Medications', (patient.medications ?? []).join(', ') || 'None recorded'],
-    ['Allergies', (patient.allergies ?? []).join(', ') || 'None documented'],
-    ...(perioperativeProfile ? [['Fasting', patient.fasting ?? 'Not recorded'] as [string, string]] : []),
-    ['Airway assessment', patient.airway.assessment ?? 'Not recorded'],
+    [t('patient.age'), patient.ageYears === 0 ? t('status.newborn') : t('patient.age-years', { years: patient.ageYears })],
+    [t('patient.sex'), patient.sex],
+    [t('patient.height'), t('patient.height-cm', { cm: patient.heightCm })],
+    [t('patient.weight'), t('status.weight', { kg: patient.weightKg })],
+    [t('patient.bmi'), (patient.weightKg / (patient.heightCm / 100) ** 2).toFixed(1)],
+    ...(perioperativeProfile ? [[t('patient.asa'), String(patient.asaClass)] as [string, string]] : []),
+    [t('patient.diagnosis'), patient.diagnosis],
+    [t('patient.procedure'), patient.procedure],
+    [t('patient.comorbidities'), (patient.comorbidities ?? []).join(', ') || t('patient.none-recorded')],
+    [t('patient.medications'), (patient.medications ?? []).join(', ') || t('patient.none-recorded')],
+    [t('patient.allergies'), (patient.allergies ?? []).join(', ') || t('patient.none-documented')],
+    ...(perioperativeProfile ? [[t('patient.fasting'), patient.fasting ?? t('patient.not-recorded')] as [string, string]] : []),
+    [t('patient.airway'), patient.airway.assessment ?? t('patient.not-recorded')],
   ];
   return (
     <div className="reading" style={{ padding: 0 }}>
@@ -142,10 +143,7 @@ function PatientPanel({ scenario, moduleId }: { scenario: Scenario; moduleId?: s
           </div>
         ))}
       </dl>
-      <p className="reading__aside">
-        Derived values such as body mass index and lean body mass are computed from the profile,
-        never stored, so they cannot drift from it.
-      </p>
+      <p className="reading__aside">{t('patient.derived')}</p>
     </div>
   );
 }
@@ -153,7 +151,7 @@ function PatientPanel({ scenario, moduleId }: { scenario: Scenario; moduleId?: s
 function LearnPanel({ onOpen }: { onOpen: (id: string) => void }) {
   return (
     <div className="reading" style={{ padding: 0 }}>
-      <h2>Concepts this scenario exercises</h2>
+      <h2>{t('learn.concepts')}</h2>
       <ul style={{ listStyle: 'none' }}>
         {EXPLAINERS.map((explainer) => (
           <li key={explainer.id}>
@@ -162,11 +160,8 @@ function LearnPanel({ onOpen }: { onOpen: (id: string) => void }) {
         ))}
       </ul>
 
-      <h2>Why these parameters</h2>
-      <p>
-        The monitored set maps onto the four categories the{' '}
-        {ASA_MONITORING_EXPLAINER.standard} require to be evaluated continually.
-      </p>
+      <h2>{t('learn.why-parameters')}</h2>
+      <p>{t('learn.categories', { standard: ASA_MONITORING_EXPLAINER.standard })}</p>
       <dl>
         {Object.entries(ASA_MONITORING_EXPLAINER.categories).map(([category, description]) => (
           <div key={category}>
@@ -176,20 +171,22 @@ function LearnPanel({ onOpen }: { onOpen: (id: string) => void }) {
         ))}
       </dl>
       <p className="reading__aside">
-        {ASA_MONITORING_EXPLAINER.standard}, revision {ASA_MONITORING_EXPLAINER.revisionYear}.
-        Non-invasive pressure defaults to the {ASA_MONITORING_EXPLAINER.nibpIntervalMaxMinutes}-minute
-        maximum interval the standard specifies.
+        {t('learn.revision', {
+          standard: ASA_MONITORING_EXPLAINER.standard,
+          year: ASA_MONITORING_EXPLAINER.revisionYear,
+          minutes: ASA_MONITORING_EXPLAINER.nibpIntervalMaxMinutes,
+        })}
       </p>
 
       <Badge kind="out-of-range">{HONEST_STATUS.headline}</Badge>
       <p className="reading__aside">{HONEST_STATUS.detail}</p>
       <CitationLink href="https://www.asahq.org/standards-and-practice-parameters/standards-for-basic-anesthetic-monitoring">
-        Read the ASA Standards for Basic Anesthetic Monitoring
+        {t('learn.read-asa')}
       </CitationLink>
     </div>
   );
 }
 
 export function EmptyAnalysis() {
-  return <EmptyState title="Nothing to analyse yet">Start the scenario to see concentrations and events.</EmptyState>;
+  return <EmptyState title={t('analysis.empty-title')}>{t('analysis.empty')}</EmptyState>;
 }

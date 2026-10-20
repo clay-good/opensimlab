@@ -13,6 +13,7 @@ import { FIELDS, qualitativeTwitchAssessment, type StateField } from '@anesthesi
 import { TRACKS, tilesFor, trackConfigs } from './tracks';
 import { waveformDescriptions } from './accessibility';
 import type { RhythmId } from '@anesthesia/waveforms/types';
+import { t } from '@platform/i18n/messages';
 
 export interface MonitorRegionProps {
   readonly state: Readonly<Record<string, number>> | null;
@@ -120,7 +121,7 @@ export function MonitorRegion(props: MonitorRegionProps) {
             ))}
           </ul>
           <div className="visually-hidden" id="waveform-descriptions">
-            <h3>Waveform morphology</h3>
+            <h3>{t('monitor.morphology')}</h3>
             <dl>
               {descriptions.filter((d) => visibleTracks.has(d.signal)).map((description) => (
                 <div key={description.signal}>
@@ -142,11 +143,12 @@ export function MonitorRegion(props: MonitorRegionProps) {
                 name={tile.name}
                 value={invalid || !props.state ? null : props.state[tile.field] ?? null}
                 unit={tile.field === 'trainOfFourRatio' && props.state
-                  ? `ratio · count ${props.state.trainOfFourCount?.toFixed(0) ?? '--'} · qualitative ${
-                    qualitativeTwitchAssessment(
+                  ? t('monitor.tof-unit', {
+                    count: props.state.trainOfFourCount?.toFixed(0) ?? '--',
+                    qualitative: qualitativeTwitchAssessment(
                       props.state.trainOfFourCount ?? 4, props.state.trainOfFourRatio ?? 1,
-                    )
-                  }`
+                    ),
+                  })
                   : spec.unit}
                 precision={spec.precision}
                 traceToken={tile.traceToken}
