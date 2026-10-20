@@ -66,6 +66,16 @@ diagnosis the lesson leaves open. Pause points change nothing about the patient,
 in the scenario's facilitator guide; `validateScenario` refuses a duplicated id, both or neither
 of `atTick` and `when`, a predicate the grammar rejects, or a question over 200 characters.
 
+## Declare rapid-cycle decision points (optional)
+
+A scenario may declare `rapidCycle` points for timed protocol steps only: a defibrillation, a
+drug dose, a help call. Each has an `id`, the `objectiveId` it serves, the decision point
+`atTick` the rehearsal restores, the `windowTicks` the expected action must land in, a
+`directive` of at most 160 characters shown when the window closes, the `sourceLocator` it comes
+from, and a `cycleCap` from 3 to 6. A recognition objective (one whose id leads with
+`recognize`) is refused, because telling a learner what to notice is the cue leakage the hazard
+analysis forbids.
+
 ## Publish quality evidence
 
 Keep records beside the scenario and register them in

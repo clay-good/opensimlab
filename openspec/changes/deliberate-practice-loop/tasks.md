@@ -26,8 +26,12 @@ its own, none changes the engine, and none produces a score.
 
 ## 3. Rapid-cycle rehearsal
 
-- [ ] Extend the scenario schema with `rapidCycle` decision points: objective id, window, directive
+- [x] Extend the scenario schema with `rapidCycle` decision points: objective id, window, directive
   line (≤160 chars) with source locator, cycle cap (3–6). Reject recognition objectives at build.
+  `ScenarioRapidCycle` in the scenario types, validated by `validateScenario`, which refuses an
+  undeclared objective, a directive over 160 characters, a cap outside 3 to 6, and a recognition
+  objective, named by the convention every lesson follows (its id leads with "recognize"). The
+  author guide documents it. No scenario declares one yet, and the cycle itself is next.
 - [ ] Implement the cycle on top of the existing rehearsal branch; assert the restored state hash
   equals the original tick's hash.
 - [ ] Hide the mechanism in Unassisted mode; show the evidence sentence with its citation in the

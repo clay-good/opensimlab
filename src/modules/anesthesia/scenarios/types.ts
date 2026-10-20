@@ -159,6 +159,27 @@ export interface ScenarioPausePoint {
   readonly region: 'monitor' | 'analysis' | 'actions';
 }
 
+/**
+ * A rapid-cycle decision point (deliberate-practice-loop → rapid-cycle
+ * rehearsal). Declared, never inferred, and only for a timed protocol step:
+ * telling a learner what to notice is the cue leakage the hazard analysis
+ * forbids, so a recognition objective cannot be rapid-cycled.
+ */
+export interface ScenarioRapidCycle {
+  readonly id: string;
+  readonly objectiveId: string;
+  /** The decision point the rehearsal restores. */
+  readonly atTick: number;
+  /** How long after it the expected action must be accepted. */
+  readonly windowTicks: number;
+  /** Shown when the window closes: at most 160 characters. */
+  readonly directive: string;
+  /** Where the directive comes from in the scenario's sources. */
+  readonly sourceLocator: string;
+  /** Cycles before the rehearsal ends: 3 to 6. */
+  readonly cycleCap: number;
+}
+
 export interface Scenario {
   readonly schemaVersion: number;
   readonly metadata: ScenarioMetadata;
@@ -168,5 +189,6 @@ export interface Scenario {
   readonly timeline: readonly TimelineEvent[];
   readonly replayPoints?: readonly ScenarioReplayPoint[];
   readonly pausePoints?: readonly ScenarioPausePoint[];
+  readonly rapidCycle?: readonly ScenarioRapidCycle[];
   readonly debrief: { readonly rubric: readonly RubricItem[] };
 }

@@ -256,6 +256,22 @@ export const SCENARIO_SCHEMA: SchemaNode = {
         },
       },
     },
+    rapidCycle: {
+      type: 'array', description: 'Rapid-cycle decision points for timed protocol steps only.', minItems: 1,
+      items: {
+        type: 'object', description: 'One rapid-cycle decision point.',
+        required: ['id', 'objectiveId', 'atTick', 'windowTicks', 'directive', 'sourceLocator', 'cycleCap'],
+        properties: {
+          id: { type: 'string', description: 'Stable identifier.', pattern: '^[a-z0-9-]+$' },
+          objectiveId: { type: 'string', description: 'The timed protocol objective it serves.', pattern: '^[a-z0-9-]+$' },
+          atTick: { type: 'integer', description: 'The decision point the rehearsal restores.', minimum: 1 },
+          windowTicks: { type: 'integer', description: 'The window for the expected action.', minimum: 1 },
+          directive: STRING_FIELD('The directive line shown when the window closes, at most 160 characters.', 10),
+          sourceLocator: STRING_FIELD('Where the directive comes from in the scenario sources.', 10),
+          cycleCap: { type: 'integer', description: 'Cycles before the rehearsal ends.', minimum: 3, maximum: 6 },
+        },
+      },
+    },
     pausePoints: {
       type: 'array', description: 'Facilitator pause points, inert unless classroom mode is on.', minItems: 1,
       items: {
@@ -472,6 +488,25 @@ export function validateScenarioSemantics(scenario: unknown): ValidationError[] 
     }
   });
 
+  const declaredObjectives = new Set(((metadata?.objectives ?? []) as readonly { id?: unknown }[])
+    .map((objective) => String(objective.id)));
+  (record.rapidCycle as readonly Record<string, unknown>[] | undefined ?? []).forEach((point, index) => {
+    const pointer = `/rapidCycle/${index}`;
+    const objectiveId = String(point.objectiveId);
+    if (!declaredObjectives.has(objectiveId)) {
+      errors.push({ pointer: `${pointer}/objectiveId`, rule: 'reference',
+        message: `Rapid-cycle point "${String(point.id)}" serves "${objectiveId}", which the scenario does not declare.` });
+    }
+    if (isRecognitionObjective(objectiveId)) {
+      errors.push({ pointer: `${pointer}/objectiveId`, rule: 'recognition',
+        message: `Rapid-cycle point "${String(point.id)}" serves a recognition objective; telling a learner what to notice is cue leakage.` });
+    }
+    if (typeof point.directive === 'string' && point.directive.length > 160) {
+      errors.push({ pointer: `${pointer}/directive`, rule: 'maxLength',
+        message: `Rapid-cycle point "${String(point.id)}" has a directive longer than 160 characters.` });
+    }
+  });
+
   const pausePoints = record.pausePoints as readonly Record<string, unknown>[] | undefined;
   const pauseIds = new Set<string>();
   (pausePoints ?? []).forEach((point, index) => {
@@ -589,6 +624,14 @@ export function validateScenarioSemantics(scenario: unknown): ValidationError[] 
   }
 
   return errors;
+}
+
+/**
+ * A recognition objective, by the naming convention every lesson follows: its
+ * id leads with "recognize" or "recognise", or names a recognition.
+ */
+export function isRecognitionObjective(objectiveId: string): boolean {
+  return /^recogni[sz]e-/.test(objectiveId) || /(?:^|-)recognition(?:-|$)/.test(objectiveId);
 }
 
 export function validateScenario(scenario: unknown): ValidationError[] {
