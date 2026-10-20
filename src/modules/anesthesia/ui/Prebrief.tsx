@@ -7,6 +7,7 @@
  * are safe — before the clock runs.
  */
 
+import { t } from '@platform/i18n/messages';
 import { Badge, Button, Panel, SiteBar } from '@platform/ui';
 import { limitationsToBrief } from '@platform/docs/scenario-limitations';
 import type { Limitation } from '@platform/docs/limitations/types';
@@ -106,7 +107,7 @@ export function Prebrief({
       </Panel>
 
       <section>
-        <h2>What you are here to do</h2>
+        <h2>{t('briefing.objectives')}</h2>
         <ol>
           {scenario.metadata.objectives.map((objective) => (
             <li key={objective.id} className="prebrief__objective">
@@ -121,7 +122,7 @@ export function Prebrief({
       </section>
 
       <section>
-        <h2>The patient</h2>
+        <h2>{t('briefing.patient')}</h2>
         {environment === 'respiratory-medicine' || environment === 'pediatrics' || environment === 'neurology' || environment === 'toxicology' || environment === 'obstetrics' || environment === 'neonatology' || environment === 'endocrine-metabolic' || environment === 'renal-electrolyte' || environment === 'infectious-disease' ? (
           <ul>
             <li>{patient.diagnosis}.</li>
@@ -156,7 +157,7 @@ export function Prebrief({
       </section>
 
       <section>
-        <h2>The environment</h2>
+        <h2>{t('briefing.environment')}</h2>
         {environment === 'critical-care' ? (
           <p>
             The ICU monitor and organ-support state stay visible while the focused reassessment opens
@@ -438,7 +439,7 @@ export function Prebrief({
           "no-shunt-or-dead-space-dynamics". */}
       {limitationsToBrief(scenario, limitations).length > 0 && (
         <section>
-          <h2>What this scenario does not model</h2>
+          <h2>{t('briefing.not-modeled')}</h2>
           <ul>
             {limitationsToBrief(scenario, limitations).map((limitation) => (
               <li key={limitation.id}>{limitation.headline}</li>
@@ -457,13 +458,12 @@ export function Prebrief({
       )}
 
       <p className="field__hint">
-        Running this with a group?{' '}
-        <a href={`/facilitator/${environment}/scenario/${scenario.metadata.id}`}>The facilitator
-        guide</a> is generated from this scenario and prints cleanly.
+        {t('briefing.group')}{' '}
+        <a href={`/facilitator/${environment}/scenario/${scenario.metadata.id}`}>{t('briefing.guide-link')}</a>
       </p>
 
       <section>
-        <h2>How much help do you want?</h2>
+        <h2>{t('briefing.guidance')}</h2>
         <p className="field__hint">
           Guidance changes how much you are prompted. It does not change the patient at all: the
           same actions produce the same physiology at every level.

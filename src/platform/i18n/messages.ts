@@ -213,6 +213,13 @@ export const EN_MESSAGES = {
   'rapid-cycle.offer': { class: 'interface', text: 'Rehearse one timed step up to {cap} times from {time}, at normal speed. If the window closes, you see one directive line and try again.' },
   'rapid-cycle.start': { class: 'interface', text: 'Start rapid-cycle rehearsal' },
   'rapid-cycle.evidence': { class: 'interface', text: 'In a 2024 ILCOR systematic review, rapid cycle deliberate practice shortened time to defibrillation and to epinephrine in simulated resuscitation, at very low certainty of evidence.' },
+  'briefing.objectives': { class: 'interface', text: 'What you are here to do' },
+  'briefing.patient': { class: 'interface', text: 'The patient' },
+  'briefing.environment': { class: 'interface', text: 'The environment' },
+  'briefing.not-modeled': { class: 'interface', text: 'What this scenario does not model' },
+  'briefing.guidance': { class: 'interface', text: 'How much help do you want?' },
+  'briefing.group': { class: 'interface', text: 'Running this with a group?' },
+  'briefing.guide-link': { class: 'interface', text: 'The facilitator guide is generated from this scenario and prints cleanly.' },
 } as const satisfies Readonly<Record<string, SourceMessage>>;
 
 export type MessageKey = keyof typeof EN_MESSAGES;
