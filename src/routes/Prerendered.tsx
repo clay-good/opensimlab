@@ -20,6 +20,9 @@ import { PlannedModuleRoute } from './PlannedModuleRoute';
 import { patientPersonNoun } from '@anesthesia/scenarios/patient-label';
 import { MaturityMarker } from '@platform/governance/MaturityMarker';
 import { SiteBar } from '@platform/ui';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-documents';
+import '@platform/i18n/messages-session';
 import { isUnreviewed } from '@platform/governance/review-gate';
 import {
   DEFAULT_EMERGENCY_MEDICINE_SCENARIO_ID,
@@ -95,7 +98,6 @@ export function PrerenderedBody({ path }: { path: string }) {
     <ModuleMarkup
       moduleId="emergency-medicine"
       basePath="/emergency-medicine"
-      heading="Emergency medicine simulator"
       scenarios={EMERGENCY_MEDICINE_SCENARIOS}
     />
   );
@@ -108,8 +110,7 @@ export function PrerenderedBody({ path }: { path: string }) {
     />
   );
   if (path === '/critical-care') return (
-    <ModuleMarkup moduleId="critical-care" basePath="/critical-care"
-      heading="Critical care simulator" scenarios={CRITICAL_CARE_SCENARIOS} />
+    <ModuleMarkup moduleId="critical-care" basePath="/critical-care" scenarios={CRITICAL_CARE_SCENARIOS} />
   );
   if (path.startsWith('/critical-care/scenario/')) return (
     <ScenarioMarkup path={path} basePath="/critical-care"
@@ -117,8 +118,7 @@ export function PrerenderedBody({ path }: { path: string }) {
       getScenario={getCriticalCareScenario} />
   );
   if (path === '/cardiology') return (
-    <ModuleMarkup moduleId="cardiology" basePath="/cardiology"
-      heading="Cardiology simulator" scenarios={CARDIOLOGY_SCENARIOS} />
+    <ModuleMarkup moduleId="cardiology" basePath="/cardiology" scenarios={CARDIOLOGY_SCENARIOS} />
   );
   if (path.startsWith('/cardiology/scenario/')) return (
     <ScenarioMarkup path={path} basePath="/cardiology"
@@ -126,8 +126,7 @@ export function PrerenderedBody({ path }: { path: string }) {
       getScenario={getCardiologyScenario} />
   );
   if (path === '/respiratory-medicine') return (
-    <ModuleMarkup moduleId="respiratory-medicine" basePath="/respiratory-medicine"
-      heading="Respiratory medicine simulator" scenarios={RESPIRATORY_MEDICINE_SCENARIOS} />
+    <ModuleMarkup moduleId="respiratory-medicine" basePath="/respiratory-medicine" scenarios={RESPIRATORY_MEDICINE_SCENARIOS} />
   );
   if (path.startsWith('/respiratory-medicine/scenario/')) return (
     <ScenarioMarkup path={path} basePath="/respiratory-medicine"
@@ -135,8 +134,7 @@ export function PrerenderedBody({ path }: { path: string }) {
       getScenario={getRespiratoryMedicineScenario} />
   );
   if (path === '/pediatrics') return (
-    <ModuleMarkup moduleId="pediatrics" basePath="/pediatrics"
-      heading="Pediatrics simulator" scenarios={PEDIATRICS_SCENARIOS} />
+    <ModuleMarkup moduleId="pediatrics" basePath="/pediatrics" scenarios={PEDIATRICS_SCENARIOS} />
   );
   if (path.startsWith('/pediatrics/scenario/')) return (
     <ScenarioMarkup path={path} basePath="/pediatrics"
@@ -144,8 +142,7 @@ export function PrerenderedBody({ path }: { path: string }) {
       getScenario={getPediatricsScenario} />
   );
   if (path === '/neonatology') return (
-    <ModuleMarkup moduleId="neonatology" basePath="/neonatology"
-      heading="Neonatology simulator" scenarios={NEONATOLOGY_SCENARIOS} />
+    <ModuleMarkup moduleId="neonatology" basePath="/neonatology" scenarios={NEONATOLOGY_SCENARIOS} />
   );
   if (path.startsWith('/neonatology/scenario/')) return (
     <ScenarioMarkup path={path} basePath="/neonatology"
@@ -153,8 +150,7 @@ export function PrerenderedBody({ path }: { path: string }) {
       getScenario={getNeonatologyScenario} />
   );
   if (path === '/endocrine-metabolic') return (
-    <ModuleMarkup moduleId="endocrine-metabolic" basePath="/endocrine-metabolic"
-      heading="Endocrine and metabolic medicine simulator" scenarios={ENDOCRINE_METABOLIC_SCENARIOS} />
+    <ModuleMarkup moduleId="endocrine-metabolic" basePath="/endocrine-metabolic" scenarios={ENDOCRINE_METABOLIC_SCENARIOS} />
   );
   if (path.startsWith('/endocrine-metabolic/scenario/')) return (
     <ScenarioMarkup path={path} basePath="/endocrine-metabolic"
@@ -162,12 +158,10 @@ export function PrerenderedBody({ path }: { path: string }) {
       getScenario={getEndocrineMetabolicScenario} />
   );
   if (path === '/neurology') return (
-    <ModuleMarkup moduleId="neurology" basePath="/neurology"
-      heading="Neurology simulator" scenarios={NEUROLOGY_SCENARIOS} />
+    <ModuleMarkup moduleId="neurology" basePath="/neurology" scenarios={NEUROLOGY_SCENARIOS} />
   );
   if (path === '/renal-electrolyte') return (
-    <ModuleMarkup moduleId="renal-electrolyte" basePath="/renal-electrolyte"
-      heading="Renal and electrolyte medicine simulator" scenarios={RENAL_ELECTROLYTE_SCENARIOS} />
+    <ModuleMarkup moduleId="renal-electrolyte" basePath="/renal-electrolyte" scenarios={RENAL_ELECTROLYTE_SCENARIOS} />
   );
   if (path.startsWith('/renal-electrolyte/scenario/')) return (
     <ScenarioMarkup path={path} basePath="/renal-electrolyte"
@@ -175,8 +169,7 @@ export function PrerenderedBody({ path }: { path: string }) {
       getScenario={getRenalElectrolyteScenario} />
   );
   if (path === '/infectious-disease') return (
-    <ModuleMarkup moduleId="infectious-disease" basePath="/infectious-disease"
-      heading="Infectious disease simulator" scenarios={INFECTIOUS_DISEASE_SCENARIOS} />
+    <ModuleMarkup moduleId="infectious-disease" basePath="/infectious-disease" scenarios={INFECTIOUS_DISEASE_SCENARIOS} />
   );
   if (path.startsWith('/infectious-disease/scenario/')) return (
     <ScenarioMarkup path={path} basePath="/infectious-disease"
@@ -184,8 +177,7 @@ export function PrerenderedBody({ path }: { path: string }) {
       getScenario={getInfectiousDiseaseScenario} />
   );
   if (path === '/surgery-trauma') return (
-    <ModuleMarkup moduleId="surgery-trauma" basePath="/surgery-trauma"
-      heading="Surgery and trauma simulator" scenarios={SURGERY_TRAUMA_SCENARIOS} />
+    <ModuleMarkup moduleId="surgery-trauma" basePath="/surgery-trauma" scenarios={SURGERY_TRAUMA_SCENARIOS} />
   );
   if (path.startsWith('/surgery-trauma/scenario/')) return (
     <ScenarioMarkup path={path} basePath="/surgery-trauma"
@@ -193,8 +185,7 @@ export function PrerenderedBody({ path }: { path: string }) {
       getScenario={getSurgeryTraumaScenario} />
   );
   if (path === '/oncology') return (
-    <ModuleMarkup moduleId="oncology" basePath="/oncology"
-      heading="Oncology simulator" scenarios={ONCOLOGY_SCENARIOS} />
+    <ModuleMarkup moduleId="oncology" basePath="/oncology" scenarios={ONCOLOGY_SCENARIOS} />
   );
   if (path.startsWith('/oncology/scenario/')) return (
     <ScenarioMarkup path={path} basePath="/oncology"
@@ -202,8 +193,7 @@ export function PrerenderedBody({ path }: { path: string }) {
       getScenario={getOncologyScenario} />
   );
   if (path === '/medical-surgical-nursing') return (
-    <ModuleMarkup moduleId="medical-surgical-nursing" basePath="/medical-surgical-nursing"
-      heading="Nursing simulator" scenarios={MEDICAL_SURGICAL_NURSING_SCENARIOS} />
+    <ModuleMarkup moduleId="medical-surgical-nursing" basePath="/medical-surgical-nursing" scenarios={MEDICAL_SURGICAL_NURSING_SCENARIOS} />
   );
   if (path.startsWith('/medical-surgical-nursing/scenario/')) return (
     <ScenarioMarkup path={path} basePath="/medical-surgical-nursing"
@@ -216,8 +206,7 @@ export function PrerenderedBody({ path }: { path: string }) {
       getScenario={getNeurologyScenario} />
   );
   if (path === '/toxicology') return (
-    <ModuleMarkup moduleId="toxicology" basePath="/toxicology"
-      heading="Toxicology simulator" scenarios={TOXICOLOGY_SCENARIOS} />
+    <ModuleMarkup moduleId="toxicology" basePath="/toxicology" scenarios={TOXICOLOGY_SCENARIOS} />
   );
   if (path.startsWith('/toxicology/scenario/')) return (
     <ScenarioMarkup path={path} basePath="/toxicology"
@@ -225,8 +214,7 @@ export function PrerenderedBody({ path }: { path: string }) {
       getScenario={getToxicologyScenario} />
   );
   if (path === '/obstetrics') return (
-    <ModuleMarkup moduleId="obstetrics" basePath="/obstetrics"
-      heading="Obstetrics simulator" scenarios={OBSTETRICS_SCENARIOS} />
+    <ModuleMarkup moduleId="obstetrics" basePath="/obstetrics" scenarios={OBSTETRICS_SCENARIOS} />
   );
   if (path.startsWith('/obstetrics/scenario/')) return (
     <ScenarioMarkup path={path} basePath="/obstetrics"
@@ -249,19 +237,19 @@ function AnesthesiaMarkup() {
     <ModuleMarkup
       moduleId="anesthesia"
       basePath="/anesthesia"
-      heading="Anesthesia simulator"
       scenarios={scenariosByDifficulty()}
     />
   );
 }
 
-function ModuleMarkup({ moduleId, basePath, heading, scenarios }: {
+function ModuleMarkup({ moduleId, basePath, scenarios }: {
   moduleId: string;
   basePath: string;
-  heading: string;
   scenarios: readonly Scenario[];
 }) {
   const module = MODULES.find((entry) => entry.id === moduleId);
+  // Every heading was the module's name and "simulator", typed out sixteen times.
+  const heading = module ? t('prerender.module-heading', { module: module.displayName }) : '';
   return (
     <div className="document">
       <SiteBar current={basePath} />
@@ -275,7 +263,7 @@ function ModuleMarkup({ moduleId, basePath, heading, scenarios }: {
             </li>
           ))}
         </ul>
-        <p><a href="/">What Open Sim Lab is, who it is for, and where its pharmacology comes from</a></p>
+        <p><a href="/">{t('prerender.about-link')}</a></p>
         <p className="landing__disclaimer">{NOT_FOR_CLINICAL_USE}</p>
       </main>
     </div>
@@ -310,28 +298,35 @@ function ScenarioMarkup({
           moduleId={basePath.slice(1)}
         />
         <p>
-          {patient.ageYears}-year-old{' '}
-          {patientPersonNoun(patient)} for{' '}
-          {patient.procedure}. About {metadata.estimatedMinutes} simulated minutes.
+          {t('prerender.patient', {
+            age: patient.ageYears,
+            person: patientPersonNoun(patient),
+            procedure: patient.procedure,
+            minutes: metadata.estimatedMinutes,
+          })}
         </p>
-        <h2>What you will practise</h2>
+        <h2>{t('prerender.practise')}</h2>
         <ul>{metadata.objectives.map((objective) => <li key={objective.id}>{objective.statement}</li>)}</ul>
         <section aria-labelledby="review-and-sources">
-          <h2 id="review-and-sources">Review and sources</h2>
+          <h2 id="review-and-sources">{t('prerender.review-heading')}</h2>
           <p>
             {unreviewed
-              ? 'Not clinically reviewed. No clinician has signed this scenario.'
-              : `Clinically reviewed by ${metadata.clinicalReview.reviewer}, ${metadata.clinicalReview.credential}, on ${metadata.clinicalReview.reviewedOn}.`}
+              ? t('prerender.unreviewed')
+              : t('prerender.reviewed', {
+                reviewer: metadata.clinicalReview.reviewer,
+                credential: metadata.clinicalReview.credential,
+                date: metadata.clinicalReview.reviewedOn,
+              })}
           </p>
           <ul>
             {metadata.clinicalReview.sources.map((source) => <li key={source}>{source}</li>)}
           </ul>
         </section>
-        <p><a href={basePath}>Every scenario in this module</a></p>
+        <p><a href={basePath}>{t('prerender.every-scenario')}</a></p>
         <p>
-          Running this with a group?{' '}
-          <a href={`/facilitator${basePath}/scenario/${metadata.id}`}>The facilitator guide</a>{' '}
-          is generated from this scenario and prints cleanly.
+          {t('briefing.group')}{' '}
+          <a href={`/facilitator${basePath}/scenario/${metadata.id}`}>{t('prerender.guide-link')}</a>{' '}
+          {t('prerender.guide-after')}
         </p>
         <p className="landing__disclaimer">{NOT_FOR_CLINICAL_USE}</p>
       </main>

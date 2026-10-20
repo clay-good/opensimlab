@@ -205,6 +205,16 @@ export const DOCUMENT_MESSAGES = {
   'planned.today': { class: 'interface', text: 'The anesthesia module is built and running.' },
   'planned.open': { class: 'interface', text: 'Open the anesthesia simulator' },
   'planned.back': { class: 'interface', text: 'Back to the Open Sim Lab front page' },
+  'prerender.module-heading': { class: 'interface', text: '{module} simulator' },
+  'prerender.about-link': { class: 'interface', text: 'What Open Sim Lab is, who it is for, and where its pharmacology comes from' },
+  'prerender.patient': { class: 'interface', text: '{age}-year-old {person} for {procedure}. About {minutes} simulated minutes.' },
+  'prerender.practise': { class: 'interface', text: 'What you will practise' },
+  'prerender.review-heading': { class: 'interface', text: 'Review and sources' },
+  'prerender.unreviewed': { class: 'interface', text: 'Not clinically reviewed. No clinician has signed this scenario.' },
+  'prerender.reviewed': { class: 'interface', text: 'Clinically reviewed by {reviewer}, {credential}, on {date}.' },
+  'prerender.every-scenario': { class: 'interface', text: 'Every scenario in this module' },
+  'prerender.guide-link': { class: 'interface', text: 'The facilitator guide' },
+  'prerender.guide-after': { class: 'interface', text: 'is generated from this scenario and prints cleanly.' },
 } as const satisfies Readonly<Record<string, SourceMessage>>;
 
 registerMessages(DOCUMENT_MESSAGES);

@@ -38,6 +38,7 @@ const EXTERNALISED: readonly { readonly path: string; readonly region?: readonly
   { path: 'src/landing/About.tsx' },
   { path: 'src/routes/PlannedModuleRoute.tsx' },
   { path: 'src/routes/ContentReviewRoute.tsx' },
+  { path: 'src/routes/Prerendered.tsx' },
   // From the limitations section to the end: the per-module orientation above it is authored
   // clinical framing and stays with the scenarios.
   { path: 'src/modules/anesthesia/ui/Prebrief.tsx', region: ['      {/* Sentences from the register', '\n}\n'] },

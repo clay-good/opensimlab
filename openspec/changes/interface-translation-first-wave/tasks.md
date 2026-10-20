@@ -56,8 +56,10 @@
   - Out of scope by design: `/gallery` and `/frame-budget` are noindex development surfaces whose
     text is component names, sample data, and a device measurement, not interface a learner or
     educator reads.
-  - Still to move: the cockpit shell and its action controls, and the prerendered scenario
-    briefing.
+  - Prerendered pages: each module's index and each scenario's static briefing (10; sixteen
+    hand-typed headings that were each a module's name and "simulator" are now one message;
+    text identical to the previous build).
+  - Still to move: the cockpit shell and its action controls.
 - [x] Generate the coverage report at build; publish `/translation-status` as a trust document.
   Its sentence claiming the test locales ran on every build was untrue and is corrected: they are
   applied by hand in development until CI runs them. The prerendered page computes coverage from the catalogs at build: languages offered (none),
