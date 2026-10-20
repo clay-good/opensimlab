@@ -16,35 +16,10 @@
  * than a verbatim transcription, the entry says so.
  */
 
-export interface FrameworkDomain {
-  /** Stable id used by scenario mappings. */
-  readonly id: string;
-  /** The body's own label, or the project's summary of it. */
-  readonly label: string;
-  /** What the domain covers, in the project's words. */
-  readonly description: string;
-}
+import type { FrameworkDomainRecord, FrameworkRecord } from '@platform/curriculum/framework-records';
 
-export interface Framework {
-  readonly id: string;
-  readonly name: string;
-  /** A few words for a tab. Derived truncation of the body name reads as garbage. */
-  readonly shortLabel: string;
-  /** The organisation that publishes it. */
-  readonly body: string;
-  /** The version or year this reading was taken from. */
-  readonly version: string;
-  readonly url: string;
-  /** Who this framework governs, so a reader knows if it applies to them. */
-  readonly appliesTo: string;
-  /**
-   * How faithful this list is to the published document. Stated because a
-   * summary presented as a transcription is a quiet misrepresentation.
-   */
-  readonly fidelity: 'verbatim' | 'summarised';
-  readonly note: string;
-  readonly domains: readonly FrameworkDomain[];
-}
+export type FrameworkDomain = FrameworkDomainRecord;
+export type Framework = FrameworkRecord;
 
 /**
  * The National Board of Certification and Recertification for Nurse Anesthetists
@@ -61,6 +36,8 @@ export const NBCRNA_NCE: Framework = {
   url: 'https://www.nbcrna.com/',
   appliesTo: 'Student registered nurse anesthetists preparing for certification',
   fidelity: 'summarised',
+  recordedOn: '2026-08-20',
+  reviewBy: '2028-08-20',
   note: 'The five content areas are the outline\'s own top-level divisions. The descriptions '
     + 'are this project\'s summary, not the board\'s wording, and the mapping is not endorsed '
     + 'by the board.',
@@ -115,6 +92,8 @@ export const COA_STANDARDS: Framework = {
   url: 'https://www.coacrna.org/',
   appliesTo: 'Nurse anesthesia programs and their curricula',
   fidelity: 'summarised',
+  recordedOn: '2026-08-20',
+  reviewBy: '2028-08-20',
   note: 'These are the curriculum content areas this simulator could plausibly contribute to, '
     + 'in this project\'s words. They are not a transcription of the standards, they are not '
     + 'a claim of compliance with them, and the Council has not reviewed this. A programme '
@@ -175,6 +154,8 @@ export const ACGME_ANESTHESIOLOGY_MILESTONES: Framework = {
   url: 'https://www.acgme.org/specialties/anesthesiology/milestones/',
   appliesTo: 'Anesthesiology residents and their programs',
   fidelity: 'summarised',
+  recordedOn: '2026-08-20',
+  reviewBy: '2028-08-20',
   note: 'A subset of the published subcompetencies: only those a screen-based simulator could '
     + 'plausibly contribute evidence toward. Subcompetency labels are summarised rather than '
     + 'transcribed, and the mapping is not endorsed by the Council.',

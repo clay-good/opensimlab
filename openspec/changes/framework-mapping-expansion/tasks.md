@@ -2,13 +2,17 @@
 
 ## 1. Registry
 
-- [ ] Generalise the framework registry out of the anesthesia module into the platform; add
-  `appliesTo`, `review_by`, and the verbatim/summarised rule to the record type.
+- [x] Generalise the framework registry out of the anesthesia module into the platform; add
+  `appliesTo`, `review_by`, and the verbatim/summarised rule to the record type. The record type
+  and its rules live in `src/platform/curriculum/framework-records.ts`; the three anesthesia
+  readings import it and stay where their mappings are. Each now carries `recordedOn`, the date
+  the reading entered the repository (2026-08-20, from git), and `reviewBy` 24 months later. That
+  is when the reading was recorded, not a claim it was re-verified then.
 - [ ] Add framework records: ACGME Milestones 2.0 for EM, pediatrics, IM, OB/GYN, neurology;
   AAMC Core EPAs (2014); RCoA 2021 Stage 1 domains and key capabilities; NCSBN CJMM Layer 3;
   NCLEX-RN Test Plan 2026 client-needs categories; USMLE Step 2 CK content outline; Primary FRCA.
   Record issuing body, version, date checked, locator, fidelity.
-- [ ] Build check: a verbatim item longer than a short name fails; `review_by` ≤ 24 months.
+- [x] Build check: a verbatim item longer than a short name fails; `review_by` ≤ 24 months. `tests/unit/framework-records.test.ts`.
 
 ## 2. Scenario mappings
 
@@ -36,5 +40,7 @@
 - [x] Add the non-endorsement statement beside the not-clinical-time statement on every mapping
   surface and export; route test. Already true of all four surfaces and the adoption pack's
   competency section, which carry `MAPPING_DISCLAIMER`; the same test now holds it.
-- [ ] List overdue framework records on the governance dashboard with overdue guidelines.
+- [x] List overdue framework records on the governance dashboard with overdue guidelines. A
+  "Framework readings" section on `/governance` lists every reading with its re-check date and
+  counts the overdue ones, dated by the build so the prerendered page and the client agree.
 - [ ] Document each framework's source and date checked in the sources register.

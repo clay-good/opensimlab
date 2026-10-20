@@ -21,6 +21,9 @@ import {
   CORRECTIONS, CORRECTIONS_EMPTY_REASON, CORRECTIONS_POLICY, CORRECTIONS_TRIAGE,
 } from '@platform/docs/corrections';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
+import { APP_VERSION } from '@platform/governance/status';
+import { FRAMEWORKS } from '@anesthesia/curriculum/frameworks';
+import { FRAMEWORK_REVIEW_MONTHS, overdueFrameworks } from '@platform/curriculum/framework-records';
 import { MODELS, MODEL_SET_REVISION } from '@anesthesia/pharmacology/registry';
 import {
   SECOND_SOURCE_KIND_LABEL, verificationQueue, type ParameterStatus,
@@ -355,6 +358,8 @@ function GovernanceBody() {
         );
       })}
 
+      <FrameworkReadings />
+
       <h2>Reporting a clinical error</h2>
       <p>
         Every content item carries a control that opens a public issue with the item id, the
@@ -478,6 +483,35 @@ function ReviewStatusBody() {
         build, and the <a href="/limitations">limitations register</a> names what the simulation
         deliberately does not model.
       </p>
+    </>
+  );
+}
+
+/**
+ * Framework readings go stale the way clinical reviews do, so they are listed
+ * here beside them. Dated by the build, which the prerendered page and the
+ * client share, so the list cannot change between the two.
+ */
+function FrameworkReadings() {
+  const today = /^\d{4}-\d{2}-\d{2}/.exec(APP_VERSION)?.[0] ?? new Date().toISOString().slice(0, 10);
+  const overdue = new Set(overdueFrameworks(FRAMEWORKS, today).map((framework) => framework.id));
+  return (
+    <>
+      <h2>Framework readings</h2>
+      <p>
+        Curriculum mappings rest on this project&apos;s reading of each framework document. Every
+        reading is re-checked against its source at least every {FRAMEWORK_REVIEW_MONTHS} months.{' '}
+        <span className="numeric">{overdue.size}</span> of {FRAMEWORKS.length} are past their
+        re-check date.
+      </p>
+      <ul>
+        {FRAMEWORKS.map((framework) => (
+          <li key={framework.id}>
+            {framework.name} ({framework.body}): recorded {framework.recordedOn}, re-check by{' '}
+            {framework.reviewBy}{overdue.has(framework.id) ? ' — overdue' : ''}.
+          </li>
+        ))}
+      </ul>
     </>
   );
 }
