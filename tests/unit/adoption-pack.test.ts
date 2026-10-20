@@ -1,6 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { EN_MESSAGES } from '@platform/i18n/messages';
 import type { MaturityCatalog } from '@platform/catalog/maturity';
 import type { ScenarioCompletionCatalog } from '@platform/catalog/scenario-completion';
 import {
@@ -185,7 +186,10 @@ describe('static adoption pack', () => {
   it('keeps the educators page honest about reviewed coverage', () => {
     const page = readFileSync(join(root, 'src/routes/EducatorsRoute.tsx'), 'utf8');
     expect(page).toContain(`href="${ADOPTION_PACK_PATH}"`);
-    if (page.includes('reviewed coverage is currently zero')) {
+    // The sentence is catalog text now; the page must still render it, and while it
+    // says zero the committed pack must agree.
+    expect(page).toContain("t('edu.doc-adoption-note')");
+    if (EN_MESSAGES['edu.doc-adoption-note'].text.includes('reviewed coverage is currently zero')) {
       expect(committed.reviewedCoverage.reviewed).toBe(0);
     }
   });

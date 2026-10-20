@@ -32,6 +32,7 @@ const EXTERNALISED: readonly { readonly path: string; readonly region?: readonly
   { path: 'src/modules/anesthesia/ui/WhyPanel.tsx' },
   { path: 'src/routes/CurriculumRoute.tsx' },
   { path: 'src/routes/educator-pages.ts' },
+  { path: 'src/routes/EducatorsRoute.tsx' },
   { path: 'src/modules/anesthesia/ui/Debrief.tsx', region: ['  return (\n    <>\n      <a className="skip-link"', '\n}\n'] },
   { path: 'src/modules/anesthesia/ui/GoalRecommendation.tsx', region: ['return (', '\n}\n'] },
   { path: 'src/platform/offline/UpdateNotice.tsx', region: ['  return (\n    <div className={`update-notice', '\n}\n'] },

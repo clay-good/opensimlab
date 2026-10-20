@@ -15,6 +15,7 @@ import { SITE_ORIGIN } from './routes';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { MAPPING_DISCLAIMER } from '@anesthesia/curriculum/frameworks';
 import { EDUCATOR_PAGES } from './educator-pages';
+import { t } from '@platform/i18n/messages';
 
 /** Builds the link an instructor hands out. Nothing here contacts anything. */
 function AssignmentBuilder() {
@@ -37,15 +38,11 @@ function AssignmentBuilder() {
 
   return (
     <section className="educators__builder">
-      <h3>Build an assignment link</h3>
-      <p className="field__hint">
-        Everyone who opens it gets the same scenario, the same guidance level and the same
-        patient. No accounts, and nothing tells you who opened it. If you need to know who did
-        the work, ask them to export the session and hand it in.
-      </p>
+      <h3>{t('edu.builder-heading')}</h3>
+      <p className="field__hint">{t('edu.builder-hint')}</p>
 
       <label className="field">
-        <span className="field__label">Scenario</span>
+        <span className="field__label">{t('edu.builder-scenario')}</span>
         <select className="select" value={scenarioId} onChange={(e) => setScenarioId(e.target.value)}>
           {scenariosByDifficulty().map((scenario) => (
             <option key={scenario.metadata.id} value={scenario.metadata.id}>
@@ -56,35 +53,32 @@ function AssignmentBuilder() {
       </label>
 
       <label className="field">
-        <span className="field__label">Guidance</span>
+        <span className="field__label">{t('edu.builder-guidance')}</span>
         <select className="select" value={guidance} onChange={(e) => setGuidance(e.target.value)}>
-          <option value="guided">Guided: prompt them</option>
-          <option value="coached">Coached: prompt rarely</option>
-          <option value="unassisted">Unassisted: say nothing</option>
+          <option value="guided">{t('edu.builder-guided')}</option>
+          <option value="coached">{t('edu.builder-coached')}</option>
+          <option value="unassisted">{t('edu.builder-unassisted')}</option>
         </select>
       </label>
 
       <label className="field">
-        <span className="field__label">Assignment name, shown in the briefing</span>
+        <span className="field__label">{t('edu.builder-name')}</span>
         <input
           className="field__input"
           value={label}
-          placeholder="Week 3, induction"
+          placeholder={t('edu.builder-name-placeholder')}
           onChange={(e) => setLabel(e.target.value)}
         />
       </label>
 
       <label className="field">
-        <span className="field__label">Patient seed</span>
+        <span className="field__label">{t('edu.builder-seed')}</span>
         <input
           className="field__input numeric"
           value={seed}
           onChange={(e) => setSeed(e.target.value)}
         />
-        <span className="field__hint">
-          The same seed gives the same patient and the same random draws, so a cohort can be
-          compared against itself.
-        </span>
+        <span className="field__hint">{t('edu.builder-seed-hint')}</span>
       </label>
 
       <div className="field">
@@ -95,12 +89,9 @@ function AssignmentBuilder() {
             aria-describedby="reviewed-only-hint"
             onChange={(e) => setReviewedOnly(e.target.checked)}
           />{' '}
-          Clinically reviewed content only
+          {t('edu.builder-reviewed-only')}
         </label>
-        <span className="field__hint" id="reviewed-only-hint">
-          The briefing then says plainly when the scenario is not clinically reviewed, and
-          practice stays open. No scenario is reviewed yet, so every such link will say so.
-        </span>
+        <span className="field__hint" id="reviewed-only-hint">{t('edu.builder-reviewed-only-hint')}</span>
       </div>
 
       <p className="educators__link"><code>{url}</code></p>
@@ -111,7 +102,7 @@ function AssignmentBuilder() {
           setCopied(true);
         }}
       >
-        {copied ? 'Copied' : 'Copy the link'}
+        {t(copied ? 'edu.builder-copied' : 'edu.builder-copy')}
       </Button>
     </section>
   );
@@ -123,138 +114,70 @@ export function EducatorsRoute() {
       <SiteBar current="/for-educators" extra={EDUCATOR_PAGES} />
 
       <main className="reading" id="main">
-        <h1>For educators</h1>
-        <p>
-          Open Sim Lab is a free, browser-based anesthesia simulator with no accounts, learner
-          telemetry, or remote practice history. An optional anonymous problem report sends only
-          the fields it previews. This page is what a program needs to decide whether to use it.
-        </p>
+        <h1>{t('sitebar.for-educators')}</h1>
+        <p>{t('edu.intro')}</p>
 
-        <h2>Read this part first</h2>
-        <p>
-          <strong>No clinician has reviewed the clinical content in this build.</strong> The
-          pharmacology is transcribed from the primary literature and machine-checked against it,
-          the physiology is checked against published benchmarks, and neither has been signed off
-          by a credentialed reviewer. The editorial board is empty and the governance page lists
-          every outstanding item by name.
-        </p>
-        <p>
-          <strong>Time spent here is not clinical time.</strong> It does not count toward any case
-          requirement, clinical hour, or supervised experience for any accrediting or certifying
-          body, and nothing it produces should be presented as though it did. No accrediting body
-          has recognised it for any purpose.
-        </p>
-        <p>
-          It supplements, and does not substitute for, mannequin-based simulation and supervised
-          clinical practice. It teaches decision-making, pharmacology and pattern recognition. It
-          teaches nothing about your hands.
-        </p>
+        <h2>{t('edu.first-heading')}</h2>
+        <p><strong>{t('edu.unreviewed-lead')}</strong> {t('edu.unreviewed')}</p>
+        <p><strong>{t('edu.not-clinical-time-lead')}</strong> {t('edu.not-clinical-time')}</p>
+        <p>{t('edu.supplements')}</p>
 
-        <h2>What it is good for</h2>
+        <h2>{t('edu.good-for-heading')}</h2>
         <ul>
-          <li>
-            The night before a first day in theatre: seeing what a drug does to a patient over
-            the two minutes after it is given, rather than reading that it does.
-          </li>
-          <li>
-            Pre-work before mannequin simulation, so scarce sim-centre time is spent on what a
-            screen cannot teach.
-          </li>
-          <li>
-            A shared reference case in a lecture: the same patient, on the projector, that
-            everyone can then run themselves.
-          </li>
-          <li>
-            Deliberate repetition of the decisions that are rare in clinic and consequential when
-            they happen.
-          </li>
+          <li>{t('edu.good-for-night-before')}</li>
+          <li>{t('edu.good-for-pre-work')}</li>
+          <li>{t('edu.good-for-lecture')}</li>
+          <li>{t('edu.good-for-repetition')}</li>
         </ul>
 
-        <h2>Assigning it to a cohort</h2>
+        <h2>{t('edu.assigning-heading')}</h2>
         <AssignmentBuilder />
 
-        <h2>Seeing what your students did</h2>
+        <h2>{t('edu.seeing-heading')}</h2>
         <p>
-          There is no learner dashboard because practice stays on the device. A
-          learner exports their session as a file and hands it to you; you open it on the{' '}
-          <a href="/review">review page</a>, which replays the engine over their recorded actions
-          and shows you what happened and where the group is weak.
+          {t('edu.seeing-before')}{' '}
+          <a href="/review">{t('edu.seeing-link')}</a>{t('edu.seeing-after')}
         </p>
-        <p>
-          This is a deliberate trade. A simulator a student can be watched in is one they perform
-          in rather than learn in, and the confidentiality simulation standards ask for is easier
-          to guarantee when the data was never collected. The cost is that you cannot know who
-          opened a link.
-        </p>
+        <p>{t('edu.trade')}</p>
 
-        <h2>Running a scenario with a group</h2>
+        <h2>{t('edu.group-heading')}</h2>
         <p>
-          Every scenario has a printable facilitator guide, linked from its briefing, at{' '}
-          <code>/facilitator/&lt;module&gt;/scenario/&lt;scenario&gt;</code>. It is generated from the scenario, so it cannot drift from what learners see:
-          objectives, patient, prebrief, timeline, debrief prompts in the PEARLS order, sources,
-          limits, and provenance. Where a scenario cannot yet fill a section, such as expected
-          actions or pause points, the guide says so instead of leaving a gap that reads as complete.
+          {t('edu.guide-before')}{' '}
+          <code>{`/facilitator/<module>/scenario/<scenario>`}</code>{t('edu.guide-after')}
         </p>
-        <p>
-          In a session, the menu&apos;s classroom mode turns the tutor off for that session, so it
-          never answers the room&apos;s question for them, and stops the clock at any pause points
-          the scenario declares, showing the question with a single Resume control. Turning it off
-          restores the guidance level the learner chose.
-        </p>
+        <p>{t('edu.classroom')}</p>
 
-        <h2>Curriculum documentation</h2>
-        <p>
-          Every scenario is mapped to published framework domains and the mapping exports as CSV
-          for your own documentation. {MAPPING_DISCLAIMER}
-        </p>
-        <p><a href="/curriculum">Open the curriculum coverage view</a></p>
+        <h2>{t('edu.curriculum-heading')}</h2>
+        <p>{t('edu.curriculum')} {MAPPING_DISCLAIMER}</p>
+        <p><a href="/curriculum">{t('edu.curriculum-link')}</a></p>
 
-        <h2>Running it on your own infrastructure</h2>
-        <p>
-          The build output is static files. Copy them to any web server, including one inside your
-          network with no route to the internet, and everything works: install, offline use and
-          every bundled scenario. There is no licence to buy, no procurement, no integration, and
-          no dependency on this project staying online.
-        </p>
-        <p>
-          The code is MIT licensed and the educational content is openly licensed per scenario, so
-          you can adopt it, adapt it, fork it and add your own local protocols. If you do, the
-          clinical review requirement is preserved in your fork, so your local content is signed
-          too.
-        </p>
+        <h2>{t('edu.infrastructure-heading')}</h2>
+        <p>{t('edu.infrastructure')}</p>
+        <p>{t('edu.licence')}</p>
 
-        <h2>What we would want from you</h2>
-        <p>
-          The thing this project needs is not users. It is a clinician willing to say which parts
-          are wrong. If you or a colleague would look at one scenario and tell us what a student
-          would learn from it that they should not, that is worth more than any number of sessions
-          run.
-        </p>
+        <h2>{t('edu.want-heading')}</h2>
+        <p>{t('edu.want')}</p>
 
-        <h2>If you are willing to check it</h2>
-        <p>
-          There is a surface built for exactly this. It lists every clinical claim in the build,
-          lets you say what is wrong at the point where you read it, and exports your notes as one
-          file. It takes no account and nothing you write leaves your device.
-        </p>
-        <p><a href="/content-review">Open the clinical review view</a></p>
+        <h2>{t('edu.check-heading')}</h2>
+        <p>{t('edu.check')}</p>
+        <p><a href="/content-review">{t('edu.check-link')}</a></p>
 
-        <h2>The documents</h2>
+        <h2>{t('edu.documents-heading')}</h2>
         <ul>
-          <li><a href="/validation">Validation report</a>: every benchmark, with what is not validated stated explicitly</li>
-          <li><a href="/governance">Clinical governance</a>: who has reviewed what, and every outstanding item</li>
-          <li><a href="/limitations">Limitations register</a>: what this deliberately does not model</li>
-          <li><a href="/privacy">Privacy</a>: what is stored, which is only on the learner&rsquo;s own device</li>
-          <li><a href="/catalog/adoption-pack.json">Adoption pack</a>: one file for this release listing every scenario with its version, status, sources and limitations, and exactly what a problem report sends; it needs no account, and its reviewed coverage is currently zero</li>
+          <li><a href="/validation">{t('edu.doc-validation')}</a>: {t('edu.doc-validation-note')}</li>
+          <li><a href="/governance">{t('edu.doc-governance')}</a>: {t('edu.doc-governance-note')}</li>
+          <li><a href="/limitations">{t('edu.doc-limitations')}</a>: {t('edu.doc-limitations-note')}</li>
+          <li><a href="/privacy">{t('edu.doc-privacy')}</a>: {t('edu.doc-privacy-note')}</li>
+          <li><a href="/catalog/adoption-pack.json">{t('edu.doc-adoption')}</a>: {t('edu.doc-adoption-note')}</li>
         </ul>
 
         <p className="reading__aside">{NOT_FOR_CLINICAL_USE}</p>
       </main>
 
       <footer className="document__foot">
-        <a href="/curriculum">Curriculum</a>
-        <a href="/review">Review submissions</a>
-        <a href="/">Back to the front page</a>
+        <a href="/curriculum">{t('sitebar.curriculum')}</a>
+        <a href="/review">{t('educator.review-submissions')}</a>
+        <a href="/">{t('documents.footer.home')}</a>
       </footer>
     </div>
   );
