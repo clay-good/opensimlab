@@ -33,5 +33,10 @@
 
 ## 4. Computed counts
 
-- [ ] Add the README-table-versus-registry test; assert structured-data counts in CI; audit every
-  count surface and replace typed numbers with rendered ones.
+- [x] Add the README-table-versus-registry test; assert structured-data counts in CI; audit every
+  count surface and replace typed numbers with rendered ones. `tests/unit/readme-counts.test.ts`
+  holds every README row against the registry and the real scenario arrays, and the headline
+  totals against what the landing page renders. The structured data carries no count; the root
+  description, the landing figures, and the module cards already render theirs from the
+  registry. An audit of `src/`, the README, and the governance documents found typed scenario
+  counts only in code comments that describe history.
