@@ -15,21 +15,8 @@ import {
   SCENARIO_MAPPINGS, coverageFor, mappingCsv, unmappedScenarios,
 } from '@anesthesia/curriculum/mapping';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
-
-/**
- * The educator surfaces' own destinations, appended to the shared site bar.
- *
- * These three pages used to carry three separate hand-written copies of the
- * same bar, and the reviewer page a fourth. Four bars is four things to keep in
- * step, and they had already drifted: none of them offered the validation report
- * or the governance page, which are the two pages an educator evaluating this
- * most wants.
- */
-const EDUCATOR_PAGES = [
-  { href: '/for-educators', label: 'For educators' },
-  { href: '/curriculum', label: 'Curriculum' },
-  { href: '/review', label: 'Review submissions' },
-];
+import { t } from '@platform/i18n/messages';
+import { EDUCATOR_PAGES } from './educator-pages';
 
 export function CurriculumRoute() {
   const [frameworkId, setFrameworkId] = useState(FRAMEWORKS[0]!.id);
@@ -53,11 +40,11 @@ export function CurriculumRoute() {
       <SiteBar current="/curriculum" extra={EDUCATOR_PAGES} />
 
       <main className="reading" id="main">
-        <h1>Curriculum coverage</h1>
+        <h1>{t('curriculum.heading')}</h1>
         <p className="reading__aside">{MAPPING_DISCLAIMER}</p>
 
         <SegmentedControl<string>
-          label="Framework"
+          label={t('curriculum.framework')}
           value={frameworkId}
           onChange={setFrameworkId}
           options={FRAMEWORKS.map((entry) => ({
@@ -70,29 +57,29 @@ export function CurriculumRoute() {
         <section>
           <h2>{framework.name}</h2>
           <p className="field__hint">
-            {framework.body} · {framework.version} · applies to {framework.appliesTo}
+            {t('curriculum.framework-meta', { body: framework.body, version: framework.version, appliesTo: framework.appliesTo })}
           </p>
           <p>
             <Badge kind={framework.fidelity === 'verbatim' ? 'default' : 'teaching'}>
-              {framework.fidelity === 'verbatim' ? 'Transcribed' : 'Summarised'}
+              {t(framework.fidelity === 'verbatim' ? 'curriculum.transcribed' : 'curriculum.summarised')}
             </Badge>{' '}
             {framework.note}
           </p>
           <p>
-            <a href={framework.url} rel="noreferrer noopener">Read the framework itself</a>
+            <a href={framework.url} rel="noreferrer noopener">{t('curriculum.read-framework')}</a>
           </p>
         </section>
 
         <p className="numeric">
-          {covered} of {framework.domains.length} domains have at least one scenario.
+          {t('curriculum.covered', { covered, total: framework.domains.length })}
         </p>
 
         <table>
           <thead>
             <tr>
-              <th>Domain</th>
-              <th>Scenarios</th>
-              <th className="numeric">Minutes</th>
+              <th>{t('curriculum.col-domain')}</th>
+              <th>{t('curriculum.col-scenarios')}</th>
+              <th className="numeric">{t('curriculum.col-minutes')}</th>
             </tr>
           </thead>
           <tbody>
@@ -105,7 +92,7 @@ export function CurriculumRoute() {
                 </td>
                 <td>
                   {scenarios.length === 0 ? (
-                    <Badge kind="out-of-range">No scenario yet</Badge>
+                    <Badge kind="out-of-range">{t('curriculum.no-scenario')}</Badge>
                   ) : (
                     <ul className="curriculum__scenarios">
                       {scenarios.map((scenario) => {
@@ -121,7 +108,7 @@ export function CurriculumRoute() {
                             </a>
                             <br />
                             <span className="field__hint">
-                              via {(mapping?.objectiveIds ?? []).join(', ')}
+                              {t('curriculum.via', { objectives: (mapping?.objectiveIds ?? []).join(', ') })}
                             </span>
                           </li>
                         );
@@ -138,9 +125,9 @@ export function CurriculumRoute() {
         </table>
 
         <section>
-          <h2>Unmapped scenarios</h2>
+          <h2>{t('curriculum.unmapped')}</h2>
           {unmapped.length === 0 ? (
-            <p>Every bundled scenario carries at least one framework mapping.</p>
+            <p>{t('curriculum.all-mapped')}</p>
           ) : (
             <ul>
               {unmapped.map((scenario) => (
@@ -150,15 +137,15 @@ export function CurriculumRoute() {
           )}
         </section>
 
-        <Button variant="primary" onClick={download}>Export the mapping as CSV</Button>
+        <Button variant="primary" onClick={download}>{t('curriculum.export')}</Button>
 
         <p className="reading__aside">{NOT_FOR_CLINICAL_USE}</p>
       </main>
 
       <footer className="document__foot">
-        <a href="/for-educators">For educators</a>
-        <a href="/review">Review submissions</a>
-        <a href="/">Back to the front page</a>
+        <a href="/for-educators">{t('sitebar.for-educators')}</a>
+        <a href="/review">{t('educator.review-submissions')}</a>
+        <a href="/">{t('documents.footer.home')}</a>
       </footer>
     </div>
   );

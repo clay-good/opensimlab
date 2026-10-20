@@ -544,6 +544,22 @@ export const EN_MESSAGES = {
   'why.card-rocuronium': { class: 'interface', text: 'Rocuronium card' },
   'why.of-change': { class: 'interface', text: 'of the current change' },
   'why.aside': { class: 'interface', text: 'The simulation continues or stays paused exactly as it was. Closing this returns you to where you were.' },
+  'educator.review-submissions': { class: 'educator', text: 'Review submissions' },
+  'curriculum.heading': { class: 'educator', text: 'Curriculum coverage' },
+  'curriculum.framework': { class: 'educator', text: 'Framework' },
+  'curriculum.framework-meta': { class: 'educator', text: '{body} · {version} · applies to {appliesTo}' },
+  'curriculum.transcribed': { class: 'educator', text: 'Transcribed' },
+  'curriculum.summarised': { class: 'educator', text: 'Summarised' },
+  'curriculum.read-framework': { class: 'educator', text: 'Read the framework itself' },
+  'curriculum.covered': { class: 'educator', text: '{covered} of {total} domains have at least one scenario.' },
+  'curriculum.col-domain': { class: 'educator', text: 'Domain' },
+  'curriculum.col-scenarios': { class: 'educator', text: 'Scenarios' },
+  'curriculum.col-minutes': { class: 'educator', text: 'Minutes' },
+  'curriculum.no-scenario': { class: 'educator', text: 'No scenario yet' },
+  'curriculum.via': { class: 'educator', text: 'via {objectives}' },
+  'curriculum.unmapped': { class: 'educator', text: 'Unmapped scenarios' },
+  'curriculum.all-mapped': { class: 'educator', text: 'Every bundled scenario carries at least one framework mapping.' },
+  'curriculum.export': { class: 'educator', text: 'Export the mapping as CSV' },
 } as const satisfies Readonly<Record<string, SourceMessage>>;
 
 export type MessageKey = keyof typeof EN_MESSAGES;

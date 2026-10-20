@@ -20,6 +20,7 @@ import {
   type TranscriptAnalysis,
 } from '@anesthesia/debrief/analyse-transcript';
 import { createReplayWorker, workerReplay } from '@anesthesia/debrief/replay-client';
+import { EDUCATOR_PAGES } from './educator-pages';
 
 const OUTCOME_LABEL: Record<string, string> = {
   met: 'Met',
@@ -27,21 +28,6 @@ const OUTCOME_LABEL: Record<string, string> = {
   'not-met': 'Not met',
   'not-exercised': 'Not exercised',
 };
-
-/**
- * The educator surfaces' own destinations, appended to the shared site bar.
- *
- * These three pages used to carry three separate hand-written copies of the
- * same bar, and the reviewer page a fourth. Four bars is four things to keep in
- * step, and they had already drifted: none of them offered the validation report
- * or the governance page, which are the two pages an educator evaluating this
- * most wants.
- */
-const EDUCATOR_PAGES = [
-  { href: '/for-educators', label: 'For educators' },
-  { href: '/curriculum', label: 'Curriculum' },
-  { href: '/review', label: 'Review submissions' },
-];
 
 export function ReviewRoute() {
   const [analyses, setAnalyses] = useState<TranscriptAnalysis[]>([]);

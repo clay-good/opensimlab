@@ -14,6 +14,7 @@ import { SCENARIOS, scenariosByDifficulty } from '@anesthesia/scenarios';
 import { SITE_ORIGIN } from './routes';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { MAPPING_DISCLAIMER } from '@anesthesia/curriculum/frameworks';
+import { EDUCATOR_PAGES } from './educator-pages';
 
 /** Builds the link an instructor hands out. Nothing here contacts anything. */
 function AssignmentBuilder() {
@@ -115,21 +116,6 @@ function AssignmentBuilder() {
     </section>
   );
 }
-
-/**
- * The educator surfaces' own destinations, appended to the shared site bar.
- *
- * These three pages used to carry three separate hand-written copies of the
- * same bar, and the reviewer page a fourth. Four bars is four things to keep in
- * step, and they had already drifted: none of them offered the validation report
- * or the governance page, which are the two pages an educator evaluating this
- * most wants.
- */
-const EDUCATOR_PAGES = [
-  { href: '/for-educators', label: 'For educators' },
-  { href: '/curriculum', label: 'Curriculum' },
-  { href: '/review', label: 'Review submissions' },
-];
 
 export function EducatorsRoute() {
   return (

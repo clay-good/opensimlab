@@ -32,7 +32,9 @@
   content), and the analysis region with its patient profile and the monitor's morphology heading
   (36; the ASA monitoring categories and waveform descriptions stay clinical content), and the
   concentration and Why panels (30; model notes, citations, and attribution terms stay data, and the
-  CSV header stays a fixed format) read from `src/platform/i18n/messages.ts` and render the same English.
+  CSV header stays a fixed format), and the `/curriculum` page with the educator pages' shared
+  navigation, now one list instead of three copies (16, educator; framework names, domains, and the
+  mapping disclaimer stay records) read from `src/platform/i18n/messages.ts` and render the same English.
   `tests/unit/externalised-strings.test.ts` is the hard-coded-string test, applied to each surface
   once it is externalised; every other surface remains.
 - [x] Generate the coverage report at build; publish `/translation-status` as a trust document.
