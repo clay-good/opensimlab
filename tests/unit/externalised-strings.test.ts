@@ -14,11 +14,14 @@ const EXTERNALISED: readonly { readonly path: string; readonly region?: readonly
   { path: 'src/modules/anesthesia/ui/SessionPreferences.tsx', region: ['export function SessionPreferences', '\n}\n'] },
   { path: 'src/modules/anesthesia/ui/SpacedReturnSuggestion.tsx', region: ['return (', '\n}\n'] },
   { path: 'src/modules/anesthesia/ui/NcjmmCoverageList.tsx' },
+  { path: 'src/routes/FacilitatorGuideRoute.tsx' },
 ];
 
 /** Text between a closing `>` and the next `<` that is not only whitespace or an expression. */
 function literalText(source: string): string[] {
-  return [...source.matchAll(/>([^<>{}]*[A-Za-z][^<>{}]*)</g)]
+  // Template literals and arrows are code, not markup; drop them so `=>` is not read as a tag end.
+  const markup = source.replace(/`[^`]*`/g, '``').replace(/=>/g, ' ');
+  return [...markup.matchAll(/>([^<>{}]*[A-Za-z][^<>{}]*)</g)]
     .map((match) => match[1]!.trim()).filter((text) => text.length > 0 && !/^[=&|?:]/.test(text));
 }
 
@@ -35,7 +38,8 @@ describe('externalised surfaces carry no hard-coded interface text', () => {
 });
 
 describe('the check itself', () => {
-  it('catches literal text in markup and ignores expressions', () => {
+  it('catches literal text in markup and ignores expressions and template literals', () => {
+    expect(literalText('const briefing = `/${route}/scenario/${id}`;\nconst f = (x) => x;')).toEqual([]);
     expect(literalText('<a href="/">Back to the front page</a>')).toEqual(['Back to the front page']);
     expect(literalText("<a href=\"/\">{t('documents.footer.home')}</a>")).toEqual([]);
   });

@@ -17,6 +17,7 @@ import {
   NCJMM_NOT_EXERCISED_REASON, NCSBN_NCJMM, ncjmmMappings,
 } from '../../modules/medical-surgical-nursing/curriculum';
 import type { FacilitatedScenario } from './scenario-catalog';
+import { t } from '@platform/i18n/messages';
 
 export interface GuideItem {
   readonly label?: string;
@@ -141,43 +142,43 @@ export function facilitatorGuide(entry: FacilitatedScenario): readonly GuideSect
   const { metadata } = scenario;
   const signed = metadata.clinicalReview.reviewer !== UNSIGNED;
   return [
-    present('at-a-glance', 'At a glance', [
+    present('at-a-glance', t('guide.section.at-a-glance'), [
       { label: 'Module', text: moduleName },
       { label: 'Duration', text: `About ${metadata.estimatedMinutes} minutes` },
       { label: 'Difficulty', text: metadata.difficulty },
       { label: 'Published as', text: MATURITY_LABELS[metadata.maturity] },
     ], 'The scenario declares no metadata.'),
-    present('objectives', 'Learning objectives',
+    present('objectives', t('guide.section.objectives'),
       metadata.objectives.map((objective) => ({ label: objective.statement, text: objective.measure })),
       'The scenario declares no objectives.'),
-    present('frameworks', 'Framework mapping', frameworkItems(entry),
+    present('frameworks', t('guide.section.frameworks'), frameworkItems(entry),
       'No framework mapping exists for this scenario yet. Mapped frameworks are listed on /curriculum.'),
-    present('patient', 'Patient', patientItems(scenario), 'The scenario declares no patient.'),
-    present('prebrief', 'Prebrief', [
+    present('patient', t('guide.section.patient'), patientItems(scenario), 'The scenario declares no patient.'),
+    present('prebrief', t('guide.section.prebrief'), [
       { text: GUIDE_TEMPLATES.fiction },
       { text: GUIDE_TEMPLATES.confidentiality },
       { label: GUIDE_TEMPLATES.monitoring, text: scenario.equipment.monitoring.join(', ') || 'none declared' },
     ], 'No prebrief could be built.'),
-    present('timeline', 'Timeline', scenario.timeline.length === 0 ? []
+    present('timeline', t('guide.section.timeline'), scenario.timeline.length === 0 ? []
       : [{ text: GUIDE_TEMPLATES.timelineLead }, ...timelineItems(scenario)],
     'The scenario declares no timeline events.'),
-    absent('expected-actions', 'Expected actions',
+    absent('expected-actions', t('guide.section.expected-actions'),
       'Accepted actions, windows, and order are not yet read from the expert transcript.'),
-    absent('error-and-recovery', 'Common error and recovery',
+    absent('error-and-recovery', t('guide.section.error-and-recovery'),
       'The common-error and recovery transcripts are not yet summarized here.'),
-    present('debrief', 'Debrief prompts (PEARLS)', debriefItems(scenario),
+    present('debrief', t('guide.section.debrief'), debriefItems(scenario),
       'The scenario declares no debrief rubric.'),
-    present('pause-points', 'Pause points', (scenario.pausePoints ?? []).map((point) => ({
+    present('pause-points', t('guide.section.pause-points'), (scenario.pausePoints ?? []).map((point) => ({
       label: point.atTick !== undefined ? (point.atTick === 0 ? 'At start' : `Tick ${point.atTick}`) : `When ${point.when}`,
       text: `${point.question} (look at the ${point.region} region)`,
     })), 'This scenario declares no pause points yet. A facilitator can pause the clock at any time.'),
-    present('limitations', 'Limitations',
+    present('limitations', t('guide.section.limitations'),
       (metadata.limitations ?? []).map((text) => ({ text })),
       'The scenario declares no limitations of its own; module limitations are on /limitations.'),
-    present('sources', 'Sources',
+    present('sources', t('guide.section.sources'),
       metadata.clinicalReview.sources.map((text) => ({ text })),
       'The scenario declares no sources.'),
-    present('provenance', 'Provenance', [
+    present('provenance', t('guide.section.provenance'), [
       { label: 'Scenario', text: `${metadata.id}, content version ${metadata.version}` },
       { label: 'Licence', text: metadata.license },
       { label: 'Author', text: metadata.author },

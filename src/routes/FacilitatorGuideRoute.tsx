@@ -9,6 +9,7 @@ import { SiteBar } from '@platform/ui';
 import { facilitatorGuide } from '@platform/facilitation/guide';
 import { facilitatedScenarioFor } from '@platform/facilitation/scenario-catalog';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
+import { t } from '@platform/i18n/messages';
 
 export function FacilitatorGuideRoute({ path }: { path: string }) {
   const entry = facilitatedScenarioFor(path);
@@ -17,8 +18,8 @@ export function FacilitatorGuideRoute({ path }: { path: string }) {
       <div className="document">
         <SiteBar />
         <main className="reading" id="main">
-          <h1>No such facilitator guide</h1>
-          <p>That address does not match a scenario. <a href="/for-educators">The educator pages</a> list them.</p>
+          <h1>{t('guide.missing.heading')}</h1>
+          <p>{t('guide.missing.body')} <a href="/for-educators">{t('guide.missing.link')}</a></p>
         </main>
       </div>
     );
@@ -28,17 +29,16 @@ export function FacilitatorGuideRoute({ path }: { path: string }) {
     <div className="document">
       <SiteBar />
       <main className="reading" id="main">
-        <h1>Facilitator guide: {entry.scenario.metadata.title}</h1>
+        <h1>{t('guide.heading', { title: entry.scenario.metadata.title })}</h1>
         <p>
-          Generated from the scenario itself, so it cannot drift from what learners see. A section
-          the scenario cannot fill says so rather than reading as complete.{' '}
-          <a className="guide__screen-only" href={briefing}>Open the scenario briefing</a>
+          {t('guide.intro')}{' '}
+          <a className="guide__screen-only" href={briefing}>{t('guide.open-briefing')}</a>
         </p>
         {facilitatorGuide(entry).map((section) => (
           <section key={section.id} className="guide__section document__group" aria-labelledby={`guide-${section.id}`}>
             <h2 id={`guide-${section.id}`}>{section.heading}</h2>
             {section.status === 'absent'
-              ? <p className="guide__absent">Not available: {section.reason}</p>
+              ? <p className="guide__absent">{t('guide.not-available', { reason: section.reason })}</p>
               : (
                 <ul>
                   {section.items.map((item, index) => (
@@ -54,8 +54,8 @@ export function FacilitatorGuideRoute({ path }: { path: string }) {
         <p>{NOT_FOR_CLINICAL_USE}</p>
       </main>
       <footer className="document__foot">
-        <a href={briefing}>Back to the scenario</a>
-        <a href="/for-educators">For educators</a>
+        <a href={briefing}>{t('guide.back')}</a>
+        <a href="/for-educators">{t('guide.educators')}</a>
       </footer>
     </div>
   );
