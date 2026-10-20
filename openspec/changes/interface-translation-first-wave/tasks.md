@@ -65,8 +65,13 @@
   - Prerendered pages: each module's index and each scenario's static briefing (10; sixteen
     hand-typed headings that were each a module's name and "simulator" are now one message;
     text identical to the previous build).
-  - Still to move: the action cockpit's controls (`ActionCockpit.tsx` and each module's tray),
-    and the cockpit's screen-reader announcements.
+  - The action cockpit's generic controls: every Cancel (17, one message), the teaching-model badge
+    (9), and the tray, pump-settings, free-dose, and out-of-region labels. What remains in
+    `ActionCockpit.tsx` names clinical interventions, parameters, and model limits ("Start 20%
+    lipid", "Tidal volume", "Never shock asystole or PEA") and stays English as clinical content.
+  - Still to move: an audit of the fifteen other modules' trays for generic controls among their
+    clinical labels, and the cockpit's screen-reader announcements, which describe clinical state
+    and need the same split before any of them moves.
 - [x] Generate the coverage report at build; publish `/translation-status` as a trust document.
   Its sentence claiming the test locales ran on every build was untrue and is corrected: they are
   applied by hand in development until CI runs them. The prerendered page computes coverage from the catalogs at build: languages offered (none),

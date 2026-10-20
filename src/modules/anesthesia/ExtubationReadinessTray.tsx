@@ -1,5 +1,7 @@
 import { Badge, Button } from '@platform/ui';
 import { useState } from 'react';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function ExtubationReadinessTray({ assessment, onAction }: {
   assessment?: {
@@ -83,7 +85,7 @@ export function ExtubationReadinessTray({ assessment, onAction }: {
                 setPendingDecision(null);
               }}>Confirm choice</Button>
               <Button variant="ghost" className="crisis-drug__action"
-                onClick={() => setPendingDecision(null)}>Cancel</Button>
+                onClick={() => setPendingDecision(null)}>{t('action.cancel')}</Button>
             </div>
           </div>
         )}

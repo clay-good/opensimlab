@@ -97,6 +97,8 @@ import type { GuidanceLevel } from '@anesthesia/tutor/guidance';
 import type { LessonTray } from './lesson-tray';
 import { TutorPanel, WatchingNotice } from './tutor-panel';
 import type { EquipmentSnapshot } from '@platform/kernel/protocol';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export type TrayId = 'syringes' | 'infusions' | 'fluids' | 'airway' | 'monitor' | 'circuit' | 'crisis';
 
@@ -3479,7 +3481,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
     <div className="actions">
       {visibleTrays.length > 1 && (
         <Tabs
-          label="Action trays"
+          label={t('action.trays')}
           tabs={visibleTrays}
           active={tray}
           onSelect={(id) => setTray(id as TrayId)}
@@ -3487,7 +3489,7 @@ export function ActionCockpit(props: ActionCockpitProps) {
       )}
 
       {/* Pinned: running infusions are visible regardless of the selected tray. */}
-      {!focusedEmergencyAssessment && <div className="actions__pinned" role="status" aria-label="Pump settings for running infusions">
+      {!focusedEmergencyAssessment && <div className="actions__pinned" role="status" aria-label={t('action.pump-settings')}>
         {props.infusions.length === 0
           ? <span>No infusions running</span>
           : props.infusions.map((infusion) => (
@@ -3959,7 +3961,7 @@ function BronchospasmTray({
     <div className="tray-grid">
       <section className="syringe" aria-labelledby="bronchospasm-response-title">
         <div id="bronchospasm-response-title" className="syringe__name">Lower-airway response</div>
-        <Badge kind="teaching">Teaching model</Badge>
+        <Badge kind="teaching">{t('debrief.teaching-model')}</Badge>
         <p className="field__hint">
           Call for help, deliver 100% oxygen and deepen anesthesia in Airway &amp; Vent, then exclude mechanical mimics.
         </p>
@@ -3992,7 +3994,7 @@ function BronchospasmTray({
                 onBronchodilator();
                 setConfirming(false);
               }}>Give {displayName}</Button>
-              <Button variant="ghost" compact onClick={() => setConfirming(false)}>Cancel</Button>
+              <Button variant="ghost" compact onClick={() => setConfirming(false)}>{t('action.cancel')}</Button>
             </div>
           </div>
         )}
@@ -4030,7 +4032,7 @@ export function NeuromuscularReversalTray({
   return (
     <section className="card" aria-label="Neuromuscular reversal">
       <h3 className="panel__title">Neuromuscular reversal</h3>
-      <Badge kind="teaching">Teaching model</Badge>
+      <Badge kind="teaching">{t('debrief.teaching-model')}</Badge>
       <p className="syringe__remaining" role="status">{status}</p>
       {lastReversal && (
         <p className="field__hint">Last accepted: {lastReversal.agent}
@@ -4048,7 +4050,7 @@ export function NeuromuscularReversalTray({
       ) : (
         <div style={{ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
           <Button variant="primary" onClick={give}>Give reversal</Button>
-          <Button variant="ghost" onClick={() => setPending(null)}>Cancel</Button>
+          <Button variant="ghost" onClick={() => setPending(null)}>{t('action.cancel')}</Button>
         </div>
       )}
       <p className="field__hint">Choose from the measured depth. Neostigmine is available only
@@ -4092,7 +4094,7 @@ function CardiacArrestTray({
       <section className="syringe">
         <div className="syringe__name">Chest compressions</div>
         <div className="syringe__meta">Fixed 110/min teaching action</div>
-        <Badge kind="teaching">Teaching model</Badge>
+        <Badge kind="teaching">{t('debrief.teaching-model')}</Badge>
         <p className="syringe__remaining" role="status">
           {roscAtTick !== null ? 'ROSC recorded'
             : active ? `${compressionsActive ? 'Running' : 'Stopped'} · ${compressionSeconds.toFixed(0)} s accepted`
@@ -4115,7 +4117,7 @@ function CardiacArrestTray({
         ) : (
           <div style={{ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
             <Button variant="primary" onClick={() => { onEpinephrine(); setPending(null); }}>Give 1 mg IV</Button>
-            <Button variant="ghost" onClick={() => setPending(null)}>Cancel</Button>
+            <Button variant="ghost" onClick={() => setPending(null)}>{t('action.cancel')}</Button>
           </div>
         )}
         <p className="field__hint">The current AHA adult algorithm repeats epinephrine every 3–5 minutes; this bounded case accepts one dose.</p>
@@ -4137,7 +4139,7 @@ function CardiacArrestTray({
             <Button variant="primary" onClick={() => { onDefibrillation(pending); setPending(null); }}>
               Deliver {pending} J
             </Button>
-            <Button variant="ghost" onClick={() => setPending(null)}>Cancel</Button>
+            <Button variant="ghost" onClick={() => setPending(null)}>{t('action.cancel')}</Button>
           </div>
         )}
         <p className="field__hint">This declared device converts VF at 200 J under the case conditions. Other devices use manufacturer guidance. Never shock asystole or PEA.</p>
@@ -4329,7 +4331,7 @@ function FluidTray({
               }}>
                 Send request
               </Button>
-              <Button variant="ghost" compact onClick={() => setPendingBloodBank(false)}>Cancel</Button>
+              <Button variant="ghost" compact onClick={() => setPendingBloodBank(false)}>{t('action.cancel')}</Button>
             </div>
           ) : (
             <Button compact onClick={() => setPendingBloodBank(true)}>Request products</Button>
@@ -4384,7 +4386,7 @@ function FluidTray({
                 >
                   Give {product.kind === 'red-cells' ? 'packed red cells' : 'plasma'}
                 </Button>
-                <Button variant="ghost" compact onClick={() => setPendingBlood(null)}>Cancel</Button>
+                <Button variant="ghost" compact onClick={() => setPendingBlood(null)}>{t('action.cancel')}</Button>
               </div>
             </div>
           ) : (
@@ -4423,7 +4425,7 @@ function HighSpinalTray({
     <div className="tray-grid">
       <section className="syringe" aria-labelledby="high-spinal-response-title">
         <div id="high-spinal-response-title" className="syringe__name">High spinal response</div>
-        <Badge kind="teaching">Teaching model</Badge>
+        <Badge kind="teaching">{t('debrief.teaching-model')}</Badge>
         <p className="field__hint">
           Call for help, support breathing in Airway &amp; Vent, and give a 250–500 mL fluid bolus in Fluids.
         </p>
@@ -4462,7 +4464,7 @@ function HighSpinalTray({
               }}>
                 Give ephedrine
               </Button>
-              <Button variant="ghost" compact onClick={() => setPendingDose(null)}>Cancel</Button>
+              <Button variant="ghost" compact onClick={() => setPendingDose(null)}>{t('action.cancel')}</Button>
             </div>
           </div>
         )}
@@ -4529,7 +4531,7 @@ function PreeclampsiaResponseTray({
                 onAction(pending);
                 setPending(null);
               }}>Confirm</Button>
-              <Button variant="ghost" compact onClick={() => setPending(null)}>Cancel</Button>
+              <Button variant="ghost" compact onClick={() => setPending(null)}>{t('action.cancel')}</Button>
             </div>
           </div>
         )}
@@ -4557,7 +4559,7 @@ function VenousAirEmbolismTray({
     <div className="tray-grid">
       <section className="syringe" aria-labelledby="venous-air-response-title">
         <div id="venous-air-response-title" className="syringe__name">Abrupt pulmonary-flow response</div>
-        <Badge kind="teaching">Teaching model</Badge>
+        <Badge kind="teaching">{t('debrief.teaching-model')}</Badge>
         <p className="field__hint">
           Escalate the abrupt monitor change, deliver 100% oxygen in Airway &amp; Vent, and stop further suspected air entry.
         </p>
@@ -4588,7 +4590,7 @@ function VenousAirEmbolismTray({
               }}>
                 Confirm source control
               </Button>
-              <Button variant="ghost" compact onClick={() => setConfirmingControl(false)}>Cancel</Button>
+              <Button variant="ghost" compact onClick={() => setConfirmingControl(false)}>{t('action.cancel')}</Button>
             </div>
           </div>
         )}
@@ -4672,7 +4674,7 @@ function PneumothoraxResponseTray({
                 setConfirmingDecompression(false);
               }}>Confirm decompression intent</Button>
               <Button variant="ghost" className="crisis-drug__action"
-                onClick={() => setConfirmingDecompression(false)}>Cancel</Button>
+                onClick={() => setConfirmingDecompression(false)}>{t('action.cancel')}</Button>
             </div>
           </div>
         )}
@@ -4985,7 +4987,7 @@ function EmergenceResidualBlockTray({
                 setPendingPlan(null);
               }}>Confirm choice</Button>
               <Button variant="ghost" className="crisis-drug__action"
-                onClick={() => setPendingPlan(null)}>Cancel</Button>
+                onClick={() => setPendingPlan(null)}>{t('action.cancel')}</Button>
             </div>
           </div>
         )}
@@ -5020,7 +5022,7 @@ function EpinephrineCrisisTray({
       <section className="syringe">
         <div className="syringe__name">{displayName}</div>
         <div className="syringe__meta">Intravenous bolus · dose in micrograms</div>
-        <Badge kind="teaching">Teaching model</Badge>
+        <Badge kind="teaching">{t('debrief.teaching-model')}</Badge>
         <p className="field__hint">
           Pre-prepared dose action. Concentration, dilution, pump delivery, and syringe inventory
           are not modeled.
@@ -5096,7 +5098,7 @@ function LocalAnestheticToxicityTray({
       <section className="syringe">
         <div className="syringe__name">Seizure suppression</div>
         <div className="syringe__meta">IV benzodiazepine · agent-class action</div>
-        <Badge kind="teaching">Teaching model</Badge>
+        <Badge kind="teaching">{t('debrief.teaching-model')}</Badge>
         <p className="syringe__remaining" role="status">Status: {seizureStatus}</p>
         <p className="field__hint">Drug selection, dose, kinetics, and physical administration are not modeled.</p>
         {pending !== 'benzodiazepine' ? (
@@ -5108,14 +5110,14 @@ function LocalAnestheticToxicityTray({
             <Button variant="primary" className="crisis-drug__action" onClick={() => {
               onSeizureSuppression(); setPending(null);
             }}>Give benzodiazepine</Button>
-            <Button variant="ghost" className="crisis-drug__action" onClick={() => setPending(null)}>Cancel</Button>
+            <Button variant="ghost" className="crisis-drug__action" onClick={() => setPending(null)}>{t('action.cancel')}</Button>
           </div>
         )}
       </section>
       <section className="syringe">
         <div className="syringe__name">20% lipid emulsion</div>
         <div className="syringe__meta">ASRA 2020 initial weight-banded protocol</div>
-        <Badge kind="teaching">Teaching model</Badge>
+        <Badge kind="teaching">{t('debrief.teaching-model')}</Badge>
         <p className="syringe__remaining" role="status">
           Accepted total: {lipidEmulsionTotalMl.toFixed(0)} mL
           {lipidEmulsionInfusionMlPerMin > 0
@@ -5137,7 +5139,7 @@ function LocalAnestheticToxicityTray({
             <Button variant="primary" className="crisis-drug__action" onClick={() => {
               onLipidEmulsion(); setPending(null);
             }}>Start 20% lipid</Button>
-            <Button variant="ghost" className="crisis-drug__action" onClick={() => setPending(null)}>Cancel</Button>
+            <Button variant="ghost" className="crisis-drug__action" onClick={() => setPending(null)}>{t('action.cancel')}</Button>
           </div>
         )}
         <p className="field__hint">
@@ -5172,7 +5174,7 @@ function HypermetabolicCrisisTray({
       <section className="syringe" aria-labelledby="dantrolene-title">
         <div id="dantrolene-title" className="syringe__name">Dantrolene</div>
         <div className="syringe__meta">Intravenous dose · weight-based</div>
-        <Badge kind="teaching">Teaching model</Badge>
+        <Badge kind="teaching">{t('debrief.teaching-model')}</Badge>
         <p className="field__hint">
           Pre-prepared dose action. Reconstitution, vial inventory, laboratory treatment, and
           dose adjustment beyond the displayed weight calculation are not modeled.
@@ -5299,7 +5301,7 @@ function Syringe({ drug, remainingMl, weightKg, onBolus, onDrugCard }: {
             ))}
           </div>
           <NumericField
-            label="Free dose"
+            label={t('action.free-dose')}
             unit={massUnit}
             value={free}
             min={0}
@@ -5335,7 +5337,7 @@ function Syringe({ drug, remainingMl, weightKg, onBolus, onDrugCard }: {
             >
               Give
             </Button>
-            <Button variant="ghost" compact onClick={() => setPending(null)}>Cancel</Button>
+            <Button variant="ghost" compact onClick={() => setPending(null)}>{t('action.cancel')}</Button>
           </div>
         </div>
       )}
@@ -5431,7 +5433,7 @@ function InfusionTray({ formulary, region, weightKg, hypnoticLine, onInfusion, o
             <Toggle
               checked={tciOpen}
               onChange={setTciOpen}
-              label="Open the out-of-region learning module anyway"
+              label={t('action.out-of-region')}
             />
             {tciOpen && (
               <p className="field__hint">

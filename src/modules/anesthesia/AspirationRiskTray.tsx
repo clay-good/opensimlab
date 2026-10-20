@@ -1,5 +1,7 @@
 import { Badge, Button } from '@platform/ui';
 import { useState } from 'react';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function AspirationRiskTray({
   assessment, onAction,
@@ -76,7 +78,7 @@ export function AspirationRiskTray({
                 setPendingPlan(null);
               }}>Confirm choice</Button>
               <Button variant="ghost" className="crisis-drug__action"
-                onClick={() => setPendingPlan(null)}>Cancel</Button>
+                onClick={() => setPendingPlan(null)}>{t('action.cancel')}</Button>
             </div>
           </div>
         )}

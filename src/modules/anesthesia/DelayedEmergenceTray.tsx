@@ -1,5 +1,7 @@
 import { Badge, Button } from '@platform/ui';
 import { useState } from 'react';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export function DelayedEmergenceTray({ assessment, onAction }: {
   assessment?: {
@@ -88,7 +90,7 @@ export function DelayedEmergenceTray({ assessment, onAction }: {
                 setPendingEscalation(null);
               }}>Confirm choice</Button>
               <Button variant="ghost" className="crisis-drug__action"
-                onClick={() => setPendingEscalation(null)}>Cancel</Button>
+                onClick={() => setPendingEscalation(null)}>{t('action.cancel')}</Button>
             </div>
           </div>
         )}
