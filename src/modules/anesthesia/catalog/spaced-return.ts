@@ -11,10 +11,11 @@
  */
 import type { Scenario } from '../scenarios/types';
 import type { PracticeAttempt, PracticeOutcome } from './practice-history';
-import { EN_MESSAGES, t, type MessageKey } from '@platform/i18n/messages';
+import { t, type MessageKey } from '@platform/i18n/messages';
+import { SESSION_MESSAGES } from '@platform/i18n/messages-session';
 
 /** The convention label, in English; the panel reads it from the catalog. */
-export const SPACED_RETURN_CONVENTION = EN_MESSAGES['spaced.convention'].text;
+export const SPACED_RETURN_CONVENTION = SESSION_MESSAGES['spaced.convention'].text;
 
 const OUTCOME_RANK: Readonly<Record<PracticeOutcome, number>> = {
   'not-met': 0, 'partly-met': 1, 'not-exercised': 2, met: 3,

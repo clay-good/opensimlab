@@ -9,7 +9,7 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { EN_MESSAGES } from '@platform/i18n/messages';
+import { EN_MESSAGES } from '@platform/i18n/all-messages';
 import {
   DEMONSTRATION_HREF, DEMONSTRATION_SCENARIO_ID, DEMONSTRATION_SECONDS, INDUCTION_DEMONSTRATION,
   beatAt, beatsToFire, demonstrationRequested,

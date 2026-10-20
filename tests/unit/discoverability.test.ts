@@ -194,6 +194,10 @@ describe('Requirement: One Screen, One Action', () => {
     expect(ONE_LINE_DESCRIPTION).toContain('free');
     expect(ONE_LINE_DESCRIPTION).toContain(`${READY_SCENARIO_COUNT}`);
     expect(ONE_LINE_DESCRIPTION).toContain(`${READY_MODULE_COUNT} specialties`);
+    // The About page's catalogue paragraph quoted its own count by hand and said
+    // 240 while the registry held 256. It reads the same total the tagline does now.
+    const inside = CONTENT_SECTIONS.find((section) => section.id === 'inside-the-module')!;
+    expect(inside.paragraphs.join(' ')).toContain(`a list of ${READY_SCENARIO_COUNT} titles`);
     expect(READY_MODULE_COUNT).toBe(availableModules().length);
     expect(READY_SCENARIO_COUNT).toBe(
       SCENARIOS.length + EMERGENCY_MEDICINE_SCENARIOS.length + CRITICAL_CARE_SCENARIOS.length

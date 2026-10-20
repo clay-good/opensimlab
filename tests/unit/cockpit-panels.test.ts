@@ -4,7 +4,8 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { RapidCyclePanel } from '@anesthesia/ui/RapidCyclePanel';
 import { PausePointPanel } from '@anesthesia/ui/PausePointPanel';
 import { PERSISTENT_VF_CARDIAC_ARREST as SCENARIO } from '@anesthesia/scenarios/persistent-vf-cardiac-arrest';
-import { EN_MESSAGES, setActiveCatalog } from '@platform/i18n/messages';
+import { setActiveCatalog } from '@platform/i18n/messages';
+import { EN_MESSAGES } from '@platform/i18n/all-messages';
 import { pseudoLocale } from '@platform/i18n/catalog';
 
 const point = SCENARIO.rapidCycle![0]!;

@@ -5,6 +5,7 @@ import { dismissRecommendation, recommendationDismissed } from '@anesthesia/cata
 import { MaturityMarker } from '@platform/governance/MaturityMarker';
 import { Button, Panel } from '@platform/ui';
 import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export interface GoalRecommendationProps {
   readonly pathId: PreparationPathId;

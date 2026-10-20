@@ -1,5 +1,6 @@
 import { Button } from '@platform/ui';
 import { t, type MessageKey } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 import type { ScenarioPausePoint } from '../scenarios/types';
 
 /** A classroom pause: the scenario's question, in its own words, and one way on. */

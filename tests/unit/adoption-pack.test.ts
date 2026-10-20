@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { EN_MESSAGES } from '@platform/i18n/messages';
+import { EN_MESSAGES } from '@platform/i18n/all-messages';
 import type { MaturityCatalog } from '@platform/catalog/maturity';
 import type { ScenarioCompletionCatalog } from '@platform/catalog/scenario-completion';
 import {

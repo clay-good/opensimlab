@@ -1,4 +1,5 @@
 import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-documents';
 import {
   CORRECTIONS, CORRECTIONS_EMPTY_REASON, CORRECTIONS_POLICY, CORRECTIONS_TRIAGE,
 } from './corrections';

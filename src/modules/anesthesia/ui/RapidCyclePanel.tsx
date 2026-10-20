@@ -1,5 +1,6 @@
 import { Button } from '@platform/ui';
 import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 import type { ScenarioRapidCycle } from '../scenarios/types';
 import type { RapidCycleStatus } from '../catalog/rapid-cycle';
 

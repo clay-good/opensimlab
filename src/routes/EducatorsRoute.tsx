@@ -16,6 +16,7 @@ import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { MAPPING_DISCLAIMER } from '@anesthesia/curriculum/frameworks';
 import { EDUCATOR_PAGES } from './educator-pages';
 import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-educator';
 
 /** Builds the link an instructor hands out. Nothing here contacts anything. */
 function AssignmentBuilder() {

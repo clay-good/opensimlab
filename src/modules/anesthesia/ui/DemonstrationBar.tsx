@@ -14,6 +14,7 @@ import { useEffect, useRef } from 'react';
 import { Button } from '@platform/ui';
 import type { DemonstrationBeat } from '@anesthesia/demo/demonstration';
 import { t, type MessageKey } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export interface DemonstrationBarProps {
   readonly beat: DemonstrationBeat | null;

@@ -16,8 +16,9 @@ import { registerServiceWorker } from '@platform/offline/register';
 if (import.meta.env.DEV) {
   const pseudo = new URLSearchParams(window.location.search).get('pseudo');
   if (pseudo === 'en-XA' || pseudo === 'en-XB') {
-    const [{ pseudoLocale }, { EN_MESSAGES, setActiveCatalog }] = await Promise.all([
+    const [{ pseudoLocale }, { setActiveCatalog }, { EN_MESSAGES }] = await Promise.all([
       import('@platform/i18n/catalog'), import('@platform/i18n/messages'),
+      import('@platform/i18n/all-messages'),
     ]);
     setActiveCatalog(pseudoLocale(EN_MESSAGES, pseudo));
     if (pseudo === 'en-XB') document.documentElement.dir = 'rtl';

@@ -1,5 +1,6 @@
 import { Badge, Disclosure, KeyFigure } from '@platform/ui';
 import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-documents';
 import { HONEST_STATUS } from './records';
 import { itemKey, reviewStatusReport } from './review-status';
 

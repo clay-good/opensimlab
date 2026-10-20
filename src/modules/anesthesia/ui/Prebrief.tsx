@@ -8,6 +8,7 @@
  */
 
 import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 import { Badge, Button, Panel, SiteBar } from '@platform/ui';
 import { limitationsToBrief } from '@platform/docs/scenario-limitations';
 import type { Limitation } from '@platform/docs/limitations/types';

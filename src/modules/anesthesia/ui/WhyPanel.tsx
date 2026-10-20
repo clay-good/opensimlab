@@ -12,6 +12,7 @@ import type { Attribution } from '@platform/kernel/protocol';
 import { FIELDS, type StateField } from '@anesthesia/physiology';
 import { EXPLAINERS } from '@anesthesia/content/explainers';
 import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 /** Which explainer each attribution term links to. */
 /**

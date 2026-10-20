@@ -1,5 +1,6 @@
 import { Badge, CitationLink, Disclosure, KeyFigure } from '@platform/ui';
 import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-documents';
 import { buildValidationReport } from './validation-report';
 import { SOURCES, formatSource, requireSource } from './sources';
 import { VERIFIED_CONSTANTS, confirmedCount } from './verified-constants';

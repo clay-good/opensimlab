@@ -33,12 +33,24 @@
   - Educator pages: the facilitator guide (71, with its prebrief and debrief templates),
     `/for-educators` (59, markup byte-identical), `/curriculum` (16), `/review` (14, outcome words
     shared with the debrief).
-  - Front door, root prose: the landing page and `/about`'s own words (18; both render
-    byte-identical markup). Their substantive copy in `src/landing/content.ts` has not moved.
+  - Front door, root prose: the landing page and `/about`'s own words (18), and their copy in
+    `src/landing/content.ts` (66: the tagline, three facts, seven sections, nine questions, the
+    reviewer invitation, footer labels), which keeps its exports and reads the catalog through
+    getters. The landing markup is byte-identical; `/about` differs in one number, where its
+    catalogue paragraph had said 240 titles by hand while 256 shipped and now reads the registry.
+    The suggested citation stays fixed text, held against `CITATION.cff`.
+  - The catalog is split by surface. With every surface in one module, the front door downloaded
+    every surface's words and its route reached 150.5 KB against a 150 KB budget. The core
+    (`messages.ts`: site bar, document chrome, not-found, acknowledgement, update notice, front
+    door) stays on every page; `messages-documents`, `messages-educator`, and `messages-session`
+    register themselves when a surface imports them, and `all-messages.ts` assembles the whole
+    catalog for coverage, the pseudo-locales, and the tests. The landing route is 137.5 KB.
+    `tests/unit/i18n-groups.test.ts` fails any file that uses a group's key without importing that
+    group, because `t` throws on an unregistered key and would do it on the route that forgot.
   - Out of scope by design: `/gallery` and `/frame-budget` are noindex development surfaces whose
     text is component names, sample data, and a device measurement, not interface a learner or
     educator reads.
-  - Still to move: the landing copy in `src/landing/content.ts`, the prebrief's remaining text, the cockpit shell
+  - Still to move: the prebrief's remaining text, the cockpit shell
     and its action controls, the crisis injector's own words, `/content-review`, the planned-module
     page, and the prerendered scenario briefing.
 - [x] Generate the coverage report at build; publish `/translation-status` as a trust document.

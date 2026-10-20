@@ -4,6 +4,7 @@
  */
 import { Button, Toggle } from '@platform/ui';
 import { t, type MessageKey } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 import { HAPTICS_UNSUPPORTED_REASON } from '@platform/audio/haptics';
 import { NARRATION_RATES, type NarrationSettings, type NarrationSource } from '@platform/audio/narration';
 import { NO_LOCAL_VOICE_REASON, type VoiceChoice, type VoiceLike } from '@platform/audio/narration-voices';

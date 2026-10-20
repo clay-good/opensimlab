@@ -18,6 +18,7 @@ import { EXPLAINERS } from '@anesthesia/content/explainers';
 import { ASA_MONITORING_EXPLAINER } from './tracks';
 import { HONEST_STATUS } from '@platform/governance/status';
 import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export type AnalysisTab = 'concentrations' | 'log' | 'patient' | 'learn';
 

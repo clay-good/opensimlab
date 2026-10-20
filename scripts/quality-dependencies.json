@@ -28,7 +28,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
-        "sha256": "c9756d535d3ead5994cd78e43af743cb29c606fc8e94bb302a68d1308d7bf668"
+        "sha256": "0197e4ffde0abc5d581417d4abde9e5fa5fe5f4e0d2a8795cac341a2e76d0ea2"
       },
       {
         "path": "src/modules/endocrine-metabolic/HypocalcemiaTray.tsx",
@@ -249,15 +249,15 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Cockpit.tsx",
-        "sha256": "a05510a1df4ad54ca8f0f301409761b1dd99139b6b789ecbaf824e5253e1c002"
+        "sha256": "93fed70f81b3422ff18359d16460a8e81c761a39f475045aa3bcc0edcfb1f153"
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
-        "sha256": "c9756d535d3ead5994cd78e43af743cb29c606fc8e94bb302a68d1308d7bf668"
+        "sha256": "0197e4ffde0abc5d581417d4abde9e5fa5fe5f4e0d2a8795cac341a2e76d0ea2"
       },
       {
         "path": "src/modules/anesthesia/ui/Prebrief.tsx",
-        "sha256": "245a5a1b538e37205374084ab615c0e2c0a76bc40a00c84b16714b4b66e86926"
+        "sha256": "154e3f889226b4f71b93cdd46943319a57869c5b3d30912c8712ab9e752d7f08"
       },
       {
         "path": "src/modules/endocrine-metabolic/HyponatremiaCorrectionTray.tsx",
@@ -514,19 +514,19 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Cockpit.tsx",
-        "sha256": "a05510a1df4ad54ca8f0f301409761b1dd99139b6b789ecbaf824e5253e1c002"
+        "sha256": "93fed70f81b3422ff18359d16460a8e81c761a39f475045aa3bcc0edcfb1f153"
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
-        "sha256": "c9756d535d3ead5994cd78e43af743cb29c606fc8e94bb302a68d1308d7bf668"
+        "sha256": "0197e4ffde0abc5d581417d4abde9e5fa5fe5f4e0d2a8795cac341a2e76d0ea2"
       },
       {
         "path": "src/modules/anesthesia/ui/DemonstrationBar.tsx",
-        "sha256": "5e3ad20388a9a9b2b2876f4aae2b75baaa1c9a967006e1eb07338eccfce755ba"
+        "sha256": "df6554408ce5b6145fd9d17668025b22344fb15549439f4ceef6a6684afa4760"
       },
       {
         "path": "src/modules/anesthesia/ui/Prebrief.tsx",
-        "sha256": "245a5a1b538e37205374084ab615c0e2c0a76bc40a00c84b16714b4b66e86926"
+        "sha256": "154e3f889226b4f71b93cdd46943319a57869c5b3d30912c8712ab9e752d7f08"
       },
       {
         "path": "src/modules/anesthesia/ui/accessibility.ts",

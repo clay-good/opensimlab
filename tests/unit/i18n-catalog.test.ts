@@ -5,7 +5,8 @@ import {
   catalogProblems, coverage, formatMessage, placeholderNames, pseudoLocale, sourceHash, translate,
   type LocaleCatalog, type SourceMessage,
 } from '@platform/i18n/catalog';
-import { EN_MESSAGES, LOCALE_CATALOGS, t } from '@platform/i18n/messages';
+import { LOCALE_CATALOGS, t } from '@platform/i18n/messages';
+import { EN_MESSAGES } from '@platform/i18n/all-messages';
 import { SITE_BAR_LINKS, SiteBar } from '@platform/ui/SiteBar';
 import { DocumentRoute } from '@routes/DocumentRoute';
 

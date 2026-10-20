@@ -15,6 +15,7 @@ import type { HistorySample } from '@platform/session/session-store';
 import { NOT_CLINICALLY_REVIEWED, NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { MODELS_BY_ID } from '@anesthesia/pharmacology/registry';
 import { t, type MessageKey } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 const DRUG_TOKENS: Record<string, string> = {
   propofol: '--neuro',

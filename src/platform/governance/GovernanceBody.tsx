@@ -1,5 +1,6 @@
 import { Badge, Disclosure, KeyFigure } from '@platform/ui';
 import { t, type MessageKey } from '@platform/i18n/messages';
+import '@platform/i18n/messages-documents';
 import { EDITORIAL_BOARD, HONEST_STATUS, reviewableItems } from './records';
 import { reportCoverage } from './review-gate';
 import { APP_VERSION } from './status';

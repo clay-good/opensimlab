@@ -1,7 +1,8 @@
 import { KeyFigure } from '@platform/ui';
 import { MODULES } from '@platform/modules/registry';
 import { coverage, pseudoLocale, type SourceMessage } from '@platform/i18n/catalog';
-import { EN_MESSAGES, LOCALE_CATALOGS, t } from '@platform/i18n/messages';
+import { LOCALE_CATALOGS, t } from '@platform/i18n/messages';
+import { EN_MESSAGES } from '@platform/i18n/all-messages';
 
 /**
  * Which language a reader is reading, stated. Counts come from the catalogs

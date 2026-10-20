@@ -1,5 +1,6 @@
 import { Disclosure, KeyFigure } from '@platform/ui';
 import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-documents';
 import { LIMITATIONS, LIMITATION_GROUPS } from './limitations';
 
 /**

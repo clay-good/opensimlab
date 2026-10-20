@@ -110,7 +110,8 @@ describe('facilitator guide', () => {
 
 describe('the guide templates come from the catalog', () => {
   it('follow the active locale, so the guide can be translated as educator text', async () => {
-    const { EN_MESSAGES, setActiveCatalog } = await import('@platform/i18n/messages');
+    const { setActiveCatalog } = await import('@platform/i18n/messages');
+    const { EN_MESSAGES } = await import('@platform/i18n/all-messages');
     const { pseudoLocale } = await import('@platform/i18n/catalog');
     expect(GUIDE_TEMPLATES.reactions).toBe(EN_MESSAGES['guide.template.reactions'].text);
     try {

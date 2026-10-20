@@ -136,6 +136,7 @@ import { RapidCyclePanel } from './RapidCyclePanel';
 import { PausePointPanel } from './PausePointPanel';
 import { SessionPreferences } from './SessionPreferences';
 import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 import { useReasoningNotes } from '@platform/session/reasoning-notes';
 import type { ScenarioPausePoint, ScenarioRapidCycle } from '../scenarios/types';
 import type { RapidCycleStatus } from '../catalog/rapid-cycle';

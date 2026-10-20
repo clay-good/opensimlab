@@ -7,6 +7,7 @@ import {
 } from '@anesthesia/catalog/spaced-return';
 import { Button, Panel } from '@platform/ui';
 import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 /** Module-level so the effect's dependency stays stable. */
 const defaultNow = () => new Date().getTime();

@@ -10,6 +10,7 @@
 
 import { availableModules } from '@platform/modules/registry';
 import { APP_VERSION } from '@platform/governance/status';
+import { CORE_MESSAGES, t, type MessageKey } from '@platform/i18n/messages';
 
 /**
  * Both counts are derived from the module registry rather than typed here.
@@ -25,9 +26,20 @@ export const READY_MODULE_COUNT = availableModules().length;
 export const READY_SCENARIO_COUNT = availableModules()
   .reduce((total, module) => total + module.scenarioCount, 0);
 
-export const ONE_LINE_DESCRIPTION =
-  `Practice ${READY_SCENARIO_COUNT} clinical scenarios across ${READY_MODULE_COUNT} specialties, free online, `
-  + 'for medical students, residents, and nurse anesthetists.';
+/**
+ * Read once, when the module loads, because it is a plain string that the
+ * structured data and the front door both import. Every other piece of prose
+ * below is a getter, so a test locale applied after load still reaches it.
+ */
+export const ONE_LINE_DESCRIPTION = t('land.tagline', {
+  scenarios: READY_SCENARIO_COUNT, modules: READY_MODULE_COUNT,
+});
+
+/** A catalog key built from a pattern, checked so a typo throws instead of rendering a key. */
+function key(name: string): MessageKey {
+  if (!(name in CORE_MESSAGES)) throw new Error(`landing copy has no catalog entry ${name}`);
+  return name as MessageKey;
+}
 
 /** Exactly three facts, chosen because they answer the objections a visitor has. */
 export interface SupportingFact {
@@ -39,25 +51,19 @@ export interface SupportingFact {
   readonly href: string;
 }
 
+function fact(n: number, href: string): SupportingFact {
+  return {
+    get text() { return t(key(`land.fact${n}.text`)); },
+    get short() { return t(key(`land.fact${n}.short`)); },
+    get linkLabel() { return t(key(`land.fact${n}.link`)); },
+    href,
+  };
+}
+
 export const THREE_FACTS: readonly SupportingFact[] = [
-  {
-    text: 'Free, with no account and nothing to install.',
-    short: 'No account',
-    linkLabel: 'Read what is stored on your device',
-    href: '/privacy',
-  },
-  {
-    text: 'Works offline after the offline download finishes and you reload, including every bundled scenario and citation.',
-    short: 'Works offline',
-    linkLabel: 'Read how offline operation works',
-    href: '/privacy',
-  },
-  {
-    text: 'The drug models come from published pharmacology, with citations you can check.',
-    short: 'Cited pharmacology',
-    linkLabel: 'Read the validation report',
-    href: '/validation',
-  },
+  fact(1, '/privacy'),
+  fact(2, '/privacy'),
+  fact(3, '/validation'),
 ];
 
 export interface ContentSection {
@@ -68,136 +74,34 @@ export interface ContentSection {
   readonly link?: { readonly label: string; readonly href: string };
 }
 
+/**
+ * One section's prose, read from the catalog by its id: a heading, `paragraphs`
+ * numbered paragraphs, `items` numbered list items, and a link when it has one.
+ */
+function section(
+  id: string, paragraphs: number, items = 0, href?: string,
+): ContentSection {
+  const range = (count: number) => Array.from({ length: count }, (_, index) => index + 1);
+  return {
+    id,
+    get heading() { return t(key(`land.${id}.heading`)); },
+    get paragraphs() {
+      return range(paragraphs).map((n) => t(key(`land.${id}.p${n}`), { scenarios: READY_SCENARIO_COUNT }));
+    },
+    ...(items > 0 ? { get list() { return range(items).map((n) => t(key(`land.${id}.li${n}`))); } } : {}),
+    ...(href ? { link: { get label() { return t(key(`land.${id}.link`)); }, href } } : {}),
+  };
+}
+
 /** In this order, because that is the order a stranger's questions arrive in. */
 export const CONTENT_SECTIONS: readonly ContentSection[] = [
-  {
-    id: 'what-it-teaches',
-    heading: 'What it teaches, and how',
-    paragraphs: [
-      'Most of what makes anaesthesia hard is invisible. The drug you pushed thirty seconds ago is '
-      + 'still on its way to where it works. The pressure that just fell did so for a reason that '
-      + 'determines what will fix it. The saturation that looks fine is about to stop looking fine, '
-      + 'and how much warning you get depends on the patient in front of you.',
-      'A textbook can tell you those things. It cannot show you them happening on a patient you are '
-      + 'responsible for. That is what this is for: you give the drug, and you watch the plasma '
-      + 'concentration spike while the effect-site concentration climbs slowly behind it, and you '
-      + 'see the pressure follow the second curve rather than the first.',
-      'Every session ends in a structured debrief that names what happened, ranks why it happened '
-      + 'using the engine\'s own attribution, and computes what the alternative would have produced '
-      + 'by re-running the simulation on your decisions with one thing changed.',
-    ],
-  },
-  {
-    id: 'who-it-is-for',
-    heading: 'Who it is for',
-    paragraphs: [
-      'It is built first for medical students on an anaesthesia rotation, in particular the one '
-      + 'opening it the night before their first day in theatre. After that: anaesthesiology '
-      + 'residents in their first year, nurse anaesthetist students, and the faculty who teach '
-      + 'all three.',
-      'It assumes basic cardiovascular and respiratory physiology and no anaesthesia experience at '
-      + 'all. It is not built for practising anaesthetists, but it needs them, because no clinician '
-      + 'has yet checked whether this patient behaves the way a real one does. If that is you, the '
-      + 'governance page says exactly what is unreviewed and there is a control on every clinical '
-      + 'claim for telling us it is wrong.',
-    ],
-  },
-  {
-    id: 'inside-the-module',
-    heading: 'What is actually in it',
-    paragraphs: [
-      'Every module is a set of short cases, each built around one thing going wrong and one '
-      + 'decision worth rehearsing. An anaesthesia induction where the pressure falls and the '
-      + 'reason determines the fix. A ward patient whose early-warning score stays reassuring '
-      + 'while they deteriorate. A cancer-treatment complication that arrives weeks after the '
-      + 'exposure that caused it. None of them takes longer than a coffee break.',
-      'The catalogue is not printed here, because a list of 240 titles is not writing and it goes '
-      + 'stale the moment a scenario is added. Every module has its own page listing its cases '
-      + 'with what each one teaches, and every case has a page of its own, both generated from '
-      + 'the same registry the simulator runs from. Those cannot drift from what ships; a '
-      + 'paragraph on this page could, and once did, for as long as it took someone to notice.',
-      'What is common to all of them is the machinery: a sweeping monitor driven by the real '
-      + 'waveform engine, population pharmacokinetics for the drugs that have published models, '
-      + 'a clearly labelled teaching model for the ones that do not, and a structured debrief '
-      + 'that re-runs your own decisions with one thing changed so you can see what the '
-      + 'alternative would have produced.',
-    ],
-    list: [
-      'A sweeping monitor with electrocardiogram, arterial pressure, capnography and plethysmography, all phase-coherent.',
-      'Propofol and remifentanil, with their compartment kinetics and interaction, pediatric '
-      + 'propofol kinetics from Paedfusor, plus a clearly '
-      + 'labeled teaching model of rocuronium onset and spontaneous recovery.',
-      'Apnoea and desaturation that follow the published times rather than a stopwatch, and a '
-      + 'circulation that fails the way an unrelieved airway problem actually makes it fail.',
-      'Laryngoscopy with a Cormack-Lehane grade, where repeated attempts make things worse.',
-      'A PEARLS debrief with computed counterfactuals.',
-    ],
-    link: { label: 'See every module and what it covers', href: '/#modules' },
-  },
-  {
-    id: 'where-the-pharmacology-comes-from',
-    heading: 'Where the pharmacology comes from',
-    paragraphs: [
-      'Every model parameter is transcribed by hand from its primary publication into typed source '
-      + 'in this repository. There is no external dataset, nothing vendored, and nothing fetched at '
-      + 'build or run time. Each model carries its citation, the table it was read from, and the '
-      + 'range of patients it was derived in.',
-      'Applying a model outside that range does not silently produce a number. It marks the model '
-      + 'out of range, names which covariate is out of bounds and by how much, and offers one that '
-      + 'is not, and it still runs, so you can see what going out of range actually does.',
-      'The project requires that every parameter be independently checked by a second person '
-      + 'against a second source before a model may be called published. That check has not been '
-      + 'done for this build, so no model here carries that label, and the interface says so '
-      + 'wherever a model drives a number.',
-    ],
-    link: { label: 'Read the validation report', href: '/validation' },
-  },
-  {
-    id: 'how-it-is-reviewed',
-    heading: 'How the clinical content is reviewed',
-    paragraphs: [
-      'Every scenario, protocol, drug card and explainer is meant to carry a machine-readable '
-      + 'review record naming a credentialed clinician, their competing interests, the sources they '
-      + 'consulted, and the date it is due for re-review. The build excludes anything without one.',
-      'In this build, nothing is signed. The editorial board is empty and recruiting it is ongoing. '
-      + 'The governance page lists every outstanding item by name rather than reporting a '
-      + 'reassuring percentage.',
-    ],
-    link: { label: 'Read the governance records', href: '/governance' },
-  },
-  {
-    id: 'what-it-does-not-do',
-    heading: 'What it deliberately does not do',
-    paragraphs: [
-      'It does not teach psychomotor skills. You cannot learn to hold a laryngoscope from a screen, '
-      + 'and this does not pretend otherwise. It does not teach physical airway technique, and it '
-      + 'does not model team communication at all, which is a large part of what goes wrong in real '
-      + 'crises.',
-      'It does not replace mannequin-based simulation or supervised clinical time. The evidence that '
-      + 'screen-based simulation helps is evidence that it helps BEFORE those things, not instead of '
-      + 'them.',
-      'And it is not a clinical tool. It predicts what a virtual patient does. It never advises what '
-      + 'to do to a real one, there is no field anywhere that accepts a real patient\'s details, and '
-      + 'the simulation core is structurally incapable of turning a target concentration into a dose.',
-    ],
-    link: { label: 'Read the limitations register', href: '/limitations' },
-  },
-  {
-    id: 'using-it-in-a-course',
-    heading: 'How to use it in a course',
-    paragraphs: [
-      'It needs no licence, no procurement, no accounts and no institutional integration. Send '
-      + 'your students a link and they are in, or clone '
-      + 'the repository, run the documented build, and host the resulting files yourself from any '
-      + 'static host, on your own domain, with no dependency on this project staying online.',
-      'Because practice stays on the device, you cannot see what a student did unless they export a '
-      + 'transcript and send it to you themselves. That is a deliberate trade: the confidentiality '
-      + 'simulation standards ask for is easier to guarantee when the data was never collected.',
-      'Scenarios are plain JSON validated against a published schema, so an educator can write one '
-      + 'by hand, validate it in the browser, and run it without touching the application source '
-      + 'or installing anything locally. If you build one worth sharing, the repository will take it.',
-    ],
-  },
+  section('what-it-teaches', 3),
+  section('who-it-is-for', 2),
+  section('inside-the-module', 3, 5, '/#modules'),
+  section('where-the-pharmacology-comes-from', 3, 0, '/validation'),
+  section('how-it-is-reviewed', 2, 0, '/governance'),
+  section('what-it-does-not-do', 3, 0, '/limitations'),
+  section('using-it-in-a-course', 3),
 ];
 
 export interface QuestionAnswer {
@@ -206,54 +110,10 @@ export interface QuestionAnswer {
 }
 
 /** The questions a visitor actually asks, answered plainly. */
-export const QUESTIONS: readonly QuestionAnswer[] = [
-  {
-    question: 'Is it free?',
-    answer: 'Yes, entirely, with no paid tier and nothing held back.',
-  },
-  {
-    question: 'Do I need an account?',
-    answer: 'No. There is no sign-in, learner account, or remote practice record anywhere.',
-  },
-  {
-    question: 'Does it work offline?',
-    answer: 'Yes. After the offline download finishes, reload once while online. Bundled scenarios, models, citations and debriefs then work with '
-      + 'the network switched off. You can install it to your home screen. Clearing site data or browser storage eviction requires another download.',
-  },
-  {
-    question: 'Can I use it on a phone?',
-    answer: 'Yes. The layout reflows down to a 360-pixel-wide screen and a full induction is '
-      + 'completable there. It is designed to run on a four-year-old mid-range Android.',
-  },
-  {
-    question: 'Where do the drug models come from?',
-    answer: 'From the primary literature, transcribed by hand into this repository with their '
-      + 'citations. Marsh 1991, Schnider 1998, Eleveld 2018 and Minto 1997 are the models in this '
-      + 'build.',
-  },
-  {
-    question: 'Who reviews the clinical content?',
-    answer: 'A named editorial board of credentialed clinicians is the intended answer. In this '
-      + 'build the board is empty and nothing has been signed, which the governance page states '
-      + 'plainly rather than glossing over.',
-  },
-  {
-    question: 'Can I use it in a course?',
-    answer: 'Yes. The code is MIT licensed and the educational content is openly licensed per '
-      + 'scenario, so you can adopt it, adapt it, or self-host it without asking anyone.',
-  },
-  {
-    question: 'Does it replace mannequin simulation?',
-    answer: 'No. It is a different thing that works well before mannequin simulation, not instead '
-      + 'of it. It teaches nothing about your hands.',
-  },
-  {
-    question: 'When are the other modules coming?',
-    answer: 'No date is promised. The project does not commit to a schedule it cannot keep. '
-      + 'Releases are announced on the public repository, and no email address is collected for '
-      + 'the purpose.',
-  },
-];
+export const QUESTIONS: readonly QuestionAnswer[] = Array.from({ length: 9 }, (_, index) => ({
+  get question() { return t(key(`land.q${index + 1}.question`)); },
+  get answer() { return t(key(`land.q${index + 1}.answer`)); },
+}));
 
 /**
  * The one thing this project is asking anyone for.
@@ -270,21 +130,21 @@ export const QUESTIONS: readonly QuestionAnswer[] = [
  */
 export const REVIEWER_INVITATION = {
   /** Read as the continuation of `HONEST_STATUS.headline` directly above it. */
-  text: 'If you are a clinician, your review would change that.',
+  get text() { return t('land.invitation'); },
   href:
     'mailto:hi@claygood.com'
     + '?subject='
     + encodeURIComponent('I am a certified US clinician who can help review Open Sim Lab'),
-} as const;
+};
 
 /** The footer trust block. Each link names its destination. */
 export const FOOTER_LINKS: readonly { readonly label: string; readonly href: string }[] = [
-  { label: 'Validation', href: '/validation' },
-  { label: 'Governance', href: '/governance' },
-  { label: 'Limitations', href: '/limitations' },
-  { label: 'Privacy', href: '/privacy' },
-  { label: 'License', href: 'https://github.com/clay-good/opensimlab/blob/main/LICENSE' },
-  { label: 'Source', href: 'https://github.com/clay-good/opensimlab' },
+  { get label() { return t('sitebar.validation'); }, href: '/validation' },
+  { get label() { return t('sitebar.governance'); }, href: '/governance' },
+  { get label() { return t('sitebar.limitations'); }, href: '/limitations' },
+  { get label() { return t('documents.privacy'); }, href: '/privacy' },
+  { get label() { return t('land.footer.license'); }, href: 'https://github.com/clay-good/opensimlab/blob/main/LICENSE' },
+  { get label() { return t('land.footer.source'); }, href: 'https://github.com/clay-good/opensimlab' },
 ];
 
 /**

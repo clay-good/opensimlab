@@ -1,4 +1,5 @@
 import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-educator';
 
 /**
  * The educator surfaces' own destinations, appended to the shared site bar.

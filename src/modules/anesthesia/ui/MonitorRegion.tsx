@@ -14,6 +14,7 @@ import { TRACKS, tilesFor, trackConfigs } from './tracks';
 import { waveformDescriptions } from './accessibility';
 import type { RhythmId } from '@anesthesia/waveforms/types';
 import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export interface MonitorRegionProps {
   readonly state: Readonly<Record<string, number>> | null;

@@ -8,6 +8,7 @@
 
 import { offeredRapidCycle } from '@anesthesia/catalog/rapid-cycle';
 import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 import type { ScenarioRapidCycle } from '@anesthesia/scenarios/types';
 import { NcjmmCoverageList } from './NcjmmCoverageList';
 import { useEffect, useMemo, useRef, useState } from 'react';

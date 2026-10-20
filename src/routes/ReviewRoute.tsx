@@ -22,6 +22,8 @@ import {
 import { createReplayWorker, workerReplay } from '@anesthesia/debrief/replay-client';
 import { EDUCATOR_PAGES } from './educator-pages';
 import { t, type MessageKey } from '@platform/i18n/messages';
+import '@platform/i18n/messages-educator';
+import '@platform/i18n/messages-session';
 
 const OUTCOME_LABEL: Record<string, MessageKey> = {
   met: 'debrief.outcome-met',

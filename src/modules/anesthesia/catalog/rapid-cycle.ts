@@ -9,10 +9,10 @@
  * because a directive line is a direct intervention.
  */
 import type { ScenarioRapidCycle } from '../scenarios/types';
-import { EN_MESSAGES } from '@platform/i18n/messages';
+import { SESSION_MESSAGES } from '@platform/i18n/messages-session';
 
 /** The one sentence of evidence the rehearsal carries, and no more than the review claims. */
-export const RAPID_CYCLE_EVIDENCE = EN_MESSAGES['rapid-cycle.evidence'].text;
+export const RAPID_CYCLE_EVIDENCE = SESSION_MESSAGES['rapid-cycle.evidence'].text;
 
 export type RapidCycleStatus = 'waiting' | 'landed' | 'missed';
 

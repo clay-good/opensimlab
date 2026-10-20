@@ -14,6 +14,7 @@ import { PERSISTENT_MARKER_TEXT } from '@platform/safety/not-for-clinical-use';
 import type { Scenario } from '@anesthesia/engine';
 import { MaturityMarker } from '@platform/governance/MaturityMarker';
 import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export interface StatusBarProps {
   readonly scenario: Scenario;

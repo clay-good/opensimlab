@@ -16,6 +16,7 @@ import {
 } from '@anesthesia/curriculum/mapping';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-educator';
 import { EDUCATOR_PAGES } from './educator-pages';
 
 export function CurriculumRoute() {

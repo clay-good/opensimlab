@@ -10,6 +10,7 @@ import { facilitatorGuide } from '@platform/facilitation/guide';
 import { facilitatedScenarioFor } from '@platform/facilitation/scenario-catalog';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-educator';
 
 export function FacilitatorGuideRoute({ path }: { path: string }) {
   const entry = facilitatedScenarioFor(path);

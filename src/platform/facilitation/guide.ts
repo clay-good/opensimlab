@@ -18,6 +18,7 @@ import {
 } from '../../modules/medical-surgical-nursing/curriculum';
 import type { FacilitatedScenario } from './scenario-catalog';
 import { t, type MessageKey } from '@platform/i18n/messages';
+import '@platform/i18n/messages-educator';
 
 export interface GuideItem {
   readonly label?: string;

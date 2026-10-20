@@ -1,5 +1,6 @@
 import { Disclosure, KeyFigure } from '@platform/ui';
 import { t, type MessageKey } from '@platform/i18n/messages';
+import '@platform/i18n/messages-documents';
 import { MODELS, MODEL_SET_REVISION } from '../pharmacology/registry';
 import { SECOND_SOURCE_KIND_LABEL, verificationQueue } from '../pharmacology/verification';
 

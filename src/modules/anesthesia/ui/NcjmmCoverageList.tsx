@@ -2,6 +2,7 @@ import type { Scenario } from '@anesthesia/scenarios/types';
 import type { ObjectiveFinding } from '@anesthesia/debrief/analysis';
 import { NCSBN_NCJMM, ncjmmCoverage, type NcjmmCoverageStatus } from '../../medical-surgical-nursing/curriculum';
 import { t, type MessageKey } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 const WORDS: Readonly<Record<NcjmmCoverageStatus, MessageKey>> = {
   evidenced: 'ncjmm.evidenced', exercised: 'ncjmm.exercised', 'not-exercised': 'ncjmm.not-exercised',
