@@ -41,6 +41,13 @@ describe('the routes that render a table', () => {
       if (!source.includes('<table>')) continue;
       expect(source, file).not.toContain('table-scroll');
     }
+    // The trust documents' tables now live in the bodies DocumentRoute renders
+    // inside its reading surface, so the same rule is held there.
+    for (const file of ['src/platform/docs/ValidationBody.tsx', 'src/platform/docs/PrivacyBody.tsx']) {
+      const source = readFileSync(join(process.cwd(), file), 'utf8');
+      expect(source, file).toContain('<table>');
+      expect(source, file).not.toContain('table-scroll');
+    }
   });
 
   it('puts every table inside a .reading surface, which is what carries the rule', () => {
