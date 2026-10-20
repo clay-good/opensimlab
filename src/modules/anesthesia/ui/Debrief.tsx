@@ -102,6 +102,8 @@ export interface DebriefProps {
   readonly log: readonly EngineEvent[];
   readonly actions: readonly LearnerAction[];
   readonly attributionByTick: (tick: number) => readonly Attribution[];
+  /** What the learner wrote at the time. Passed in, never read from the session here. */
+  readonly reasoningNotes?: readonly { readonly tick: number; readonly text: string }[];
   readonly timeToPeakSeconds: Readonly<Record<string, number>>;
   readonly replayOptions: ReplayOptions;
   /**
@@ -393,6 +395,27 @@ export function Debrief(props: DebriefProps) {
                   </p>
                 </div>
               ))}
+            </Panel>
+          )}
+
+          {(props.reasoningNotes?.length ?? 0) > 0 && (
+            <Panel title="What you wrote at the time">
+              <ul>
+                {props.reasoningNotes!.map((note) => {
+                  const action = [...props.actions].filter((entry) => entry.tick <= note.tick)
+                    .sort((a, b) => b.tick - a.tick)[0];
+                  return (
+                    <li key={`${note.tick}-${note.text}`}>
+                      <span className="numeric">{formatElapsed(note.tick)}</span>: &ldquo;{note.text}&rdquo;
+                      <br />
+                      <span className="field__hint">
+                        {action ? `Beside your ${action.type.replace(/-/g, ' ')} at ${formatElapsed(action.tick)}.` : 'Before any action.'}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+              <p className="reading__aside">Your notes are shown back to you as written. Nothing reads, scores, or sends them.</p>
             </Panel>
           )}
 

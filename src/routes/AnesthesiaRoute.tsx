@@ -12,6 +12,7 @@ import {
   useSession, sessionInternals, type GuidanceLevel, type SessionState,
 } from '@platform/session/session-store';
 import { NotForClinicalUseGate, hasAcknowledged, recordAcknowledgement } from '@platform/safety/not-for-clinical-use';
+import { useReasoningNotes } from '@platform/session/reasoning-notes';
 import { SonificationEngine } from '@platform/audio/sonification';
 import { guessRegion, getRegion, REGIONS } from '@anesthesia/region/profiles';
 import type { Scenario } from '@anesthesia/engine';
@@ -823,6 +824,7 @@ export function assignmentNotices(
 
 export function ClinicalModuleRoute({ path, config }: { path: string; config: ClinicalModuleConfig }) {
   const session = useSession();
+  const reasoningNotes = useReasoningNotes((state) => state.notes);
   const { scenario, missingId } = useMemo(() => scenarioForPath(path, config), [path, config]);
   const assignment = useMemo(
     () => readAssignment(typeof location === 'undefined' ? '' : location.search),
@@ -933,6 +935,8 @@ export function ClinicalModuleRoute({ path, config }: { path: string; config: Cl
 
   useEffect(() => {
     if (isIndex || !acknowledged || session.phase !== 'idle') return;
+    // A new session starts with no notes; they belong to the run they were written in.
+    useReasoningNotes.getState().clear();
     session.begin(
       {
         scenarioId: scenario.metadata.id,
@@ -1040,6 +1044,7 @@ export function ClinicalModuleRoute({ path, config }: { path: string; config: Cl
         log={session.log}
         actions={internals.recorder ? internals.recorder.build('pending').actions : []}
         attributionByTick={() => session.attribution}
+        reasoningNotes={reasoningNotes}
         timeToPeakSeconds={{ propofol: 100, remifentanil: 90 }}
         replayOptions={{
           scenario, seed: assignment.seed,

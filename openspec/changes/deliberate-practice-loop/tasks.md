@@ -39,11 +39,21 @@ its own, none changes the engine, and none produces a score.
 
 ## 4. Reasoning notes
 
-- [ ] Add the note control to action confirmation and pause; store notes in the transcript
-  sidecar keyed by tick; assert the transcript hash is unchanged.
+- [x] Add the note control to action confirmation and pause; store notes in the transcript
+  sidecar keyed by tick; assert the transcript hash is unchanged. A "Note your reasoning" field
+  in the session menu, present but never prompting, attaches up to 280 characters to the current
+  simulated moment. Notes live in their own store (`src/platform/session/reasoning-notes.ts`),
+  never in the transcript, so its hash cannot change; a new session starts with none.
 - [ ] Show notes in the debrief analysis phase beside attribution; exclude from summary export;
-  include in full export only after preview.
-- [ ] Extend the report-context structural exclusion test to notes.
+  include in full export only after preview. Partly done: the analysis phase shows "What you
+  wrote at the time", each note beside the action it was written next to, after the reactions
+  phase. Not yet: the engine's attribution beside it, because the route's attribution lookup
+  returns the latest attribution for any tick and showing it would pair every note with the end
+  of the session; and the full-export option, since notes are in no export today.
+- [x] Extend the report-context structural exclusion test to notes. `tests/unit/reasoning-notes.test.ts`
+  holds that the transcript, the reporting package, and the report-context collector never
+  reference the notes store, and the debrief receives notes as a prop rather than reading session
+  state, keeping the private-tutor boundary intact.
 
 ## 5. Spaced return and progress file (curriculum requirements)
 

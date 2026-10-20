@@ -132,6 +132,7 @@ import type { RhythmId } from '@anesthesia/waveforms/types';
 import type { SonificationEngine } from '@platform/audio/sonification';
 import { HAPTICS_UNSUPPORTED_REASON, HapticEngine, hapticsSupported } from '@platform/audio/haptics';
 import { duePausePoint } from '@platform/facilitation/pause-points';
+import { REASONING_NOTE_LIMIT, useReasoningNotes } from '@platform/session/reasoning-notes';
 import type { ScenarioPausePoint } from '../scenarios/types';
 import {
   DEFAULT_NARRATION_SETTINGS, NARRATION_RATES, NarrationEngine, isNarrationSettings,
@@ -1376,6 +1377,8 @@ export function Cockpit({
   // Classroom mode is a facilitator's setting for this session only. It forces
   // unassisted guidance, so the tutor never answers the room's question, and it
   // arms the scenario's pause points; turning it off restores the guidance level.
+  const [noteDraft, setNoteDraft] = useState('');
+  const [noteSaved, setNoteSaved] = useState('');
   const [classroom, setClassroom] = useState(false);
   const guidanceBeforeClassroom = useRef<typeof session.guidance | null>(null);
   const firedPauses = useRef(new Set<string>());
@@ -2195,6 +2198,24 @@ export function Cockpit({
             saturation while looking somewhere else. Sound is never the only channel: every alarm
             and cue is also shown.
           </p>
+        </div>
+        <div className="overflow-menu__sound">
+          <label className="field" htmlFor="reasoning-note">
+            <span className="field__label">Note your reasoning (optional)</span>
+            <textarea id="reasoning-note" className="field__input" rows={2} maxLength={REASONING_NOTE_LIMIT}
+              value={noteDraft} onChange={(event) => setNoteDraft(event.target.value)} />
+            <span className="field__hint">
+              Attached to this moment and shown back to you in the debrief. Never scored, read by the
+              tutor, or included in a problem report.
+            </span>
+          </label>
+          <Button compact disabled={noteDraft.trim().length === 0} onClick={() => {
+            if (useReasoningNotes.getState().add(noteDraft, session.tick)) {
+              setNoteDraft('');
+              setNoteSaved(`Saved at ${session.elapsed}.`);
+            }
+          }}>Save note</Button>
+          {noteSaved && <p className="field__hint" role="status">{noteSaved}</p>}
         </div>
         <div className="overflow-menu__sound">
           <Toggle
