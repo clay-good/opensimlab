@@ -239,6 +239,22 @@ export const EN_MESSAGES = {
   'not-found.limitations.why': { class: 'interface', text: 'what this deliberately does not model' },
   'not-found.privacy.link': { class: 'interface', text: 'Privacy' },
   'not-found.privacy.why': { class: 'interface', text: 'what is stored on your device, which is all of it' },
+  'history.import-label': { class: 'interface', text: 'Practice-history JSON to import' },
+  'history.import-placeholder': { class: 'interface', text: 'Paste the contents of an Open Sim Lab practice-history export' },
+  'history.import-hint': { class: 'interface', text: 'Import is atomic: invalid or oversized JSON changes nothing.' },
+  'history.export': { class: 'interface', text: 'Export practice history' },
+  'history.merge': { class: 'interface', text: 'Merge into this device' },
+  'history.replace': { class: 'interface', text: 'Replace this device\'s history' },
+  'history.replace-confirm': { class: 'interface', text: 'Replace this device\'s practice history with the file? This cannot be undone unless you exported it first.' },
+  'history.erase': { class: 'interface', text: 'Erase practice history' },
+  'history.erase-confirm': { class: 'interface', text: 'Erase all private practice history from this device? This cannot be undone unless you exported it first.' },
+  'history.erased': { class: 'interface', text: 'Private practice history erased from this device.' },
+  'history.import-failed': { class: 'interface', text: 'Could not import that JSON.' },
+  'history.merged': { class: 'interface', text: 'Merged. {added} added, {duplicates} already here; {stored} summaries stored.' },
+  'history.replaced': { class: 'interface', text: 'Replaced. {added} added, {duplicates} already here; {stored} summaries stored.' },
+  'history.no-change': { class: 'interface', text: 'No objective status changed.' },
+  'history.changed': { class: 'interface', text: '{count, plural, one {# objective status changed} other {# objective statuses changed}}: {changes}.' },
+  'history.none': { class: 'interface', text: 'none' },
 } as const satisfies Readonly<Record<string, SourceMessage>>;
 
 export type MessageKey = keyof typeof EN_MESSAGES;

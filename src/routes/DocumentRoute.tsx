@@ -670,13 +670,13 @@ function PrivacyBody() {
       setAttemptCount(result.history.length);
       setHistoryImport('');
       const moved = result.changes.map((change) =>
-        `${change.scenarioId} ${change.objectiveId}: ${change.previous ?? 'none'} → ${change.current ?? 'none'}`);
-      setHistoryMessage(`${mode === 'merge' ? 'Merged' : 'Replaced'}. ${result.added} added, `
-        + `${result.duplicates} already here; ${result.history.length} summaries stored. `
-        + (moved.length === 0 ? 'No objective status changed.'
-          : `${moved.length} objective ${moved.length === 1 ? 'status' : 'statuses'} changed: ${moved.join('; ')}.`));
+        `${change.scenarioId} ${change.objectiveId}: ${change.previous ?? t('history.none')} → ${change.current ?? t('history.none')}`);
+      const counts = { added: result.added, duplicates: result.duplicates, stored: result.history.length };
+      setHistoryMessage(`${t(mode === 'merge' ? 'history.merged' : 'history.replaced', counts)} `
+        + (moved.length === 0 ? t('history.no-change')
+          : t('history.changed', { count: moved.length, changes: moved.join('; ') })));
     } catch (error) {
-      setHistoryMessage(error instanceof Error ? error.message : 'Could not import that JSON.');
+      setHistoryMessage(error instanceof Error ? error.message : t('history.import-failed'));
     }
   };
   return (
@@ -744,32 +744,32 @@ function PrivacyBody() {
         included. The newest 50 summaries are kept; older ones fall away locally.
       </p>
       <label className="field" htmlFor="practice-history-import">
-        <span className="field__label">Practice-history JSON to import</span>
+        <span className="field__label">{t('history.import-label')}</span>
         <textarea
           id="practice-history-import"
-          aria-label="Practice-history JSON to import"
+          aria-label={t('history.import-label')}
           className="field__input"
           rows={5}
           value={historyImport}
           onChange={(event) => setHistoryImport(event.target.value)}
-          placeholder="Paste the contents of an Open Sim Lab practice-history export"
+          placeholder={t('history.import-placeholder')}
         />
-        <span className="field__hint">Import is atomic: invalid or oversized JSON changes nothing.</span>
+        <span className="field__hint">{t('history.import-hint')}</span>
       </label>
       <div className="phase-nav">
-        <Button onClick={downloadHistory}>Export practice history</Button>
-        <Button onClick={() => importHistory('merge')}>Merge into this device</Button>
+        <Button onClick={downloadHistory}>{t('history.export')}</Button>
+        <Button onClick={() => importHistory('merge')}>{t('history.merge')}</Button>
         <Button variant="ghost" onClick={() => {
-          if (!confirm('Replace this device\'s practice history with the file? This cannot be undone unless you exported it first.')) return;
+          if (!confirm(t('history.replace-confirm'))) return;
           importHistory('replace');
-        }}>Replace this device&apos;s history</Button>
+        }}>{t('history.replace')}</Button>
         <Button variant="danger" onClick={() => {
-          if (!confirm('Erase all private practice history from this device? This cannot be undone unless you exported it first.')) return;
+          if (!confirm(t('history.erase-confirm'))) return;
           try { eraseOne(localStorage, PRACTICE_HISTORY_KEY); } catch { /* Storage may be blocked. */ }
           setAttemptCount(0);
-          setHistoryMessage('Private practice history erased from this device.');
+          setHistoryMessage(t('history.erased'));
         }}>
-          Erase practice history
+          {t('history.erase')}
         </Button>
       </div>
       {historyMessage && <p role="status" className="field__hint">{historyMessage}</p>}
