@@ -12,6 +12,8 @@ const EXTERNALISED: readonly { readonly path: string; readonly region?: readonly
   { path: 'src/modules/anesthesia/ui/RapidCyclePanel.tsx' },
   { path: 'src/modules/anesthesia/ui/PausePointPanel.tsx' },
   { path: 'src/modules/anesthesia/ui/SessionPreferences.tsx', region: ['export function SessionPreferences', '\n}\n'] },
+  { path: 'src/modules/anesthesia/ui/SpacedReturnSuggestion.tsx', region: ['return (', '\n}\n'] },
+  { path: 'src/modules/anesthesia/ui/NcjmmCoverageList.tsx' },
 ];
 
 /** Text between a closing `>` and the next `<` that is not only whitespace or an expression. */

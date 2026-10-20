@@ -11,18 +11,15 @@
  */
 import type { Scenario } from '../scenarios/types';
 import type { PracticeAttempt, PracticeOutcome } from './practice-history';
+import { EN_MESSAGES, t, type MessageKey } from '@platform/i18n/messages';
 
-export const SPACED_RETURN_CONVENTION =
-  'Return intervals of 7, 14, 28, then 56 days are an educational convention, not a measure of '
-  + 'what you remember.';
+/** The convention label, in English; the panel reads it from the catalog. */
+export const SPACED_RETURN_CONVENTION = EN_MESSAGES['spaced.convention'].text;
 
 const OUTCOME_RANK: Readonly<Record<PracticeOutcome, number>> = {
   'not-met': 0, 'partly-met': 1, 'not-exercised': 2, met: 3,
 };
 
-const OUTCOME_WORDS: Readonly<Record<PracticeOutcome, string>> = {
-  'not-met': 'not met', 'partly-met': 'partly met', 'not-exercised': 'not exercised', met: 'met',
-};
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const dayNumber = (iso: string) => Math.floor(Date.parse(`${iso.slice(0, 10)}T00:00:00.000Z`) / DAY_MS);
@@ -78,9 +75,8 @@ export function spacedReturnSuggestion(
     practises: chosen.practises,
     daysSince: chosen.daysSince,
     intervalDays: chosen.intervalDays,
-    reason: `Last practised ${chosen.daysSince} ${chosen.daysSince === 1 ? 'day' : 'days'} ago, `
-      + `past its ${chosen.intervalDays}-day return interval. Your weakest latest result in it was `
-      + `${OUTCOME_WORDS[chosen.weakOutcome]}.`,
+    reason: t('spaced.reason', { days: chosen.daysSince, interval: chosen.intervalDays,
+      outcome: t(`outcome.${chosen.weakOutcome}` as MessageKey) }),
   };
 }
 

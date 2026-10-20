@@ -74,6 +74,23 @@ export const EN_MESSAGES = {
   'prefs.narration.screen-reader': { class: 'interface', text: 'I use a screen reader (it already reads alarms and the summary, so narration skips them)' },
   'prefs.narration.speed': { class: 'interface', text: 'Speed' },
   'prefs.narration.voice': { class: 'interface', text: 'Voice' },
+  'spaced.title': { class: 'interface', text: 'Worth coming back to' },
+  'spaced.duration': { class: 'interface', text: 'about {minutes} simulated minutes' },
+  'spaced.reason': { class: 'interface', text: '{days, plural, one {Last practised # day ago} other {Last practised # days ago}}, past its {interval}-day return interval. Your weakest latest result in it was {outcome}.' },
+  'spaced.local': { class: 'interface', text: 'Worked out on this device from your own practice history; nothing is sent anywhere. It does not measure competence.' },
+  'spaced.convention': { class: 'interface', text: 'Return intervals of 7, 14, 28, then 56 days are an educational convention, not a measure of what you remember.' },
+  'spaced.hide': { class: 'interface', text: 'Hide this suggestion for 7 days' },
+  'outcome.met': { class: 'interface', text: 'met' },
+  'outcome.partly-met': { class: 'interface', text: 'partly met' },
+  'outcome.not-met': { class: 'interface', text: 'not met' },
+  'outcome.not-exercised': { class: 'interface', text: 'not exercised' },
+  'ncjmm.heading': { class: 'educator', text: 'Clinical judgment steps in this run' },
+  'ncjmm.evidenced': { class: 'educator', text: 'Evidenced' },
+  'ncjmm.exercised': { class: 'educator', text: 'Exercised, not yet evidenced' },
+  'ncjmm.not-exercised': { class: 'educator', text: 'Not exercised' },
+  'ncjmm.source-lead': { class: 'educator', text: 'Step names from the NCSBN Clinical Judgment Measurement Model as listed in the' },
+  'ncjmm.source-link': { class: 'educator', text: '2026 NCLEX-RN Test Plan' },
+  'ncjmm.disclaimer': { class: 'educator', text: 'Which objective counts toward which step is this project\'s reading, which NCSBN has not reviewed or endorsed. There is no total across the steps, and nothing here predicts how anyone would do on an examination.' },
 } as const satisfies Readonly<Record<string, SourceMessage>>;
 
 export type MessageKey = keyof typeof EN_MESSAGES;

@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react';
 import type { Scenario } from '@anesthesia/scenarios/types';
 import { loadPracticeHistory } from '@anesthesia/catalog/practice-history';
 import {
-  SPACED_RETURN_CONVENTION, dismissSpacedReturn, spacedReturnDismissed, spacedReturnSuggestion,
+  dismissSpacedReturn, spacedReturnDismissed, spacedReturnSuggestion,
   type SpacedReturnSuggestion as Suggestion,
 } from '@anesthesia/catalog/spaced-return';
 import { Button, Panel } from '@platform/ui';
+import { t } from '@platform/i18n/messages';
 
 /** Module-level so the effect's dependency stays stable. */
 const defaultNow = () => new Date().getTime();
@@ -30,22 +31,19 @@ export function SpacedReturnSuggestion({ scenarios, basePath, now = defaultNow }
   if (suggestion === null) return null;
   const { scenario } = suggestion;
   return (
-    <Panel title="Worth coming back to">
+    <Panel title={t('spaced.title')}>
       <p><a href={`${basePath}/scenario/${scenario.metadata.id}`}>{scenario.metadata.title}</a>
-        {' '}· about {scenario.metadata.estimatedMinutes} simulated minutes</p>
+        {' · '}{t('spaced.duration', { minutes: scenario.metadata.estimatedMinutes })}</p>
       {suggestion.practises.length > 0 && (
         <ul>{suggestion.practises.map((statement) => <li key={statement}>{statement}</li>)}</ul>
       )}
       <p>{suggestion.reason}</p>
-      <p className="reading__aside">
-        Worked out on this device from your own practice history; nothing is sent anywhere. It does
-        not measure competence. {SPACED_RETURN_CONVENTION}
-      </p>
+      <p className="reading__aside">{t('spaced.local')} {t('spaced.convention')}</p>
       <Button compact variant="ghost" onClick={() => {
         dismissSpacedReturn(now());
         setSuggestion(null);
       }}>
-        Hide this suggestion for 7 days
+        {t('spaced.hide')}
       </Button>
     </Panel>
   );
