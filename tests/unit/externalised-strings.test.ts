@@ -9,6 +9,8 @@ import { describe, expect, it } from 'vitest';
 const EXTERNALISED: readonly { readonly path: string; readonly region?: readonly [string, string] }[] = [
   { path: 'src/platform/ui/SiteBar.tsx', region: ['return (', '\n}\n'] },
   { path: 'src/routes/DocumentRoute.tsx', region: ['export function DocumentRoute', '\n}\n'] },
+  { path: 'src/modules/anesthesia/ui/RapidCyclePanel.tsx' },
+  { path: 'src/modules/anesthesia/ui/PausePointPanel.tsx' },
 ];
 
 /** Text between a closing `>` and the next `<` that is not only whitespace or an expression. */

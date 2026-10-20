@@ -41,6 +41,17 @@ export const EN_MESSAGES = {
   'documents.footer.home': { class: 'interface', text: 'Back to the front page' },
   'documents.footer.about': { class: 'interface', text: 'About Open Sim Lab' },
   'documents.footer.simulator': { class: 'interface', text: 'Open the simulator' },
+  'rapid-cycle.heading': { class: 'interface', text: 'Rapid cycle {cycle} of {cap}' },
+  'rapid-cycle.landed': { class: 'interface', text: 'Inside the window. That is the step this cycle was for.' },
+  'rapid-cycle.retry': { class: 'interface', text: 'Try the cycle again' },
+  'rapid-cycle.last': { class: 'interface', text: 'That was the last cycle. Source: {source}.' },
+  'rapid-cycle.back': { class: 'interface', text: 'Back to the debrief' },
+  'pause-point.heading': { class: 'interface', text: 'Pause for the room' },
+  'pause-point.look': { class: 'interface', text: 'Look at the {region} region. The clock is paused.' },
+  'pause-point.resume': { class: 'interface', text: 'Resume' },
+  'region.monitor': { class: 'interface', text: 'monitor' },
+  'region.analysis': { class: 'interface', text: 'analysis' },
+  'region.actions': { class: 'interface', text: 'actions' },
 } as const satisfies Readonly<Record<string, SourceMessage>>;
 
 export type MessageKey = keyof typeof EN_MESSAGES;

@@ -74,7 +74,9 @@ describe('pseudo-locales', () => {
     for (const [key, message] of Object.entries(EN_MESSAGES)) {
       const long = xa.messages[key]!.text;
       expect(long.startsWith('[') && long.endsWith(']')).toBe(true);
-      expect(long.length).toBeGreaterThanOrEqual(Math.floor(message.text.length * 1.4));
+      // Placeholder names are not text a reader sees, so the padding is sized on the rest.
+      const visible = message.text.replace(/\{\w+\}/g, '').length;
+      expect(long.length - message.text.length).toBeGreaterThanOrEqual(Math.ceil(visible * 0.4));
     }
     expect(pseudoLocale(EN_MESSAGES, 'en-XB').messages['sitebar.browse']?.text).toBe('Browse');
     expect(catalogProblems(EN_MESSAGES, xa)).toContain('catalog is not human-translated');

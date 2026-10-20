@@ -8,8 +8,9 @@
   ICU-style placeholders and plurals; a translation that is missing, stale (its English changed),
   unfillable, or clinical falls back to English, and English that cannot be filled throws.
 - [ ] Externalise every interface, educator-documentation, and root-prose string; make the
-  hard-coded-string test pass. Started: the site bar (26 strings) and the trust documents' shared
-  chrome (8 strings) read from `src/platform/i18n/messages.ts` and render the same English.
+  hard-coded-string test pass. Started: the site bar (26 strings), the trust documents' shared
+  chrome (8 strings), and the cockpit's rapid-cycle and classroom pause panels (11 strings, now
+  their own components) read from `src/platform/i18n/messages.ts` and render the same English.
   `tests/unit/externalised-strings.test.ts` is the hard-coded-string test, applied to each surface
   once it is externalised; every other surface remains.
 - [x] Generate the coverage report at build; publish `/translation-status` as a trust document.

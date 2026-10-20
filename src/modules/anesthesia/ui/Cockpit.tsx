@@ -132,6 +132,8 @@ import type { RhythmId } from '@anesthesia/waveforms/types';
 import type { SonificationEngine } from '@platform/audio/sonification';
 import { HAPTICS_UNSUPPORTED_REASON, HapticEngine, hapticsSupported } from '@platform/audio/haptics';
 import { duePausePoint } from '@platform/facilitation/pause-points';
+import { RapidCyclePanel } from './RapidCyclePanel';
+import { PausePointPanel } from './PausePointPanel';
 import { REASONING_NOTE_LIMIT, useReasoningNotes } from '@platform/session/reasoning-notes';
 import type { ScenarioPausePoint, ScenarioRapidCycle } from '../scenarios/types';
 import type { RapidCycleStatus } from '../catalog/rapid-cycle';
@@ -2080,40 +2082,12 @@ export function Cockpit({
       ) : null}
 
       {rapidCycle && (
-        <aside className="panel" aria-labelledby="rapid-cycle-heading" role="complementary">
-          <h2 id="rapid-cycle-heading">Rapid cycle {rapidCycle.cycle} of {rapidCycle.point.cycleCap}</h2>
-          {rapidCycle.status === 'waiting' && (
-            <p>{scenario.metadata.objectives.find((objective) => objective.id === rapidCycle!.point.objectiveId)?.statement}</p>
-          )}
-          {rapidCycle.status === 'landed' && (
-            <>
-              <p>Inside the window. That is the step this cycle was for.</p>
-              <Button variant="primary" onClick={rapidCycle.onFinish}>Back to the debrief</Button>
-            </>
-          )}
-          {rapidCycle.status === 'missed' && (
-            <>
-              <p><strong>{rapidCycle.point.directive}</strong></p>
-              {rapidCycle.cycle < rapidCycle.point.cycleCap ? (
-                <Button variant="primary" onClick={rapidCycle.onRetry}>Try the cycle again</Button>
-              ) : (
-                <>
-                  <p className="field__hint">That was the last cycle. Source: {rapidCycle.point.sourceLocator}.</p>
-                  <Button variant="primary" onClick={rapidCycle.onFinish}>Back to the debrief</Button>
-                </>
-              )}
-            </>
-          )}
-        </aside>
+        <RapidCyclePanel {...rapidCycle}
+          objectiveStatement={scenario.metadata.objectives.find((objective) => objective.id === rapidCycle.point.objectiveId)?.statement} />
       )}
 
       {pausePoint && (
-        <aside className="panel" aria-labelledby="pause-point-heading" role="complementary">
-          <h2 id="pause-point-heading">Pause for the room</h2>
-          <p>{pausePoint.question}</p>
-          <p className="field__hint">Look at the {pausePoint.region} region. The clock is paused.</p>
-          <Button variant="primary" onClick={() => { setPausePoint(null); session.play(); }}>Resume</Button>
-        </aside>
+        <PausePointPanel point={pausePoint} onResume={() => { setPausePoint(null); session.play(); }} />
       )}
 
       {/* The live regions. Polite for ordinary change, assertive for critical. */}
