@@ -42,6 +42,15 @@ export function thresholdSignature(state: Readonly<Record<string, number>>): str
   return parts.join('|');
 }
 
+/**
+ * The summary's closing line. It was the same ternary in every lesson's branch;
+ * the alarm messages themselves are the engine's own wording.
+ */
+function alarmLine(alarms: readonly EngineAlarm[]): string {
+  return alarms.length === 0 ? t('announce.no-alarms')
+    : t('announce.alarms', { alarms: alarms.map((a) => `${a.priority}, ${a.message}`).join('; ') });
+}
+
 export interface Announcement {
   readonly text: string;
   readonly severity: 'info' | 'warning' | 'critical';
@@ -70,10 +79,13 @@ export function announcementsFor(
       if (wasBelow === isBelow) continue;
       const spec = FIELDS[field as StateField];
       const alarm = alarms.find((a) => a.parameter === field);
+      const crossing = {
+        field: spec.label, threshold, value: after.toFixed(spec.precision), unit: spec.unit,
+      };
       out.push({
-        text: `${spec.label} ${isBelow ? 'fell below' : 'rose above'} ${threshold} ${spec.unit}`
-          + `, now ${after.toFixed(spec.precision)} ${spec.unit}`
-          + (alarm ? `. ${alarm.priority === 'high' ? 'High priority' : alarm.priority === 'medium' ? 'Medium priority' : 'Low priority'} alarm.` : ''),
+        text: t(isBelow ? 'announce.fell' : 'announce.rose', crossing)
+          + (alarm ? `. ${t(alarm.priority === 'high' ? 'announce.alarm-high'
+            : alarm.priority === 'medium' ? 'announce.alarm-medium' : 'announce.alarm-low')}` : ''),
         severity: alarm?.priority === 'high' ? 'critical' : alarm ? 'warning' : 'info',
       });
     }
@@ -1099,8 +1111,7 @@ export function stateSummary(
       : 'No new full assessment has been requested.');
     if (patient.investigationObserved) lines.push('Concern for infection persists and a source is identified. The ceiling has not moved, because it runs from first suspicion rather than from the result.');
     lines.push('Every tier in the current guidance rests on very low certainty of evidence, including the strong recommendations, so conditional does not mean optional. No tier, organism, or outcome is established.');
-    lines.push(options.alarms.length === 0 ? 'No active alarms.'
-      : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
+    lines.push(alarmLine(options.alarms));
     return lines.join(' ');
   }
   if (options.toxicShock) {
@@ -1127,8 +1138,7 @@ export function stateSummary(
       : 'No new full assessment has been requested.');
     if (patient.deteriorationObserved) lines.push('More criteria are now satisfied on both definitions. Neither has closed, and the reasons are unchanged.');
     lines.push('Accumulating criteria move both definitions closer and close neither. The diagnosis is handed over open, and no classification, organism, or outcome is established.');
-    lines.push(options.alarms.length === 0 ? 'No active alarms.'
-      : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
+    lines.push(alarmLine(options.alarms));
     return lines.join(' ');
   }
   if (options.severePneumonia) {
@@ -1155,8 +1165,7 @@ export function stateSummary(
       : 'No new full assessment has been requested.');
     if (patient.deteriorationObserved) lines.push('The mortality score has caught up. It was always going to, and it was never the instrument for the question of where this patient should be.');
     lines.push('Whether a critical-care bed exists is a real-world constraint this rehearsal does not model, and neither escalation nor survival is established.');
-    lines.push(options.alarms.length === 0 ? 'No active alarms.'
-      : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
+    lines.push(alarmLine(options.alarms));
     return lines.join(' ');
   }
   if (options.endocarditisHeartFailure) {
@@ -1183,8 +1192,7 @@ export function stateSummary(
       : 'No new full assessment has been requested.');
     if (patient.decompensationObserved) lines.push('The C-reactive protein has fallen further while the patient has become very much worse. That divergence is the whole point.');
     lines.push('The decompensation occurs whatever is recorded, because the treatment is an operation that is not in this rehearsal. Neither operability, transfer acceptance, nor survival is established.');
-    lines.push(options.alarms.length === 0 ? 'No active alarms.'
-      : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
+    lines.push(alarmLine(options.alarms));
     return lines.join(' ');
   }
   if (options.necrotizingInfection) {
@@ -1211,8 +1219,7 @@ export function stateSummary(
       : 'No new full assessment has been requested.');
     if (patient.progressionObserved) lines.push('The derived score is now firmly positive. It became useful only after the interval in which acting on it mattered, which is the lesson rather than a reward.');
     lines.push('The authored progression occurs whatever is recorded, because only an operation treats this and the operation happens after this rehearsal. The diagnosis stays unconfirmed, and no operative finding, limb outcome, or survival is established.');
-    lines.push(options.alarms.length === 0 ? 'No active alarms.'
-      : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
+    lines.push(alarmLine(options.alarms));
     return lines.join(' ');
   }
   if (options.febrileNeutropenia) {
@@ -1239,8 +1246,7 @@ export function stateSummary(
       : 'No new full assessment has been requested.');
     if (patient.untreatedResponseObserved && patient.antimicrobialIntentAtTick === null) lines.push('A full assessment recorded a falling temperature with failing perfusion and no rise in the white cell count. In a patient who cannot mount a count, that combination is worsening infection.');
     lines.push('C-reactive protein takes many hours to rise, so it is uninformative at the door and its later climb is lag catching up. The patient remains profoundly neutropenic, no source or organism is established, and no discharge readiness is certified.');
-    lines.push(options.alarms.length === 0 ? 'No active alarms.'
-      : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
+    lines.push(alarmLine(options.alarms));
     return lines.join(' ');
   }
   if (options.obstructedKidney) {
@@ -1267,8 +1273,7 @@ export function stateSummary(
       : 'No new full assessment has been requested.');
     if (patient.untreatedResponseObserved && patient.decompressionIntentAtTick === null) lines.push('A full assessment recorded deterioration after six authored hours of antimicrobial care with the kidney still obstructed.');
     lines.push('C-reactive protein lags by many hours and can keep rising while the patient improves, so it is not the success signal. Drainage is not cure: deterioration after decompression is well described, and no cleared infection, recovered kidney function, or discharge readiness is established.');
-    lines.push(options.alarms.length === 0 ? 'No active alarms.'
-      : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
+    lines.push(alarmLine(options.alarms));
     return lines.join(' ');
   }
   if (options.meningococcalSepsis) {
@@ -1295,8 +1300,7 @@ export function stateSummary(
       : 'No new full bedside and laboratory assessment has been requested.');
     if (patient.incompleteResponseObserved && patient.consultantAtTick === null) lines.push('A full assessment recorded an inadequate response an hour after recorded intent. Attendance in person has not yet happened.');
     lines.push('A rising C-reactive protein is expected with elapsed time and is not by itself treatment failure. Unresolved shock and an unconfirmed diagnosis remain ongoing responsibilities; no survival or discharge readiness is established.');
-    lines.push(options.alarms.length === 0 ? 'No active alarms.'
-      : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
+    lines.push(alarmLine(options.alarms));
     return lines.join(' ');
   }
   if (options.renalHypermagnesemia) {
@@ -1326,8 +1330,7 @@ export function stateSummary(
       : 'No new full magnesium, neuromuscular, and bedside assessment has been requested.');
     if (patient.recurrenceObserved) lines.push('A full assessment recorded recurrent clinical toxicity, not a new magnesium rise.');
     lines.push('Residual weakness and respiratory support remain ongoing responsibilities. A removal response does not establish durable recovery or authorize withdrawal of support.');
-    lines.push(options.alarms.length === 0 ? 'No active alarms.'
-      : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
+    lines.push(alarmLine(options.alarms));
     return lines.join(' ');
   }
   if (options.renalHypocalcemia) {
@@ -1355,8 +1358,7 @@ export function stateSummary(
       : 'No new full ionized-calcium, symptom, and bedside assessment has been requested.');
     if (patient.recurrenceObserved) lines.push('A full assessment recorded recurrence without continuing calcium care. That history remains visible.');
     lines.push('Symptom relief does not establish durable correction. Continuing calcium, mineral care, and longer-term follow-up remain active responsibilities.');
-    lines.push(options.alarms.length === 0 ? 'No active alarms.'
-      : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
+    lines.push(alarmLine(options.alarms));
     return lines.join(' ');
   }
   if (options.renalHypernatremia) {
@@ -1384,8 +1386,7 @@ export function stateSummary(
       : 'No new full sodium, fluid-balance, and bedside assessment has been requested.');
     if (patient.recurrenceObserved) lines.push('A full assessment recorded recurrence with continuing losses. That history remains visible.');
     lines.push('Continuing replacement, safe access, and surveillance remain active responsibilities. Ongoing-loss care does not instantly stop diarrhea or prove durable recovery.');
-    lines.push(options.alarms.length === 0 ? 'No active alarms.'
-      : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
+    lines.push(alarmLine(options.alarms));
     return lines.join(' ');
   }
   if (options.renalHyponatremia) {
@@ -1414,8 +1415,7 @@ export function stateSummary(
     if (patient.persistentSymptomsObserved) lines.push('A full assessment recorded persistent symptoms despite a sodium rise.');
     if (patient.additionalResponseObserved) lines.push('The observed rise of 6 millimoles per liter is not a clinical stopping rule. No treatment is automatically stopped.');
     lines.push('A sodium rise does not establish symptom recovery. Expert treatment review, monitoring, and cause evaluation remain active responsibilities.');
-    lines.push(options.alarms.length === 0 ? 'No active alarms.'
-      : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
+    lines.push(alarmLine(options.alarms));
     return lines.join(' ');
   }
   if (options.renalHypokalemia) {
@@ -1442,8 +1442,7 @@ export function stateSummary(
       : 'No new full potassium, magnesium, ECG, and bedside assessment has been requested.');
     if (patient.recurrenceObserved) lines.push('A full assessment recorded recurrent depletion; later care does not erase that observation.');
     lines.push('ECG appearance does not establish electrolyte concentrations. This waveform supplies no U-wave or QTc measurement. Repeated electrolyte and ECG surveillance remain necessary; improvement does not prove durable safety.');
-    lines.push(options.alarms.length === 0 ? 'No active alarms.'
-      : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
+    lines.push(alarmLine(options.alarms));
     return lines.join(' ');
   }
   if (options.renalHyperkalemia) {
@@ -1470,8 +1469,7 @@ export function stateSummary(
       : 'No new full potassium, glucose, ECG, and bedside assessment has been requested.');
     if (patient.reboundObserved) lines.push('A full assessment recorded rebound; later care does not erase that observation.');
     lines.push('ECG appearance does not establish a potassium concentration. The waveform is not calibrated to QRS duration. Repeated potassium, glucose, and ECG surveillance remain necessary; improvement does not prove durable safety.');
-    lines.push(options.alarms.length === 0 ? 'No active alarms.'
-      : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
+    lines.push(alarmLine(options.alarms));
     return lines.join(' ');
   }
   if (options.perioperativeDiabetes) {
@@ -1494,8 +1492,7 @@ export function stateSummary(
       : 'No new full glucose, ketone, and bedside assessment has been requested.');
     if (patient.deteriorationObserved) lines.push('A requested full assessment recorded deterioration; later care does not erase that observation.');
     lines.push('Improved glucose alone does not establish the full response, diagnose or exclude ketoacidosis, or automatically clear surgery. Continued insulin, fasting, and monitoring ownership remain necessary.');
-    lines.push(options.alarms.length === 0 ? 'No active alarms.'
-      : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
+    lines.push(alarmLine(options.alarms));
     return lines.join(' ');
   }
   if (options.refeeding) {
@@ -1515,8 +1512,7 @@ export function stateSummary(
       : 'No new electrolyte and bedside reassessment has been requested.');
     if (patient.recurrentDeclineObserved) lines.push('A requested recurrent decline remains in the record after later care.');
     lines.push('Phosphate-only care is partial care. Improved signs or one better result do not establish normalization or lasting safety. Nutrition review selects neither a universal feeding rate nor stopping all nutrition.');
-    lines.push(options.alarms.length === 0 ? 'No active alarms.'
-      : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
+    lines.push(alarmLine(options.alarms));
     return lines.join(' ');
   }
   if (options.avpDeficiency) {
@@ -1535,8 +1531,7 @@ export function stateSummary(
       ? `Last requested assessment at simulated ${formatElapsed(patient.observation.atTick)}: sodium ${patient.observation.sodiumMmolL} millimoles per liter, urine output ${patient.observation.urineOutputMlPerHour} milliliters per hour, urine osmolality ${patient.observation.urineOsmolalityMosmPerKg} milliosmoles per kilogram. These are historical observations, not live measurements.`
       : 'No sodium, urine-output, and urine-osmolality reassessment has been requested.');
     lines.push(`Highest observed sodium: ${patient.peakObservedSodiumMmolL} millimoles per liter. Improved circulation or less urine does not establish sodium normalization or recovery.`);
-    lines.push(options.alarms.length === 0 ? 'No active alarms.'
-      : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
+    lines.push(alarmLine(options.alarms));
     return lines.join(' ');
   }
   if (options.hyponatremiaCorrection) {
@@ -1548,8 +1543,7 @@ export function stateSummary(
       ? `Last requested assessment at simulated ${formatElapsed(patient.observation.atTick)}: sodium ${patient.observation.sodiumMmolL} millimoles per liter, urine output ${patient.observation.urineOutputMlPerHour} milliliters per hour. These are historical observations, not live measurements.`
       : 'No sodium and urine-output reassessment has been requested.');
     lines.push(`Highest observed sodium: ${patient.peakObservedSodiumMmolL} millimoles per liter. Relowering does not erase the correction history. A normal appearance does not establish safety.`);
-    lines.push(options.alarms.length === 0 ? 'No active alarms.'
-      : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
+    lines.push(alarmLine(options.alarms));
     return lines.join(' ');
   }
   if (options.hypocalcemia) {
@@ -1561,9 +1555,7 @@ export function stateSummary(
       ? `Last requested adjusted calcium at simulated ${formatElapsed(patient.observation.atTick)}: ${patient.observation.adjustedCalciumMgDl} milligrams per deciliter. This is a historical observation, not a live measurement.`
       : 'No calcium and bedside reassessment has been requested.');
     lines.push('Symptom relief does not establish sustained calcium control or recovery.');
-    lines.push(options.alarms.length === 0
-      ? 'No active alarms.'
-      : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
+    lines.push(alarmLine(options.alarms));
     return lines.join(' ');
   }
   if (options.hypercalcemia) {
@@ -1575,9 +1567,7 @@ export function stateSummary(
       ? `Last requested adjusted calcium at simulated ${formatElapsed(patient.observation.atTick)}: ${patient.observation.adjustedCalciumMgDl} milligrams per deciliter. This is a historical observation, not a live measurement. Fluid tolerance: ${patient.observation.fluidTolerance}.`
       : 'No calcium and fluid-tolerance reassessment has been requested.');
     lines.push('Improved circulation does not establish calcium control or recovery.');
-    lines.push(options.alarms.length === 0
-      ? 'No active alarms.'
-      : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
+    lines.push(alarmLine(options.alarms));
     return lines.join(' ');
   }
   if (options.myxedema) {
@@ -1589,9 +1579,7 @@ export function stateSummary(
       ? `Last requested bedside PaCO₂ at simulated ${formatElapsed(patient.observation.atTick)}: ${patient.observation.paco2MmHg} millimeters of mercury. This is a historical observation, not a live measurement.`
       : 'No bedside PaCO₂ reassessment has been requested.');
     lines.push('Supported improvement is not independent breathing or recovery.');
-    lines.push(options.alarms.length === 0
-      ? 'No active alarms.'
-      : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
+    lines.push(alarmLine(options.alarms));
     return lines.join(' ');
   }
   lines.push(options.infusions.length === 0
@@ -1689,9 +1677,7 @@ export function stateSummary(
   if (options.lastExposure) {
     lines.push(`Most recent modeled trigger exposure: ${options.lastExposure.agentId}.`);
   }
-  lines.push(options.alarms.length === 0
-    ? 'No active alarms.'
-    : `Active alarms: ${options.alarms.map((a) => `${a.priority}, ${a.message}`).join('; ')}.`);
+  lines.push(alarmLine(options.alarms));
   return lines.join(' ');
 }
 

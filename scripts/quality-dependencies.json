@@ -530,7 +530,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/accessibility.ts",
-        "sha256": "5e9dc4546545f2853126380d17eb3473c01d12fbf5149043472daf6a3f456344"
+        "sha256": "30a483ca9aadab611329d26503ac050df5ce2e5acc8bbeaf980e4402360707bf"
       },
       {
         "path": "src/modules/anesthesia/ui/cockpit.css",

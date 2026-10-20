@@ -73,8 +73,13 @@
     worked-example notice (129 copies), the loading line (62), the think-time heading (62), Confirm
     choice (4), and the source prefixes (14) are six messages used 271 times across 130 files.
     The rest is each lab's clinical step and boundary wording and stays English.
-  - Still to move: the cockpit's screen-reader announcements, which describe clinical state and
-    need the same split before any of them moves.
+  - Screen-reader announcements: the threshold-crossing frame and alarm priorities (5), and the
+    state summary's alarm line, the same ternary in 22 lessons' branches and now one helper (2).
+    Parameter labels, alarm messages, each lesson's spoken state, the waveform descriptions, and
+    the cockpit's equipment announcements describe clinical state and stay English.
+  - Still to move, found by scanning every non-module file for literal markup text: the problem
+    report dialog (21), the error boundary (12), the anaesthesia route (10), the review flag
+    control (8), and a few monitor, component, and router labels (6).
 - [x] Generate the coverage report at build; publish `/translation-status` as a trust document.
   Its sentence claiming the test locales ran on every build was untrue and is corrected: they are
   applied by hand in development until CI runs them. The prerendered page computes coverage from the catalogs at build: languages offered (none),
