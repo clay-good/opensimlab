@@ -11,6 +11,7 @@
  * existing More options gateway offers it without covering or moving controls.
  */
 
+import { t } from '@platform/i18n/messages';
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import { Button } from '@platform/ui';
 import { UPDATE_READY_EVENT, UPDATE_FAILED_EVENT, acceptUpdate } from './register';
@@ -73,13 +74,13 @@ export function UpdateNotice({ surface = 'page' }: { readonly surface?: 'page' |
   return (
     <div className={`update-notice update-notice--${surface}`}>
       <div className="update-notice__message">
-        <p role="status">{update.failed ? 'Update could not be prepared. Your session is unchanged. Try again later.' : 'A newer version is ready.'}</p>
-        {surface === 'session' && <p>Reloading ends this session and clears its unsaved progress.</p>}
+        <p role="status">{t(update.failed ? 'update.failed' : 'update.ready')}</p>
+        {surface === 'session' && <p>{t('update.session-warning')}</p>}
       </div>
       <Button compact={surface === 'page'} variant="primary" onClick={update.accept}>
-        Reload to update
+        {t('update.reload')}
       </Button>
-      {surface === 'page' && <Button compact variant="ghost" onClick={update.dismiss}>Not now</Button>}
+      {surface === 'page' && <Button compact variant="ghost" onClick={update.dismiss}>{t('update.later')}</Button>}
     </div>
   );
 }

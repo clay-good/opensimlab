@@ -473,7 +473,9 @@ describe('Requirement: An Explicit Update Is Actually Offered', () => {
 
   it('Scenario: the offer never takes the decision away', () => {
     // No automatic reload and no skipWaiting outside the learner's click.
-    expect(notice).toContain('Not now');
+    // The decline control is still there; its words now live in the catalog.
+    expect(notice).toContain("onClick={update.dismiss}>{t('update.later')}");
+    expect(readFileSync('src/platform/i18n/messages.ts', 'utf8')).toContain("'update.later': { class: 'interface', text: 'Not now' }");
     expect(register).not.toMatch(/skipWaiting\(\)/);
   });
 });

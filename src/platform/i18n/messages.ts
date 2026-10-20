@@ -192,6 +192,11 @@ export const EN_MESSAGES = {
   'goal.title': { class: 'interface', text: 'A good next rehearsal' },
   'goal.path': { class: 'interface', text: 'Your private path · {path}' },
   'goal.aside': { class: 'interface', text: 'This suggestion uses only the goal in this link and the path stored in the offline catalog. It does not measure competence.' },
+  'update.failed': { class: 'interface', text: 'Update could not be prepared. Your session is unchanged. Try again later.' },
+  'update.ready': { class: 'interface', text: 'A newer version is ready.' },
+  'update.session-warning': { class: 'interface', text: 'Reloading ends this session and clears its unsaved progress.' },
+  'update.reload': { class: 'interface', text: 'Reload to update' },
+  'update.later': { class: 'interface', text: 'Not now' },
 } as const satisfies Readonly<Record<string, SourceMessage>>;
 
 export type MessageKey = keyof typeof EN_MESSAGES;
