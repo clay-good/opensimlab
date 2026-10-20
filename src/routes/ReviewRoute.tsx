@@ -21,12 +21,13 @@ import {
 } from '@anesthesia/debrief/analyse-transcript';
 import { createReplayWorker, workerReplay } from '@anesthesia/debrief/replay-client';
 import { EDUCATOR_PAGES } from './educator-pages';
+import { t, type MessageKey } from '@platform/i18n/messages';
 
-const OUTCOME_LABEL: Record<string, string> = {
-  met: 'Met',
-  'partly-met': 'Partly met',
-  'not-met': 'Not met',
-  'not-exercised': 'Not exercised',
+const OUTCOME_LABEL: Record<string, MessageKey> = {
+  met: 'debrief.outcome-met',
+  'partly-met': 'debrief.outcome-partly-met',
+  'not-met': 'debrief.outcome-not-met',
+  'not-exercised': 'debrief.outcome-not-exercised',
 };
 
 export function ReviewRoute() {
@@ -48,7 +49,7 @@ export function ReviewRoute() {
       } catch (error) {
         failed.push(error instanceof UnreadableTranscript
           ? error.message
-          : `${file.name} could not be read.`);
+          : t('review.unreadable', { file: file.name }));
       }
     }
     setAnalyses((current) => [...current, ...added]);
@@ -62,19 +63,12 @@ export function ReviewRoute() {
       <SiteBar current="/review" extra={EDUCATOR_PAGES} />
 
       <main className="reading" id="main">
-        <h1>Review submitted sessions</h1>
-        <p>
-          Drop the transcript files your learners exported. Everything is read and computed in
-          this browser: the files are not uploaded, and this page makes no request to anything.
-        </p>
-        <p className="reading__aside">
-          Each result below is produced by re-running the simulation engine over the learner&rsquo;s
-          recorded inputs, not by reading a score out of the file. A transcript records what they
-          did; what it means is derived here, the same way the learner&rsquo;s own debrief derived it.
-        </p>
+        <h1>{t('review.heading')}</h1>
+        <p>{t('review.intro')}</p>
+        <p className="reading__aside">{t('review.rederived')}</p>
 
         <label className="review__drop">
-          <span>Choose transcript files</span>
+          <span>{t('review.choose')}</span>
           <input
             type="file"
             accept="application/json,.json"
@@ -85,30 +79,26 @@ export function ReviewRoute() {
 
         {errors.length > 0 && (
           <section>
-            <h2>Files that could not be read</h2>
+            <h2>{t('review.unreadable-heading')}</h2>
             <ul>{errors.map((message) => <li key={message}>{message}</li>)}</ul>
           </section>
         )}
 
         {analyses.length === 0 ? (
-          <p className="field__hint">No sessions loaded yet.</p>
+          <p className="field__hint">{t('review.empty')}</p>
         ) : (
           <>
             <section>
-              <h2>Where the group is strong, and where it is not</h2>
-              <p className="field__hint">
-                {analyses.length} session{analyses.length === 1 ? '' : 's'}, weakest objective
-                first. There is no ranking of learners here and there will not be one: this is for
-                deciding what to teach next.
-              </p>
+              <h2>{t('review.group-heading')}</h2>
+              <p className="field__hint">{t('review.group-hint', { count: analyses.length })}</p>
               <table>
                 <thead>
                   <tr>
-                    <th>Objective</th>
-                    <th className="numeric">Met</th>
-                    <th className="numeric">Partly</th>
-                    <th className="numeric">Not met</th>
-                    <th className="numeric">Not exercised</th>
+                    <th>{t('review.col-objective')}</th>
+                    <th className="numeric">{t('debrief.outcome-met')}</th>
+                    <th className="numeric">{t('review.col-partly')}</th>
+                    <th className="numeric">{t('debrief.outcome-not-met')}</th>
+                    <th className="numeric">{t('debrief.outcome-not-exercised')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -126,21 +116,24 @@ export function ReviewRoute() {
             </section>
 
             <section>
-              <h2>Each session</h2>
+              <h2>{t('review.each-heading')}</h2>
               {analyses.map((analysis) => (
                 <article key={analysis.label} className="review__session">
                   <h3>{analysis.label}</h3>
                   <p className="field__hint">
-                    {analysis.scenarioTitle} · {analysis.simulatedMinutes.toFixed(1)} simulated
-                    minutes · {analysis.actionCount} actions ·{' '}
-                    {analysis.transcript.guidanceLevel} · engine{' '}
-                    {analysis.transcript.versions.engine}
+                    {t('review.session-meta', {
+                      title: analysis.scenarioTitle,
+                      minutes: analysis.simulatedMinutes.toFixed(1),
+                      actions: analysis.actionCount,
+                      guidance: analysis.transcript.guidanceLevel,
+                      engine: analysis.transcript.versions.engine,
+                    })}
                   </p>
                   <ul>
                     {analysis.findings.map((finding) => (
                       <li key={finding.objectiveId}>
                         <Badge kind={finding.outcome === 'met' ? 'default' : 'out-of-range'}>
-                          {OUTCOME_LABEL[finding.outcome] ?? finding.outcome}
+                          {OUTCOME_LABEL[finding.outcome] ? t(OUTCOME_LABEL[finding.outcome]!) : finding.outcome}
                         </Badge>{' '}
                         {finding.statement}
                         <br />
@@ -153,7 +146,7 @@ export function ReviewRoute() {
             </section>
 
             <Button onClick={() => { setAnalyses([]); setErrors([]); }}>
-              Clear these sessions
+              {t('review.clear')}
             </Button>
           </>
         )}
@@ -162,9 +155,9 @@ export function ReviewRoute() {
       </main>
 
       <footer className="document__foot">
-        <a href="/for-educators">For educators</a>
-        <a href="/curriculum">Curriculum</a>
-        <a href="/">Back to the front page</a>
+        <a href="/for-educators">{t('sitebar.for-educators')}</a>
+        <a href="/curriculum">{t('sitebar.curriculum')}</a>
+        <a href="/">{t('documents.footer.home')}</a>
       </footer>
     </div>
   );

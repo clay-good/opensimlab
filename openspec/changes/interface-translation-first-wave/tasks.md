@@ -35,7 +35,8 @@
   CSV header stays a fixed format), and the `/curriculum` page with the educator pages' shared
   navigation, now one list instead of three copies (16, educator; framework names, domains, and the
   mapping disclaimer stay records), and the `/for-educators` page with its assignment builder
-  (59, educator; its markup renders byte-identical) read from `src/platform/i18n/messages.ts` and render the same English.
+  (59, educator; its markup renders byte-identical), and the `/review` page (14, educator; outcome
+  words shared with the debrief) read from `src/platform/i18n/messages.ts` and render the same English.
   `tests/unit/externalised-strings.test.ts` is the hard-coded-string test, applied to each surface
   once it is externalised; every other surface remains.
 - [x] Generate the coverage report at build; publish `/translation-status` as a trust document.

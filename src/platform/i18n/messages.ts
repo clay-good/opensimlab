@@ -619,6 +619,20 @@ export const EN_MESSAGES = {
   'edu.doc-privacy-note': { class: 'educator', text: 'what is stored, which is only on the learner’s own device' },
   'edu.doc-adoption': { class: 'educator', text: 'Adoption pack' },
   'edu.doc-adoption-note': { class: 'educator', text: 'one file for this release listing every scenario with its version, status, sources and limitations, and exactly what a problem report sends; it needs no account, and its reviewed coverage is currently zero' },
+  'review.unreadable': { class: 'educator', text: '{file} could not be read.' },
+  'review.heading': { class: 'educator', text: 'Review submitted sessions' },
+  'review.intro': { class: 'educator', text: 'Drop the transcript files your learners exported. Everything is read and computed in this browser: the files are not uploaded, and this page makes no request to anything.' },
+  'review.rederived': { class: 'educator', text: 'Each result below is produced by re-running the simulation engine over the learner’s recorded inputs, not by reading a score out of the file. A transcript records what they did; what it means is derived here, the same way the learner’s own debrief derived it.' },
+  'review.choose': { class: 'educator', text: 'Choose transcript files' },
+  'review.unreadable-heading': { class: 'educator', text: 'Files that could not be read' },
+  'review.empty': { class: 'educator', text: 'No sessions loaded yet.' },
+  'review.group-heading': { class: 'educator', text: 'Where the group is strong, and where it is not' },
+  'review.group-hint': { class: 'educator', text: '{count, plural, one {# session} other {# sessions}}, weakest objective first. There is no ranking of learners here and there will not be one: this is for deciding what to teach next.' },
+  'review.col-objective': { class: 'educator', text: 'Objective' },
+  'review.col-partly': { class: 'educator', text: 'Partly' },
+  'review.each-heading': { class: 'educator', text: 'Each session' },
+  'review.session-meta': { class: 'educator', text: '{title} · {minutes} simulated minutes · {actions} actions · {guidance} · engine {engine}' },
+  'review.clear': { class: 'educator', text: 'Clear these sessions' },
 } as const satisfies Readonly<Record<string, SourceMessage>>;
 
 export type MessageKey = keyof typeof EN_MESSAGES;
