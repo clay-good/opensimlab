@@ -2,6 +2,7 @@ import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { extname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
+import { EN_MESSAGES } from '@platform/i18n/messages';
 
 const root = fileURLToPath(new URL('../..', import.meta.url));
 
@@ -169,7 +170,11 @@ describe('Requirement: Tutor and reporting boundaries are structural', () => {
     const debrief = sourceFiles.find((file) => file.path === 'src/modules/anesthesia/ui/Debrief.tsx')!.text;
     const review = sourceFiles.find((file) => file.path === 'src/routes/ReviewRoute.tsx')!.text;
     const tutor = sourceFiles.find((file) => file.path === 'src/modules/anesthesia/ui/TutorRegion.tsx')!.text;
-    expect(debrief).toContain('There is no overall score, no pass or fail, and no comparison with anyone else.');
+    // The debrief's sentence lives in the message catalog now; hold both that the
+    // debrief renders that key and what the key says.
+    expect(debrief).toContain("t('debrief.no-score')");
+    expect(EN_MESSAGES['debrief.no-score'].text)
+      .toContain('There is no overall score, no pass or fail, and no comparison with anyone else.');
     expect(review).toContain('There is no ranking of learners here and there will not be one');
     expect(tutor).toContain('works entirely on this device');
   });

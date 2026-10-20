@@ -25,7 +25,9 @@
   (16, root prose), the limitations register's own words (7), the privacy statement's prose
   (29), the governance dashboard's own words (28; its board, coverage, and framework records
   stay typed data), the validation report's own words (43; its figures, rows, and sources stay
-  generated), and the cockpit status bar (18: patient summary units, transport, speed, overflow) read from `src/platform/i18n/messages.ts` and render the same English.
+  generated), the cockpit status bar (18: patient summary units, transport, speed, overflow), and the
+  debrief's shared shell (45: phase headings, controls, outcome words, and the sentences that frame
+  computed findings; scenario-specific framing and episode labels stay clinical content) read from `src/platform/i18n/messages.ts` and render the same English.
   `tests/unit/externalised-strings.test.ts` is the hard-coded-string test, applied to each surface
   once it is externalised; every other surface remains.
 - [x] Generate the coverage report at build; publish `/translation-status` as a trust document.

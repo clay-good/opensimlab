@@ -237,9 +237,9 @@ export function Debrief(props: DebriefProps) {
 
   return (
     <>
-      <a className="skip-link" href="#main">Skip to main content</a>
+      <a className="skip-link" href="#main">{t('sitebar.skip')}</a>
       <main className="reading" id="main">
-      <h1>Debrief</h1>
+      <h1>{t('debrief.heading')}</h1>
       <MaturityMarker
         status={props.scenario.metadata.maturity}
         subjectKind="scenario"
@@ -247,7 +247,7 @@ export function Debrief(props: DebriefProps) {
         contentVersion={props.scenario.metadata.version}
         moduleId={props.moduleId}
       />
-      <nav className="phase-nav" aria-label="Debrief phases">
+      <nav className="phase-nav" aria-label={t('debrief.phases')}>
         {PEARLS_PHASES.map((entry, index) => (
           <Button
             key={entry.id}
@@ -305,27 +305,25 @@ export function Debrief(props: DebriefProps) {
                 ? { activityContext: 'preserving the original sodium-correction window while coordinating water-loss management and continuing surveillance after emergency rescue' }
               : {}),
           })}</p>
-          <label className="field__label" htmlFor="reactions-account">Your account</label>
+          <label className="field__label" htmlFor="reactions-account">{t('debrief.account')}</label>
           <textarea
             id="reactions-account"
             className="field__input"
             style={{ minBlockSize: '8rem', paddingBlock: 'var(--space-2)' }}
             value={account}
             onChange={(event) => setAccount(event.target.value)}
-            placeholder="What stood out? What were you trying to do?"
+            placeholder={t('debrief.account-placeholder')}
           />
-          <p className="field__hint">
-            This stays on this device and is used only for this debrief. It is not scored.
-          </p>
+          <p className="field__hint">{t('debrief.account-hint')}</p>
           <Button variant="primary" onClick={() => { setSubmitted(true); setPhase('description'); }}>
-            {account.trim().length > 0 ? 'Continue' : 'Skip and continue'}
+            {t(account.trim().length > 0 ? 'debrief.continue' : 'debrief.skip-continue')}
           </Button>
         </section>
       )}
 
       {phase === 'description' && (
         <section>
-          <h2>What happened</h2>
+          <h2>{t('debrief.what-happened')}</h2>
           <Timeline marks={marks} totalTicks={totalTicks} />
           <ol>
             {describedEvents(props.log).map((entry) => (
@@ -334,38 +332,36 @@ export function Debrief(props: DebriefProps) {
               </li>
             ))}
           </ol>
-          <Button variant="primary" onClick={() => setPhase('analysis')}>Continue to the analysis</Button>
+          <Button variant="primary" onClick={() => setPhase('analysis')}>{t('debrief.to-analysis')}</Button>
         </section>
       )}
 
       {phase === 'analysis' && (
         <section>
-          <h2>Why the patient did that</h2>
+          <h2>{t('debrief.why')}</h2>
           <p>{tone.opening}</p>
           {tone.mode === 'confirm-and-extend' && (
-            <p className="reading__aside">
-              This reads as a keyword match against what you wrote, which is a crude instrument.
-              A human facilitator would judge your reasoning, not your wording.
-            </p>
+            <p className="reading__aside">{t('debrief.keyword-aside')}</p>
           )}
 
           {episodes.length === 0 ? (
-            <p>No sustained low-pressure or low-oxygen episode was detected by these two thresholds.
-              That does not establish a good outcome or exclude other deterioration. Review the
-              scenario-specific findings and continuing risks below.</p>
+            <p>{t('debrief.no-episode')}</p>
           ) : episodes.map((episode) => (
             <Panel key={episode.id} title={episode.label}>
               <p>
-                It lasted {episode.durationSeconds.toFixed(0)} seconds, from{' '}
-                {formatElapsed(episode.startTick)}, reaching {episode.extreme.toFixed(0)}.
+                {t('debrief.episode', {
+                  seconds: episode.durationSeconds.toFixed(0),
+                  from: formatElapsed(episode.startTick),
+                  extreme: episode.extreme.toFixed(0),
+                })}
               </p>
-              <p className="field__hint">Preceded by: {episode.precededBy}</p>
-              <h3>Ranked contributors</h3>
+              <p className="field__hint">{t('debrief.preceded-by', { what: episode.precededBy })}</p>
+              <h3>{t('debrief.contributors')}</h3>
               <ul>
                 {episode.contributors.map((contributor) => (
                   <li key={contributor.label}>
                     {contributor.label} — {(contributor.share * 100).toFixed(0)}%
-                    {contributor.teachingModel && <> <Badge kind="teaching">Teaching model</Badge></>}
+                    {contributor.teachingModel && <> <Badge kind="teaching">{t('debrief.teaching-model')}</Badge></>}
                   </li>
                 ))}
               </ul>
@@ -373,36 +369,38 @@ export function Debrief(props: DebriefProps) {
           ))}
 
           {stacking.length > 0 && (
-            <Panel title="Dose stacking">
+            <Panel title={t('debrief.stacking')}>
               <ul>
                 {stacking.map((finding) => (
                   <li key={finding.tick}>
-                    A {finding.drugId} bolus at {formatElapsed(finding.tick)} came{' '}
-                    {finding.secondsSincePrevious.toFixed(0)} s after the previous one, while the
-                    effect site was still climbing toward its peak at{' '}
-                    {finding.timeToPeakSeconds.toFixed(0)} s.
+                    {t('debrief.stacking-finding', {
+                      drug: finding.drugId,
+                      time: formatElapsed(finding.tick),
+                      since: finding.secondsSincePrevious.toFixed(0),
+                      peak: finding.timeToPeakSeconds.toFixed(0),
+                    })}
                   </li>
                 ))}
               </ul>
               <Button variant="ghost" onClick={() => props.onOpenExplainer('hysteresis-and-effect-site-lag')}>
-                Read: hysteresis and effect-site lag
+                {t('debrief.read-hysteresis')}
               </Button>
             </Panel>
           )}
 
           {counterfactuals.length > 0 && (
-            <Panel title="What the alternative would have produced">
+            <Panel title={t('debrief.alternative')}>
               {counterfactuals.map((result) => (
                 <div key={result.id}>
                   <p>{result.claim}</p>
                   <p className="numeric">
-                    Your run: {result.actual.toFixed(0)} {result.unit}. The alternative:{' '}
-                    {result.counterfactual.toFixed(0)} {result.unit}.
+                    {t('debrief.alternative-result', {
+                      actual: result.actual.toFixed(0),
+                      counterfactual: result.counterfactual.toFixed(0),
+                      unit: result.unit,
+                    })}
                   </p>
-                  <p className="reading__aside">
-                    Computed by re-running the engine on your action list with that one change,
-                    not asserted from a rule. The modified run is reproducible from the same seed.
-                  </p>
+                  <p className="reading__aside">{t('debrief.alternative-aside')}</p>
                 </div>
               ))}
             </Panel>
@@ -431,13 +429,13 @@ export function Debrief(props: DebriefProps) {
             </Panel>
           )}
 
-          <Button variant="primary" onClick={() => setPhase('summary')}>Continue</Button>
+          <Button variant="primary" onClick={() => setPhase('summary')}>{t('debrief.continue')}</Button>
         </section>
       )}
 
       {phase === 'summary' && (
         <section>
-          <h2>Objectives</h2>
+          <h2>{t('debrief.objectives')}</h2>
           <ul>
             {findings.map((finding) => (
               <li key={finding.objectiveId}>
@@ -448,7 +446,7 @@ export function Debrief(props: DebriefProps) {
                   <>
                     <br />
                     <Button variant="ghost" compact onClick={() => props.onOpenExplainer(finding.concept!)}>
-                      {EXPLAINERS.find((e) => e.id === finding.concept)?.title ?? 'Read more'}
+                      {EXPLAINERS.find((e) => e.id === finding.concept)?.title ?? t('debrief.read-more')}
                     </Button>
                   </>
                 )}
@@ -458,13 +456,9 @@ export function Debrief(props: DebriefProps) {
           {props.moduleId === 'medical-surgical-nursing' && (
             <NcjmmCoverageList scenario={props.scenario} findings={findings} />
           )}
-          <p className="reading__aside">
-            There is no overall score, no pass or fail, and no comparison with anyone else. Nothing
-            about this session has left the device. Any comparison below uses only your own prior
-            bounded attempt summary on this device.
-          </p>
+          <p className="reading__aside">{t('debrief.no-score')}</p>
 
-          <h2>Your own prior attempt</h2>
+          <h2>{t('debrief.prior-heading')}</h2>
           {previousAttempt ? (
             changes.length > 0 ? (
               <ul>
@@ -477,24 +471,22 @@ export function Debrief(props: DebriefProps) {
                       <strong>{objective?.statement ?? change.objectiveId}</strong>
                       <br />
                       <span className="field__hint">
-                        Previously {outcomeWord(change.previous).toLowerCase()}; now{' '}
-                        {outcomeWord(change.current).toLowerCase()}.
+                        {t('debrief.prior-change', {
+                          previous: outcomeWord(change.previous).toLowerCase(),
+                          current: outcomeWord(change.current).toLowerCase(),
+                        })}
                       </span>
                     </li>
                   );
                 })}
               </ul>
-            ) : <p>The objective outcomes are unchanged from your last attempt at this exact content version.</p>
+            ) : <p>{t('debrief.prior-unchanged')}</p>
           ) : (
-            <p>This is the first bounded attempt summary stored for this exact content version.</p>
+            <p>{t('debrief.prior-first')}</p>
           )}
-          <p className="field__hint">
-            Stored locally: scenario and content version, selected public goal, simulated duration,
-            completion time, and objective outcome words. No reflection, action list, physiology
-            trace, identity, or overall score is stored here.
-          </p>
+          <p className="field__hint">{t('debrief.stored-locally')}</p>
 
-          <h2>Where this goes next</h2>
+          <h2>{t('debrief.next-heading')}</h2>
           {rapidCycle && props.onRapidCycle && (
             <Panel>
               <strong>{t('rapid-cycle.offer-title')}</strong>
@@ -507,33 +499,30 @@ export function Debrief(props: DebriefProps) {
           )}
           {replayPoint && props.onReplayDecisionPoint && (
             <Panel>
-              <strong>Rehearse one decision</strong>
+              <strong>{t('debrief.rehearse')}</strong>
               <p>{replayPoint.reason}</p>
               <Button onClick={() => props.onReplayDecisionPoint?.(replayPoint)}>
-                Practice “{replayPoint.label}” from {formatElapsed(replayPoint.atTick)}
+                {t('debrief.rehearse-start', { label: replayPoint.label, time: formatElapsed(replayPoint.atTick) })}
               </Button>
-              <p className="field__hint">
-                Your original run stays intact. The engine rebuilds its exact state through this
-                point, then records your next actions as a separate rehearsal branch.
-              </p>
+              <p className="field__hint">{t('debrief.rehearse-hint')}</p>
             </Panel>
           )}
           {props.nextRecommendation && <GoalRecommendation {...props.nextRecommendation} />}
           <div className="phase-nav">
-            <Button onClick={props.onReplayScenario}>Run it again and compare with this attempt</Button>
-            <Button onClick={props.onExportTranscript}>Export the transcript</Button>
+            <Button onClick={props.onReplayScenario}>{t('debrief.run-again')}</Button>
+            <Button onClick={props.onExportTranscript}>{t('debrief.export')}</Button>
           </div>
 
-          <h3>About this debrief</h3>
+          <h3>{t('debrief.about')}</h3>
           <p className="reading__aside">{PEARLS_CITATION}</p>
           <details>
-            <summary>What is automated, and what still needs a person</summary>
-            <p className="field__label">Automated</p>
+            <summary>{t('debrief.division')}</summary>
+            <p className="field__label">{t('debrief.automated')}</p>
             <ul>{PEARLS_DIVISION_OF_LABOUR.automated.map((item) => <li key={item}>{item}</li>)}</ul>
-            <p className="field__label">Requires a human facilitator</p>
+            <p className="field__label">{t('debrief.requires-human')}</p>
             <ul>{PEARLS_DIVISION_OF_LABOUR.requiresHuman.map((item) => <li key={item}>{item}</li>)}</ul>
           </details>
-          <CitationLink href="https://pubmed.ncbi.nlm.nih.gov/25710312/">PEARLS on PubMed</CitationLink>
+          <CitationLink href="https://pubmed.ncbi.nlm.nih.gov/25710312/">{t('debrief.pearls-pubmed')}</CitationLink>
           <p className="reading__aside">{NOT_FOR_CLINICAL_USE}</p>
         </section>
       )}
@@ -559,10 +548,10 @@ function sentenceCaseTitle(title: string): string {
 }
 
 function outcomeWord(outcome: ObjectiveFinding['outcome']): string {
-  return outcome === 'met' ? 'Met'
-    : outcome === 'partly-met' ? 'Partly met'
-      : outcome === 'not-met' ? 'Not met'
-        : 'Not exercised';
+  return outcome === 'met' ? t('debrief.outcome-met')
+    : outcome === 'partly-met' ? t('debrief.outcome-partly-met')
+      : outcome === 'not-met' ? t('debrief.outcome-not-met')
+        : t('debrief.outcome-not-exercised');
 }
 
 /**
