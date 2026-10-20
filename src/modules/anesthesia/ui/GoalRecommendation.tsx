@@ -4,6 +4,7 @@ import type { PreparationPathId } from '@anesthesia/catalog/preparation-paths';
 import { dismissRecommendation, recommendationDismissed } from '@anesthesia/catalog/recommendation-state';
 import { MaturityMarker } from '@platform/governance/MaturityMarker';
 import { Button, Panel } from '@platform/ui';
+import { t } from '@platform/i18n/messages';
 
 export interface GoalRecommendationProps {
   readonly pathId: PreparationPathId;
@@ -19,8 +20,8 @@ export function GoalRecommendation({
   const [dismissed, setDismissed] = useState(() => recommendationDismissed(pathId, now()));
   if (dismissed) return null;
   return (
-    <Panel title="A good next rehearsal">
-      <p className="field__hint">Your private path · {pathTitle}</p>
+    <Panel title={t('goal.title')}>
+      <p className="field__hint">{t('goal.path', { path: pathTitle })}</p>
       <p><a href={`/anesthesia/scenario/${scenario.metadata.id}?goal=${pathId}`}>{scenario.metadata.title}</a></p>
       <MaturityMarker
         compact
@@ -30,12 +31,12 @@ export function GoalRecommendation({
         contentVersion={scenario.metadata.version}
       />
       <p>{reason}</p>
-      <p className="reading__aside">This suggestion uses only the goal in this link and the path stored in the offline catalog. It does not measure competence.</p>
+      <p className="reading__aside">{t('goal.aside')}</p>
       <Button compact variant="ghost" onClick={() => {
         dismissRecommendation(pathId, now());
         setDismissed(true);
       }}>
-        Hide this suggestion for 7 days
+        {t('spaced.hide')}
       </Button>
     </Panel>
   );

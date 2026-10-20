@@ -189,6 +189,9 @@ export const EN_MESSAGES = {
   'queue.status.disputed': { class: 'root-prose', text: 'disputed: a check found a discrepancy, and a correction is open' },
   'queue.status.earlier-version-checked': { class: 'root-prose', text: 'pending: a check exists, but for an earlier model-set revision' },
   'queue.status.pending': { class: 'root-prose', text: 'pending independent check' },
+  'goal.title': { class: 'interface', text: 'A good next rehearsal' },
+  'goal.path': { class: 'interface', text: 'Your private path · {path}' },
+  'goal.aside': { class: 'interface', text: 'This suggestion uses only the goal in this link and the path stored in the offline catalog. It does not measure competence.' },
 } as const satisfies Readonly<Record<string, SourceMessage>>;
 
 export type MessageKey = keyof typeof EN_MESSAGES;
