@@ -56,7 +56,7 @@ const ReviewRoute = lazy(async () => ({ default: (await import('./ReviewRoute'))
 const ContentReviewRoute = lazy(async () => ({ default: (await import('./ContentReviewRoute')).ContentReviewRoute }));
 
 function Loading() {
-  return <div className="loading-state" role="status" aria-live="polite">Loading…</div>;
+  return <div className="loading-state" role="status" aria-live="polite">{t('ui.loading')}</div>;
 }
 
 function usePath(): string {

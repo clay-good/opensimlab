@@ -194,6 +194,18 @@ export const CORE_MESSAGES = {
   'flag.save': { class: 'interface', text: 'Save this note' },
   'flag.cancel': { class: 'interface', text: 'Cancel' },
   'flag.saved-locally': { class: 'interface', text: 'Saved on this device only. Nothing is sent anywhere; you export the notes as one file when you are finished.' },
+  'ui.artifact': { class: 'interface', text: 'ARTIFACT' },
+  'ui.waveforms': { class: 'interface', text: 'Physiological waveforms. A text description is available below.' },
+  'ui.plot': { class: 'interface', text: 'Concentration plot. Use the arrow keys to read values.' },
+  'ui.alarms': { class: 'interface', text: 'Active alarms' },
+  'ui.silence': { class: 'interface', text: 'Silence' },
+  'ui.log-empty': { class: 'interface', text: 'Nothing logged yet' },
+  'ui.log': { class: 'interface', text: 'Event log' },
+  'ui.unread': { class: 'interface', text: ', has unread entries' },
+  'ui.new-tab': { class: 'interface', text: '(opens in a new tab)' },
+  'ui.timeline': { class: 'interface', text: 'Session timeline' },
+  'ui.close': { class: 'interface', text: 'Close' },
+  'ui.loading': { class: 'interface', text: 'Loading…' },
 } as const satisfies Readonly<Record<string, SourceMessage>>;
 
 export type MessageKey = keyof typeof CORE_MESSAGES | keyof typeof DOCUMENT_MESSAGES

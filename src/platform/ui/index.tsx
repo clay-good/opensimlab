@@ -11,6 +11,7 @@ import {
   type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes,
 } from 'react';
 import './components.css';
+import { t } from '@platform/i18n/messages';
 
 // --- Button ----------------------------------------------------------------
 
@@ -284,7 +285,7 @@ export function Tabs({ label, tabs, active, onSelect }: TabsProps) {
           {tab.unread && (
             <>
               <span className="tabs__unread" aria-hidden="true" />
-              <span className="visually-hidden">, has unread entries</span>
+              <span className="visually-hidden">{t('ui.unread')}</span>
             </>
           )}
         </button>
@@ -553,7 +554,7 @@ export function Modal({ open, title, onClose, dismissible = true, cornerClose = 
         <div className="modal__header">
           <h2 className="panel__title" id={titleId}>{title}</h2>
           {cornerClose && dismissible && (
-            <IconButton label="Close" className="modal__close" data-dialog-dismiss="" onClick={onClose}>✕</IconButton>
+            <IconButton label={t('ui.close')} className="modal__close" data-dialog-dismiss="" onClick={onClose}>✕</IconButton>
           )}
         </div>
         {children}
@@ -574,7 +575,7 @@ export function Drawer({ open, title, onClose, children }: {
     <div className="drawer" role="dialog" aria-modal="false" aria-labelledby={titleId} tabIndex={-1} ref={ref}>
       <div className="panel__header" style={{ paddingInline: 0 }}>
         <h2 className="panel__title" id={titleId}>{title}</h2>
-        <IconButton label="Close" onClick={onClose}>✕</IconButton>
+        <IconButton label={t('ui.close')} onClick={onClose}>✕</IconButton>
       </div>
       {children}
     </div>
@@ -619,7 +620,7 @@ export function CitationLink({ href, children }: { href?: string; children: Reac
   return (
     <a className="citation-link" href={href} rel="noreferrer noopener" target="_blank">
       {children}
-      <span className="visually-hidden"> (opens in a new tab)</span>
+      <span className="visually-hidden"> {t('ui.new-tab')}</span>
     </a>
   );
 }
@@ -636,7 +637,7 @@ export function Timeline({ marks, totalTicks, onSelect }: {
   marks: readonly TimelineMark[]; totalTicks: number; onSelect?: (tick: number) => void;
 }) {
   return (
-    <div className="timeline" role="group" aria-label="Session timeline">
+    <div className="timeline" role="group" aria-label={t('ui.timeline')}>
       <span className="timeline__track" />
       {marks.map((mark) => (
         <button

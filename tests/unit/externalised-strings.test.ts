@@ -4,6 +4,7 @@
  * move into the catalog; from then on, a literal string in its markup fails.
  */
 import { readFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import { describe, expect, it } from 'vitest';
 
 const EXTERNALISED: readonly { readonly path: string; readonly region?: readonly [string, string] }[] = [
@@ -42,6 +43,9 @@ const EXTERNALISED: readonly { readonly path: string; readonly region?: readonly
   { path: 'src/platform/ui/ErrorBoundary.tsx' },
   { path: 'src/platform/governance/FlagControl.tsx' },
   { path: 'src/platform/reporting/ScenarioProblemReport.tsx' },
+  { path: 'src/routes/AnesthesiaRoute.tsx' },
+  { path: 'src/platform/ui/monitor.tsx' },
+  { path: 'src/platform/ui/index.tsx' },
   // The shell's markup. Its screen-reader announcements describe clinical state and stay
   // with the engine's own wording.
   { path: 'src/modules/anesthesia/ui/Cockpit.tsx' },
@@ -77,6 +81,23 @@ describe('externalised surfaces carry no hard-coded interface text', () => {
     }
     expect(literalText(source)).toEqual([]);
     expect(source).not.toMatch(/label: '[A-Z]/);
+  });
+});
+
+/**
+ * Every surface outside the modules, swept rather than listed, so a new page or
+ * component cannot ship hard-coded words by not being added above. The module
+ * folders are left to the list: what remains in them is clinical content. The
+ * gallery and the frame-budget harness are development surfaces whose text is
+ * sample data and a device measurement.
+ */
+const SWEPT = execFileSync('git', ['ls-files', 'src'], { encoding: 'utf8' }).split('\n')
+  .filter((path) => path.endsWith('.tsx') && !path.startsWith('src/modules/')
+    && !['src/routes/GalleryRoute.tsx', 'src/routes/FrameBudgetRoute.tsx'].includes(path));
+
+describe('every surface outside the modules carries no hard-coded interface text', () => {
+  it.each(SWEPT)('%s', (path) => {
+    expect(literalText(readFileSync(path, 'utf8'))).toEqual([]);
   });
 });
 

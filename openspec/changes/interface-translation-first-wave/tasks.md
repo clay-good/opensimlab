@@ -7,7 +7,7 @@
   flat keyed messages, each English key classed interface, educator, root-prose, or clinical;
   ICU-style placeholders and plurals; a translation that is missing, stale (its English changed),
   unfillable, or clinical falls back to English, and English that cannot be filled throws.
-- [ ] Externalise every interface, educator-documentation, and root-prose string; make the
+- [x] Externalise every interface, educator-documentation, and root-prose string; make the
   hard-coded-string test pass. `tests/unit/externalised-strings.test.ts` is that test, applied to
   each surface once it moves; every surface it does not list remains. Each surface below reads from
   `src/platform/i18n/messages.ts` and renders the same English (count, then what stays data):
@@ -81,8 +81,15 @@
     and the review flag control (12), both in the core because every page can show them.
   - The problem report dialog (48: its status messages, form, preview fields, and category names;
     the category ids stay the report contract in `contracts.ts`).
-  - Still to move, found by scanning every non-module file for literal markup text: the
-    anaesthesia route (10), and a few monitor, component, and router labels (6).
+  - The anaesthesia route's own words and assignment notices (12), and the shared component,
+    monitor, and router labels (12).
+  - Held, not listed: the hard-coded-string test now also sweeps every `.tsx` file outside the
+    module folders, so a new page or component fails the build if it ships literal words.
+  - What stays English, and why: inside the modules, each lab's tray steps, model limits, spoken
+    state, waveform descriptions, scenario framing, and the two dose-bearing shortcuts are clinical
+    content, translated only with a clinical review record (the shortcuts are classed `clinical`
+    in the catalog). The line between a generic control and a clinical label was drawn by hand;
+    a translator's first pass is the check on where it falls.
 - [x] Generate the coverage report at build; publish `/translation-status` as a trust document.
   Its sentence claiming the test locales ran on every build was untrue and is corrected: they are
   applied by hand in development until CI runs them. The prerendered page computes coverage from the catalogs at build: languages offered (none),

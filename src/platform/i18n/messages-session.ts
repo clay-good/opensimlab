@@ -374,6 +374,18 @@ export const SESSION_MESSAGES = {
   'report.category.accessibility': { class: 'interface', text: 'Accessibility' },
   'report.category.outdated-source': { class: 'interface', text: 'Outdated source' },
   'report.category.other': { class: 'interface', text: 'Other' },
+  'route.other-profile': { class: 'interface', text: 'Use the other profile instead' },
+  'route.pinned-version': { class: 'interface', text: 'This assignment was made for version {pinned}. {title} is now version {version}. What changed is in the corrections log.' },
+  'route.corrections-log': { class: 'interface', text: 'Corrections log' },
+  'route.reviewed-only': { class: 'interface', text: 'This assignment asks for clinically reviewed content only. {title} version {version} is "{maturity}", so it does not meet that policy. You can still practice it, but it does not count as reviewed.' },
+  'route.missing-heading': { class: 'interface', text: 'No scenario called that' },
+  'route.missing-before': { class: 'interface', text: 'This link asks for a scenario with the id' },
+  'route.missing-after': { class: 'interface', text: ', and there is not one. It may have been renamed, or the link may have a typo in it.' },
+  'route.missing-hint': { class: 'interface', text: 'If you were given this link by an instructor, the id in it is the part to check. These are all the scenarios there are:' },
+  'route.back-to-list': { class: 'interface', text: 'Back to the scenario list' },
+  'route.eyebrow': { class: 'interface', text: 'Your private practice lab' },
+  'route.anesthesia-heading': { class: 'interface', text: 'Anesthesia simulator' },
+  'route.index-intro': { class: 'interface', text: 'Each scenario is a patient and a problem. Start at the top if this is your first one.' },
 } as const satisfies Readonly<Record<string, SourceMessage>>;
 
 registerMessages(SESSION_MESSAGES);

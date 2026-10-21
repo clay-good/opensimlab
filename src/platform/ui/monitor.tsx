@@ -14,6 +14,7 @@ import { formatElapsed } from '@platform/clock/simulation-clock';
 import { SEVERITY_GLYPH, SEVERITY_LABEL, type Severity } from '@platform/log/event-log';
 import type { EngineEvent } from '@platform/kernel/protocol';
 import { Badge } from './index';
+import { t } from '@platform/i18n/messages';
 
 // --- VitalTile ------------------------------------------------------------
 
@@ -67,7 +68,7 @@ export function VitalTile({
       <div className="vital-tile__label-row">
         <span>{name}</span>
         {alarm && <span className="vital-tile__alarm-word">{alarm === 'high' ? 'HIGH PRIORITY' : alarm === 'medium' ? 'MEDIUM' : 'LOW'}</span>}
-        {artifact && <span className="vital-tile__alarm-word">ARTIFACT</span>}
+        {artifact && <span className="vital-tile__alarm-word">{t('ui.artifact')}</span>}
       </div>
       <div className="vital-tile__value-row">
         {onOpenWhy ? (
@@ -230,7 +231,7 @@ export function WaveformCanvas({
         ref={canvasRef}
         style={{ position: 'absolute', inset: 0 }}
         role="img"
-        aria-label="Physiological waveforms. A text description is available below."
+        aria-label={t('ui.waveforms')}
       />
     </div>
   );
@@ -346,7 +347,7 @@ export function PlotCanvas({ series, height, cursorSeconds, xMax, yMax }: PlotCa
 
   return (
     <div style={{ position: 'relative', inlineSize: '100%', blockSize: height }}>
-      <canvas ref={canvasRef} role="img" aria-label="Concentration plot. Use the arrow keys to read values." />
+      <canvas ref={canvasRef} role="img" aria-label={t('ui.plot')} />
     </div>
   );
 }
@@ -364,7 +365,7 @@ export function AlarmRail({ alarms, tick, onSilence }: {
   alarms: readonly AlarmRailItem[]; tick: number; onSilence: (id: string) => void;
 }) {
   return (
-    <div className="alarm-rail" data-active={alarms.length > 0} role="region" aria-label="Active alarms">
+    <div className="alarm-rail" data-active={alarms.length > 0} role="region" aria-label={t('ui.alarms')}>
       {alarms.map((alarm) => {
         const remaining = alarm.silencedUntilTick !== null
           ? Math.max(Math.ceil((alarm.silencedUntilTick - tick) / 10), 0)
@@ -383,7 +384,7 @@ export function AlarmRail({ alarms, tick, onSilence }: {
               ? <span className="alarm-rail__priority-word">silenced {remaining}s</span>
               : (
                 <button type="button" className="button button--ghost button--compact" onClick={() => onSilence(alarm.id)}>
-                  Silence
+                  {t('ui.silence')}
                 </button>
               )}
           </div>
@@ -399,10 +400,10 @@ export function LogList({ entries, onSelect, selectedTick }: {
   entries: readonly EngineEvent[]; onSelect?: (tick: number) => void; selectedTick?: number | null;
 }) {
   if (entries.length === 0) {
-    return <div className="empty-state"><span className="empty-state__title">Nothing logged yet</span></div>;
+    return <div className="empty-state"><span className="empty-state__title">{t('ui.log-empty')}</span></div>;
   }
   return (
-    <ul className="log-list" aria-label="Event log">
+    <ul className="log-list" aria-label={t('ui.log')}>
       {entries.map((entry) => (
         <li key={`${entry.tick}-${entry.eventId}`}>
           <LogEntryRow entry={entry} onSelect={onSelect} selected={selectedTick === entry.tick} />

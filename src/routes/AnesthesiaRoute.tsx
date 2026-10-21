@@ -137,6 +137,8 @@ import {
 } from '@platform/reporting/contracts';
 import type { Limitation } from '@platform/docs/limitations/types';
 import { SITE_ORIGIN } from './site-metadata';
+import { t } from '@platform/i18n/messages';
+import '@platform/i18n/messages-session';
 
 export interface ClinicalModuleConfig {
   readonly id: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology' | 'respiratory-medicine' | 'pediatrics' | 'neurology' | 'toxicology' | 'obstetrics' | 'neonatology' | 'endocrine-metabolic' | 'renal-electrolyte' | 'infectious-disease' | 'medical-surgical-nursing' | 'oncology' | 'surgery-trauma';
@@ -808,17 +810,14 @@ export function assignmentNotices(
   const notices: AssignmentNotice[] = [];
   if (assignment.pinnedVersion !== null && assignment.pinnedVersion !== version) {
     notices.push({
-      text: `This assignment was made for version ${assignment.pinnedVersion}. ${title} is now version `
-        + `${version}. What changed is in the corrections log.`,
-      link: { href: '/corrections', label: 'Corrections log' },
+      text: t('route.pinned-version', { pinned: assignment.pinnedVersion, title, version }),
+      link: { href: '/corrections', label: t('route.corrections-log') },
     });
   }
   if (assignment.reviewedOnly && !isReviewedOnlyStatus(maturity)) {
     notices.push({
-      text: `This assignment asks for clinically reviewed content only. ${title} version ${version} is `
-        + `"${MATURITY_LABELS[maturity]}", so it does not meet that policy. You can still practice it, `
-        + 'but it does not count as reviewed.',
-      link: { href: '/review-status', label: 'Review status' },
+      text: t('route.reviewed-only', { title, version, maturity: MATURITY_LABELS[maturity] }),
+      link: { href: '/review-status', label: t('documents.review-status') },
     });
   }
   return notices;
@@ -1107,7 +1106,7 @@ export function ClinicalModuleRoute({ path, config }: { path: string; config: Cl
           <div className="reading">
             <p className="field__hint">{guess.reason}</p>
             <Button compact onClick={() => setRegionId(region.id === 'US' ? 'GB' : 'US')}>
-              Use the other profile instead
+              {t('route.other-profile')}
             </Button>
           </div>
         )}
@@ -1164,15 +1163,11 @@ function UnknownScenario({ id, config }: { id: string; config: ClinicalModuleCon
     <>
       <SiteBar />
       <main className="reading" id="main">
-      <h1>No scenario called that</h1>
+      <h1>{t('route.missing-heading')}</h1>
       <p>
-        This link asks for a scenario with the id <code>{id}</code>, and there is not one.
-        It may have been renamed, or the link may have a typo in it.
+        {t('route.missing-before')} <code>{id}</code>{t('route.missing-after')}
       </p>
-      <p>
-        If you were given this link by an instructor, the id in it is the part to check. These are
-        all the scenarios there are:
-      </p>
+      <p>{t('route.missing-hint')}</p>
       <ul className="scenario-index">
         {config.scenarios.map((entry) => (
           <li key={entry.metadata.id} className="scenario-index__item">
@@ -1183,7 +1178,7 @@ function UnknownScenario({ id, config }: { id: string; config: ClinicalModuleCon
           </li>
         ))}
       </ul>
-      <p><a href={config.basePath}>Back to the scenario list</a></p>
+      <p><a href={config.basePath}>{t('route.back-to-list')}</a></p>
       </main>
     </>
   );
@@ -1194,7 +1189,7 @@ function EmergencyMedicineScenarioIndex({ config }: { config: ClinicalModuleConf
     <>
       <SiteBar current={config.basePath} />
       <main className="reading" id="main">
-        <p className="catalog-path__eyebrow">Your private practice lab</p>
+        <p className="catalog-path__eyebrow">{t('route.eyebrow')}</p>
         <h1>{config.heading}</h1>
         <p>
           {config.catalogIntroduction}
@@ -1254,11 +1249,9 @@ export function ScenarioIndex() {
     <>
       <SiteBar current="/anesthesia" />
       <main className="reading" id="main">
-        <p className="catalog-path__eyebrow">Your private practice lab</p>
-        <h1>Anesthesia simulator</h1>
-        <p>
-          Each scenario is a patient and a problem. Start at the top if this is your first one.
-        </p>
+        <p className="catalog-path__eyebrow">{t('route.eyebrow')}</p>
+        <h1>{t('route.anesthesia-heading')}</h1>
+        <p>{t('route.index-intro')}</p>
         <SpacedReturnSuggestion scenarios={SCENARIOS_FOR_RETURN} basePath="/anesthesia" />
         <ul className="scenario-index">
           {scenariosByDifficulty().map((entry) => (
