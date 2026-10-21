@@ -9,6 +9,7 @@ import { StrictMode } from 'react';
 import { createRoot, hydrateRoot } from 'react-dom/client';
 import { App } from '@routes/App';
 import { registerServiceWorker } from '@platform/offline/register';
+import { HYDRATABLE } from '@routes/hydratable';
 
 // Development only: `?pseudo=en-XA` lengthens every externalised string and
 // `?pseudo=en-XB` mirrors the page, so layout can be checked before a real
@@ -45,8 +46,6 @@ const tree = (
  * render generated tables. Hydrating a deliberate difference is a mismatch, and
  * React is right to complain about it, so those mount fresh instead.
  */
-/** Routes whose prerendered markup is the same tree the client renders. */
-const HYDRATABLE = new Set(['', '/about', '/for-educators', '/curriculum', '/validation', '/governance', '/limitations', '/privacy', '/cardiology', '/respiratory-medicine', '/pediatrics', '/neurology', '/oncology', '/critical-care']);
 const path = window.location.pathname.replace(/\/+$/, '');
 if (root.dataset.prerendered === 'true' && HYDRATABLE.has(path)) hydrateRoot(root, tree);
 else createRoot(root).render(tree);

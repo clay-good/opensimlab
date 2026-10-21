@@ -7,6 +7,7 @@
  * cumulative layout shift at zero.
  */
 
+import { Suspense } from 'react';
 import { MODULES } from '@platform/modules/registry';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { Landing } from '@landing/Landing';
@@ -78,6 +79,21 @@ import {
 } from '../modules/surgery-trauma/scenarios';
 import { moduleProse } from '@platform/modules/module-prose';
 import type { Scenario } from '@anesthesia/scenarios/types';
+
+/**
+ * What the prerender writes for a path: the body, inside the same Suspense
+ * boundary the client's router puts every lazily loaded route in.
+ *
+ * Without the boundary the server emitted the route's markup bare while the
+ * client rendered it inside `<Suspense>`, so every hydrated route except the
+ * front door, which is not lazy, failed hydration (React error #418) and was
+ * thrown away and rendered again. With it the server writes the boundary's
+ * markers, and React keeps the markup and hydrates it once the chunk arrives.
+ */
+export function prerenderTree(path: string) {
+  const body = <PrerenderedBody path={path} />;
+  return path === '/' ? body : <Suspense fallback={null}>{body}</Suspense>;
+}
 
 export function PrerenderedBody({ path }: { path: string }) {
   // The landing page, the informational routes and the planned-module pages

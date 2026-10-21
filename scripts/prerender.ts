@@ -14,14 +14,13 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
 import { renderToString } from 'react-dom/server';
-import { createElement } from 'react';
 import {
   ROUTES, SITE_ORIGIN, SOCIAL_IMAGE_HEIGHT, SOCIAL_IMAGE_WIDTH,
   canonicalUrl, formatTitle, indexableRoutes, socialImageAlt, socialImageUrl,
 } from '../src/routes/routes.ts';
 import { structuredDataFor } from '../src/platform/docs/structured-data.ts';
 import { PUBLIC_CATALOG_ARTIFACTS } from '../src/platform/catalog/public-artifacts.ts';
-import { PrerenderedBody } from '../src/routes/Prerendered.tsx';
+import { prerenderTree } from '../src/routes/Prerendered.tsx';
 import { notFoundHtml } from '../src/routes/not-found.ts';
 import {
   ADOPTION_PACK_PATH, ADOPTION_PACK_RELEASE_TOKEN,
@@ -123,7 +122,7 @@ function main(): void {
     // separators React needs to hydrate adjacent text nodes. Static markup
     // hydrates with a text mismatch on any `{value}{' '}<a>` in the tree, which
     // is most of the prose on the landing page.
-    const body = renderToString(createElement(PrerenderedBody, { path: route.path }));
+    const body = renderToString(prerenderTree(route.path));
     const html = [
       head(route, `${styles}\n${preloads}`),
       `<div id="root" data-prerendered="true">${body}</div>`,
