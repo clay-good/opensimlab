@@ -132,6 +132,12 @@ Read [CONTRIBUTING.md](CONTRIBUTING.md). The project is spec-driven with
 under [`openspec/specs/`](openspec/specs/), and clinical review is governed by
 [GOVERNANCE.md](GOVERNANCE.md).
 
+Two contributions need no clinical credential: a second-source check of a pharmacology parameter
+from the [verification queue](https://opensimlab.com/verification-queue), and translating the
+interface. Interface translators can check a locale catalog entirely in the browser at
+[`/translation-coverage`](https://opensimlab.com/translation-coverage) before committing;
+CONTRIBUTING.md has both paths.
+
 ## License
 
 Code is MIT. Educational content is openly licensed per scenario. See [LICENSE](LICENSE).

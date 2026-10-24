@@ -307,8 +307,9 @@ describe('Renal and electrolyte medicine module foundation', () => {
     // surgery and trauma went away, because there is no longer a planned module to describe.
     // Each surgery and trauma lesson since then adds one route and one indexable page, and so
     // does the seventh renal lab, the verification queue, and the translation status page. Each of the 256
-    // scenarios also has a facilitator guide route, which is not indexed.
-    expect(ROUTES).toHaveLength(544);
+    // scenarios also has a facilitator guide route, which is not indexed. The translation-coverage
+    // tool adds one more noindex route, so the total is one above the indexable count's base.
+    expect(ROUTES).toHaveLength(545);
     expect(indexableRoutes()).toHaveLength(285);
     // 59 module and shared artifacts, plus the release-wide adoption pack.
     expect(PUBLIC_CATALOG_ARTIFACTS).toHaveLength(60);

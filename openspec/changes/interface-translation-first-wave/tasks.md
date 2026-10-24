@@ -129,9 +129,21 @@
 
 ## 4. Contribution path
 
-- [ ] Build the browser-based coverage page (file in, missing/stale out, sample render; no
-  network).
-- [ ] Document the translator path; refuse machine-seeded catalogs by provenance field.
+- [x] Build the browser-based coverage page (file in, missing/stale out, sample render; no
+  network). `/translation-coverage` is a noindex contribution surface, alongside `/gallery` and
+  `/frame-budget`, and like them stays English because its text is instructions to a contributor.
+  A catalog loaded from a file or pasted is parsed in the browser (`parseCatalog`), and
+  `inspectCatalog` (`src/platform/i18n/coverage-tool.ts`) runs the same `coverage` and
+  `catalogProblems` the build runs, then samples a few keys of each status rendered with sample
+  placeholder values, so a translator sees the fill, the English fallback where a key is missing or
+  stale, and the clinical keys staying English. Nothing leaves the browser. The parser reports only
+  that text is not a catalog; shipping faults are left to the inspection so the page shows them
+  together. `tests/unit/i18n-coverage-tool.test.ts`.
+- [x] Document the translator path; refuse machine-seeded catalogs by provenance field. The
+  provenance refusal is `catalogProblems` (`provenance !== 'human'`), covered by
+  `tests/unit/i18n-catalog.test.ts`; the path a translator follows — the catalog shape, the named
+  translators and human provenance, the browser coverage page, and the full/non-stale bar before
+  the selector offers a locale — is written up under "Translate the interface" in `CONTRIBUTING.md`.
 
 ## 5. Budget
 
