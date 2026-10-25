@@ -204,6 +204,18 @@ textarea.field__input {
 .field__error { font: var(--type-micro); color: var(--alarm-critical-text); }
 .field__hint { font: var(--type-micro); color: var(--text-tertiary); }
 
+/* The English-content marker: one inline line at the top of a clinical surface,
+   shown only under a translated interface locale. Never a modal or a toast. */
+.clinical-marker {
+  font: var(--type-micro);
+  color: var(--text-secondary);
+  margin: 0 0 var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-inline-start: 2px solid var(--line-strong);
+  background: var(--surface-2);
+  border-radius: var(--radius-control);
+}
+
 /* --- Tabs ---------------------------------------------------------------- */
 /* The tab strip scrolls sideways inside itself rather than widening its parent:
    a grid column takes its minimum from its widest child, so a non-scrolling row

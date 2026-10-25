@@ -23,6 +23,8 @@ export const DOCUMENT_MESSAGES = {
   'translation.pseudo': { class: 'root-prose', text: 'Two test locales are never offered: one lengthens every string by about 40% ({total} strings) and one mirrors the page right to left. They are applied by hand in development to check layout; running them automatically on every build is not done yet.' },
   'translation.clinical-heading': { class: 'root-prose', text: 'Clinical content' },
   'translation.clinical': { class: 'root-prose', text: 'Every scenario, explainer, tutor message, debrief, and limitation stays in English in all {modules} modules until a translation of it has its own clinical review. That review does not exist in English yet, so no clinical translation is planned before it.' },
+  'translation.clinical-by-module': { class: 'root-prose', text: 'Clinical translation state, per module:' },
+  'translation.clinical-module-state': { class: 'root-prose', text: 'shown in English; no clinically reviewed translation in any language yet' },
   'queue.verified': { class: 'root-prose', text: 'Parameters independently verified' },
   'queue.pending': { class: 'root-prose', text: 'Parameters awaiting a check' },
   'queue.intro': { class: 'root-prose', text: 'Every pharmacology parameter in this build was transcribed by hand from its primary publication. This project calls a value verified only when a different person has checked it against a second source, and there has not yet been a different person. A check is not a clinical review: it changes one parameter from pending to verified, and it signs no content, covers no clinical domain, and advances no maturity label.' },

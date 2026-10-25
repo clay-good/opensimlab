@@ -123,9 +123,21 @@
 
 ## 3. Clinical-content marker
 
-- [ ] Add the once-per-surface English-content marker to briefing, cockpit tutor region, debrief,
-  explainer drawer, card drawer; route test for presence and uniqueness.
-- [ ] List clinical translation state per module on `/translation-status`.
+- [x] Add the once-per-surface English-content marker to briefing, cockpit tutor region, debrief,
+  explainer drawer, card drawer; route test for presence and uniqueness. `ClinicalContentMarker`
+  (`src/platform/i18n/ClinicalContentMarker.tsx`) renders one inline line — never a modal or toast
+  — linking to `/translation-status`, and only when `activeLocale()` is defined, so a reader on
+  English never sees it. It sits at the top of the briefing (`Prebrief`), the debrief (`Debrief`),
+  the expanded tutor prompt (`TutorRegion`, where the clinical teaching prose is — not the
+  interface-only tutor introduction or the collapsed card), and the explainer and drug-card drawers
+  (`Cockpit`). `tests/unit/clinical-content-marker.test.tsx` proves the behaviour (nothing under
+  English, one line with the status link under a translated locale) and pins the placement: once on
+  each named surface, and not on the interface-only crisis injector or the status page.
+- [x] List clinical translation state per module on `/translation-status`. `TranslationStatusBody`
+  lists every available module with its clinical translation state, which is the same honest line
+  for all of them — shown in English, no clinically reviewed translation in any language yet —
+  because no clinical review of a translation exists. The same test holds that every available
+  module is listed and that none claims a translation.
 
 ## 4. Contribution path
 

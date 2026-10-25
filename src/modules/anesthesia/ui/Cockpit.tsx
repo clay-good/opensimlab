@@ -136,6 +136,7 @@ import { RapidCyclePanel } from './RapidCyclePanel';
 import { PausePointPanel } from './PausePointPanel';
 import { SessionPreferences } from './SessionPreferences';
 import { t } from '@platform/i18n/messages';
+import { ClinicalContentMarker } from '@platform/i18n/ClinicalContentMarker';
 import '@platform/i18n/messages-session';
 import { useReasoningNotes } from '@platform/session/reasoning-notes';
 import type { ScenarioPausePoint, ScenarioRapidCycle } from '../scenarios/types';
@@ -2138,6 +2139,7 @@ export function Cockpit({
       <Drawer open={explainerId !== null} title={explainerId ? getExplainer(explainerId).title : ''} onClose={() => setExplainerId(null)}>
         {explainerId && (
           <div className="reading" style={{ padding: 0 }}>
+            <ClinicalContentMarker />
             {getExplainer(explainerId).body.split('\n\n').map((paragraph, index) => (
               <p key={index}>{paragraph}</p>
             ))}
@@ -2169,6 +2171,7 @@ export function Cockpit({
       <Drawer open={drugCardId !== null} title={drugCardId ? (getDrugCard(drugCardId)?.name ?? '') : ''} onClose={() => setDrugCardId(null)}>
         {drugCardId && getDrugCard(drugCardId) && (
           <>
+            <ClinicalContentMarker />
             <DrugCardBody drugId={drugCardId} reviewMode={reviewMode} />
             {onReportSource && (
               <Button compact variant="ghost" onClick={onReportSource}>{t('cockpit.report-source')}</Button>
