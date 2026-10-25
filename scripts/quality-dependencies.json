@@ -28,7 +28,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
-        "sha256": "0197e4ffde0abc5d581417d4abde9e5fa5fe5f4e0d2a8795cac341a2e76d0ea2"
+        "sha256": "fd9632ca6c602c65f994c7dc75e5a101c07a264f5c011eda4456e2a4ab3e1beb"
       },
       {
         "path": "src/modules/endocrine-metabolic/HypocalcemiaTray.tsx",
@@ -249,15 +249,15 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Cockpit.tsx",
-        "sha256": "c26b7c619ff3140c4f6586adeaf0ce688b5b114ed313d5b413e454dca80aa60b"
+        "sha256": "1a3245e0d6795a9ab91481853193b3483821d854873cf78de2ed2a6bd27e186e"
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
-        "sha256": "0197e4ffde0abc5d581417d4abde9e5fa5fe5f4e0d2a8795cac341a2e76d0ea2"
+        "sha256": "fd9632ca6c602c65f994c7dc75e5a101c07a264f5c011eda4456e2a4ab3e1beb"
       },
       {
         "path": "src/modules/anesthesia/ui/Prebrief.tsx",
-        "sha256": "0e01566cad3087a0aee2cc71d9d6f25585614eeef2c04612218fa715f6a47616"
+        "sha256": "f4bd2730af531a85245ce926505bb33c91efa983957dda4ef046330f7eb25acf"
       },
       {
         "path": "src/modules/endocrine-metabolic/HyponatremiaCorrectionTray.tsx",
@@ -514,11 +514,11 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Cockpit.tsx",
-        "sha256": "c26b7c619ff3140c4f6586adeaf0ce688b5b114ed313d5b413e454dca80aa60b"
+        "sha256": "1a3245e0d6795a9ab91481853193b3483821d854873cf78de2ed2a6bd27e186e"
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
-        "sha256": "0197e4ffde0abc5d581417d4abde9e5fa5fe5f4e0d2a8795cac341a2e76d0ea2"
+        "sha256": "fd9632ca6c602c65f994c7dc75e5a101c07a264f5c011eda4456e2a4ab3e1beb"
       },
       {
         "path": "src/modules/anesthesia/ui/DemonstrationBar.tsx",
@@ -526,7 +526,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Prebrief.tsx",
-        "sha256": "0e01566cad3087a0aee2cc71d9d6f25585614eeef2c04612218fa715f6a47616"
+        "sha256": "f4bd2730af531a85245ce926505bb33c91efa983957dda4ef046330f7eb25acf"
       },
       {
         "path": "src/modules/anesthesia/ui/accessibility.ts",

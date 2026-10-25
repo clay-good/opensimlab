@@ -492,6 +492,16 @@ export const ROUTES: readonly RouteMetadata[] = [
     structuredData: [],
     heading: 'Frame budget harness',
   },
+  {
+    path: '/translation-coverage',
+    title: formatTitle('Translation coverage'),
+    description:
+      'A contributor checks a locale catalog in the browser: its coverage, the build’s shipping '
+      + 'checks, and which keys are still missing or stale.',
+    indexable: false,
+    structuredData: [],
+    heading: 'Translation coverage',
+  },
   // A planned module route resolves to an honest page rather than an error.
   ...MODULES.filter((module) => module.status === 'planned').map((module) => ({
     path: `/${module.route}`,

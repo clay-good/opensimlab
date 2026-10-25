@@ -103,8 +103,13 @@ describe('Requirement: Educational rehearsal never becomes a runtime work tool',
     const review = readFileSync(join(root, 'src/routes/ReviewRoute.tsx'), 'utf8');
     expect(review).toContain('accept="application/json,.json"');
     expect(review).toContain('parseTranscript(text, file.name)');
-    expect(sourceFiles.filter((file) => file.text.includes('type="file"')).map((file) => file.path))
-      .toEqual(['src/routes/ReviewRoute.tsx']);
+    // The translation-coverage contributor tool is the only other file input. It reads a local
+    // locale catalog, parsed in the browser with no network, under the same strict-JSON accept.
+    const coverage = readFileSync(join(root, 'src/routes/TranslationCoverageRoute.tsx'), 'utf8');
+    expect(coverage).toContain('accept="application/json,.json"');
+    expect(coverage).toContain('parseCatalog(');
+    expect(sourceFiles.filter((file) => file.text.includes('type="file"')).map((file) => file.path).sort())
+      .toEqual(['src/routes/ReviewRoute.tsx', 'src/routes/TranslationCoverageRoute.tsx']);
   });
 
   it('ships no general server, MCP surface, or package API', () => {

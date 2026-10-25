@@ -206,6 +206,11 @@ export const CORE_MESSAGES = {
   'ui.timeline': { class: 'interface', text: 'Session timeline' },
   'ui.close': { class: 'interface', text: 'Close' },
   'ui.loading': { class: 'interface', text: 'Loading…' },
+  // The once-per-surface notice that a surface's clinical content is still English. It is core
+  // because any clinical surface — briefing, cockpit, debrief, drawer — can show it, and it never
+  // renders under English (the source), only once a translated interface locale is active.
+  'clinical-marker.notice': { class: 'interface', text: 'This clinical content is shown in English until a clinically reviewed translation exists in your language.' },
+  'clinical-marker.link': { class: 'interface', text: 'Translation status' },
 } as const satisfies Readonly<Record<string, SourceMessage>>;
 
 export type MessageKey = keyof typeof CORE_MESSAGES | keyof typeof DOCUMENT_MESSAGES
@@ -233,6 +238,15 @@ let activeCatalog: LocaleCatalog | undefined;
  */
 export function setActiveCatalog(catalog: LocaleCatalog | undefined): void {
   activeCatalog = catalog;
+}
+
+/**
+ * The active interface locale, or undefined when the reader is on English, the
+ * source. A defined locale means the interface is translated and a surface's
+ * still-English clinical content is shown under a different language.
+ */
+export function activeLocale(): string | undefined {
+  return activeCatalog?.locale;
 }
 
 /** The interface string for a key, in English until a locale is offered. */

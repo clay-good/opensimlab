@@ -46,6 +46,7 @@ const About = lazy(async () => ({ default: (await import('@landing/About')).Abou
 const PlannedModuleRoute = lazy(async () => ({ default: (await import('./PlannedModuleRoute')).PlannedModuleRoute }));
 const GalleryRoute = lazy(async () => ({ default: (await import('./GalleryRoute')).GalleryRoute }));
 const FrameBudgetRoute = lazy(async () => ({ default: (await import('./FrameBudgetRoute')).FrameBudgetRoute }));
+const TranslationCoverageRoute = lazy(async () => ({ default: (await import('./TranslationCoverageRoute')).TranslationCoverageRoute }));
 // The informational routes read the validation report and the governance records,
 // which reach the pharmacology models. They load on demand for the same reason.
 const DocumentRoute = lazy(async () => ({ default: (await import('./DocumentRoute')).DocumentRoute }));
@@ -289,6 +290,7 @@ function CurrentRoute() {
   if (path === '/content-review') return <Suspense fallback={<Loading />}><ContentReviewRoute /></Suspense>;
   if (path === '/gallery') return <Suspense fallback={<Loading />}><GalleryRoute /></Suspense>;
   if (path === '/frame-budget') return <Suspense fallback={<Loading />}><FrameBudgetRoute /></Suspense>;
+  if (path === '/translation-coverage') return <Suspense fallback={<Loading />}><TranslationCoverageRoute /></Suspense>;
   if (['/validation', '/governance', '/review-status', '/corrections', '/verification-queue', '/translation-status', '/limitations', '/privacy'].includes(path)) {
     return <Suspense fallback={<Loading />}><DocumentRoute path={path} /></Suspense>;
   }

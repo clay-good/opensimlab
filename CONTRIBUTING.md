@@ -63,3 +63,26 @@ Leave `maintainerConfirmed` false: a maintainer opens your second source and set
 second source disagrees, add a `discrepancy` describing what differs instead of changing the
 value; that opens a correction rather than a verified record. No contact detail is needed, and a
 check is never a clinical review. Rules: `src/modules/anesthesia/pharmacology/verification.ts`.
+
+## Translate the interface
+
+The interface, educator documentation, and root prose are translatable; a module's clinical
+content — each lab's steps, model limits, spoken state, waveform descriptions, and scenario
+framing — stays English until a clinically reviewed translation exists, and the catalog refuses a
+clinical key.
+
+A locale catalog is a JSON object: a `locale` (such as `es` or `pt-BR`), a `translators` array of
+the names behind it, a `provenance` of `"human"`, and a `messages` object mapping each English key
+to its `text` and the `sourceHash` of the English it translated. A catalog with no named
+translator, or any `provenance` but `human`, is refused — a machine-seeded catalog has no value
+here, because nobody reviewed it. The checks live in `catalogProblems`
+(`src/platform/i18n/catalog.ts`) and run in the build.
+
+Before you commit, check your work in the browser at
+[`/translation-coverage`](https://opensimlab.com/translation-coverage): drop the catalog file in
+and it shows the coverage, the same shipping checks the build runs, every missing or stale key, and
+a sample render with placeholders filled. Everything there runs locally; nothing is uploaded. A
+locale is offered in the language selector only at full, non-stale coverage, and only once those
+checks pass. The English keys are in `src/platform/i18n/messages*.ts`, split by surface; run
+`npm run ci` to see the coverage report the build publishes to
+[`/translation-status`](https://opensimlab.com/translation-status).

@@ -88,12 +88,15 @@ describe('externalised surfaces carry no hard-coded interface text', () => {
  * Every surface outside the modules, swept rather than listed, so a new page or
  * component cannot ship hard-coded words by not being added above. The module
  * folders are left to the list: what remains in them is clinical content. The
- * gallery and the frame-budget harness are development surfaces whose text is
- * sample data and a device measurement.
+ * gallery, the frame-budget harness, and the translation-coverage tool are
+ * development and contribution surfaces whose text is sample data, a device
+ * measurement, and instructions to a contributor, not interface a learner or
+ * educator reads.
  */
 const SWEPT = execFileSync('git', ['ls-files', 'src'], { encoding: 'utf8' }).split('\n')
   .filter((path) => path.endsWith('.tsx') && !path.startsWith('src/modules/')
-    && !['src/routes/GalleryRoute.tsx', 'src/routes/FrameBudgetRoute.tsx'].includes(path));
+    && !['src/routes/GalleryRoute.tsx', 'src/routes/FrameBudgetRoute.tsx',
+      'src/routes/TranslationCoverageRoute.tsx'].includes(path));
 
 describe('every surface outside the modules carries no hard-coded interface text', () => {
   it.each(SWEPT)('%s', (path) => {

@@ -1,6 +1,7 @@
 import { Banner, Button } from '@platform/ui';
 import type { Prompt } from '../tutor/guidance';
 import { t } from '@platform/i18n/messages';
+import { ClinicalContentMarker } from '@platform/i18n/ClinicalContentMarker';
 import '@platform/i18n/messages-session';
 
 export const TUTOR_INTRODUCTION_PREFERENCE = 'tutor-introduction-dismissed';
@@ -54,6 +55,7 @@ export function TutorPromptCard({
 
   return (
     <div className="tutor-prompt" role="status">
+      <ClinicalContentMarker />
       <Banner
         kind="advisory"
         actions={(

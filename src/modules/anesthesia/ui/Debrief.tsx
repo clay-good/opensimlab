@@ -92,6 +92,7 @@ import { supportsTrialRule } from '../../oncology/trial-rule';
 import { supportsSilentInteraction } from '../../oncology/silent-interaction';
 import { supportsEasyLabel } from '../../oncology/easy-label';
 import { GoalRecommendation, type GoalRecommendationProps } from './GoalRecommendation';
+import { ClinicalContentMarker } from '@platform/i18n/ClinicalContentMarker';
 import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
   appendPracticeAttempt,
@@ -240,6 +241,7 @@ export function Debrief(props: DebriefProps) {
     <>
       <a className="skip-link" href="#main">{t('sitebar.skip')}</a>
       <main className="reading" id="main">
+      <ClinicalContentMarker />
       <h1>{t('debrief.heading')}</h1>
       <MaturityMarker
         status={props.scenario.metadata.maturity}

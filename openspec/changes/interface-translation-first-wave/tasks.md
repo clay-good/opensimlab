@@ -123,15 +123,39 @@
 
 ## 3. Clinical-content marker
 
-- [ ] Add the once-per-surface English-content marker to briefing, cockpit tutor region, debrief,
-  explainer drawer, card drawer; route test for presence and uniqueness.
-- [ ] List clinical translation state per module on `/translation-status`.
+- [x] Add the once-per-surface English-content marker to briefing, cockpit tutor region, debrief,
+  explainer drawer, card drawer; route test for presence and uniqueness. `ClinicalContentMarker`
+  (`src/platform/i18n/ClinicalContentMarker.tsx`) renders one inline line — never a modal or toast
+  — linking to `/translation-status`, and only when `activeLocale()` is defined, so a reader on
+  English never sees it. It sits at the top of the briefing (`Prebrief`), the debrief (`Debrief`),
+  the expanded tutor prompt (`TutorRegion`, where the clinical teaching prose is — not the
+  interface-only tutor introduction or the collapsed card), and the explainer and drug-card drawers
+  (`Cockpit`). `tests/unit/clinical-content-marker.test.tsx` proves the behaviour (nothing under
+  English, one line with the status link under a translated locale) and pins the placement: once on
+  each named surface, and not on the interface-only crisis injector or the status page.
+- [x] List clinical translation state per module on `/translation-status`. `TranslationStatusBody`
+  lists every available module with its clinical translation state, which is the same honest line
+  for all of them — shown in English, no clinically reviewed translation in any language yet —
+  because no clinical review of a translation exists. The same test holds that every available
+  module is listed and that none claims a translation.
 
 ## 4. Contribution path
 
-- [ ] Build the browser-based coverage page (file in, missing/stale out, sample render; no
-  network).
-- [ ] Document the translator path; refuse machine-seeded catalogs by provenance field.
+- [x] Build the browser-based coverage page (file in, missing/stale out, sample render; no
+  network). `/translation-coverage` is a noindex contribution surface, alongside `/gallery` and
+  `/frame-budget`, and like them stays English because its text is instructions to a contributor.
+  A catalog loaded from a file or pasted is parsed in the browser (`parseCatalog`), and
+  `inspectCatalog` (`src/platform/i18n/coverage-tool.ts`) runs the same `coverage` and
+  `catalogProblems` the build runs, then samples a few keys of each status rendered with sample
+  placeholder values, so a translator sees the fill, the English fallback where a key is missing or
+  stale, and the clinical keys staying English. Nothing leaves the browser. The parser reports only
+  that text is not a catalog; shipping faults are left to the inspection so the page shows them
+  together. `tests/unit/i18n-coverage-tool.test.ts`.
+- [x] Document the translator path; refuse machine-seeded catalogs by provenance field. The
+  provenance refusal is `catalogProblems` (`provenance !== 'human'`), covered by
+  `tests/unit/i18n-catalog.test.ts`; the path a translator follows — the catalog shape, the named
+  translators and human provenance, the browser coverage page, and the full/non-stale bar before
+  the selector offers a locale — is written up under "Translate the interface" in `CONTRIBUTING.md`.
 
 ## 5. Budget
 

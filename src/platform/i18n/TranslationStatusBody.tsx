@@ -42,6 +42,16 @@ export function TranslationStatusBody() {
       <p className="field__hint">{t('translation.pseudo', { total: pseudo.total })}</p>
       <h2>{t('translation.clinical-heading')}</h2>
       <p>{t('translation.clinical', { modules: MODULES.filter((module) => module.status === 'available').length })}</p>
+      <p>{t('translation.clinical-by-module')}</p>
+      <ul>
+        {MODULES.filter((module) => module.status === 'available').map((module) => (
+          <li key={module.id}>
+            <strong>{module.displayName}</strong>
+            {' — '}
+            {t('translation.clinical-module-state')}
+          </li>
+        ))}
+      </ul>
     </>
   );
 }
