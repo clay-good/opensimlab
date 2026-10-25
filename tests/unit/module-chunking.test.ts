@@ -65,7 +65,15 @@ describe('Requirement: One Module Downloads One Catalogue', () => {
   });
 
   it('Scenario: the largest module still fits well inside the cockpit budget', () => {
-    const anesthesia = [...manifestAssetPaths(manifest, [ENTRY, routeKey('anesthesia')])];
+    // vite 8.3.4 began listing a worker bundle under its importing chunk's `assets`, so the
+    // traversal above started pulling `solver.worker` into this graph: 553.8 KB gz measured as
+    // 999.3 with not one byte shipped differently. The worker is neither catalogue nor cockpit
+    // code and carries its own guard -- `check-budgets` adds it to the `interactive cockpit`
+    // ceiling by name -- so it is excluded here rather than folded into a number no tray or
+    // demonstration migration could ever move.
+    const isWorker = (path: string) => /^assets\/solver\.worker-[^/]+\.js$/.test(path);
+    const anesthesia = [...manifestAssetPaths(manifest, [ENTRY, routeKey('anesthesia')])]
+      .filter((path) => !isWorker(path));
     // Before the split this graph carried all thirteen catalogues at once. It no longer does, and
     // the three tests above prove the seam still holds: each module has its own chunk, pulls at
     // least one exclusive asset, and cannot see another module's scenario prose.
