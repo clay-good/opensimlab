@@ -45,12 +45,16 @@ its own, none changes the engine, and none produces a score.
 - [ ] Author rapid-cycle decision points for every scenario whose objectives include a timed
   protocol step, starting with cardiac arrest, anaphylaxis, malignant hyperthermia, LAST, and
   status epilepticus across modules; register each directive line with the tutor-rule maturity.
-  Five lessons now declare six points, each on a scheduled crisis event and each from the step
-  its own cited source puts first: both persistent VF lessons and PEA arrest (compressions within
-  20 seconds of the rhythm event), perioperative anaphylaxis (the 50 microgram IV epinephrine
-  action within 60 seconds of the cefazolin exposure), and LAST (benzodiazepine, then lipid,
-  within 60 seconds of the bupivacaine exposure, in checklist order, so the offer takes seizure
-  suppression first). Every directive line is now a `tutor-rule` maturity subject at its lesson's
+  Eleven lessons now declare twelve points, each on a scheduled crisis event, each inside the
+  window its own objective measures, and each traced to the step its cited source puts first:
+  compressions in both persistent VF lessons and PEA arrest; the 50 microgram IV epinephrine
+  action in perioperative anaphylaxis; benzodiazepine then lipid in LAST, in checklist order, so
+  the offer takes seizure suppression first; the jaw thrust with CPAP in laryngospasm; the help
+  call in pneumothorax under positive pressure, high spinal, bronchospasm and emergency
+  medicine's tension pneumothorax; and source control in venous air embolism. Two lessons chose
+  the help call over the more obvious step because assessment and decompression share one engine
+  action type there, so a cycle on the decompression could not tell the two apart - which is the
+  kind of thing only the behavioural test makes visible. Every directive line is now a `tutor-rule` maturity subject at its lesson's
   own version and status, and registering them had consequences worth recording. The release gate
   refused the build until each one also had a preview evidence rule and appeared on the public
   review-status page, which is the right refusal: a maturity record for an item no rule judges and
@@ -69,8 +73,10 @@ its own, none changes the engine, and none produces a score.
   against; giving it one would be inventing a measure the lesson does not make. The remaining 41
   timed measures across 17 anesthesia and emergency-medicine lessons are ordinary authoring work.
 - [ ] Build test: every timed-protocol objective has at least one rapid-cycle decision point.
-  Not yet: 6 of the 47 timed measures in the catalogue are rehearsed, so a build gate would fail
-  every build. What exists is `tests/unit/rapid-cycle-coverage.test.ts`, which holds every point
+  Not yet: 12 of the 47 timed measures in the catalogue are rehearsed, so a build gate would fail
+  every build. Eleven lessons with timed measures remain, and the inventory behind them is in this
+  change's own history: of the 22 lessons that measure a window, malignant hyperthermia cannot
+  carry a fixed-tick point and the rest are ordinary authoring. What exists is `tests/unit/rapid-cycle-coverage.test.ts`, which holds every point
   that is authored against its own lesson: the declared action has to land inside the declared
   window on that lesson's expert reference path, the locator has to carry a year one of the
   lesson's own sources carries, the directive may not read as a verdict on the learner, and the

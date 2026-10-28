@@ -93,6 +93,16 @@ export const HIGH_SPINAL_AFTER_EPIDURAL_TOP_UP: Scenario = {
       message: 'Reassess oxygen delivery, ventilation, heart rate, and pressure. The modeled block does not recede during this short initial-response case.',
     },
   ],
+  // The scheduled block height at tick 600 with the 30 seconds the help objective measures.
+  rapidCycle: [
+    {
+      id: 'help-within-thirty-seconds', objectiveId: 'call-for-high-spinal-help',
+      atTick: 600, windowTicks: 300, actionType: 'call-for-help',
+      directive: 'The block is climbing with the arms and the breathing involved: call for help now. This lesson looks for the call within 30 seconds.',
+      sourceLocator: 'Obstetric Anaesthetists Association Quick Reference Handbook, section 2-7, high central neuraxial block',
+      cycleCap: 4,
+    },
+  ],
   debrief: { rubric: [
     {
       id: 'high-spinal-escalation', objectiveId: 'call-for-high-spinal-help',

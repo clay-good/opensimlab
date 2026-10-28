@@ -95,6 +95,17 @@ export const VENOUS_AIR_EMBOLISM_DURING_LINE_REMOVAL: Scenario = {
       message: 'Reassess end-tidal carbon dioxide, pressure, and oxygenation. Monitor changes are not specific enough to establish a diagnosis.',
     },
   ],
+  // The scheduled air entry at tick 600 with the 30 seconds the source-control objective
+  // measures. Source control has an engine action of its own, so the cycle reads only it.
+  rapidCycle: [
+    {
+      id: 'source-control-within-thirty-seconds', objectiveId: 'control-venous-air-entry',
+      atTick: 600, windowTicks: 300, actionType: 'control-venous-air-entry',
+      directive: 'Air is entering through the catheter track: close the source now, before anything else. This lesson looks for it within 30 seconds.',
+      sourceLocator: 'Association of Anaesthetists Quick Reference Handbook, June 2023, 3-5 circulatory embolus',
+      cycleCap: 4,
+    },
+  ],
   debrief: { rubric: [
     {
       id: 'venous-air-escalation', objectiveId: 'escalate-venous-air-pattern',

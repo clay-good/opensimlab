@@ -192,6 +192,18 @@ export const BRONCHOSPASM: Scenario = {
       severity: 'info',
     },
   ],
+  // The scheduled obstruction at tick 2,400 with the 60 seconds the escalation objective
+  // measures. That measure asks for the help call and 100% oxygen together; the call is the
+  // step the cycle can read, and the directive names both.
+  rapidCycle: [
+    {
+      id: 'help-within-sixty-seconds', objectiveId: 'escalate-bronchospasm',
+      atTick: 2400, windowTicks: 600, actionType: 'call-for-help',
+      directive: 'Rising airway pressure with a sloping capnogram: call for help and give 100% oxygen now. This lesson looks for the call within 60 seconds.',
+      sourceLocator: 'Association of Anaesthetists Quick Reference Handbook, June 2023, 3-4 bronchospasm v3',
+      cycleCap: 4,
+    },
+  ],
   debrief: {
     rubric: [
       {

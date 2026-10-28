@@ -68,6 +68,16 @@ export const OBSTRUCTIVE_SHOCK_TENSION_PNEUMOTHORAX: Scenario = {
       message: 'Assess bilateral ventilation, escalate, give high-concentration oxygen, record immediate left-chest decompression intent, and reassess. Examination, POCUS, imaging, procedural technique, equipment selection, later drainage, recurrence, differential diagnosis, and outcome are not simulated.',
     },
   ],
+  // The pleural crisis is present from tick 0, so the point opens at tick 1, the earliest the
+  // rehearsal branch can restore, with the 30 seconds the escalation objective measures. The
+  // help call, because assessment and decompression share one engine action type here.
+  rapidCycle: [
+    { id: 'help-within-thirty-seconds', objectiveId: 'escalate-obstructive-pleural-shock',
+      atTick: 1, windowTicks: 300, actionType: 'call-for-help',
+      directive: 'Unilateral breath sounds with hypoxia and shock after trauma: call for help now, while you treat it. This lesson looks for the call within 30 seconds.',
+      sourceLocator: 'European Resuscitation Council Guidelines 2025, special circumstances: tension pneumothorax',
+      cycleCap: 4 },
+  ],
   debrief: { rubric: [
     { id: 'obstructive-pleural-assessment', objectiveId: 'assess-obstructive-pleural-shock', question: 'Which trauma, breathing, oxygenation, and circulation findings formed the dangerous pattern?' },
     { id: 'obstructive-pleural-escalation', objectiveId: 'escalate-obstructive-pleural-shock', question: 'How did escalation proceed alongside treatment of the reversible threat?' },

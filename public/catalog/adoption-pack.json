@@ -2328,6 +2328,24 @@
     {
       "moduleId": "anesthesia",
       "subjectKind": "tutor-rule",
+      "subjectId": "bronchospasm-help-within-sixty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "anesthesia",
+      "subjectKind": "tutor-rule",
+      "subjectId": "laryngospasm-after-airway-stimulation-maneuver-within-thirty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "anesthesia",
+      "subjectKind": "tutor-rule",
       "subjectId": "perioperative-anaphylaxis-after-antibiotic-epinephrine-within-sixty-seconds",
       "contentVersion": "0.1.0",
       "status": "preview",
@@ -2356,6 +2374,42 @@
       "moduleId": "anesthesia",
       "subjectKind": "tutor-rule",
       "subjectId": "persistent-vf-cardiac-arrest-compressions-within-twenty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "anesthesia",
+      "subjectKind": "tutor-rule",
+      "subjectId": "high-spinal-after-epidural-top-up-help-within-thirty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "anesthesia",
+      "subjectKind": "tutor-rule",
+      "subjectId": "venous-air-embolism-during-line-removal-source-control-within-thirty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "anesthesia",
+      "subjectKind": "tutor-rule",
+      "subjectId": "pneumothorax-under-positive-pressure-help-within-thirty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "emergency-medicine",
+      "subjectKind": "tutor-rule",
+      "subjectId": "obstructive-shock-tension-pneumothorax-help-within-thirty-seconds",
       "contentVersion": "0.1.0",
       "status": "preview",
       "reason": "preview",

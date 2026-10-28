@@ -37,6 +37,12 @@ import { PERSISTENT_VF_FIXTURES } from '../../src/modules/emergency-medicine/per
 import { PERSISTENT_VF_DISPATCH } from '../../src/modules/emergency-medicine/persistent-vf-arrest';
 import { PEA_ARREST_FIXTURES } from '../../src/modules/emergency-medicine/pea-arrest-fixtures';
 import { PEA_ARREST_DISPATCH } from '../../src/modules/emergency-medicine/pea-arrest';
+import { LARYNGOSPASM_FIXTURES } from '../../src/modules/anesthesia/laryngospasm-after-airway-stimulation-fixtures';
+import { PNEUMOTHORAX_UNDER_POSITIVE_PRESSURE_FIXTURES } from '../../src/modules/anesthesia/pneumothorax-under-positive-pressure-fixtures';
+import { VENOUS_AIR_EMBOLISM_FIXTURES } from '../../src/modules/anesthesia/venous-air-embolism-fixtures';
+import { HIGH_SPINAL_AFTER_EPIDURAL_TOP_UP_FIXTURES } from '../../src/modules/anesthesia/high-spinal-after-epidural-top-up-fixtures';
+import { BRONCHOSPASM_FIXTURES } from '../../src/modules/anesthesia/bronchospasm-fixtures';
+import { OBSTRUCTIVE_PLEURAL_SHOCK_FIXTURES } from '../../src/modules/emergency-medicine/obstructive-shock-tension-pneumothorax-fixtures';
 
 const ALL_SCENARIOS: readonly Scenario[] = [
   ...SCENARIOS, ...EMERGENCY_MEDICINE_SCENARIOS, ...CRITICAL_CARE_SCENARIOS, ...CARDIOLOGY_SCENARIOS,
@@ -61,6 +67,13 @@ const EXPERT_PATHS: Readonly<Record<string, readonly TimedAction[]>> = {
   'local-anesthetic-systemic-toxicity': LAST_FIXTURES.expert,
   'persistent-vf-arrest': dispatched(PERSISTENT_VF_FIXTURES.expert, PERSISTENT_VF_DISPATCH),
   'pea-arrest': dispatched(PEA_ARREST_FIXTURES.expert, PEA_ARREST_DISPATCH),
+  'laryngospasm-after-airway-stimulation': LARYNGOSPASM_FIXTURES.expert,
+  'pneumothorax-under-positive-pressure': PNEUMOTHORAX_UNDER_POSITIVE_PRESSURE_FIXTURES.expert,
+  'venous-air-embolism-during-line-removal': VENOUS_AIR_EMBOLISM_FIXTURES.expert,
+  'high-spinal-after-epidural-top-up': HIGH_SPINAL_AFTER_EPIDURAL_TOP_UP_FIXTURES.expert,
+  bronchospasm: BRONCHOSPASM_FIXTURES.expert,
+  'obstructive-shock-tension-pneumothorax':
+    OBSTRUCTIVE_PLEURAL_SHOCK_FIXTURES.expert.map(([tick, dispatch]) => ({ tick, type: dispatch.type })),
 };
 
 const DECLARING = ALL_SCENARIOS.filter((scenario) => (scenario.rapidCycle ?? []).length > 0);
@@ -97,10 +110,14 @@ describe('authored rapid-cycle points', () => {
       expect(validateScenario(scenario)).toEqual([]);
       expect(scenario.metadata.objectives.map((objective) => objective.id)).toContain(point.objectiveId);
       expect(isRecognitionObjective(point.objectiveId)).toBe(false);
-      const years = [...point.sourceLocator.matchAll(/\b(19|20)\d{2}\b/g)].map((match) => match[0]);
-      expect(years.length).toBeGreaterThan(0);
+      // The locator has to point into a source this lesson actually cites. A year is the
+      // usual handle; for an undated document — an obstetric handbook section, say — the
+      // section designation is the only one there is, and it identifies the page just as well.
+      const handles = [...point.sourceLocator.matchAll(/\b(?:(?:19|20)\d{2}|\d+-\d+)\b/g)]
+        .map((match) => match[0]);
+      expect(handles.length).toBeGreaterThan(0);
       const sources = scenario.metadata.clinicalReview.sources.join(' ');
-      expect(years.some((year) => sources.includes(year))).toBe(true);
+      expect(handles.some((handle) => sources.includes(handle))).toBe(true);
     },
   );
 

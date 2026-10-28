@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "recordCount": 58,
+  "recordCount": 63,
   "records": [
     {
       "recordId": "scenario:routine-induction@0.1.0",
@@ -586,6 +586,28 @@
       ]
     },
     {
+      "recordId": "tutor-rule:bronchospasm-help-within-sixty-seconds@0.1.0",
+      "subjectKind": "tutor-rule",
+      "subjectId": "bronchospasm-help-within-sixty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#bronchospasm@0.1.0",
+        "Association of Anaesthetists Quick Reference Handbook, June 2023, 3-4 bronchospasm v3"
+      ]
+    },
+    {
+      "recordId": "tutor-rule:laryngospasm-after-airway-stimulation-maneuver-within-thirty-seconds@0.1.0",
+      "subjectKind": "tutor-rule",
+      "subjectId": "laryngospasm-after-airway-stimulation-maneuver-within-thirty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#laryngospasm-after-airway-stimulation@0.1.0",
+        "Visvanathan 2005, crisis management during anaesthesia: laryngospasm, immediate management"
+      ]
+    },
+    {
       "recordId": "tutor-rule:perioperative-anaphylaxis-after-antibiotic-epinephrine-within-sixty-seconds@0.1.0",
       "subjectKind": "tutor-rule",
       "subjectId": "perioperative-anaphylaxis-after-antibiotic-epinephrine-within-sixty-seconds",
@@ -627,6 +649,39 @@
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#persistent-vf-cardiac-arrest@0.1.0",
         "AHA 2025 Adult Cardiac Arrest Algorithm, first step: start CPR"
+      ]
+    },
+    {
+      "recordId": "tutor-rule:high-spinal-after-epidural-top-up-help-within-thirty-seconds@0.1.0",
+      "subjectKind": "tutor-rule",
+      "subjectId": "high-spinal-after-epidural-top-up-help-within-thirty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#high-spinal-after-epidural-top-up@0.1.0",
+        "Obstetric Anaesthetists Association Quick Reference Handbook, section 2-7, high central neuraxial block"
+      ]
+    },
+    {
+      "recordId": "tutor-rule:venous-air-embolism-during-line-removal-source-control-within-thirty-seconds@0.1.0",
+      "subjectKind": "tutor-rule",
+      "subjectId": "venous-air-embolism-during-line-removal-source-control-within-thirty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#venous-air-embolism-during-line-removal@0.1.0",
+        "Association of Anaesthetists Quick Reference Handbook, June 2023, 3-5 circulatory embolus"
+      ]
+    },
+    {
+      "recordId": "tutor-rule:pneumothorax-under-positive-pressure-help-within-thirty-seconds@0.1.0",
+      "subjectKind": "tutor-rule",
+      "subjectId": "pneumothorax-under-positive-pressure-help-within-thirty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#pneumothorax-under-positive-pressure@0.1.0",
+        "Association of Anaesthetists Quick Reference Handbook, June 2023, 2-3 increased airway pressure"
       ]
     }
   ]

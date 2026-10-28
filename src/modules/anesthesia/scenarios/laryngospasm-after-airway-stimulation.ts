@@ -143,6 +143,17 @@ export const LARYNGOSPASM_AFTER_AIRWAY_STIMULATION: Scenario = {
       message: 'Reassess airway patency, delivered ventilation, saturation, and the next step if initial measures have not worked.',
     },
   ],
+  // The scheduled closure at tick 2,400 with the 30 seconds the objective measures. The
+  // maneuver is the step, not the propofol: the first measure is the jaw thrust with CPAP.
+  rapidCycle: [
+    {
+      id: 'maneuver-within-thirty-seconds', objectiveId: 'apply-initial-laryngospasm-measures',
+      atTick: 2400, windowTicks: 300, actionType: 'airway-maneuver',
+      directive: 'The cords have closed: apply jaw thrust with continuous positive pressure now. This lesson looks for the maneuver within 30 seconds.',
+      sourceLocator: 'Visvanathan 2005, crisis management during anaesthesia: laryngospasm, immediate management',
+      cycleCap: 4,
+    },
+  ],
   debrief: {
     rubric: [
       {
