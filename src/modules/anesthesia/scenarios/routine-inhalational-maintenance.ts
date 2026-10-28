@@ -108,6 +108,19 @@ export const ROUTINE_INHALATIONAL_MAINTENANCE: Scenario = {
       reason: 'Rehearse reducing a maintenance input and confirming that pressure and depth recover together.',
     },
   ],
+  // The scheduled stimulus offset at tick 3,600 with the 30 seconds the reassessment objective
+  // measures. The payload names the drug rather than a rate: the objective accepts a reduction
+  // or a stop, and a cycle that demanded zero would tell a learner who reduced that they missed.
+  rapidCycle: [
+    {
+      id: 'remifentanil-within-thirty-seconds', objectiveId: 'reassess-when-stimulus-falls',
+      atTick: 3600, windowTicks: 300, actionType: 'infusion',
+      actionPayload: { drugId: 'remifentanil' },
+      directive: 'The stimulus has gone and the depth is still set for it: bring the remifentanil down now. Within 30 seconds here.',
+      sourceLocator: 'Minto 1996, remifentanil pharmacokinetics and pharmacodynamics, model application',
+      cycleCap: 4,
+    },
+  ],
   debrief: { rubric: [
     {
       id: 'maintenance-evidence', objectiveId: 'maintain-bounded-depth',

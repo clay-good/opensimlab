@@ -61,7 +61,17 @@ its own, none changes the engine, and none produces a score.
   authored the same way, each naming the payload that separates it from the repair that follows,
   and the blood-bank release needs no matcher because it has an action type of its own. The
   coverage test now demands a matcher whenever a lesson's expert path sends that action type more
-  than once, so the next author cannot reintroduce the ambiguity by hand. Every directive line is now a `tutor-rule` maturity subject at its lesson's
+  than once, so the next author cannot reintroduce the ambiguity by hand.
+  Twenty-four points across twenty lessons now, the last seven being the hypnotic-line inspection
+  in awareness under paralysis, the fresh-gas bridge and the absorbent replacement in
+  circle-system rebreathing, the coagulation panel in dilutional coagulopathy, breath delivery in
+  opioid-induced ventilatory impairment, the jaw thrust in post-extubation obstruction, and
+  bringing the remifentanil down when the stimulus falls. Two of those taught something about the
+  matcher. The opioid lesson's whole error is oxygen without breath delivery, so its point
+  matches `delivering: true` as well as the oxygen: a cycle that accepted any ventilator action
+  would have accepted precisely the mistake. And the maintenance lesson matches the drug rather
+  than a rate of zero, because its objective accepts a reduction or a stop, and a cycle demanding
+  zero would tell a learner who reduced that they had missed. Every directive line is now a `tutor-rule` maturity subject at its lesson's
   own version and status, and registering them had consequences worth recording. The release gate
   refused the build until each one also had a preview evidence rule and appeared on the public
   review-status page, which is the right refusal: a maturity record for an item no rule judges and

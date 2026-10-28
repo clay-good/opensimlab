@@ -91,6 +91,19 @@ export const OPIOID_INDUCED_VENTILATORY_IMPAIRMENT: Scenario = {
       message: 'Reassess arousal, airway patency, spontaneous rate and breath size, carbon dioxide, oxygenation, analgesia risk, and the need for continued monitoring or repeated reversal outside this model.',
     },
   ],
+  // The scheduled impairment at tick 100 with the 45 seconds the support objective measures.
+  // Oxygen alone is the error this lesson is built around, so the payload names breath delivery:
+  // a cycle that accepted any ventilator action would accept exactly the mistake.
+  rapidCycle: [
+    {
+      id: 'breath-delivery-within-forty-five-seconds', objectiveId: 'support-opioid-impaired-ventilation',
+      atTick: 100, windowTicks: 450, actionType: 'ventilator',
+      actionPayload: { delivering: true, fio2: 1 },
+      directive: 'Oxygen alone will not move this carbon dioxide: deliver breaths at 100% oxygen now. Within 45 seconds here.',
+      sourceLocator: 'Association of Anaesthetists, Recommendations for standards of monitoring during anaesthesia and recovery 2021, capnography',
+      cycleCap: 4,
+    },
+  ],
   debrief: { rubric: [
     { id: 'oivi-recognition', objectiveId: 'recognize-opioid-ventilatory-impairment', question: 'Which arousal and ventilation changes mattered before saturation fell?', concept: 'capnogram-morphology' },
     { id: 'oivi-support', objectiveId: 'support-opioid-impaired-ventilation', question: 'How quickly did you recruit help and support ventilation and oxygenation?', concept: 'preoxygenation-and-safe-apnea-time' },

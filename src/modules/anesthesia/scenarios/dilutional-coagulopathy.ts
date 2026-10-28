@@ -101,6 +101,18 @@ export const DILUTIONAL_COAGULOPATHY: Scenario = {
     objectiveId: 'identify-dilutional-coagulopathy', atTick: 599,
     reason: 'Rehearse the lab-guided sequence from the first new clue without replaying prior resuscitation.',
   }],
+  // The scheduled oozing cue at tick 600 with the 60 seconds the first objective measures.
+  // The panel has an action type of its own; the lesson sends a second one later, outside this
+  // window, and the two are the same action, so there is no payload that could separate them.
+  rapidCycle: [
+    {
+      id: 'panel-within-sixty-seconds', objectiveId: 'identify-dilutional-coagulopathy',
+      atTick: 600, windowTicks: 600, actionType: 'coagulation-labs',
+      directive: 'Diffuse oozing after this much volume: send a coagulation panel now, before choosing a product. Within 60 seconds here.',
+      sourceLocator: 'Association of Anaesthetists Quick Reference Handbook 2026, major haemorrhage',
+      cycleCap: 4,
+    },
+  ],
   debrief: { rubric: [
     {
       id: 'recognize-dilution', objectiveId: 'identify-dilutional-coagulopathy',

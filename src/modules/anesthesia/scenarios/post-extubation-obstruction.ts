@@ -81,6 +81,17 @@ export const POST_EXTUBATION_OBSTRUCTION: Scenario = {
       message: 'Reassess airway patency, visible gas movement, the capnogram, oxygenation, and whether escalation beyond this bounded initial-response model is needed.',
     },
   ],
+  // The scheduled obstruction at tick 100 with the 45 seconds the support objective measures.
+  // The maneuver is the half of the bundle the error path leaves out, so it is the step read.
+  rapidCycle: [
+    {
+      id: 'maneuver-within-forty-five-seconds', objectiveId: 'support-post-extubation-airway',
+      atTick: 100, windowTicks: 450, actionType: 'airway-maneuver',
+      directive: 'This airway is obstructed, not just desaturating: jaw thrust with CPAP now, alongside the oxygen. Within 45 seconds here.',
+      sourceLocator: 'Popat 2012, Difficult Airway Society guidelines for the management of tracheal extubation',
+      cycleCap: 4,
+    },
+  ],
   debrief: { rubric: [
     {
       id: 'post-extubation-recognition', objectiveId: 'recognize-post-extubation-obstruction',

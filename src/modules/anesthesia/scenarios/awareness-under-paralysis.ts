@@ -153,6 +153,19 @@ export const AWARENESS_UNDER_PARALYSIS: Scenario = {
       message: 'The surgeon asks whether the anesthetic is stable enough to continue.',
     },
   ],
+  // The scheduled disconnection at tick 1,800 with the 45 seconds the inspection objective
+  // measures. `hypnotic-line` also reconnects the line, which is the step after this one, so
+  // the payload names the inspection: finding the problem is what this cycle is about.
+  rapidCycle: [
+    {
+      id: 'inspect-within-forty-five-seconds', objectiveId: 'inspect-the-tiva-line',
+      atTick: 1800, windowTicks: 450, actionType: 'hypnotic-line',
+      actionPayload: { action: 'inspect' },
+      directive: 'A paralysed patient on intravenous anaesthesia with signs of light anaesthesia: inspect the hypnotic line now. Within 45 seconds here.',
+      sourceLocator: 'Pandit 2014, NAP5 accidental awareness during general anaesthesia, intravenous technique findings',
+      cycleCap: 4,
+    },
+  ],
   debrief: {
     rubric: [
       {

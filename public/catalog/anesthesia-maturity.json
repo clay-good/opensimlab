@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "recordCount": 67,
+  "recordCount": 74,
   "records": [
     {
       "recordId": "scenario:routine-induction@0.1.0",
@@ -597,6 +597,17 @@
       ]
     },
     {
+      "recordId": "tutor-rule:awareness-under-paralysis-inspect-within-forty-five-seconds@0.1.0",
+      "subjectKind": "tutor-rule",
+      "subjectId": "awareness-under-paralysis-inspect-within-forty-five-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#awareness-under-paralysis@0.1.0",
+        "Pandit 2014, NAP5 accidental awareness during general anaesthesia, intravenous technique findings"
+      ]
+    },
+    {
       "recordId": "tutor-rule:laryngospasm-after-airway-stimulation-maneuver-within-thirty-seconds@0.1.0",
       "subjectKind": "tutor-rule",
       "subjectId": "laryngospasm-after-airway-stimulation-maneuver-within-thirty-seconds",
@@ -685,6 +696,17 @@
       ]
     },
     {
+      "recordId": "tutor-rule:dilutional-coagulopathy-panel-within-sixty-seconds@0.1.0",
+      "subjectKind": "tutor-rule",
+      "subjectId": "dilutional-coagulopathy-panel-within-sixty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#dilutional-coagulopathy@0.1.0",
+        "Association of Anaesthetists Quick Reference Handbook 2026, major haemorrhage"
+      ]
+    },
+    {
       "recordId": "tutor-rule:arterial-pressure-transducer-artifact-cuff-within-sixty-seconds@0.1.0",
       "subjectKind": "tutor-rule",
       "subjectId": "arterial-pressure-transducer-artifact-cuff-within-sixty-seconds",
@@ -693,6 +715,39 @@
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#arterial-pressure-transducer-artifact@0.1.0",
         "ASA Standards for Basic Anesthetic Monitoring, 2020 revision, blood-pressure monitoring"
+      ]
+    },
+    {
+      "recordId": "tutor-rule:circle-system-rebreathing-bridge-within-sixty-seconds@0.1.0",
+      "subjectKind": "tutor-rule",
+      "subjectId": "circle-system-rebreathing-bridge-within-sixty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#circle-system-rebreathing@0.1.0",
+        "Association of Anaesthetists, Recommendations for standards of monitoring during anaesthesia and recovery 2021, capnography"
+      ]
+    },
+    {
+      "recordId": "tutor-rule:circle-system-rebreathing-replace-within-ninety-seconds@0.1.0",
+      "subjectKind": "tutor-rule",
+      "subjectId": "circle-system-rebreathing-replace-within-ninety-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#circle-system-rebreathing@0.1.0",
+        "Association of Anaesthetists Quick Reference Handbook, June 2023, equipment failure"
+      ]
+    },
+    {
+      "recordId": "tutor-rule:routine-inhalational-maintenance-remifentanil-within-thirty-seconds@0.1.0",
+      "subjectKind": "tutor-rule",
+      "subjectId": "routine-inhalational-maintenance-remifentanil-within-thirty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#routine-inhalational-maintenance@0.1.0",
+        "Minto 1996, remifentanil pharmacokinetics and pharmacodynamics, model application"
       ]
     },
     {
@@ -726,6 +781,28 @@
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#pneumothorax-under-positive-pressure@0.1.0",
         "Resuscitation Council UK special circumstances, October 27, 2025: tension pneumothorax"
+      ]
+    },
+    {
+      "recordId": "tutor-rule:post-extubation-obstruction-maneuver-within-forty-five-seconds@0.1.0",
+      "subjectKind": "tutor-rule",
+      "subjectId": "post-extubation-obstruction-maneuver-within-forty-five-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#post-extubation-obstruction@0.1.0",
+        "Popat 2012, Difficult Airway Society guidelines for the management of tracheal extubation"
+      ]
+    },
+    {
+      "recordId": "tutor-rule:opioid-induced-ventilatory-impairment-breath-delivery-within-forty-five-seconds@0.1.0",
+      "subjectKind": "tutor-rule",
+      "subjectId": "opioid-induced-ventilatory-impairment-breath-delivery-within-forty-five-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#opioid-induced-ventilatory-impairment@0.1.0",
+        "Association of Anaesthetists, Recommendations for standards of monitoring during anaesthesia and recovery 2021, capnography"
       ]
     }
   ]

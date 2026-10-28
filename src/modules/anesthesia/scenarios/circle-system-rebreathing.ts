@@ -94,6 +94,27 @@ export const CIRCLE_SYSTEM_REBREATHING: Scenario = {
     objectiveId: 'recognize-inspired-carbon-dioxide', atTick: 1799,
     reason: 'Rehearse reading the full capnogram and choosing a circuit response before carbon dioxide accumulates.',
   }],
+  // Two steps from the scheduled absorbent failure at tick 1,800, each inside the window its
+  // own objective measures. `breathing-circuit` is also how the capnogram is assessed, so the
+  // replacement point names the payload that makes it the replacement.
+  rapidCycle: [
+    {
+      id: 'bridge-within-sixty-seconds', objectiveId: 'bridge-with-fresh-gas-flow',
+      atTick: 1800, windowTicks: 600, actionType: 'ventilator',
+      actionPayload: { freshGasFlowLPerMin: 10 },
+      directive: 'Inspired carbon dioxide is rising through an exhausted absorbent: raise fresh-gas flow to 10 L/min now. Within 60 seconds here.',
+      sourceLocator: 'Association of Anaesthetists, Recommendations for standards of monitoring during anaesthesia and recovery 2021, capnography',
+      cycleCap: 4,
+    },
+    {
+      id: 'replace-within-ninety-seconds', objectiveId: 'replace-exhausted-absorbent',
+      atTick: 1800, windowTicks: 900, actionType: 'breathing-circuit',
+      actionPayload: { action: 'replace-absorbent' },
+      directive: 'Fresh gas only bridges this: replace the exhausted absorbent now, so the circuit works again. Within 90 seconds here.',
+      sourceLocator: 'Association of Anaesthetists Quick Reference Handbook, June 2023, equipment failure',
+      cycleCap: 4,
+    },
+  ],
   debrief: { rubric: [
     {
       id: 'inspiratory-baseline', objectiveId: 'recognize-inspired-carbon-dioxide',

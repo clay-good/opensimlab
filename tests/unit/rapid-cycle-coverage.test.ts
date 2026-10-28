@@ -46,6 +46,12 @@ import { OBSTRUCTIVE_PLEURAL_SHOCK_FIXTURES } from '../../src/modules/emergency-
 import { ARTERIAL_PRESSURE_TRANSDUCER_ARTIFACT_FIXTURES } from '../../src/modules/anesthesia/arterial-pressure-transducer-artifact-fixtures';
 import { CAPNOGRAPHY_SAMPLING_LINE_OBSTRUCTION_FIXTURES } from '../../src/modules/anesthesia/capnography-sampling-line-obstruction-fixtures';
 import { BLOOD_BANK_HANDOFF_FIXTURES } from '../../src/modules/anesthesia/blood-bank-handoff-fixtures';
+import { AWARENESS_UNDER_PARALYSIS_FIXTURES } from '../../src/modules/anesthesia/awareness-under-paralysis-fixtures';
+import { CIRCLE_SYSTEM_REBREATHING_FIXTURES } from '../../src/modules/anesthesia/circle-system-rebreathing-fixtures';
+import { DILUTIONAL_COAGULOPATHY_FIXTURES } from '../../src/modules/anesthesia/dilutional-coagulopathy-fixtures';
+import { OPIOID_INDUCED_VENTILATORY_IMPAIRMENT_FIXTURES } from '../../src/modules/anesthesia/opioid-induced-ventilatory-impairment-fixtures';
+import { POST_EXTUBATION_OBSTRUCTION_FIXTURES } from '../../src/modules/anesthesia/post-extubation-obstruction-fixtures';
+import { ROUTINE_INHALATIONAL_MAINTENANCE_FIXTURES } from '../../src/modules/anesthesia/routine-inhalational-maintenance-fixtures';
 
 const ALL_SCENARIOS: readonly Scenario[] = [
   ...SCENARIOS, ...EMERGENCY_MEDICINE_SCENARIOS, ...CRITICAL_CARE_SCENARIOS, ...CARDIOLOGY_SCENARIOS,
@@ -81,8 +87,33 @@ const EXPERT_PATHS: Readonly<Record<string, readonly TimedAction[]>> = {
   'arterial-pressure-transducer-artifact': ARTERIAL_PRESSURE_TRANSDUCER_ARTIFACT_FIXTURES.expert,
   'capnography-sampling-line-obstruction': CAPNOGRAPHY_SAMPLING_LINE_OBSTRUCTION_FIXTURES.expert,
   'blood-bank-handoff': BLOOD_BANK_HANDOFF_FIXTURES.expert,
+  'awareness-under-paralysis': AWARENESS_UNDER_PARALYSIS_FIXTURES.expert,
+  'circle-system-rebreathing': CIRCLE_SYSTEM_REBREATHING_FIXTURES.expert,
+  'dilutional-coagulopathy': DILUTIONAL_COAGULOPATHY_FIXTURES.expert,
+  'opioid-induced-ventilatory-impairment': OPIOID_INDUCED_VENTILATORY_IMPAIRMENT_FIXTURES.expert,
+  'post-extubation-obstruction': POST_EXTUBATION_OBSTRUCTION_FIXTURES.expert,
+  'routine-inhalational-maintenance': ROUTINE_INHALATIONAL_MAINTENANCE_FIXTURES.expert,
   'obstructive-shock-tension-pneumothorax':
     OBSTRUCTIVE_PLEURAL_SHOCK_FIXTURES.expert.map(([tick, dispatch]) => ({ tick, ...dispatch })),
+};
+
+/** An objective that measures a window and is not a recognition objective. */
+const timedSteps = (scenario: Scenario) => scenario.metadata.objectives.filter((objective) =>
+  /within \d+ (?:seconds|minutes)/.test(objective.measure) && !isRecognitionObjective(objective.id));
+
+/**
+ * The lessons a fixed decision tick cannot serve, each with the reason.
+ *
+ * This is the exemption list the build gate below reads, and it is deliberately
+ * data rather than a skipped test: a new lesson cannot join it by accident, and
+ * the reason has to stay true, which the test after the gate checks.
+ */
+const NOT_SCHEDULABLE: Readonly<Record<string, string>> = {
+  'early-malignant-hyperthermia-during-volatile-anesthesia':
+    'Its timed objectives measure from the first modeled rigidity, which begins whenever the '
+    + "learner's own volatile reaches the patient. The scheduled tick-2,400 event arms the "
+    + 'trigger rather than producing the rigidity, so a fixed decision tick would restore the '
+    + 'wrong moment for most learners. It needs an event-relative decision point.',
 };
 
 const DECLARING = ALL_SCENARIOS.filter((scenario) => (scenario.rapidCycle ?? []).length > 0);
@@ -94,6 +125,41 @@ const POINTS = DECLARING.flatMap((scenario) => (scenario.rapidCycle ?? [])
  * may say what the protocol does; it may not say how the learner did.
  */
 const VERDICT_WORDS = /\b(score|scored|grade|graded|pass|passed|failed|competent|proficient)\b/i;
+
+describe('rapid-cycle coverage of timed protocol steps', () => {
+  it('rehearses one step in every lesson that measures a window and can restore it', () => {
+    const uncovered = ALL_SCENARIOS
+      .filter((scenario) => timedSteps(scenario).length > 0 && (scenario.rapidCycle ?? []).length === 0)
+      .map((scenario) => scenario.metadata.id);
+    expect(uncovered.sort()).toEqual(Object.keys(NOT_SCHEDULABLE).sort());
+  });
+
+  it('holds each exemption to the reason it gives', () => {
+    for (const [scenarioId, reason] of Object.entries(NOT_SCHEDULABLE)) {
+      const scenario = ALL_SCENARIOS.find((entry) => entry.metadata.id === scenarioId);
+      expect(scenario, scenarioId).toBeDefined();
+      expect(reason.length).toBeGreaterThan(80);
+      // The exemption rests on the measure pointing at something the timeline does not
+      // schedule. If an author later rewrote these measures against a scheduled event, the
+      // lesson would stop being exempt and this would say so.
+      for (const objective of timedSteps(scenario!)) {
+        expect(objective.measure, objective.id).toMatch(/first modeled rigidity/);
+      }
+      expect(scenario!.rapidCycle).toBeUndefined();
+    }
+  });
+
+  it('counts the steps it does not yet rehearse, rather than implying it rehearses them all', () => {
+    // Per-lesson coverage is complete; per-objective coverage is not, and saying so here is
+    // the point. Some measures combine conditions one action cannot represent (a help call
+    // AND 100% oxygen), and some steps share an action type with no payload to separate them.
+    const timed = ALL_SCENARIOS.flatMap(timedSteps).length;
+    const rehearsed = new Set(ALL_SCENARIOS.flatMap((scenario) =>
+      (scenario.rapidCycle ?? []).map((point) => `${scenario.metadata.id}:${point.objectiveId}`)));
+    expect(timed).toBeGreaterThan(rehearsed.size);
+    expect(rehearsed.size).toBe(24);
+  });
+});
 
 describe('authored rapid-cycle points', () => {
   it('are declared by the lessons this test covers, and only those', () => {
@@ -113,10 +179,11 @@ describe('authored rapid-cycle points', () => {
         && action.tick >= point.atTick && action.tick <= closes
         && Object.entries(point.actionPayload ?? {})
           .every(([field, value]) => action.payload?.[field] === value))).toBe(true);
-      // A point whose action type serves more than one step in its own lesson has to say
-      // which step it is, or another step could close it.
-      const sameType = expert.filter((action) => action.type === point.actionType);
-      if (sameType.length > 1) expect(point.actionPayload).toBeDefined();
+      // A point whose action type reaches the window more than once has to say which of them
+      // is the step, or the other one could close the cycle. Outside the window nothing can.
+      const inWindow = expert.filter((action) => action.type === point.actionType
+        && action.tick >= point.atTick && action.tick <= closes);
+      if (inWindow.length > 1) expect(point.actionPayload).toBeDefined();
     },
   );
 
