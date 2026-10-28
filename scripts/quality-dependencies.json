@@ -132,7 +132,7 @@
       },
       {
         "path": "src/platform/docs/limitations/shared.ts",
-        "sha256": "1cf6dc995d6c71b1c22cac05741aeb78531f06902c9891d9196e6f52d5f180c7"
+        "sha256": "89f1bc9f79ff51e0425d0300fedefcc17eb66efb5152a5e7ec5b8674a76034bc"
       },
       {
         "path": "src/platform/docs/limitations/surgery-trauma.ts",
@@ -148,7 +148,7 @@
       },
       {
         "path": "src/platform/docs/sources.ts",
-        "sha256": "83f1b0151b4d6384669ed46f70a580c80fd68be19d1ae6920a0a4303de0503c1"
+        "sha256": "d0a07bcb1f75f58855adfaa5c5597a137c774cbf4f5ff04fe3c0232552b651ed"
       },
       {
         "path": "src/platform/governance/publication.ts",
@@ -373,7 +373,7 @@
       },
       {
         "path": "src/platform/docs/limitations/shared.ts",
-        "sha256": "1cf6dc995d6c71b1c22cac05741aeb78531f06902c9891d9196e6f52d5f180c7"
+        "sha256": "89f1bc9f79ff51e0425d0300fedefcc17eb66efb5152a5e7ec5b8674a76034bc"
       },
       {
         "path": "src/platform/docs/limitations/surgery-trauma.ts",
@@ -389,7 +389,7 @@
       },
       {
         "path": "src/platform/docs/sources.ts",
-        "sha256": "83f1b0151b4d6384669ed46f70a580c80fd68be19d1ae6920a0a4303de0503c1"
+        "sha256": "d0a07bcb1f75f58855adfaa5c5597a137c774cbf4f5ff04fe3c0232552b651ed"
       },
       {
         "path": "src/platform/governance/publication.ts",
@@ -650,7 +650,7 @@
       },
       {
         "path": "src/platform/docs/limitations/shared.ts",
-        "sha256": "1cf6dc995d6c71b1c22cac05741aeb78531f06902c9891d9196e6f52d5f180c7"
+        "sha256": "89f1bc9f79ff51e0425d0300fedefcc17eb66efb5152a5e7ec5b8674a76034bc"
       },
       {
         "path": "src/platform/docs/limitations/surgery-trauma.ts",
@@ -666,7 +666,7 @@
       },
       {
         "path": "src/platform/docs/sources.ts",
-        "sha256": "83f1b0151b4d6384669ed46f70a580c80fd68be19d1ae6920a0a4303de0503c1"
+        "sha256": "d0a07bcb1f75f58855adfaa5c5597a137c774cbf4f5ff04fe3c0232552b651ed"
       },
       {
         "path": "src/platform/governance/publication.ts",

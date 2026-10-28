@@ -163,6 +163,17 @@ export function EducatorsRoute() {
         <p>{t('edu.check')}</p>
         <p><a href="/content-review">{t('edu.check-link')}</a></p>
 
+        <h2>{t('edu.practice-heading')}</h2>
+        <p>{t('edu.practice-intro')}</p>
+        <p><strong>{t('edu.practice-rapid-lead')}</strong> {t('edu.practice-rapid')}</p>
+        <p>{t('edu.practice-rapid-not')}</p>
+        <p><strong>{t('edu.practice-notes-lead')}</strong> {t('edu.practice-notes')}</p>
+        <p>{t('edu.practice-notes-not')}</p>
+        <p><strong>{t('edu.practice-return-lead')}</strong> {t('edu.practice-return')}</p>
+        <p>{t('edu.practice-return-not')}</p>
+        <p><strong>{t('edu.practice-progress-lead')}</strong> {t('edu.practice-progress')}</p>
+        <p>{t('edu.practice-progress-not')}</p>
+
         <h2>{t('edu.documents-heading')}</h2>
         <ul>
           <li><a href="/validation">{t('edu.doc-validation')}</a>: {t('edu.doc-validation-note')}</li>

@@ -9,6 +9,38 @@ import type { Limitation } from './types';
 
 export const SHARED_LIMITATIONS: readonly Limitation[] = [
   {
+    id: 'rapid-cycle-evidence-is-very-low-certainty',
+    headline: 'The evidence behind rapid-cycle rehearsal is nine simulated studies at very low certainty, and none of it is about a patient.',
+    simplification: 'The rapid-cycle rehearsal repeats one timed protocol step from a fixed '
+      + 'decision point, which is the instructional method a 2024 ILCOR systematic review found '
+      + 'shortened time to defibrillation and time to epinephrine. That review included nine '
+      + 'studies, all simulated, and graded the certainty of every outcome as very low.',
+    whereItMisleads: 'Reading a faster window in this simulator as evidence that a learner will '
+      + 'be faster with a patient, or treating the method as established rather than reasonable. '
+      + 'The review reports no clinical or patient outcome at all, and says substantial variation '
+      + 'exists in how rapid cycle practice is delivered.',
+    correctUnderstanding: 'Repeating a timed step until it lands is a defensible way to practise '
+      + 'that step. How much of it reaches a resuscitation is unmeasured here and barely measured '
+      + 'anywhere, which is why the rehearsal states its certainty beside its one claim.',
+    briefIn: [],
+  },
+  {
+    id: 'reasoning-notes-are-never-assessed',
+    headline: 'A reasoning note is never read, scored, or compared with anything: it is a record for the learner and nothing else.',
+    simplification: 'A learner may attach up to 280 characters to the simulated moment they acted '
+      + 'in. The note is kept beside the session, never inside the transcript, and the debrief '
+      + 'shows it back beside what the engine attributes the next change to. Nothing parses it, '
+      + 'nothing grades it, and it enters no export or report.',
+    whereItMisleads: 'Expecting the notes to be marked, or taking the self-explanation literature '
+      + 'as evidence that writing them improves reasoning here. In the study this feature is '
+      + 'drawn from, the students who gained most also heard worked examples and answered '
+      + 'prompts; the note field does neither, and asks nothing.',
+    correctUnderstanding: 'Writing down why you acted, at the moment you acted, is worth doing '
+      + 'because it is the only record of your reasoning that the debrief cannot reconstruct. '
+      + 'Its value here is as a record, not as an assessment or a measured intervention.',
+    briefIn: [],
+  },
+  {
     id: 'respiratory-depression-is-calibrated',
     headline: "Propofol's respiratory dose-response is an Open Sim Lab calibration, so the direction and rough timescale of apnoea are defensible but the exact duration is not a published number.",
     simplification: 'Propofol\'s respiratory dose-response is an Open Sim Lab calibration, not a '

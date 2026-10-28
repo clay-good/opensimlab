@@ -64,6 +64,26 @@ const CHECKED = '2026-08-20';
 
 export const SOURCES: readonly Source[] = [
   {
+    id: 'rapid-cycle-deliberate-practice-ilcor-2024', pmid: '38757054',
+    authors: 'Abelairas-Gómez C, Cortegiani A, Sawyer T, Greif R, Donoghue A; International Liaison Committee on Resuscitation (ILCOR) Education, Implementation and Teams Task Force',
+    title: 'Rapid cycle deliberate practice approach on resuscitation training: A systematic review',
+    publication: 'Resuscitation Plus', year: 2024,
+    locator: '18:100648; doi:10.1016/j.resplu.2024.100648; meta-analysis of three timing outcomes and the GRADE certainty statement',
+    usedFor: 'The one sentence of evidence the rapid-cycle rehearsal carries. Nine simulated studies met inclusion; a meta-analysis of time to chest compressions, time to defibrillation and time to first epinephrine found significantly shorter times to defibrillation and to epinephrine with rapid cycle deliberate practice than controls, at very low certainty across all outcomes. The rehearsal claims exactly that and no more.',
+    verifiedAgainst: 'PubMed PMID 38757054 bibliographic record and full abstract, read field by field through NCBI E-utilities. Every study included was simulated: the review reports no clinical or patient outcome, and its own conclusion is that it may be reasonable to include the method as an instructional design feature while substantial variation in how it is delivered exists. The certainty was very low for risk of bias, inconsistency, indirectness and imprecision, which is why the interface states the certainty beside the finding.',
+    verifiedOn: '2026-10-27',
+  },
+  {
+    id: 'self-explanation-clinical-reasoning-2015', pmid: '25626750',
+    authors: 'Chamberland M, Mamede S, St-Onge C, Setrakian J, Bergeron L, Schmidt H',
+    title: 'Self-explanation in learning clinical reasoning: the added value of examples and prompts',
+    publication: 'Medical Education', year: 2015,
+    locator: '49(2):193–202; doi:10.1111/medu.12623; three-group randomised training and assessment phases',
+    usedFor: 'Why a learner is offered somewhere to write down why they acted. Self-explanation while diagnosing cases improved later diagnostic performance, and the paper is also the reason the project does not claim more for its own note field: the group that gained most both heard worked examples and answered prompts, and the note control does neither.',
+    verifiedAgainst: 'PubMed PMID 25626750 bibliographic record and full abstract, read field by field through NCBI E-utilities. Fifty-four Year 3 medical students at one faculty, four cases, one week apart, with the significant between-group differences at p values from 0.037 to below 0.001. It supports self-explanation as a technique in that setting; it is not evidence that an unprompted, unexamined note improves anything, and nothing here says it is.',
+    verifiedOn: '2026-10-27',
+  },
+  {
     id: 'renal-proteinuria-variability-2018', pmid: '30031564', authors: 'Waikar SS, Rebholz CM, Zheng Z, Hurwitz S, et al',
     title: 'Biological Variability of Estimated GFR and Albuminuria in CKD', publication: 'American Journal of Kidney Diseases', year: 2018,
     locator: '72(4):538\u2013546; doi:10.1053/j.ajkd.2018.04.023; within-person coefficients of variation and reference change values',
