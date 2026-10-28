@@ -264,7 +264,7 @@ export const SCENARIO_SCHEMA: SchemaNode = {
         properties: {
           id: { type: 'string', description: 'Stable identifier.', pattern: '^[a-z0-9-]+$' },
           objectiveId: { type: 'string', description: 'The timed protocol objective it serves.', pattern: '^[a-z0-9-]+$' },
-          atTick: { type: 'integer', description: 'The decision point the rehearsal restores.', minimum: 1 },
+          atTick: { type: 'integer', description: 'The decision point the rehearsal restores: a tick the timeline schedules, or 1 for an event at tick 0.', minimum: 1 },
           windowTicks: { type: 'integer', description: 'The window for the expected action.', minimum: 1 },
           actionType: { type: 'string', description: 'The learner action type that lands the step.', pattern: '^[a-z0-9-]+$' },
           directive: STRING_FIELD('The directive line shown when the window closes, at most 160 characters.', 10),
@@ -491,6 +491,7 @@ export function validateScenarioSemantics(scenario: unknown): ValidationError[] 
 
   const declaredObjectives = new Set(((metadata?.objectives ?? []) as readonly { id?: unknown }[])
     .map((objective) => String(objective.id)));
+  const scheduledTicks = new Set((timeline ?? []).map((event) => Number(event.atTick)));
   (record.rapidCycle as readonly Record<string, unknown>[] | undefined ?? []).forEach((point, index) => {
     const pointer = `/rapidCycle/${index}`;
     const objectiveId = String(point.objectiveId);
@@ -505,6 +506,16 @@ export function validateScenarioSemantics(scenario: unknown): ValidationError[] 
     if (typeof point.directive === 'string' && point.directive.length > 160) {
       errors.push({ pointer: `${pointer}/directive`, rule: 'maxLength',
         message: `Rapid-cycle point "${String(point.id)}" has a directive longer than 160 characters.` });
+    }
+    // A cycle restores one fixed tick, so it only fits a lesson whose crisis is scheduled.
+    // An event at tick 0 is not restorable — the engine has to step once before the state
+    // exists — so a point for it opens at tick 1, and that is the one offset allowed.
+    if (!scheduledTicks.has(Number(point.atTick))
+      && !(Number(point.atTick) === 1 && scheduledTicks.has(0))) {
+      errors.push({ pointer: `${pointer}/atTick`, rule: 'scheduled',
+        message: `Rapid-cycle point "${String(point.id)}" opens at tick ${String(point.atTick)}, which is no `
+          + 'scheduled timeline event. A cycle restores a fixed tick, so a crisis the learner\'s own actions '
+          + `time cannot carry one. Scheduled ticks are: ${[...scheduledTicks].sort((a, b) => a - b).join(', ')}.` });
     }
   });
 

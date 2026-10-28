@@ -42,6 +42,16 @@ export const PEA_ARREST: Scenario = {
     { id: 'pea-arrest-rhythm', type: 'rhythm-change', target: 'pea', atTick: 0,
       severity: 'critical', message: 'Organized electrical activity is present without a mechanical pulse: PEA.' },
   ],
+  // PEA is present from tick 0; the earliest decision point the rehearsal branch can
+  // restore is tick 1, so the window runs from there for the 20 seconds the objective
+  // measures. Nonshockable or shockable, the first step of the algorithm is the same one.
+  rapidCycle: [
+    { id: 'compressions-within-twenty-seconds', objectiveId: 'resume-arrest-compressions',
+      atTick: 1, windowTicks: 200, actionType: 'chest-compressions',
+      directive: 'Organized complexes with no pulse: start chest compressions now, before anything else. This lesson looks for them within 20 seconds.',
+      sourceLocator: 'Wigginton 2025, Part 9 Adult ALS, adult cardiac arrest algorithm: start CPR first',
+      cycleCap: 4 },
+  ],
   debrief: { rubric: [
     { id: 'pea-compressions', objectiveId: 'resume-arrest-compressions', question: 'How quickly were modeled compressions started after PEA appeared?' },
     { id: 'pea-epinephrine', objectiveId: 'give-arrest-epinephrine', question: 'Was exactly 1 mg IV/IO epinephrine accepted during active compressions?' },

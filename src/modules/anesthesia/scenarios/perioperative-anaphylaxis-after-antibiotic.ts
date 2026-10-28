@@ -104,6 +104,19 @@ export const PERIOPERATIVE_ANAPHYLAXIS_AFTER_ANTIBIOTIC: Scenario = {
       message: 'Reassess pressure, delivered ventilation, saturation, and the response to initial treatment. The displayed findings cannot establish a definitive diagnosis.',
     },
   ],
+  // The one scheduled crisis step here with a measured window: the 50 microgram
+  // intravenous epinephrine action within 60 seconds of the cefazolin exposure at tick
+  // 1,800. The recognition objective above it is deliberately not rehearsed this way,
+  // because naming the pattern for a learner is the cue the lesson withholds.
+  rapidCycle: [
+    {
+      id: 'epinephrine-within-sixty-seconds', objectiveId: 'give-initial-epinephrine',
+      atTick: 1800, windowTicks: 600, actionType: 'epinephrine',
+      directive: 'Abrupt hypotension after an antibiotic: give the 50 microgram IV epinephrine action now. This lesson looks for it within 60 seconds.',
+      sourceLocator: 'Resuscitation Council UK 2024, emergency treatment of peri-operative anaphylaxis: intravenous adrenaline first',
+      cycleCap: 4,
+    },
+  ],
   debrief: { rubric: [
     {
       id: 'pattern-not-proof', objectiveId: 'recognize-anaphylaxis-pattern',

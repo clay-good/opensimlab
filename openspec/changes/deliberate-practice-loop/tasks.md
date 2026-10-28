@@ -45,14 +45,39 @@ its own, none changes the engine, and none produces a score.
 - [ ] Author rapid-cycle decision points for every scenario whose objectives include a timed
   protocol step, starting with cardiac arrest, anaphylaxis, malignant hyperthermia, LAST, and
   status epilepticus across modules; register each directive line with the tutor-rule maturity.
-  Started: both persistent VF lessons (anesthesia and emergency medicine) declare compressions
-  within 20 seconds of their scheduled VF event, from the first step of each one's cited algorithm. A rapid-cycle point restores a fixed decision tick, so it fits
-  only a lesson whose crisis is scheduled. Malignant hyperthermia is not: its trigger is latent,
-  and rigidity begins whenever the learner's volatile reaches the patient (tick 2,400 on the
-  expert path, later on others), so a fixed tick would restore the wrong moment for most
-  learners. The first authored points should go on scheduled-event lessons, or the format needs
-  an event-relative decision point (for example "90 seconds after the first modeled rigidity").
+  Five lessons now declare six points, each on a scheduled crisis event and each from the step
+  its own cited source puts first: both persistent VF lessons and PEA arrest (compressions within
+  20 seconds of the rhythm event), perioperative anaphylaxis (the 50 microgram IV epinephrine
+  action within 60 seconds of the cefazolin exposure), and LAST (benzodiazepine, then lipid,
+  within 60 seconds of the bupivacaine exposure, in checklist order, so the offer takes seizure
+  suppression first). Every directive line is now a `tutor-rule` maturity subject at its lesson's
+  own version and status, and registering them had consequences worth recording. The release gate
+  refused the build until each one also had a preview evidence rule and appeared on the public
+  review-status page, which is the right refusal: a maturity record for an item no rule judges and
+  no surface lists is a record with no owner. So `publication.ts` now carries a `tutor-rule` rule
+  (its locator is its source, its bounded window and 3-to-6 cap are its limitation, and it is in
+  scope while it names the step rather than ranking the learner), `/content-review` lists every
+  directive under its lesson, and governance counts them as six more unreviewed clinical items:
+  277 rather than 271, all still unsigned. Four separate places were building these catalogs and
+  only one passed anesthesia its extra subjects; they share `scripts/module-maturity.ts` now.
+  Still open, and each for a stated reason. Malignant hyperthermia cannot carry one: its trigger
+  is latent, and rigidity begins whenever the learner's volatile reaches the patient (tick 2,400
+  on the expert path, later on others), so a fixed tick would restore the wrong moment for most
+  learners; it needs an event-relative decision point (for example "90 seconds after the first
+  modeled rigidity") the format does not have. Status epilepticus, in both modules, measures its
+  objectives by sequence rather than by a clock, so there is no authored window to rehearse
+  against; giving it one would be inventing a measure the lesson does not make. The remaining 41
+  timed measures across 17 anesthesia and emergency-medicine lessons are ordinary authoring work.
 - [ ] Build test: every timed-protocol objective has at least one rapid-cycle decision point.
+  Not yet: 6 of the 47 timed measures in the catalogue are rehearsed, so a build gate would fail
+  every build. What exists is `tests/unit/rapid-cycle-coverage.test.ts`, which holds every point
+  that is authored against its own lesson: the declared action has to land inside the declared
+  window on that lesson's expert reference path, the locator has to carry a year one of the
+  lesson's own sources carries, the directive may not read as a verdict on the learner, and the
+  set of lessons declaring points has to equal the set the test covers, so a new point cannot be
+  added without one. The validator now also refuses an `atTick` the timeline does not schedule,
+  which is what stopped malignant hyperthermia being authored by hand into the wrong moment. The
+  gate this task asks for lands when authoring reaches the last schedulable lesson.
 
 ## 4. Reasoning notes
 

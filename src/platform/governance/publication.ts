@@ -164,8 +164,19 @@ const INSTRUCTS_A_DOSE = new RegExp(
   'i',
 );
 
+/**
+ * A directive that passes judgement on the learner rather than naming the step.
+ *
+ * A rapid-cycle directive is allowed to instruct — that is what it is for, and
+ * the dose it names is the one its lesson has already bounded. What it may not
+ * do is tell a learner how they did, because the rehearsal measures a window and
+ * nothing about a person.
+ */
+const PASSES_A_VERDICT =
+  /\b(score[ds]?|grade[ds]?|passe?d?|failed|competent|proficient|ready to practi[cs]e)\b/i;
+
 export function nonScenarioPreviewEvidence(
-  kind: 'explanation' | 'drug-card' | 'practice-region',
+  kind: 'explanation' | 'drug-card' | 'practice-region' | 'tutor-rule',
   item: NonScenarioEvidenceInput,
   options: ReleaseEvidenceOptions,
 ): PreviewEvidence {
@@ -199,6 +210,22 @@ export function nonScenarioPreviewEvidence(
     return { passed };
   }
 
+  if (kind === 'tutor-rule') {
+    // A directive's source is the locator it was written from: the step of the
+    // named algorithm or checklist the line repeats, which is what a reader has
+    // to be able to follow back.
+    if (stated(item.sourceLocator)) passed.push('sources');
+    // Its limitation is that the rehearsal is bounded. A declared window and a
+    // cap of three to six cycles is the whole of what it offers, and the lesson
+    // it serves names its own limitations beside it.
+    if (item.boundedRehearsal) passed.push('limitations');
+    // In scope while it names the step rather than ranking the learner.
+    if (stated(item.directive) && !PASSES_A_VERDICT.test(item.directive!)) {
+      passed.push('safety-scope');
+    }
+    return { passed };
+  }
+
   if (stated(item.guideline)) passed.push('sources');
   // A profile is in scope while it describes practice rather than recommends it,
   // and it states its limits by naming what is not available in the region.
@@ -208,7 +235,7 @@ export function nonScenarioPreviewEvidence(
 }
 
 /** The kinds a per-kind evidence rule is defined for. */
-const RULED_KINDS = ['explanation', 'drug-card', 'practice-region'] as const;
+const RULED_KINDS = ['explanation', 'drug-card', 'practice-region', 'tutor-rule'] as const;
 type RuledKind = typeof RULED_KINDS[number];
 
 /**
@@ -260,6 +287,11 @@ export interface NonScenarioEvidenceInput {
   readonly guideline?: string;
   readonly practiceNote?: string;
   readonly namesUnavailable?: boolean;
+  /** A rapid-cycle directive line, and where it was written from. */
+  readonly directive?: string;
+  readonly sourceLocator?: string;
+  /** Whether the point declares a finite window and a cap of 3 to 6 cycles. */
+  readonly boundedRehearsal?: boolean;
 }
 
 /** Preview and source checking never satisfy an authority claim. */

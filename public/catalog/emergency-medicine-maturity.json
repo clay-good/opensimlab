@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "emergency-medicine",
-  "recordCount": 25,
+  "recordCount": 27,
   "records": [
     {
       "recordId": "scenario:undifferentiated-shock@0.1.0",
@@ -276,6 +276,28 @@
       "evidence": [
         "/catalog/emergency-medicine-completion-audit.json#acute-aortic-syndrome@0.1.0",
         "/catalog/emergency-medicine-quality-audit.json#acute-aortic-syndrome@0.1.0"
+      ]
+    },
+    {
+      "recordId": "tutor-rule:persistent-vf-arrest-compressions-within-twenty-seconds@0.1.0",
+      "subjectKind": "tutor-rule",
+      "subjectId": "persistent-vf-arrest-compressions-within-twenty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/emergency-medicine-completion-audit.json#persistent-vf-arrest@0.1.0",
+        "Wigginton 2025, Part 9 Adult ALS, adult cardiac arrest algorithm: start CPR first"
+      ]
+    },
+    {
+      "recordId": "tutor-rule:pea-arrest-compressions-within-twenty-seconds@0.1.0",
+      "subjectKind": "tutor-rule",
+      "subjectId": "pea-arrest-compressions-within-twenty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/emergency-medicine-completion-audit.json#pea-arrest@0.1.0",
+        "Wigginton 2025, Part 9 Adult ALS, adult cardiac arrest algorithm: start CPR first"
       ]
     }
   ]

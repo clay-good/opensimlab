@@ -152,15 +152,15 @@
       },
       {
         "path": "src/platform/governance/publication.ts",
-        "sha256": "7423214f6a8d5dc31795833422b840649e05832bd458ed74cf3151fc393963cf"
+        "sha256": "273548420820206b53ba5618bbbd5dba8191d0c56110aaafd78b56b06f74e8de"
       },
       {
         "path": "src/platform/governance/records.ts",
-        "sha256": "1d8a2a174712fba2fbe172e3fca4e6d527884b07be495216d9a3dd22a4b73b9a"
+        "sha256": "f8a993962b69a5f4004f3ee735cdd2ebd5931f2b853f36bddb13fd415fac3f91"
       },
       {
         "path": "src/platform/governance/review-gate.ts",
-        "sha256": "ad779f6e639a0ec3933622b405ce56cbc7e11b5eff0975b835497b0efa80f157"
+        "sha256": "2ebb5ce50cd643dffd0c95765f18319cc4d8b604eaedd5d40680cbc3c324500a"
       },
       {
         "path": "src/platform/governance/review-notes.ts",
@@ -393,15 +393,15 @@
       },
       {
         "path": "src/platform/governance/publication.ts",
-        "sha256": "7423214f6a8d5dc31795833422b840649e05832bd458ed74cf3151fc393963cf"
+        "sha256": "273548420820206b53ba5618bbbd5dba8191d0c56110aaafd78b56b06f74e8de"
       },
       {
         "path": "src/platform/governance/records.ts",
-        "sha256": "1d8a2a174712fba2fbe172e3fca4e6d527884b07be495216d9a3dd22a4b73b9a"
+        "sha256": "f8a993962b69a5f4004f3ee735cdd2ebd5931f2b853f36bddb13fd415fac3f91"
       },
       {
         "path": "src/platform/governance/review-gate.ts",
-        "sha256": "ad779f6e639a0ec3933622b405ce56cbc7e11b5eff0975b835497b0efa80f157"
+        "sha256": "2ebb5ce50cd643dffd0c95765f18319cc4d8b604eaedd5d40680cbc3c324500a"
       },
       {
         "path": "src/platform/governance/review-notes.ts",
@@ -670,15 +670,15 @@
       },
       {
         "path": "src/platform/governance/publication.ts",
-        "sha256": "7423214f6a8d5dc31795833422b840649e05832bd458ed74cf3151fc393963cf"
+        "sha256": "273548420820206b53ba5618bbbd5dba8191d0c56110aaafd78b56b06f74e8de"
       },
       {
         "path": "src/platform/governance/records.ts",
-        "sha256": "1d8a2a174712fba2fbe172e3fca4e6d527884b07be495216d9a3dd22a4b73b9a"
+        "sha256": "f8a993962b69a5f4004f3ee735cdd2ebd5931f2b853f36bddb13fd415fac3f91"
       },
       {
         "path": "src/platform/governance/review-gate.ts",
-        "sha256": "ad779f6e639a0ec3933622b405ce56cbc7e11b5eff0975b835497b0efa80f157"
+        "sha256": "2ebb5ce50cd643dffd0c95765f18319cc4d8b604eaedd5d40680cbc3c324500a"
       },
       {
         "path": "src/platform/governance/review-notes.ts",

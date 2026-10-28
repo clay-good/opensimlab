@@ -63,7 +63,13 @@ describe('static adoption pack', () => {
   it('lists every non-scenario dependency as excluded, with reasons', () => {
     const kinds = committed.dependencies.reduce<Record<string, number>>((counts, entry) =>
       ({ ...counts, [entry.subjectKind]: (counts[entry.subjectKind] ?? 0) + 1 }), {});
-    expect(kinds).toEqual({ explanation: 10, 'drug-card': 3, 'practice-region': 2 });
+    // The three stable kinds are pinned; the authored tutor rules are counted
+    // where they are declared, in `tests/unit/rapid-cycle-coverage.test.ts`, so
+    // authoring one more does not land here as a number to bump.
+    expect(Object.keys(kinds).sort())
+      .toEqual(['drug-card', 'explanation', 'practice-region', 'tutor-rule']);
+    expect(kinds).toMatchObject({ explanation: 10, 'drug-card': 3, 'practice-region': 2 });
+    expect(kinds['tutor-rule']).toBeGreaterThan(0);
     for (const entry of committed.dependencies) {
       expect(entry).toMatchObject({ status: 'preview', reason: 'preview' });
     }

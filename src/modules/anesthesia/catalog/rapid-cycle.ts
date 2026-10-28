@@ -8,7 +8,8 @@
  * from the debrief, never starts itself, and is unavailable in Unassisted mode,
  * because a directive line is a direct intervention.
  */
-import type { ScenarioRapidCycle } from '../scenarios/types';
+import type { Scenario, ScenarioRapidCycle } from '../scenarios/types';
+import type { MaturitySubjectInput } from '@platform/catalog/maturity';
 import { SESSION_MESSAGES } from '@platform/i18n/messages-session';
 
 /** The one sentence of evidence the rehearsal carries, and no more than the review claims. */
@@ -36,4 +37,33 @@ export function offeredRapidCycle(
 ): ScenarioRapidCycle | undefined {
   if (guidance === 'unassisted') return undefined;
   return points?.find((point) => unmetObjectives.has(point.objectiveId));
+}
+
+/**
+ * Each authored directive line, as a `tutor-rule` maturity subject.
+ *
+ * A directive tells a learner what to do, which makes it a tutor rule and not
+ * scenario prose: it needs its own exact-version maturity record, so a reader
+ * can see that the line carries the lesson's status and no more. The subject id
+ * joins the lesson to the point, because a point id is unique only inside its
+ * own lesson — three lessons declare `compressions-within-twenty-seconds`.
+ *
+ * The evidence is the lesson's published audit and the point's own locator,
+ * both inert text. No source file path: a rename would then fail a record that
+ * nothing about the content had changed.
+ */
+export function rapidCycleMaturitySubjects(
+  scenarios: readonly Scenario[],
+  moduleId: string,
+): MaturitySubjectInput[] {
+  return scenarios.flatMap((scenario) => (scenario.rapidCycle ?? []).map((point): MaturitySubjectInput => ({
+    subjectKind: 'tutor-rule',
+    subjectId: `${scenario.metadata.id}-${point.id}`,
+    contentVersion: scenario.metadata.version,
+    status: scenario.metadata.maturity,
+    evidence: [
+      `/catalog/${moduleId}-completion-audit.json#${scenario.metadata.id}@${scenario.metadata.version}`,
+      point.sourceLocator,
+    ],
+  })));
 }

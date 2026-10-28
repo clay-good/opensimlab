@@ -21,7 +21,8 @@ export interface ReviewRecord {
 
 export interface ReviewableItem {
   readonly id: string;
-  readonly kind: 'scenario' | 'protocol' | 'drug-card' | 'explainer' | 'debrief-template' | 'region-profile' | 'alarm-threshold';
+  readonly kind: 'scenario' | 'protocol' | 'drug-card' | 'explainer' | 'debrief-template'
+    | 'region-profile' | 'alarm-threshold' | 'tutor-rule';
   readonly contentVersion: string;
   readonly review: ReviewRecord;
   /** Domains the item covers, so board coverage can be checked. */

@@ -95,6 +95,25 @@ export const LOCAL_ANESTHETIC_SYSTEMIC_TOXICITY: Scenario = {
       message: 'Reassess seizure status, oxygen delivery, cardiac output, and pressure. Modeled improvement is not diagnostic confirmation or a guarantee of recovery.',
     },
   ],
+  // Two scheduled crisis steps with measured windows, in the order the checklist takes
+  // them, both 60 seconds from the bupivacaine exposure at tick 600. The offer picks the
+  // first whose objective the run did not meet, so seizure suppression comes first here.
+  rapidCycle: [
+    {
+      id: 'benzodiazepine-within-sixty-seconds', objectiveId: 'support-last-airway-and-seizure',
+      atTick: 600, windowTicks: 600, actionType: 'seizure-suppression',
+      directive: 'Seizure activity after local anesthetic: give the IV benzodiazepine now, with oxygen and ventilation. This lesson looks for it within 60 seconds.',
+      sourceLocator: 'ASRA 2020 LAST checklist (Neal 2021), seizure suppression with a benzodiazepine',
+      cycleCap: 4,
+    },
+    {
+      id: 'lipid-within-sixty-seconds', objectiveId: 'start-last-lipid',
+      atTick: 600, windowTicks: 600, actionType: 'lipid-emulsion',
+      directive: 'Toxicity after local anesthetic: start the weight-banded 20% lipid emulsion now. This lesson looks for it within 60 seconds.',
+      sourceLocator: 'ASRA 2020 LAST checklist (Neal 2021), weight-banded 20% lipid emulsion step',
+      cycleCap: 4,
+    },
+  ],
   debrief: { rubric: [
     {
       id: 'pattern-after-exposure', objectiveId: 'recognize-last-pattern',

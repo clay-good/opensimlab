@@ -27,8 +27,8 @@ import { SCENARIO_COMPLETION_SCHEMA } from '@platform/catalog/scenario-completio
 import { buildScenarioQualityCatalogs, QUALITY_SCHEMAS } from '@platform/catalog/scenario-quality';
 import { QUALITY_DEPENDENCY_RECEIPTS, QUALITY_RECORDS } from './quality-records';
 import { assertQualityDependencies } from './quality-dependencies';
-import { buildMaturityCatalog, MATURITY_RECORD_SCHEMA } from '@platform/catalog/maturity';
-import { additionalMaturitySubjects } from '@platform/governance/records';
+import { MATURITY_RECORD_SCHEMA } from '@platform/catalog/maturity';
+import { moduleMaturity } from './module-maturity';
 import { ASSET_LICENSE_MANIFEST, buildEvidenceSourceManifest } from '@platform/catalog/provenance';
 import { SOURCES } from '@platform/docs/sources';
 import {
@@ -336,42 +336,42 @@ writeFileSync(
 );
 writeFileSync(
   join(target, 'anesthesia-maturity.json'),
-  `${JSON.stringify(buildMaturityCatalog(completion, quality, additionalMaturitySubjects()), null, 2)}\n`,
+  `${JSON.stringify(moduleMaturity(completion, quality), null, 2)}\n`,
   'utf8',
 );
 writeFileSync(
   join(target, 'emergency-medicine-maturity.json'),
-  `${JSON.stringify(buildMaturityCatalog(emergencyCompletion, emergencyQuality), null, 2)}\n`,
+  `${JSON.stringify(moduleMaturity(emergencyCompletion, emergencyQuality), null, 2)}\n`,
   'utf8',
 );
 writeFileSync(join(target, 'critical-care-maturity.json'),
-  `${JSON.stringify(buildMaturityCatalog(criticalCareCompletion, criticalCareQuality), null, 2)}\n`, 'utf8');
+  `${JSON.stringify(moduleMaturity(criticalCareCompletion, criticalCareQuality), null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'cardiology-maturity.json'),
-  `${JSON.stringify(buildMaturityCatalog(cardiologyCompletion, cardiologyQuality), null, 2)}\n`, 'utf8');
+  `${JSON.stringify(moduleMaturity(cardiologyCompletion, cardiologyQuality), null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'respiratory-medicine-maturity.json'),
-  `${JSON.stringify(buildMaturityCatalog(respiratoryMedicineCompletion, respiratoryMedicineQuality), null, 2)}\n`, 'utf8');
+  `${JSON.stringify(moduleMaturity(respiratoryMedicineCompletion, respiratoryMedicineQuality), null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'pediatrics-maturity.json'),
-  `${JSON.stringify(buildMaturityCatalog(pediatricsCompletion, pediatricsQuality), null, 2)}\n`, 'utf8');
+  `${JSON.stringify(moduleMaturity(pediatricsCompletion, pediatricsQuality), null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'neurology-maturity.json'),
-  `${JSON.stringify(buildMaturityCatalog(neurologyCompletion, neurologyQuality), null, 2)}\n`, 'utf8');
+  `${JSON.stringify(moduleMaturity(neurologyCompletion, neurologyQuality), null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'toxicology-maturity.json'),
-  `${JSON.stringify(buildMaturityCatalog(toxicologyCompletion, toxicologyQuality), null, 2)}\n`, 'utf8');
+  `${JSON.stringify(moduleMaturity(toxicologyCompletion, toxicologyQuality), null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'obstetrics-maturity.json'),
-  `${JSON.stringify(buildMaturityCatalog(obstetricsCompletion, obstetricsQuality), null, 2)}\n`, 'utf8');
+  `${JSON.stringify(moduleMaturity(obstetricsCompletion, obstetricsQuality), null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'neonatology-maturity.json'),
-  `${JSON.stringify(buildMaturityCatalog(neonatologyCompletion, neonatologyQuality), null, 2)}\n`, 'utf8');
+  `${JSON.stringify(moduleMaturity(neonatologyCompletion, neonatologyQuality), null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'endocrine-metabolic-maturity.json'),
-  `${JSON.stringify(buildMaturityCatalog(endocrineMetabolicCompletion, endocrineMetabolicQuality), null, 2)}\n`, 'utf8');
+  `${JSON.stringify(moduleMaturity(endocrineMetabolicCompletion, endocrineMetabolicQuality), null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'renal-electrolyte-maturity.json'),
-  `${JSON.stringify(buildMaturityCatalog(renalElectrolyteCompletion, renalElectrolyteQuality), null, 2)}\n`, 'utf8');
+  `${JSON.stringify(moduleMaturity(renalElectrolyteCompletion, renalElectrolyteQuality), null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'infectious-disease-maturity.json'),
-  `${JSON.stringify(buildMaturityCatalog(infectiousDiseaseCompletion, infectiousDiseaseQuality), null, 2)}\n`, 'utf8');
+  `${JSON.stringify(moduleMaturity(infectiousDiseaseCompletion, infectiousDiseaseQuality), null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'medical-surgical-nursing-maturity.json'),
-  `${JSON.stringify(buildMaturityCatalog(medicalSurgicalNursingCompletion, medicalSurgicalNursingQuality), null, 2)}\n`, 'utf8');
+  `${JSON.stringify(moduleMaturity(medicalSurgicalNursingCompletion, medicalSurgicalNursingQuality), null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'oncology-maturity.json'),
-  `${JSON.stringify(buildMaturityCatalog(oncologyCompletion, oncologyQuality), null, 2)}\n`, 'utf8');
+  `${JSON.stringify(moduleMaturity(oncologyCompletion, oncologyQuality), null, 2)}\n`, 'utf8');
 writeFileSync(join(target, 'surgery-trauma-maturity.json'),
-  `${JSON.stringify(buildMaturityCatalog(surgeryTraumaCompletion, surgeryTraumaQuality), null, 2)}\n`, 'utf8');
+  `${JSON.stringify(moduleMaturity(surgeryTraumaCompletion, surgeryTraumaQuality), null, 2)}\n`, 'utf8');
 const allCompletions = [
   completion, emergencyCompletion, criticalCareCompletion, cardiologyCompletion,
   respiratoryMedicineCompletion, pediatricsCompletion, neurologyCompletion, toxicologyCompletion,
@@ -379,9 +379,8 @@ const allCompletions = [
   infectiousDiseaseCompletion, medicalSurgicalNursingCompletion, oncologyCompletion,
   surgeryTraumaCompletion,
 ];
-const maturityCatalogs = allCompletions.map((entry) => buildMaturityCatalog(
+const maturityCatalogs = allCompletions.map((entry) => moduleMaturity(
   entry, qualityCatalogs.get(entry.moduleId)!,
-  entry.moduleId === 'anesthesia' ? additionalMaturitySubjects() : [],
 ));
 writeFileSync(join(target, 'adoption-pack.json'), `${JSON.stringify(buildAdoptionPack(adoptionPackInput(
   allCompletions, maturityCatalogs, process.env.SOURCE_DATE ? new Date(process.env.SOURCE_DATE) : new Date(),

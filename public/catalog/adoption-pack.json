@@ -2324,6 +2324,60 @@
       "status": "preview",
       "reason": "preview",
       "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "anesthesia",
+      "subjectKind": "tutor-rule",
+      "subjectId": "perioperative-anaphylaxis-after-antibiotic-epinephrine-within-sixty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "anesthesia",
+      "subjectKind": "tutor-rule",
+      "subjectId": "local-anesthetic-systemic-toxicity-benzodiazepine-within-sixty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "anesthesia",
+      "subjectKind": "tutor-rule",
+      "subjectId": "local-anesthetic-systemic-toxicity-lipid-within-sixty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "anesthesia",
+      "subjectKind": "tutor-rule",
+      "subjectId": "persistent-vf-cardiac-arrest-compressions-within-twenty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "emergency-medicine",
+      "subjectKind": "tutor-rule",
+      "subjectId": "persistent-vf-arrest-compressions-within-twenty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "emergency-medicine",
+      "subjectKind": "tutor-rule",
+      "subjectId": "pea-arrest-compressions-within-twenty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
     }
   ],
   "scenarios": [

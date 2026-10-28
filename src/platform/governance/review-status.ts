@@ -40,7 +40,7 @@ import { ONCOLOGY_SCENARIOS } from '../../modules/oncology/scenarios';
 import { SURGERY_TRAUMA_SCENARIOS } from '../../modules/surgery-trauma/scenarios';
 
 export interface ReviewStatusItem {
-  readonly kind: 'scenario' | 'explainer' | 'drug-card' | 'region-profile';
+  readonly kind: 'scenario' | 'explainer' | 'drug-card' | 'region-profile' | 'tutor-rule';
   /**
    * The content id, which is scoped to its module rather than globally unique:
    * emergency medicine and critical care both teach a `status-epilepticus`
@@ -73,6 +73,7 @@ export interface ReviewStatusReport {
 
 const MODULE_SCENARIOS: readonly (readonly [string, readonly {
   metadata: { id: string; title: string; version: string; maturity: ContentMaturity };
+  rapidCycle?: readonly { id: string; directive: string }[];
 }[]])[] = [
   ['anesthesia', SCENARIOS],
   ['emergency-medicine', EMERGENCY_MEDICINE_SCENARIOS],
@@ -106,6 +107,21 @@ export function reviewStatusItems(): ReviewStatusItem[] {
         kind: 'scenario', id: scenario.metadata.id, title: scenario.metadata.title,
         route, contentVersion: scenario.metadata.version, status: scenario.metadata.maturity,
       });
+    }
+  }
+  // Each authored rapid-cycle directive, under the lesson it belongs to. A line
+  // that tells a learner what to do at a timed step is content a reader may want
+  // the status of, and leaving it off this page while the build holds a maturity
+  // record for it is exactly the silence the gate refuses.
+  for (const [route, scenarios] of MODULE_SCENARIOS) {
+    for (const scenario of scenarios) {
+      for (const point of scenario.rapidCycle ?? []) {
+        items.push({
+          kind: 'tutor-rule', id: `${scenario.metadata.id}-${point.id}`,
+          title: `${scenario.metadata.title}: ${point.id.replace(/-/g, ' ')}`,
+          route, contentVersion: scenario.metadata.version, status: scenario.metadata.maturity,
+        });
+      }
     }
   }
   for (const explainer of EXPLAINERS) {

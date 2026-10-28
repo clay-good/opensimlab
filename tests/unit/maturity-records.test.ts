@@ -23,74 +23,74 @@ import { ONCOLOGY_SCENARIOS } from '../../src/modules/oncology/scenarios';
 import { SURGERY_TRAUMA_SCENARIOS } from '../../src/modules/surgery-trauma/scenarios';
 import { buildScenarioQualityCatalog } from '@platform/catalog/scenario-quality';
 import {
-  buildMaturityCatalog, MATURITY_RECORD_SCHEMA, MATURITY_STATUSES,
-  maturityFor, validateMaturityCatalog,
+  MATURITY_RECORD_SCHEMA, MATURITY_STATUSES, maturityFor, validateMaturityCatalog,
 } from '@platform/catalog/maturity';
-import { additionalMaturitySubjects, reviewableItems } from '@platform/governance/records';
+import { reviewableItems } from '@platform/governance/records';
+import { moduleMaturity } from '../../scripts/module-maturity.ts';
 
 const completion = buildAnesthesiaCompletionCatalog(SCENARIOS, ENGINE_VERSION);
 const quality = buildScenarioQualityCatalog(completion);
-const catalog = buildMaturityCatalog(completion, quality, additionalMaturitySubjects());
+const catalog = moduleMaturity(completion, quality);
 const emergencyCompletion = buildModuleCompletionCatalog(
   EMERGENCY_MEDICINE_SCENARIOS, ENGINE_VERSION, 'emergency-medicine',
   'emergency-department', 'state_transition',
 );
-const emergencyCatalog = buildMaturityCatalog(
+const emergencyCatalog = moduleMaturity(
   emergencyCompletion, buildScenarioQualityCatalog(emergencyCompletion),
 );
 const criticalCareCompletion = buildModuleCompletionCatalog(
   CRITICAL_CARE_SCENARIOS, ENGINE_VERSION, 'critical-care', 'icu', 'state_transition',
 );
-const criticalCareCatalog = buildMaturityCatalog(
+const criticalCareCatalog = moduleMaturity(
   criticalCareCompletion, buildScenarioQualityCatalog(criticalCareCompletion),
 );
 const cardiologyCompletion = buildModuleCompletionCatalog(
   CARDIOLOGY_SCENARIOS, ENGINE_VERSION, 'cardiology', 'clinic', 'state_transition',
 );
-const cardiologyCatalog = buildMaturityCatalog(
+const cardiologyCatalog = moduleMaturity(
   cardiologyCompletion, buildScenarioQualityCatalog(cardiologyCompletion),
 );
 const respiratoryMedicineCompletion = buildModuleCompletionCatalog(
   RESPIRATORY_MEDICINE_SCENARIOS, ENGINE_VERSION, 'respiratory-medicine', 'icu',
   'state_transition',
 );
-const respiratoryMedicineCatalog = buildMaturityCatalog(
+const respiratoryMedicineCatalog = moduleMaturity(
   respiratoryMedicineCompletion, buildScenarioQualityCatalog(respiratoryMedicineCompletion),
 );
 const pediatricsCompletion = buildModuleCompletionCatalog(
   PEDIATRICS_SCENARIOS, ENGINE_VERSION, 'pediatrics', 'emergency-department', 'state_transition',
 );
-const pediatricsCatalog = buildMaturityCatalog(
+const pediatricsCatalog = moduleMaturity(
   pediatricsCompletion, buildScenarioQualityCatalog(pediatricsCompletion),
 );
 const neurologyCompletion = buildModuleCompletionCatalog(
   NEUROLOGY_SCENARIOS, ENGINE_VERSION, 'neurology', 'ward', 'state_transition',
 );
-const neurologyCatalog = buildMaturityCatalog(
+const neurologyCatalog = moduleMaturity(
   neurologyCompletion, buildScenarioQualityCatalog(neurologyCompletion),
 );
 const toxicologyCompletion = buildModuleCompletionCatalog(
   TOXICOLOGY_SCENARIOS, ENGINE_VERSION, 'toxicology', 'emergency-department', 'state_transition',
 );
-const toxicologyCatalog = buildMaturityCatalog(
+const toxicologyCatalog = moduleMaturity(
   toxicologyCompletion, buildScenarioQualityCatalog(toxicologyCompletion),
 );
 const obstetricsCompletion = buildModuleCompletionCatalog(
   OBSTETRICS_SCENARIOS, ENGINE_VERSION, 'obstetrics', 'delivery-room', 'state_transition',
 );
-const obstetricsCatalog = buildMaturityCatalog(
+const obstetricsCatalog = moduleMaturity(
   obstetricsCompletion, buildScenarioQualityCatalog(obstetricsCompletion),
 );
 const neonatologyCompletion = buildModuleCompletionCatalog(
   NEONATOLOGY_SCENARIOS, ENGINE_VERSION, 'neonatology', 'delivery-room', 'state_transition',
 );
-const neonatologyCatalog = buildMaturityCatalog(
+const neonatologyCatalog = moduleMaturity(
   neonatologyCompletion, buildScenarioQualityCatalog(neonatologyCompletion),
 );
 const endocrineMetabolicCompletion = buildModuleCompletionCatalog(
   ENDOCRINE_METABOLIC_SCENARIOS, ENGINE_VERSION, 'endocrine-metabolic', 'ward', 'state_transition',
 );
-const endocrineMetabolicCatalog = buildMaturityCatalog(
+const endocrineMetabolicCatalog = moduleMaturity(
   endocrineMetabolicCompletion, buildScenarioQualityCatalog(endocrineMetabolicCompletion),
 );
 const renalElectrolyteCompletion = buildModuleCompletionCatalog(
@@ -99,28 +99,28 @@ const renalElectrolyteCompletion = buildModuleCompletionCatalog(
 const infectiousDiseaseCompletion = buildModuleCompletionCatalog(
   INFECTIOUS_DISEASE_SCENARIOS, ENGINE_VERSION, 'infectious-disease', 'emergency-department', 'state_transition',
 );
-const infectiousDiseaseCatalog = buildMaturityCatalog(
+const infectiousDiseaseCatalog = moduleMaturity(
   infectiousDiseaseCompletion, buildScenarioQualityCatalog(infectiousDiseaseCompletion),
 );
-const renalElectrolyteCatalog = buildMaturityCatalog(
+const renalElectrolyteCatalog = moduleMaturity(
   renalElectrolyteCompletion, buildScenarioQualityCatalog(renalElectrolyteCompletion),
 );
 const medicalSurgicalNursingCompletion = buildModuleCompletionCatalog(
   MEDICAL_SURGICAL_NURSING_SCENARIOS, ENGINE_VERSION, 'medical-surgical-nursing', 'ward', 'state_transition',
 );
-const medicalSurgicalNursingCatalog = buildMaturityCatalog(
+const medicalSurgicalNursingCatalog = moduleMaturity(
   medicalSurgicalNursingCompletion, buildScenarioQualityCatalog(medicalSurgicalNursingCompletion),
 );
 const oncologyCompletion = buildModuleCompletionCatalog(
   ONCOLOGY_SCENARIOS, ENGINE_VERSION, 'oncology', 'clinic', 'state_transition',
 );
-const oncologyCatalog = buildMaturityCatalog(
+const oncologyCatalog = moduleMaturity(
   oncologyCompletion, buildScenarioQualityCatalog(oncologyCompletion),
 );
 const surgeryTraumaCompletion = buildModuleCompletionCatalog(
   SURGERY_TRAUMA_SCENARIOS, ENGINE_VERSION, 'surgery-trauma', 'ward', 'state_transition',
 );
-const surgeryTraumaCatalog = buildMaturityCatalog(
+const surgeryTraumaCatalog = moduleMaturity(
   surgeryTraumaCompletion, buildScenarioQualityCatalog(surgeryTraumaCompletion),
 );
 
@@ -139,7 +139,7 @@ describe('exact-version maturity records', () => {
       + medicalSurgicalNursingCatalog.recordCount + oncologyCatalog.recordCount
       + surgeryTraumaCatalog.recordCount)
       .toBe(reviewableItems().length);
-    expect(catalog.recordCount).toBe(54);
+    expect(catalog.recordCount).toBe(58);
     expect(catalog.records.filter((record) => record.subjectKind === 'scenario')
       .every((record) => record.status === 'preview')).toBe(true);
     // One state for everything published. Non-scenario content used to sit in
@@ -277,9 +277,9 @@ describe('exact-version maturity records', () => {
       catalog, 'scenario', current.metadata.id, current.metadata.version,
     )?.status).toBe('preview');
     expect(maturityFor(catalog, 'scenario', current.metadata.id, '99.0.0')).toBeUndefined();
-    expect(() => buildMaturityCatalog(completion, {
+    expect(() => moduleMaturity(completion, {
       ...quality, scenarios: quality.scenarios.slice(1),
-    }, additionalMaturitySubjects()))
+    }))
       .toThrow(`No exact-version quality audit for ${current.metadata.id} ${current.metadata.version}.`);
   });
 

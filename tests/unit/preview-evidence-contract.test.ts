@@ -34,6 +34,10 @@ function publishes(evidence: { passed: readonly string[] }): boolean {
 const COMPLETE_EXPLAINER = { reflects: 'A guideline, 2024', simplifies: 'It leaves out X.', body: 'Prose.' };
 const COMPLETE_CARD = { sourceId: 'src-1', sourceTitle: 'A publication', comparedWithLabel: 'Wider than the label.' };
 const COMPLETE_REGION = { guideline: 'A guideline', practiceNote: 'Described as practice.', namesUnavailable: true };
+const COMPLETE_DIRECTIVE = {
+  directive: 'Pulseless rhythm: start compressions now. This lesson looks for them within 20 seconds.',
+  sourceLocator: 'A 2025 algorithm, first step', boundedRehearsal: true,
+};
 
 describe('Requirement: An Undefined Contract Fails Closed And Says So', () => {
   it('names the kind rather than reporting six missed gates', () => {
@@ -44,11 +48,11 @@ describe('Requirement: An Undefined Contract Fails Closed And Says So', () => {
     expect(contract.reason).toContain('alarm-threshold');
   });
 
-  it('has a rule for exactly the three kinds that publish today, and none for the rest', () => {
+  it('has a rule for exactly the four kinds that publish today, and none for the rest', () => {
     const ruled = MATURITY_SUBJECT_KINDS.filter(
       (kind) => previewEvidenceFor(kind, {}, OPTIONS).contract === 'rule',
     );
-    expect([...ruled].sort()).toEqual(['drug-card', 'explanation', 'practice-region']);
+    expect([...ruled].sort()).toEqual(['drug-card', 'explanation', 'practice-region', 'tutor-rule']);
   });
 });
 
@@ -57,6 +61,7 @@ describe('Requirement: Each Rule Refuses What It Requires', () => {
     { kind: 'explanation' as const, complete: COMPLETE_EXPLAINER, drop: ['reflects', 'simplifies'] },
     { kind: 'drug-card' as const, complete: COMPLETE_CARD, drop: ['sourceId', 'sourceTitle', 'comparedWithLabel'] },
     { kind: 'practice-region' as const, complete: COMPLETE_REGION, drop: ['guideline', 'practiceNote', 'namesUnavailable'] },
+    { kind: 'tutor-rule' as const, complete: COMPLETE_DIRECTIVE, drop: ['directive', 'sourceLocator', 'boundedRehearsal'] },
   ];
 
   for (const { kind, complete, drop } of cases) {
@@ -100,6 +105,30 @@ describe('Requirement: Each Rule Refuses What It Requires', () => {
       const contract = previewEvidenceFor('explanation', { ...COMPLETE_EXPLAINER, body }, OPTIONS);
       if (contract.contract !== 'rule') throw new Error('expected a rule');
       expect(contract.evidence.passed, body).toContain('safety-scope');
+    }
+  });
+
+  it('refuses a directive that tells a learner how they did, and allows one that instructs', () => {
+    // A directive may name the step and its dose; that is the whole point of it.
+    // What it may not do is rank the person, so the two cases are held together.
+    for (const directive of [
+      'You failed this cycle: start compressions sooner.',
+      'Scored below the expected time. Start compressions now.',
+      'Not yet competent at this step; try again.',
+    ]) {
+      const contract = previewEvidenceFor('tutor-rule', { ...COMPLETE_DIRECTIVE, directive }, OPTIONS);
+      if (contract.contract !== 'rule') throw new Error('expected a rule');
+      expect(contract.evidence.passed, directive).not.toContain('safety-scope');
+      expect(publishes(contract.evidence), directive).toBe(false);
+    }
+    for (const directive of [
+      'Abrupt hypotension after an antibiotic: give the 50 microgram IV epinephrine action now.',
+      'Toxicity after local anesthetic: start the weight-banded 20% lipid emulsion now.',
+    ]) {
+      const contract = previewEvidenceFor('tutor-rule', { ...COMPLETE_DIRECTIVE, directive }, OPTIONS);
+      if (contract.contract !== 'rule') throw new Error('expected a rule');
+      expect(contract.evidence.passed, directive).toContain('safety-scope');
+      expect(publishes(contract.evidence), directive).toBe(true);
     }
   });
 

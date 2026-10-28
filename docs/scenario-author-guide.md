@@ -76,6 +76,20 @@ from, and a `cycleCap` from 3 to 6. A recognition objective (one whose id leads 
 `recognize`) is refused, because telling a learner what to notice is the cue leakage the hazard
 analysis forbids.
 
+A cycle restores one fixed tick, so `atTick` must be a tick the timeline schedules. The
+validator refuses any other, with the scheduled ticks listed: a crisis the learner's own
+actions time — latent malignant hyperthermia, where rigidity begins whenever the volatile
+reaches the patient — would restore the wrong moment for most learners, and needs an
+event-relative decision point the format does not yet have. An event at tick 0 is the one
+exception: the engine has to step once before that state exists, so its point opens at tick 1.
+
+Name an `actionType` the lesson actually sends. The engine drops an unknown action silently, so
+a typo leaves a cycle that can only ever end in its directive.
+`tests/unit/rapid-cycle-coverage.test.ts` holds every declared point against its lesson's expert
+reference path: the declared action has to land inside the declared window, the locator has to
+carry a year one of the lesson's own sources carries, and the directive may not read as a verdict
+on the learner.
+
 ## Publish quality evidence
 
 Keep records beside the scenario and register them in

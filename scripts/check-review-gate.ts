@@ -29,14 +29,14 @@ import { CORRECTIONS } from '@platform/docs/corrections';
 import { FACILITATED_SCENARIOS } from '@platform/facilitation/scenario-catalog';
 import { QUALITY_DEPENDENCY_RECEIPTS, QUALITY_RECORDS } from './quality-records';
 import { assertQualityDependencies } from './quality-dependencies';
-import {
-  buildMaturityCatalog, maturityFor, type MaturitySubjectKind,
-} from '@platform/catalog/maturity';
+import { maturityFor, type MaturitySubjectKind } from '@platform/catalog/maturity';
+import type { ScenarioRapidCycle } from '@anesthesia/scenarios/types';
+import { moduleMaturity, RAPID_CYCLE_SCENARIOS } from './module-maturity';
 import {
   isReviewedOnlyStatus, previewEvidenceFor, previewPublication, scenarioPreviewEvidence,
   type NonScenarioEvidenceInput,
 } from '@platform/governance/publication';
-import { EDITORIAL_BOARD, additionalMaturitySubjects, reviewableItems } from '@platform/governance/records';
+import { EDITORIAL_BOARD, reviewableItems } from '@platform/governance/records';
 import { gate, reportCoverage, uncoveredDomains } from '@platform/governance/review-gate';
 import {
   exportDisclosureBlockers, honestySurfaceBlockers, reviewStatusReport,
@@ -61,7 +61,19 @@ import { REGIONS } from '@anesthesia/region/profiles';
  * yields an empty input, and every rule then fails it — the same fail-closed
  * behaviour as an unknown kind.
  */
+/** Every authored rapid-cycle point, by the composite id governance judges it under. */
+const RAPID_CYCLE_POINTS = new Map(RAPID_CYCLE_SCENARIOS.flatMap((scenario) =>
+  (scenario.rapidCycle ?? []).map((point): readonly [string, ScenarioRapidCycle] =>
+    [`${scenario.metadata.id}-${point.id}`, point])));
+
 function nonScenarioEvidenceInput(item: { kind: string; id: string }): NonScenarioEvidenceInput {
+  if (item.kind === 'tutor-rule') {
+    const point = RAPID_CYCLE_POINTS.get(item.id);
+    return point
+      ? { directive: point.directive, sourceLocator: point.sourceLocator,
+        boundedRehearsal: point.windowTicks > 0 && point.cycleCap >= 3 && point.cycleCap <= 6 }
+      : {};
+  }
   if (item.kind === 'explainer') {
     const explainer = EXPLAINERS.find((entry) => entry.id === item.id);
     return explainer
@@ -192,24 +204,24 @@ export function main(): void {
 const medicalSurgicalNursingQuality = qualityCatalogs.get('medical-surgical-nursing')!;
   const oncologyQuality = qualityCatalogs.get('oncology')!;
   const surgeryTraumaQuality = qualityCatalogs.get('surgery-trauma')!;
-  const maturity = buildMaturityCatalog(completion, quality, additionalMaturitySubjects());
-  const emergencyMaturity = buildMaturityCatalog(emergencyCompletion, emergencyQuality);
-  const criticalCareMaturity = buildMaturityCatalog(criticalCareCompletion, criticalCareQuality);
-  const cardiologyMaturity = buildMaturityCatalog(cardiologyCompletion, cardiologyQuality);
-  const respiratoryMedicineMaturity = buildMaturityCatalog(
+  const maturity = moduleMaturity(completion, quality);
+  const emergencyMaturity = moduleMaturity(emergencyCompletion, emergencyQuality);
+  const criticalCareMaturity = moduleMaturity(criticalCareCompletion, criticalCareQuality);
+  const cardiologyMaturity = moduleMaturity(cardiologyCompletion, cardiologyQuality);
+  const respiratoryMedicineMaturity = moduleMaturity(
     respiratoryMedicineCompletion, respiratoryMedicineQuality,
   );
-  const pediatricsMaturity = buildMaturityCatalog(pediatricsCompletion, pediatricsQuality);
-  const neurologyMaturity = buildMaturityCatalog(neurologyCompletion, neurologyQuality);
-  const toxicologyMaturity = buildMaturityCatalog(toxicologyCompletion, toxicologyQuality);
-  const obstetricsMaturity = buildMaturityCatalog(obstetricsCompletion, obstetricsQuality);
-  const neonatologyMaturity = buildMaturityCatalog(neonatologyCompletion, neonatologyQuality);
-  const endocrineMetabolicMaturity = buildMaturityCatalog(endocrineMetabolicCompletion, endocrineMetabolicQuality);
-  const renalElectrolyteMaturity = buildMaturityCatalog(renalElectrolyteCompletion, renalElectrolyteQuality);
-  const infectiousDiseaseMaturity = buildMaturityCatalog(infectiousDiseaseCompletion, infectiousDiseaseQuality);
-  const medicalSurgicalNursingMaturity = buildMaturityCatalog(medicalSurgicalNursingCompletion, medicalSurgicalNursingQuality);
-  const oncologyMaturity = buildMaturityCatalog(oncologyCompletion, oncologyQuality);
-  const surgeryTraumaMaturity = buildMaturityCatalog(surgeryTraumaCompletion, surgeryTraumaQuality);
+  const pediatricsMaturity = moduleMaturity(pediatricsCompletion, pediatricsQuality);
+  const neurologyMaturity = moduleMaturity(neurologyCompletion, neurologyQuality);
+  const toxicologyMaturity = moduleMaturity(toxicologyCompletion, toxicologyQuality);
+  const obstetricsMaturity = moduleMaturity(obstetricsCompletion, obstetricsQuality);
+  const neonatologyMaturity = moduleMaturity(neonatologyCompletion, neonatologyQuality);
+  const endocrineMetabolicMaturity = moduleMaturity(endocrineMetabolicCompletion, endocrineMetabolicQuality);
+  const renalElectrolyteMaturity = moduleMaturity(renalElectrolyteCompletion, renalElectrolyteQuality);
+  const infectiousDiseaseMaturity = moduleMaturity(infectiousDiseaseCompletion, infectiousDiseaseQuality);
+  const medicalSurgicalNursingMaturity = moduleMaturity(medicalSurgicalNursingCompletion, medicalSurgicalNursingQuality);
+  const oncologyMaturity = moduleMaturity(oncologyCompletion, oncologyQuality);
+  const surgeryTraumaMaturity = moduleMaturity(surgeryTraumaCompletion, surgeryTraumaQuality);
   const moduleCatalogs = [
     { completion, quality, maturity },
     { completion: emergencyCompletion, quality: emergencyQuality, maturity: emergencyMaturity },

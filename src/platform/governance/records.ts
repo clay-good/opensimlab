@@ -27,6 +27,7 @@ import { MEDICAL_SURGICAL_NURSING_SCENARIOS } from '../../modules/medical-surgic
 import { ONCOLOGY_SCENARIOS } from '../../modules/oncology/scenarios';
 import { SURGERY_TRAUMA_SCENARIOS } from '../../modules/surgery-trauma/scenarios';
 import type { MaturitySubjectInput } from '@platform/catalog/maturity';
+import type { Scenario } from '@anesthesia/scenarios/types';
 
 /**
  * The editorial board.
@@ -40,6 +41,29 @@ import type { MaturitySubjectInput } from '@platform/catalog/maturity';
  * This is the honest state, published rather than hidden.
  */
 export const EDITORIAL_BOARD: readonly BoardMember[] = [];
+
+/**
+ * Each module's scenarios beside the review domain its content belongs to, so a
+ * per-scenario item and a per-directive item cannot disagree about either.
+ */
+const MODULE_REVIEW_DOMAINS: readonly (readonly [readonly Scenario[], string])[] = [
+  [SCENARIOS, 'adult-general-anaesthesia'],
+  [EMERGENCY_MEDICINE_SCENARIOS, 'emergency-medicine'],
+  [CRITICAL_CARE_SCENARIOS, 'critical-care'],
+  [CARDIOLOGY_SCENARIOS, 'cardiology'],
+  [RESPIRATORY_MEDICINE_SCENARIOS, 'respiratory-medicine'],
+  [PEDIATRICS_SCENARIOS, 'pediatrics'],
+  [NEUROLOGY_SCENARIOS, 'neurology'],
+  [TOXICOLOGY_SCENARIOS, 'toxicology'],
+  [OBSTETRICS_SCENARIOS, 'obstetrics'],
+  [NEONATOLOGY_SCENARIOS, 'neonatology'],
+  [ENDOCRINE_METABOLIC_SCENARIOS, 'endocrine-metabolic'],
+  [RENAL_ELECTROLYTE_SCENARIOS, 'renal-electrolyte'],
+  [INFECTIOUS_DISEASE_SCENARIOS, 'infectious-disease'],
+  [MEDICAL_SURGICAL_NURSING_SCENARIOS, 'medical-surgical-nursing'],
+  [ONCOLOGY_SCENARIOS, 'oncology'],
+  [SURGERY_TRAUMA_SCENARIOS, 'surgery-trauma'],
+];
 
 /** Every clinical content item the gate judges. */
 export function reviewableItems(): ReviewableItem[] {
@@ -167,6 +191,25 @@ export function reviewableItems(): ReviewableItem[] {
       review: card.review,
       domains: ['pharmacology'],
     });
+  }
+
+  // Every authored rapid-cycle directive. A directive line tells a learner what
+  // to do at a timed protocol step, which makes it clinical content in its own
+  // right: it is judged here, at the version and under the review of the lesson
+  // that declares it, so an unreviewed directive is counted as unreviewed
+  // rather than riding along inside a scenario record.
+  for (const [scenarios, domain] of MODULE_REVIEW_DOMAINS) {
+    for (const scenario of scenarios) {
+      for (const point of scenario.rapidCycle ?? []) {
+        items.push({
+          id: `${scenario.metadata.id}-${point.id}`,
+          kind: 'tutor-rule',
+          contentVersion: scenario.metadata.version,
+          review: scenario.metadata.clinicalReview,
+          domains: [domain],
+        });
+      }
+    }
   }
 
   for (const region of REGIONS) {

@@ -5,7 +5,7 @@ import type { Scenario, ScenarioRapidCycle } from '@anesthesia/scenarios/types';
 
 const objective = ROUTINE_INDUCTION.metadata.objectives.find((entry) => !isRecognitionObjective(entry.id))!;
 const point = (overrides: Partial<ScenarioRapidCycle> = {}): ScenarioRapidCycle => ({
-  id: 'ventilate-in-time', objectiveId: objective.id, atTick: 600, windowTicks: 300, actionType: 'ventilator',
+  id: 'ventilate-in-time', objectiveId: objective.id, atTick: 3000, windowTicks: 300, actionType: 'ventilator',
   directive: 'Start ventilation before the saturation falls, not after.',
   sourceLocator: 'Scenario source 1, airway management section', cycleCap: 4, ...overrides,
 });
@@ -32,8 +32,17 @@ describe('rapid-cycle decision points', () => {
     ['a directive over 160 characters', point({ directive: `Do ${'x'.repeat(160)}.` }), 'maxLength'],
     ['a cap below 3', point({ cycleCap: 2 }), 'minimum'],
     ['a cap above 6', point({ cycleCap: 7 }), 'maximum'],
+    ['a tick no scheduled event reaches', point({ atTick: 2999 }), 'scheduled'],
   ])('refuses %s', (_, candidate, rule) => {
     expect(rules(candidate)).toContain(rule);
+  });
+
+  it('allows the one offset a tick-0 event needs, because tick 0 cannot be restored', () => {
+    const atZero: Scenario = { ...ROUTINE_INDUCTION,
+      timeline: ROUTINE_INDUCTION.timeline.map((event, index) => index === 0 ? { ...event, atTick: 0 } : event),
+      rapidCycle: [point({ atTick: 1 })] };
+    expect(validateScenario(atZero)).toEqual([]);
+    expect(rules(point({ atTick: 2 }))).toContain('scheduled');
   });
 
   it('names recognition objectives by their verb', () => {

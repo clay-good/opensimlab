@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "recordCount": 54,
+  "recordCount": 58,
   "records": [
     {
       "recordId": "scenario:routine-induction@0.1.0",
@@ -583,6 +583,50 @@
       "status": "preview",
       "evidence": [
         "src/modules/anesthesia/region/profiles.ts#GB"
+      ]
+    },
+    {
+      "recordId": "tutor-rule:perioperative-anaphylaxis-after-antibiotic-epinephrine-within-sixty-seconds@0.1.0",
+      "subjectKind": "tutor-rule",
+      "subjectId": "perioperative-anaphylaxis-after-antibiotic-epinephrine-within-sixty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#perioperative-anaphylaxis-after-antibiotic@0.1.0",
+        "Resuscitation Council UK 2024, emergency treatment of peri-operative anaphylaxis: intravenous adrenaline first"
+      ]
+    },
+    {
+      "recordId": "tutor-rule:local-anesthetic-systemic-toxicity-benzodiazepine-within-sixty-seconds@0.1.0",
+      "subjectKind": "tutor-rule",
+      "subjectId": "local-anesthetic-systemic-toxicity-benzodiazepine-within-sixty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#local-anesthetic-systemic-toxicity@0.1.0",
+        "ASRA 2020 LAST checklist (Neal 2021), seizure suppression with a benzodiazepine"
+      ]
+    },
+    {
+      "recordId": "tutor-rule:local-anesthetic-systemic-toxicity-lipid-within-sixty-seconds@0.1.0",
+      "subjectKind": "tutor-rule",
+      "subjectId": "local-anesthetic-systemic-toxicity-lipid-within-sixty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#local-anesthetic-systemic-toxicity@0.1.0",
+        "ASRA 2020 LAST checklist (Neal 2021), weight-banded 20% lipid emulsion step"
+      ]
+    },
+    {
+      "recordId": "tutor-rule:persistent-vf-cardiac-arrest-compressions-within-twenty-seconds@0.1.0",
+      "subjectKind": "tutor-rule",
+      "subjectId": "persistent-vf-cardiac-arrest-compressions-within-twenty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#persistent-vf-cardiac-arrest@0.1.0",
+        "AHA 2025 Adult Cardiac Arrest Algorithm, first step: start CPR"
       ]
     }
   ]
