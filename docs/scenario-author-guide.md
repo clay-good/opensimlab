@@ -83,6 +83,13 @@ reaches the patient — would restore the wrong moment for most learners, and ne
 event-relative decision point the format does not yet have. An event at tick 0 is the one
 exception: the engine has to step once before that state exists, so its point opens at tick 1.
 
+Where one action type serves more than one step — a pleural lesson that assesses and
+decompresses through `pneumothorax-response`, an arterial lesson that cycles the cuff and levels
+the transducer through `arterial-line` — declare `actionPayload` with the field that makes this
+action the step. Matching on the type alone is worse than having no cycle there: it would tell a
+learner they had decompressed the chest when they had only looked at it. The coverage test
+requires a matcher whenever the lesson's own expert path sends that type more than once.
+
 Name an `actionType` the lesson actually sends. The engine drops an unknown action silently, so
 a typo leaves a cycle that can only ever end in its directive.
 `tests/unit/rapid-cycle-coverage.test.ts` holds every declared point against its lesson's expert

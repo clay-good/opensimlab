@@ -43,6 +43,25 @@ describe('a rapid cycle in progress', () => {
     expect(rapidCycleStatus(point, [compressions(250)], 520)).toBe('missed');
   });
 
+  it('reads a payload matcher, so another step of the same action type cannot close it', () => {
+    // Both pleural lessons send assessment and decompression through one action type. A point
+    // that matched the type alone would report the decompression done when it was only looked at.
+    const decompression = { ...point, actionType: 'pneumothorax-response',
+      actionPayload: { action: 'decompress-left-chest' } };
+    const look = { tick: 450, type: 'pneumothorax-response',
+      payload: { action: 'assess-bilateral-ventilation' } };
+    const act = { tick: 460, type: 'pneumothorax-response',
+      payload: { action: 'decompress-left-chest' } };
+    expect(rapidCycleStatus(decompression, [look], 600)).toBe('missed');
+    expect(rapidCycleStatus(decompression, [look, act], 600)).toBe('landed');
+    // An action with no payload at all cannot satisfy a matcher.
+    expect(rapidCycleStatus(decompression, [{ tick: 450, type: 'pneumothorax-response' }], 600))
+      .toBe('missed');
+    // And a point with no matcher still reads the type alone.
+    expect(rapidCycleStatus({ ...point, actionType: 'pneumothorax-response' }, [look], 600))
+      .toBe('landed');
+  });
+
   it('is offered only with guidance, and only for an objective not yet met', () => {
     const unmet = new Set([point.objectiveId]);
     expect(offeredRapidCycle(SCENARIO.rapidCycle, unmet, 'coached')).toBe(point);

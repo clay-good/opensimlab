@@ -102,6 +102,17 @@ export const BLOOD_BANK_HANDOFF: Scenario = {
       reason: 'Rehearse selecting the released red-cell teaching action without implying a real compatibility workflow.',
     },
   ],
+  // The scheduled hemorrhage at tick 600 with the 60 seconds the release objective measures.
+  // The blood-bank request has an engine action of its own, so no payload is needed.
+  rapidCycle: [
+    {
+      id: 'release-within-sixty-seconds', objectiveId: 'request-blood-bank-release',
+      atTick: 600, windowTicks: 600, actionType: 'blood-bank-request',
+      directive: 'This is bleeding that will need blood: ask the blood bank to release now, before you need it. This lesson looks for it within 60 seconds.',
+      sourceLocator: 'Association of Anaesthetists, Quick Reference Handbook 2024, major haemorrhage',
+      cycleCap: 4,
+    },
+  ],
   debrief: { rubric: [
     {
       id: 'ordered-release', objectiveId: 'request-blood-bank-release',

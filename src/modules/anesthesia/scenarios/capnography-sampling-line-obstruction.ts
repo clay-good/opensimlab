@@ -97,6 +97,19 @@ export const CAPNOGRAPHY_SAMPLING_LINE_OBSTRUCTION: Scenario = {
     atTick: 1199,
     reason: 'Rehearse the first discrimination step while the patient trajectory and independent signals are still stable.',
   }],
+  // The scheduled obstruction at tick 1,200 with the 30 seconds the cross-check objective
+  // measures. `capnography-line` also reconnects the sampling line, and reconnecting is the
+  // step after this one, so the payload names the cross-check rather than the repair.
+  rapidCycle: [
+    {
+      id: 'cross-check-within-thirty-seconds', objectiveId: 'cross-check-capnography-loss',
+      atTick: 1200, windowTicks: 300, actionType: 'capnography-line',
+      actionPayload: { action: 'cross-check-ventilation' },
+      directive: 'The trace is gone: cross-check that the patient is still being ventilated before touching the sampling line. Within 30 seconds here.',
+      sourceLocator: 'Association of Anaesthetists, Recommendations for standards of monitoring during anaesthesia and recovery 2021',
+      cycleCap: 4,
+    },
+  ],
   debrief: { rubric: [
     {
       id: 'signal-cross-check', objectiveId: 'cross-check-capnography-loss',

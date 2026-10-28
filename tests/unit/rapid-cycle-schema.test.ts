@@ -33,8 +33,18 @@ describe('rapid-cycle decision points', () => {
     ['a cap below 3', point({ cycleCap: 2 }), 'minimum'],
     ['a cap above 6', point({ cycleCap: 7 }), 'maximum'],
     ['a tick no scheduled event reaches', point({ atTick: 2999 }), 'scheduled'],
+    ['an empty payload matcher', point({ actionPayload: {} }), 'minProperties'],
+    ['a payload matcher against an object', point({
+      actionPayload: { action: { nested: true } } as unknown as Record<string, string>,
+    }), 'type'],
   ])('refuses %s', (_, candidate, rule) => {
     expect(rules(candidate)).toContain(rule);
+  });
+
+  it('accepts a payload matcher of plain values, for a type that serves more than one step', () => {
+    expect(validateScenario(withPoints([point({
+      actionPayload: { action: 'level-zero', units: 2, confirmed: true },
+    })]))).toEqual([]);
   });
 
   it('allows the one offset a tick-0 event needs, because tick 0 cannot be restored', () => {

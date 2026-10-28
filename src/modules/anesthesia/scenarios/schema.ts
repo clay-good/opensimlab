@@ -267,6 +267,8 @@ export const SCENARIO_SCHEMA: SchemaNode = {
           atTick: { type: 'integer', description: 'The decision point the rehearsal restores: a tick the timeline schedules, or 1 for an event at tick 0.', minimum: 1 },
           windowTicks: { type: 'integer', description: 'The window for the expected action.', minimum: 1 },
           actionType: { type: 'string', description: 'The learner action type that lands the step.', pattern: '^[a-z0-9-]+$' },
+          actionPayload: { type: 'object', additionalProperties: true,
+            description: 'Payload fields the landing action must carry, where the type alone is not the step. The semantic check holds each value to a string, number or boolean.' },
           directive: STRING_FIELD('The directive line shown when the window closes, at most 160 characters.', 10),
           sourceLocator: STRING_FIELD('Where the directive comes from in the scenario sources.', 10),
           cycleCap: { type: 'integer', description: 'Cycles before the rehearsal ends.', minimum: 3, maximum: 6 },
@@ -506,6 +508,21 @@ export function validateScenarioSemantics(scenario: unknown): ValidationError[] 
     if (typeof point.directive === 'string' && point.directive.length > 160) {
       errors.push({ pointer: `${pointer}/directive`, rule: 'maxLength',
         message: `Rapid-cycle point "${String(point.id)}" has a directive longer than 160 characters.` });
+    }
+    // A payload matcher that matches nothing is a declaration the author did not finish.
+    if (point.actionPayload !== undefined) {
+      const payload = point.actionPayload as Record<string, unknown>;
+      const entries = Object.entries(payload);
+      if (entries.length === 0) {
+        errors.push({ pointer: `${pointer}/actionPayload`, rule: 'minProperties',
+          message: `Rapid-cycle point "${String(point.id)}" declares an empty action payload. Leave it out, or name the field that makes this action the step.` });
+      }
+      for (const [field, value] of entries) {
+        if (!['string', 'number', 'boolean'].includes(typeof value)) {
+          errors.push({ pointer: `${pointer}/actionPayload/${field}`, rule: 'type',
+            message: `Rapid-cycle point "${String(point.id)}" matches payload field "${field}" against a ${typeof value}. An action payload carries strings, numbers and booleans.` });
+        }
+      }
     }
     // A cycle restores one fixed tick, so it only fits a lesson whose crisis is scheduled.
     // An event at tick 0 is not restorable — the engine has to step once before the state

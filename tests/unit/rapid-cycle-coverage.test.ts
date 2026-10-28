@@ -43,6 +43,9 @@ import { VENOUS_AIR_EMBOLISM_FIXTURES } from '../../src/modules/anesthesia/venou
 import { HIGH_SPINAL_AFTER_EPIDURAL_TOP_UP_FIXTURES } from '../../src/modules/anesthesia/high-spinal-after-epidural-top-up-fixtures';
 import { BRONCHOSPASM_FIXTURES } from '../../src/modules/anesthesia/bronchospasm-fixtures';
 import { OBSTRUCTIVE_PLEURAL_SHOCK_FIXTURES } from '../../src/modules/emergency-medicine/obstructive-shock-tension-pneumothorax-fixtures';
+import { ARTERIAL_PRESSURE_TRANSDUCER_ARTIFACT_FIXTURES } from '../../src/modules/anesthesia/arterial-pressure-transducer-artifact-fixtures';
+import { CAPNOGRAPHY_SAMPLING_LINE_OBSTRUCTION_FIXTURES } from '../../src/modules/anesthesia/capnography-sampling-line-obstruction-fixtures';
+import { BLOOD_BANK_HANDOFF_FIXTURES } from '../../src/modules/anesthesia/blood-bank-handoff-fixtures';
 
 const ALL_SCENARIOS: readonly Scenario[] = [
   ...SCENARIOS, ...EMERGENCY_MEDICINE_SCENARIOS, ...CRITICAL_CARE_SCENARIOS, ...CARDIOLOGY_SCENARIOS,
@@ -52,13 +55,16 @@ const ALL_SCENARIOS: readonly Scenario[] = [
   ...MEDICAL_SURGICAL_NURSING_SCENARIOS, ...ONCOLOGY_SCENARIOS, ...SURGERY_TRAUMA_SCENARIOS,
 ];
 
-type TimedAction = { readonly tick: number; readonly type: string };
+type TimedAction = {
+  readonly tick: number; readonly type: string;
+  readonly payload?: Readonly<Record<string, unknown>>;
+};
 
 /** An emergency-medicine control list, resolved through the lesson's own dispatch map. */
 const dispatched = (
   path: readonly (readonly [number, string])[],
   map: Readonly<Record<string, Omit<LearnerAction, 'tick'>>>,
-): readonly TimedAction[] => path.map(([tick, control]) => ({ tick, type: map[control]!.type }));
+): readonly TimedAction[] => path.map(([tick, control]) => ({ tick, ...map[control]! }));
 
 /** Each lesson that declares a point, beside the reference path a learner is shown. */
 const EXPERT_PATHS: Readonly<Record<string, readonly TimedAction[]>> = {
@@ -72,8 +78,11 @@ const EXPERT_PATHS: Readonly<Record<string, readonly TimedAction[]>> = {
   'venous-air-embolism-during-line-removal': VENOUS_AIR_EMBOLISM_FIXTURES.expert,
   'high-spinal-after-epidural-top-up': HIGH_SPINAL_AFTER_EPIDURAL_TOP_UP_FIXTURES.expert,
   bronchospasm: BRONCHOSPASM_FIXTURES.expert,
+  'arterial-pressure-transducer-artifact': ARTERIAL_PRESSURE_TRANSDUCER_ARTIFACT_FIXTURES.expert,
+  'capnography-sampling-line-obstruction': CAPNOGRAPHY_SAMPLING_LINE_OBSTRUCTION_FIXTURES.expert,
+  'blood-bank-handoff': BLOOD_BANK_HANDOFF_FIXTURES.expert,
   'obstructive-shock-tension-pneumothorax':
-    OBSTRUCTIVE_PLEURAL_SHOCK_FIXTURES.expert.map(([tick, dispatch]) => ({ tick, type: dispatch.type })),
+    OBSTRUCTIVE_PLEURAL_SHOCK_FIXTURES.expert.map(([tick, dispatch]) => ({ tick, ...dispatch })),
 };
 
 const DECLARING = ALL_SCENARIOS.filter((scenario) => (scenario.rapidCycle ?? []).length > 0);
@@ -98,9 +107,16 @@ describe('authored rapid-cycle points', () => {
       const expert = EXPERT_PATHS[scenarioId]!;
       const closes = point.atTick + point.windowTicks;
       expect(rapidCycleStatus(point, expert, closes + 1)).toBe('landed');
-      // Not merely present somewhere in the run: the window is what it claims.
+      // Not merely present somewhere in the run: the window is what it claims, and a
+      // declared payload has to be the one the expert path actually sent.
       expect(expert.some((action) => action.type === point.actionType
-        && action.tick >= point.atTick && action.tick <= closes)).toBe(true);
+        && action.tick >= point.atTick && action.tick <= closes
+        && Object.entries(point.actionPayload ?? {})
+          .every(([field, value]) => action.payload?.[field] === value))).toBe(true);
+      // A point whose action type serves more than one step in its own lesson has to say
+      // which step it is, or another step could close it.
+      const sameType = expert.filter((action) => action.type === point.actionType);
+      if (sameType.length > 1) expect(point.actionPayload).toBeDefined();
     },
   );
 

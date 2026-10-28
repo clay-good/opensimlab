@@ -98,15 +98,23 @@ export const PNEUMOTHORAX_UNDER_POSITIVE_PRESSURE: Scenario = {
       message: 'Reassess oxygenation, carbon dioxide, and circulation after the initial response. The monitor pattern is a bounded teaching trajectory, not a diagnosis or patient prediction.',
     },
   ],
-  // The scheduled tension physiology at tick 600 with the 30 seconds the escalation objective
-  // measures. The help call rather than the decompression: both decompression and assessment
-  // are the same engine action type, so a cycle on the decompression could not tell them apart.
+  // Two steps from the scheduled tension physiology at tick 600, each inside the window its own
+  // objective measures. Assessment and decompression are the same engine action type here, so
+  // the decompression point names the payload that makes it the decompression and not the look.
   rapidCycle: [
     {
       id: 'help-within-thirty-seconds', objectiveId: 'escalate-pneumothorax-pattern',
       atTick: 600, windowTicks: 300, actionType: 'call-for-help',
       directive: 'Rising airway pressure with unilateral breath sounds and falling pressure: call for help now. This lesson looks for the call within 30 seconds.',
       sourceLocator: 'Association of Anaesthetists Quick Reference Handbook, June 2023, 2-3 increased airway pressure',
+      cycleCap: 4,
+    },
+    {
+      id: 'decompression-within-sixty-seconds', objectiveId: 'decompress-pneumothorax',
+      atTick: 600, windowTicks: 600, actionType: 'pneumothorax-response',
+      actionPayload: { action: 'decompress-left-chest' },
+      directive: 'Nothing else will empty this chest: record left-chest decompression now, without waiting for imaging. Within 60 seconds here.',
+      sourceLocator: 'Resuscitation Council UK special circumstances, October 27, 2025: tension pneumothorax',
       cycleCap: 4,
     },
   ],

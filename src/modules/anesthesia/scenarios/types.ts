@@ -174,6 +174,16 @@ export interface ScenarioRapidCycle {
   readonly windowTicks: number;
   /** The learner action type that lands the step, for example `chest-compressions`. */
   readonly actionType: string;
+  /**
+   * Payload fields the landing action must carry, when the type alone is not the step.
+   *
+   * Several lessons send one action type for more than one step: a pleural lesson
+   * assesses and decompresses through `pneumothorax-response`, an arterial lesson
+   * cycles the cuff and levels the transducer through `arterial-line`. Matching on
+   * the type alone would let the wrong step close the cycle, which is worse than
+   * having no cycle: it would tell a learner they had done the thing they had not.
+   */
+  readonly actionPayload?: Readonly<Record<string, string | number | boolean>>;
   /** Shown when the window closes: at most 160 characters. */
   readonly directive: string;
   /** Where the directive comes from in the scenario's sources. */

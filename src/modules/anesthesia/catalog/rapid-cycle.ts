@@ -17,14 +17,27 @@ export const RAPID_CYCLE_EVIDENCE = SESSION_MESSAGES['rapid-cycle.evidence'].tex
 
 export type RapidCycleStatus = 'waiting' | 'landed' | 'missed';
 
+/** An action that is the declared step: its type, and every payload field declared with it. */
+function isTheStep(
+  point: ScenarioRapidCycle,
+  action: { readonly type: string; readonly payload?: Readonly<Record<string, unknown>> },
+): boolean {
+  if (action.type !== point.actionType) return false;
+  return Object.entries(point.actionPayload ?? {})
+    .every(([field, value]) => action.payload?.[field] === value);
+}
+
 /** Whether the expected action has landed inside the window, is still possible, or was missed. */
 export function rapidCycleStatus(
   point: ScenarioRapidCycle,
-  actions: readonly { readonly tick: number; readonly type: string }[],
+  actions: readonly {
+    readonly tick: number; readonly type: string;
+    readonly payload?: Readonly<Record<string, unknown>>;
+  }[],
   tick: number,
 ): RapidCycleStatus {
   const closes = point.atTick + point.windowTicks;
-  if (actions.some((action) => action.type === point.actionType
+  if (actions.some((action) => isTheStep(point, action)
     && action.tick >= point.atTick && action.tick <= closes)) return 'landed';
   return tick > closes ? 'missed' : 'waiting';
 }

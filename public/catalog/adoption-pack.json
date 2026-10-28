@@ -2400,7 +2400,43 @@
     {
       "moduleId": "anesthesia",
       "subjectKind": "tutor-rule",
+      "subjectId": "capnography-sampling-line-obstruction-cross-check-within-thirty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "anesthesia",
+      "subjectKind": "tutor-rule",
+      "subjectId": "arterial-pressure-transducer-artifact-cuff-within-sixty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "anesthesia",
+      "subjectKind": "tutor-rule",
+      "subjectId": "blood-bank-handoff-release-within-sixty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "anesthesia",
+      "subjectKind": "tutor-rule",
       "subjectId": "pneumothorax-under-positive-pressure-help-within-thirty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "anesthesia",
+      "subjectKind": "tutor-rule",
+      "subjectId": "pneumothorax-under-positive-pressure-decompression-within-sixty-seconds",
       "contentVersion": "0.1.0",
       "status": "preview",
       "reason": "preview",
@@ -2410,6 +2446,15 @@
       "moduleId": "emergency-medicine",
       "subjectKind": "tutor-rule",
       "subjectId": "obstructive-shock-tension-pneumothorax-help-within-thirty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "emergency-medicine",
+      "subjectKind": "tutor-rule",
+      "subjectId": "obstructive-shock-tension-pneumothorax-decompression-within-sixty-seconds",
       "contentVersion": "0.1.0",
       "status": "preview",
       "reason": "preview",

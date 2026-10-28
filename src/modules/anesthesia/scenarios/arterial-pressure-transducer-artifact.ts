@@ -88,6 +88,19 @@ export const ARTERIAL_PRESSURE_TRANSDUCER_ARTIFACT: Scenario = {
     objectiveId: 'verify-invasive-pressure-independently', atTick: 599,
     reason: 'Rehearse the measurement-verification sequence while canonical circulation remains stable.',
   }],
+  // The scheduled artifact at tick 600 with the 60 seconds the verification objective measures.
+  // `arterial-line` is also how the transducer is levelled and the waveform assessed, so the
+  // payload names the cuff cycle: without it, levelling would close a cycle about verifying.
+  rapidCycle: [
+    {
+      id: 'cuff-within-sixty-seconds', objectiveId: 'verify-invasive-pressure-independently',
+      atTick: 600, windowTicks: 600, actionType: 'arterial-line',
+      actionPayload: { action: 'cycle-cuff' },
+      directive: 'Before treating this pressure, check it against another method: cycle the cuff now. This lesson looks for it within 60 seconds.',
+      sourceLocator: 'ASA Standards for Basic Anesthetic Monitoring, 2020 revision, blood-pressure monitoring',
+      cycleCap: 4,
+    },
+  ],
   debrief: { rubric: [
     {
       id: 'independent-pressure', objectiveId: 'verify-invasive-pressure-independently',

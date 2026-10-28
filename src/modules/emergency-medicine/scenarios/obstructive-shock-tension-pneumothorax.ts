@@ -70,11 +70,18 @@ export const OBSTRUCTIVE_SHOCK_TENSION_PNEUMOTHORAX: Scenario = {
   ],
   // The pleural crisis is present from tick 0, so the point opens at tick 1, the earliest the
   // rehearsal branch can restore, with the 30 seconds the escalation objective measures. The
-  // help call, because assessment and decompression share one engine action type here.
+  // Both steps the lesson measures. Assessment and decompression share one engine action type
+  // here, so the decompression point names the payload that makes it the decompression.
   rapidCycle: [
     { id: 'help-within-thirty-seconds', objectiveId: 'escalate-obstructive-pleural-shock',
       atTick: 1, windowTicks: 300, actionType: 'call-for-help',
       directive: 'Unilateral breath sounds with hypoxia and shock after trauma: call for help now, while you treat it. This lesson looks for the call within 30 seconds.',
+      sourceLocator: 'European Resuscitation Council Guidelines 2025, special circumstances: tension pneumothorax',
+      cycleCap: 4 },
+    { id: 'decompression-within-sixty-seconds', objectiveId: 'decompress-obstructive-pleural-shock',
+      atTick: 1, windowTicks: 600, actionType: 'pneumothorax-response',
+      actionPayload: { action: 'decompress-left-chest' },
+      directive: 'Nothing else will empty this chest: record left-chest decompression now, without waiting for imaging. Within 60 seconds here.',
       sourceLocator: 'European Resuscitation Council Guidelines 2025, special circumstances: tension pneumothorax',
       cycleCap: 4 },
   ],

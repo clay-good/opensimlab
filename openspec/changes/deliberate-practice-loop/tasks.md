@@ -54,7 +54,14 @@ its own, none changes the engine, and none produces a score.
   medicine's tension pneumothorax; and source control in venous air embolism. Two lessons chose
   the help call over the more obvious step because assessment and decompression share one engine
   action type there, so a cycle on the decompression could not tell the two apart - which is the
-  kind of thing only the behavioural test makes visible. Every directive line is now a `tutor-rule` maturity subject at its lesson's
+  kind of thing only the behavioural test makes visible. That sharp edge is now fixed rather than
+  worked around: a point may declare `actionPayload`, the fields the landing action has to carry,
+  and both pleural lessons declare the decompression step beside their help call. Sixteen points
+  across thirteen lessons: the arterial artifact's cuff check and the capnography cross-check are
+  authored the same way, each naming the payload that separates it from the repair that follows,
+  and the blood-bank release needs no matcher because it has an action type of its own. The
+  coverage test now demands a matcher whenever a lesson's expert path sends that action type more
+  than once, so the next author cannot reintroduce the ambiguity by hand. Every directive line is now a `tutor-rule` maturity subject at its lesson's
   own version and status, and registering them had consequences worth recording. The release gate
   refused the build until each one also had a preview evidence rule and appeared on the public
   review-status page, which is the right refusal: a maturity record for an item no rule judges and

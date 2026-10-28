@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "emergency-medicine",
-  "recordCount": 28,
+  "recordCount": 29,
   "records": [
     {
       "recordId": "scenario:undifferentiated-shock@0.1.0",
@@ -282,6 +282,17 @@
       "recordId": "tutor-rule:obstructive-shock-tension-pneumothorax-help-within-thirty-seconds@0.1.0",
       "subjectKind": "tutor-rule",
       "subjectId": "obstructive-shock-tension-pneumothorax-help-within-thirty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/emergency-medicine-completion-audit.json#obstructive-shock-tension-pneumothorax@0.1.0",
+        "European Resuscitation Council Guidelines 2025, special circumstances: tension pneumothorax"
+      ]
+    },
+    {
+      "recordId": "tutor-rule:obstructive-shock-tension-pneumothorax-decompression-within-sixty-seconds@0.1.0",
+      "subjectKind": "tutor-rule",
+      "subjectId": "obstructive-shock-tension-pneumothorax-decompression-within-sixty-seconds",
       "contentVersion": "0.1.0",
       "status": "preview",
       "evidence": [

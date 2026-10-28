@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "recordCount": 63,
+  "recordCount": 67,
   "records": [
     {
       "recordId": "scenario:routine-induction@0.1.0",
@@ -674,6 +674,39 @@
       ]
     },
     {
+      "recordId": "tutor-rule:capnography-sampling-line-obstruction-cross-check-within-thirty-seconds@0.1.0",
+      "subjectKind": "tutor-rule",
+      "subjectId": "capnography-sampling-line-obstruction-cross-check-within-thirty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#capnography-sampling-line-obstruction@0.1.0",
+        "Association of Anaesthetists, Recommendations for standards of monitoring during anaesthesia and recovery 2021"
+      ]
+    },
+    {
+      "recordId": "tutor-rule:arterial-pressure-transducer-artifact-cuff-within-sixty-seconds@0.1.0",
+      "subjectKind": "tutor-rule",
+      "subjectId": "arterial-pressure-transducer-artifact-cuff-within-sixty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#arterial-pressure-transducer-artifact@0.1.0",
+        "ASA Standards for Basic Anesthetic Monitoring, 2020 revision, blood-pressure monitoring"
+      ]
+    },
+    {
+      "recordId": "tutor-rule:blood-bank-handoff-release-within-sixty-seconds@0.1.0",
+      "subjectKind": "tutor-rule",
+      "subjectId": "blood-bank-handoff-release-within-sixty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#blood-bank-handoff@0.1.0",
+        "Association of Anaesthetists, Quick Reference Handbook 2024, major haemorrhage"
+      ]
+    },
+    {
       "recordId": "tutor-rule:pneumothorax-under-positive-pressure-help-within-thirty-seconds@0.1.0",
       "subjectKind": "tutor-rule",
       "subjectId": "pneumothorax-under-positive-pressure-help-within-thirty-seconds",
@@ -682,6 +715,17 @@
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#pneumothorax-under-positive-pressure@0.1.0",
         "Association of Anaesthetists Quick Reference Handbook, June 2023, 2-3 increased airway pressure"
+      ]
+    },
+    {
+      "recordId": "tutor-rule:pneumothorax-under-positive-pressure-decompression-within-sixty-seconds@0.1.0",
+      "subjectKind": "tutor-rule",
+      "subjectId": "pneumothorax-under-positive-pressure-decompression-within-sixty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#pneumothorax-under-positive-pressure@0.1.0",
+        "Resuscitation Council UK special circumstances, October 27, 2025: tension pneumothorax"
       ]
     }
   ]

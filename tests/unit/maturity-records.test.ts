@@ -139,7 +139,7 @@ describe('exact-version maturity records', () => {
       + medicalSurgicalNursingCatalog.recordCount + oncologyCatalog.recordCount
       + surgeryTraumaCatalog.recordCount)
       .toBe(reviewableItems().length);
-    expect(catalog.recordCount).toBe(63);
+    expect(catalog.recordCount).toBe(67);
     expect(catalog.records.filter((record) => record.subjectKind === 'scenario')
       .every((record) => record.status === 'preview')).toBe(true);
     // One state for everything published. Non-scenario content used to sit in
