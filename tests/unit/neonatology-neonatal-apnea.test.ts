@@ -12,7 +12,7 @@ describe('Neonatology neonatal-apnea contract', () => {
     expect(validateScenario(SCENARIO)).toEqual([]); const subject = make(); let frame = subject.step();
     expect(frame.state).toMatchObject({ heartRateBpm: 92, meanArterialMmHg: 44, respiratoryRateBpm: 0, spo2Percent: 72, coreTemperatureC: 36.6 });
     expect(frame.equipment.resuscitation.neonatologyApneaAssessment).toMatchObject({ supportAtTick: null, authoredApneaAndHeartRatePattern: true, authoredQualifiedEarlyResponse: false });
-    for (const action of ACTIONS.slice(0, 4)) { apply(subject, action); frame = subject.step(); } apply(subject, ACTIONS[4]); frame = subject.step();
+    for (const action of ACTIONS.slice(0, 4)) { apply(subject, action); subject.step(); } apply(subject, ACTIONS[4]); frame = subject.step();
     expect(frame.state).toMatchObject({ heartRateBpm: 126, respiratoryRateBpm: 28, spo2Percent: 90 });
     expect(frame.equipment.resuscitation.neonatologyApneaAssessment).toMatchObject({ authoredQualifiedEarlyResponse: true, newbornExaminedOrScoredByLearner: false, monitoringOrTestsInterpretedByLearner: false, diagnosisMadeByLearner: false, positioningDryingWarmingSuctionOrStimulationPerformedByLearner: false, oxygenOrVentilationDeliveredByLearner: false, airwayManagedByLearner: false, ventilationCorrectiveStepsPerformedByLearner: false, compressionsAccessFluidGlucoseOrDrugDeliveredByLearner: false, feedingPerformedByLearner: false, resuscitationPerformedByLearner: false, transportOrProcedurePerformedByLearner: false, durableBreathingProven: false, stableTransitionProven: false, neurologicSafetyProven: false, causeDetermined: false, safetyDispositionDetermined: false, newbornOutcomePredicted: false, parentOutcomePredicted: false, outcomePredicted: false });
   });

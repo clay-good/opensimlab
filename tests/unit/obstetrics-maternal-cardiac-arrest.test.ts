@@ -21,7 +21,7 @@ describe('Obstetrics maternal cardiac-arrest contract', () => {
     expect(frame.alarms).toEqual([]);
     expect(frame.events.filter((event) => event.category === 'alarm')).toEqual([]);
     expect(frame.equipment.resuscitation.obstetricsMaternalArrestAssessment).toMatchObject({ supportAtTick: null, authoredMaternalCardiacArrest: true, qualifiedStandardResuscitationAuthored: true });
-    for (const action of ACTIONS.slice(0, 4)) apply(subject, action); frame = subject.step(); apply(subject, ACTIONS[4]); frame = subject.step();
+    for (const action of ACTIONS.slice(0, 4)) apply(subject, action); subject.step(); apply(subject, ACTIONS[4]); frame = subject.step();
     expect(frame.state).toMatchObject({ heartRateBpm: 42, systolicMmHg: 0, diastolicMmHg: 0, meanArterialMmHg: 0, respiratoryRateBpm: 0, spo2Percent: 0 });
     expect(frame.equipment.resuscitation.obstetricsMaternalArrestAssessment).toMatchObject({
       authoredMaternalCardiacArrest: true, learnerAssessedResponsivenessBreathingOrPulse: false,

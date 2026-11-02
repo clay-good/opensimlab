@@ -50,7 +50,7 @@ describe('Neurology focal motor status engine contract', () => {
       laterVisibleClonusAuthored: false,
     });
     for (const action of ACTIONS.slice(0, 4)) apply(subject, action);
-    frame = subject.step(); apply(subject, ACTIONS[4]); frame = subject.step();
+    subject.step(); apply(subject, ACTIONS[4]); frame = subject.step();
     expect(frame.state).toMatchObject({ heartRateBpm: 122, respiratoryRateBpm: 23,
       systolicMmHg: 128, diastolicMmHg: 78, meanArterialMmHg: 95,
       spo2Percent: 95, coreTemperatureC: 37.3 });

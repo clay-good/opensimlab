@@ -14,7 +14,7 @@ describe('Obstetrics high-neuraxial-block contract', () => {
     const subject = make(); let frame = subject.step();
     expect(frame.state).toMatchObject({ heartRateBpm: 52, systolicMmHg: 78, diastolicMmHg: 42, meanArterialMmHg: 54, respiratoryRateBpm: 8, spo2Percent: 96, coreTemperatureC: 36.8 });
     expect(frame.equipment.resuscitation.obstetricsHighNeuraxialAssessment).toMatchObject({ supportAtTick: null, authoredHighNeuraxialPattern: true, authoredQualifiedPartialSupport: false });
-    for (const action of ACTIONS.slice(0, 4)) { apply(subject, action); frame = subject.step(); }
+    for (const action of ACTIONS.slice(0, 4)) { apply(subject, action); subject.step(); }
     apply(subject, ACTIONS[4]); frame = subject.step();
     expect(frame.state).toMatchObject({ heartRateBpm: 78, systolicMmHg: 104, diastolicMmHg: 64, meanArterialMmHg: 77, respiratoryRateBpm: 14, spo2Percent: 99, coreTemperatureC: 36.8 });
     expect(frame.equipment.resuscitation.obstetricsHighNeuraxialAssessment).toMatchObject({

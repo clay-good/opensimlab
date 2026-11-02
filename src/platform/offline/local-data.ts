@@ -98,7 +98,7 @@ export interface StoredItemReport {
 /** What is actually stored right now, for the data panel. */
 export function inventory(storage: Storage): StoredItemReport[] {
   return LOCAL_DATA_ITEMS.map((item) => {
-    let value: string | null = null;
+    let value: string | null;
     try { value = storage.getItem(item.key); } catch { value = null; }
     return {
       item,

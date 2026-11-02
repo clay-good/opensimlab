@@ -27,7 +27,8 @@ function runExample(opening: readonly LearnerAction[] = [], limit = 9_000) {
   const submitted = new Set<string>();
   const events = [];
   let handed = 0;
-  let frame = engine.step();
+  engine.step();
+  let frame: ReturnType<typeof engine.step>;
   /** The same assembly the cockpit does, from the same sources. */
   const progress = (): CircleSystemRebreathingProgress => {
     const equipment = engine.equipment();

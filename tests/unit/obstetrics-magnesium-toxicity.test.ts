@@ -14,7 +14,7 @@ describe('Obstetrics magnesium-toxicity contract', () => {
     const subject = make(); let frame = subject.step();
     expect(frame.state).toMatchObject({ heartRateBpm: 62, systolicMmHg: 112, diastolicMmHg: 68, meanArterialMmHg: 83, respiratoryRateBpm: 9, spo2Percent: 94, coreTemperatureC: 36.7 });
     expect(frame.equipment.resuscitation.obstetricsMagnesiumToxicityAssessment).toMatchObject({ supportAtTick: null, authoredMagnesiumToxicityPattern: true, authoredQualifiedPartialResponse: false });
-    for (const action of ACTIONS.slice(0, 4)) { apply(subject, action); frame = subject.step(); }
+    for (const action of ACTIONS.slice(0, 4)) { apply(subject, action); subject.step(); }
     apply(subject, ACTIONS[4]); frame = subject.step();
     expect(frame.state).toMatchObject({ heartRateBpm: 66, systolicMmHg: 110, diastolicMmHg: 68, meanArterialMmHg: 82, respiratoryRateBpm: 12, spo2Percent: 98, coreTemperatureC: 36.7 });
     expect(frame.equipment.resuscitation.obstetricsMagnesiumToxicityAssessment).toMatchObject({
