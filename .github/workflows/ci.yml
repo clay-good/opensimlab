@@ -10,9 +10,13 @@
 
 name: CI
 
+# `push` is limited to main rather than '**'. With `pull_request` also listening,
+# every branch push that had an open pull request ran this whole suite twice on
+# identical code — two ~50-minute jobs per commit. A branch with no pull request
+# open no longer gets a run of its own; open the pull request to get one.
 on:
   push:
-    branches: ['**']
+    branches: [main]
   pull_request:
 
 permissions:
