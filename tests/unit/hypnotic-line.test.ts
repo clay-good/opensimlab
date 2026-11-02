@@ -70,7 +70,8 @@ describe('the propofol hypnotic line', () => {
       engine.step();
       disconnectedControl.step();
     }
-    let result = engine.step();
+    engine.step();
+    let result: ReturnType<typeof engine.step>;
 
     engine.apply({ tick: engine.tick, type: 'hypnotic-line', payload: { action: 'reconnect' } });
     result = engine.step();

@@ -14,7 +14,7 @@ describe('Obstetrics shoulder-dystocia cognitive-sequence contract', () => {
     const subject = make(); let frame = subject.step();
     expect(frame.state).toMatchObject({ heartRateBpm: 104, systolicMmHg: 118, diastolicMmHg: 66, meanArterialMmHg: 83, respiratoryRateBpm: 22, spo2Percent: 98, coreTemperatureC: 36.8 });
     expect(frame.equipment.resuscitation.obstetricsShoulderDystociaAssessment).toMatchObject({ supportAtTick: null, authoredShoulderDystocia: true, authoredCaseSpecificDeliveryCompleted: false });
-    for (const action of ACTIONS.slice(0, 4)) { apply(subject, action); frame = subject.step(); }
+    for (const action of ACTIONS.slice(0, 4)) { apply(subject, action); subject.step(); }
     apply(subject, ACTIONS[4]); frame = subject.step();
     expect(frame.equipment.resuscitation.obstetricsShoulderDystociaAssessment).toMatchObject({
       authoredCaseSpecificDeliveryCompleted: true, patientExaminedByLearner: false,

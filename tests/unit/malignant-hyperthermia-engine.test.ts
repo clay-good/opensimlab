@@ -168,7 +168,8 @@ describe('malignant hyperthermia engine foundation', () => {
       },
       seed: 1, practiceRegion: 'US',
     });
-    let result = atThreshold.step();
+    atThreshold.step();
+    let result: ReturnType<typeof atThreshold.step>;
     atThreshold.apply({ tick: 1, type: 'active-cooling', payload: { active: true } });
     result = atThreshold.step();
     expect(result.equipment.resuscitation.activeCooling).toBe(false);

@@ -14,7 +14,7 @@ describe('Obstetrics umbilical-cord-prolapse contract', () => {
     const subject = make(); let frame = subject.step();
     expect(frame.state).toMatchObject({ heartRateBpm: 96, systolicMmHg: 122, diastolicMmHg: 72, meanArterialMmHg: 89, respiratoryRateBpm: 20, spo2Percent: 99, coreTemperatureC: 36.8 });
     expect(frame.equipment.resuscitation.obstetricsCordProlapseAssessment).toMatchObject({ supportAtTick: null, authoredCordProlapse: true, authoredPersistentFetalCompromise: false });
-    for (const action of ACTIONS.slice(0, 4)) { apply(subject, action); frame = subject.step(); }
+    for (const action of ACTIONS.slice(0, 4)) { apply(subject, action); subject.step(); }
     apply(subject, ACTIONS[4]); frame = subject.step();
     expect(frame.equipment.resuscitation.obstetricsCordProlapseAssessment).toMatchObject({
       authoredPersistentFetalCompromise: true, patientExaminedByLearner: false,

@@ -25,7 +25,7 @@ const git = (...args: string[]): string => {
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === 'ENOBUFS') {
       throw new Error(`git ${args[0]} produced more than ${GIT_OUTPUT_CEILING_BYTES} bytes; `
-        + 'the audit needs to read it in chunks rather than in one buffer');
+        + 'the audit needs to read it in chunks rather than in one buffer', { cause: error });
     }
     throw error;
   }

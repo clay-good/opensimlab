@@ -13,7 +13,7 @@ describe('Neonatology term-newborn-transition contract', () => {
     expect(validateScenario(SCENARIO)).toEqual([]); const subject = make(); let frame = subject.step();
     expect(frame.state).toMatchObject({ heartRateBpm: 142, meanArterialMmHg: 46, respiratoryRateBpm: 42, spo2Percent: 95, coreTemperatureC: 36.8 });
     expect(frame.equipment.resuscitation.neonatologyTermTransitionAssessment).toMatchObject({ supportAtTick: null, authoredStableTermTransition: true, authoredQualifiedOneHourReport: false });
-    for (const action of ACTIONS.slice(0, 4)) { apply(subject, action); frame = subject.step(); }
+    for (const action of ACTIONS.slice(0, 4)) { apply(subject, action); subject.step(); }
     apply(subject, ACTIONS[4]); frame = subject.step();
     expect(frame.equipment.resuscitation.neonatologyTermTransitionAssessment).toMatchObject({ authoredQualifiedOneHourReport: true, newbornExaminedOrScoredByLearner: false, monitoringOrTestsInterpretedByLearner: false, diagnosisMadeByLearner: false, cordCarePerformedByLearner: false, skinToSkinOrPositionPerformedByLearner: false, dryingOrWarmingPerformedByLearner: false, suctionOrStimulationPerformedByLearner: false, oxygenVentilationOrAirwayCareDeliveredByLearner: false, compressionsAccessFluidGlucoseOrDrugDeliveredByLearner: false, feedingPerformedByLearner: false, resuscitationPerformedByLearner: false, transportOrProcedurePerformedByLearner: false, durableSafetyProven: false, glucoseStabilityProven: false, feedingSuccessProven: false, dischargeReadinessDetermined: false, newbornOutcomePredicted: false, parentOutcomePredicted: false, outcomePredicted: false });
   });

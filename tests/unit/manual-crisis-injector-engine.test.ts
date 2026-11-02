@@ -37,7 +37,8 @@ describe('complete manual crisis injector', () => {
 
   it('injects the already-modeled airway, allergic, hypermetabolic, and toxicity drives', () => {
     const anaphylaxis = engine();
-    let result = inject(anaphylaxis, 'anaphylaxis');
+    inject(anaphylaxis, 'anaphylaxis');
+    let result: ReturnType<typeof inject>;
     result = advance(anaphylaxis, 20);
     expect(result.equipment.lastExposure?.agentId).toBe('manual-trigger');
     expect(result.equipment.airway.bronchospasmSeverity).toBeGreaterThan(0.5);

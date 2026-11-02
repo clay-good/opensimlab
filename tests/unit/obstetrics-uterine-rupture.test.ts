@@ -14,7 +14,7 @@ describe('Obstetrics suspected-uterine-rupture contract', () => {
     const subject = make(); let frame = subject.step();
     expect(frame.state).toMatchObject({ heartRateBpm: 118, systolicMmHg: 96, diastolicMmHg: 58, meanArterialMmHg: 71, respiratoryRateBpm: 24, spo2Percent: 98, coreTemperatureC: 36.8 });
     expect(frame.equipment.resuscitation.obstetricsUterineRuptureAssessment).toMatchObject({ supportAtTick: null, authoredSuspectedUterineRupture: true, authoredWorseningMaternalFetalPattern: false });
-    for (const action of ACTIONS.slice(0, 4)) { apply(subject, action); frame = subject.step(); }
+    for (const action of ACTIONS.slice(0, 4)) { apply(subject, action); subject.step(); }
     apply(subject, ACTIONS[4]); frame = subject.step();
     expect(frame.state).toMatchObject({ heartRateBpm: 126, systolicMmHg: 86, diastolicMmHg: 50, meanArterialMmHg: 62, respiratoryRateBpm: 26, spo2Percent: 98, coreTemperatureC: 36.8 });
     expect(frame.equipment.resuscitation.obstetricsUterineRuptureAssessment).toMatchObject({
