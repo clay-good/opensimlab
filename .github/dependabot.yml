@@ -29,6 +29,18 @@ updates:
     commit-message:
       prefix: build(deps)
       prefix-development: build(deps-dev)
+    ignore:
+      # Held at 1.10.x on purpose, not abandoned. 1.15.0 makes `validate --strict`
+      # fail on warnings, so 11 of 30 specs fail on the "requirement text is very
+      # long (>500 characters)" advice alone — unchanged spec files, 30/30 under
+      # 1.10.0 and 19/30 under 1.15.0. Splitting those requirements is worth doing
+      # and is scheduled; until then this stops one preference from blocking every
+      # other update in the group. Patches to 1.10.x still come through.
+      # Remove this entry once the long requirements are split.
+      - dependency-name: '@fission-ai/openspec'
+        update-types:
+          - version-update:semver-minor
+          - version-update:semver-major
 
   # The runner already warns that actions/checkout@v4 and actions/setup-node@v4
   # target the deprecated Node 20 and are being forced onto Node 24.
