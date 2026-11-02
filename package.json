@@ -50,25 +50,25 @@
     "verify:citations": "tsx --import ./scripts/register-css-stub.mjs scripts/check-citations.ts"
   },
   "dependencies": {
-    "react": "19.2.8",
-    "react-dom": "19.2.8",
-    "zustand": "5.0.15"
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "zustand": "5.0.16"
   },
   "devDependencies": {
     "@eslint/js": "9.39.5",
-    "@fission-ai/openspec": "1.10.0",
-    "@playwright/test": "1.63.0",
+    "@fission-ai/openspec": "1.15.0",
+    "@playwright/test": "1.64.1",
     "@resvg/resvg-js": "^2.6.2",
-    "@types/node": "26.2.0",
-    "@types/react": "19.2.18",
-    "@types/react-dom": "19.2.4",
-    "@vitejs/plugin-react": "6.0.5",
+    "@types/node": "26.6.6",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.1.2",
     "eslint": "9.39.5",
-    "jsdom": "30.0.1",
-    "tsx": "4.23.12",
+    "jsdom": "30.1.3",
+    "tsx": "4.23.15",
     "typescript": "5.9.3",
-    "typescript-eslint": "8.67.0",
-    "vite": "8.3.4",
+    "typescript-eslint": "8.72.1",
+    "vite": "8.3.5",
     "vitest": "4.1.12",
     "wrangler": "4.156.0"
   },
