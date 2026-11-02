@@ -22,9 +22,17 @@ updates:
     # Low, because each open pull request carries the receipt-refresh chore.
     open-pull-requests-limit: 3
     groups:
+      # First match wins, so eslint's minor and patch updates still ride along
+      # with everything else. Only the majors need coordinating, below.
       npm-minor-and-patch:
         patterns: ['*']
         update-types: [minor, patch]
+      # eslint and @eslint/js must cross a major together: @eslint/js 10.0.1
+      # declares peer `eslint ^10.0.0`, so a lone @eslint/js bump (#15) was
+      # unmergeable by construction against eslint 9. Grouping them means the
+      # next major arrives as one coherent pull request.
+      eslint:
+        patterns: ['eslint', '@eslint/*', 'typescript-eslint', '@typescript-eslint/*']
     # Conventional Commits, matching the history: `build(deps-dev): bump vite …`.
     commit-message:
       prefix: build(deps)
@@ -40,6 +48,18 @@ updates:
       - dependency-name: '@fission-ai/openspec'
         update-types:
           - version-update:semver-minor
+          - version-update:semver-major
+      # TypeScript majors are blocked upstream, not here. typescript-eslint
+      # refuses TS 7 outright — "typescript-eslint does not support TS 7.0" —
+      # and its peer range is `>=4.8.4 <6.1.0`, so `npm ci` fails ERESOLVE
+      # before any script runs. Tracked at
+      # https://github.com/typescript-eslint/typescript-eslint/issues/10940
+      # for TS >=7.1. The source itself is ready: under TS 7.0.2 this
+      # repository typechecks with zero errors once tsconfig drops baseUrl,
+      # which this change does. Remove this entry once typescript-eslint
+      # supports TS 7, and the bump should then be a version change alone.
+      - dependency-name: typescript
+        update-types:
           - version-update:semver-major
 
   # The runner already warns that actions/checkout@v4 and actions/setup-node@v4
