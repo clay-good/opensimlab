@@ -1,0 +1,43 @@
+# Scheduled dependency updates.
+#
+# Security alerts arrive without this file; scheduled *version* updates do not.
+# Their absence is why zod 4.4.3 sat at a high-severity advisory with no alert
+# raised until `npm audit` was run by hand on 2026-11-01.
+#
+# Updates are grouped deliberately. Every lockfile change invalidates the three
+# endocrine quality receipts in scripts/quality-dependencies.json that pin a
+# SHA-256 of package-lock.json, so each pull request costs a manual receipt
+# refresh plus a full ~50-minute suite. One grouped pull request per week is far
+# cheaper than one per package, so minor and patch updates travel together and
+# only majors — which want individual review anyway — arrive alone.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: '06:00'
+      timezone: America/Denver
+    # Low, because each open pull request carries the receipt-refresh chore.
+    open-pull-requests-limit: 3
+    groups:
+      npm-minor-and-patch:
+        patterns: ['*']
+        update-types: [minor, patch]
+    # Conventional Commits, matching the history: `build(deps-dev): bump vite …`.
+    commit-message:
+      prefix: build(deps)
+      prefix-development: build(deps-dev)
+
+  # The runner already warns that actions/checkout@v4 and actions/setup-node@v4
+  # target the deprecated Node 20 and are being forced onto Node 24.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      github-actions:
+        patterns: ['*']
+    commit-message:
+      prefix: ci
