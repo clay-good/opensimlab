@@ -8,6 +8,7 @@
 import { SiteBar } from '@platform/ui';
 import { facilitatorGuide } from '@platform/facilitation/guide';
 import { facilitatedScenarioFor } from '@platform/facilitation/scenario-catalog';
+import { RunSheetDownload } from '@platform/facilitation/RunSheetDownload';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { t } from '@platform/i18n/messages';
 import '@platform/i18n/messages-educator';
@@ -52,6 +53,7 @@ export function FacilitatorGuideRoute({ path }: { path: string }) {
               )}
           </section>
         ))}
+        <RunSheetDownload moduleId={entry.moduleRoute} scenario={entry.scenario} />
         <p>{NOT_FOR_CLINICAL_USE}</p>
       </main>
       <footer className="document__foot">

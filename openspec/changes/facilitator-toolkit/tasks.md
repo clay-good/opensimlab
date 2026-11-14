@@ -97,9 +97,29 @@
 
 - [ ] Write the run-sheet exporter for both fidelity families; sample closed-loop vitals at event
   ticks under the expert transcript.
-- [ ] Emit plain text and JSON with identical fields; carry licence, statements, maturity, version,
-  sources; exclude transcript, identifiers, timestamps.
-- [ ] Test over the catalog: every state and transition present; labels present; no vendor format.
+  Written, and it covers both families, because the states are the authored timeline either way:
+  the 217 state-transition lessons carry their observations in each state's own text, and the 39
+  closed-loop anaesthesia lessons have the same timeline. What is NOT done is the second half of
+  this line. No sheet samples the engine. That needs the anaesthesia engine run over each lesson's
+  expert transcript at build time and the modelled vitals recorded at each event tick, which is a
+  fourth generated artifact; the pattern is there in `scripts/build-reference-paths.ts` if someone
+  picks it up. Every sheet carries `vitalsNote` saying so in as many words, so a facilitator
+  reading one never takes the absence of vitals to mean the lesson has none.
+- [x] Emit plain text and JSON with identical fields; carry licence, statements, maturity, version,
+  sources; exclude transcript, identifiers, timestamps. `runSheetText` and `runSheetJson` in
+  `src/platform/facilitation/run-sheet.ts`, offered from each facilitator guide as two downloads
+  built in the browser from the scenario already on the page, so the guide stays a document that
+  requests nothing. The sheet is a view of the scenario and the checked-in expert transcript, not
+  a second copy, so it cannot drift from the lesson. It carries no transcript of a learner's run,
+  no identifier and no timestamp, because it is built from authored content only.
+- [x] Test over the catalog: every state and transition present; labels present; no vendor format.
+  `tests/unit/run-sheet.test.ts` builds a sheet for all 256 and holds that each has states,
+  objectives, expected actions and sources; that both statements, the maturity label, the licence
+  and the content version are on every one; that the JSON round-trips to the same fields the text
+  prints; and that no vendor's name appears. The learner-claim guard is on the prose this module
+  owns rather than on bare words, because a lesson may legitimately say "pain score" and a source
+  may legitimately be the I-PASS handoff curriculum - forbidding the words themselves failed on
+  both and would have taught the next author to reword a citation.
 
 ## 5. Documentation
 
