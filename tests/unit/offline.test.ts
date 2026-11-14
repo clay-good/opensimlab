@@ -273,7 +273,7 @@ describe('Requirement: Everything The Offline Claim Names Is Actually Precached'
    */
   it('Scenario: the first visit skips exactly the assets it is allowed to skip', () => {
     expect(FIRST_VISIT_PRECACHE_EXCLUSIONS.map((exclusion) => exclusion.chunk))
-      .toEqual(['return-index.generated']);
+      .toEqual(['return-index.generated', 'FacilitatorGuideRoute']);
     for (const exclusion of FIRST_VISIT_PRECACHE_EXCLUSIONS) {
       expect(exclusion.reason.length).toBeGreaterThan(80);
     }

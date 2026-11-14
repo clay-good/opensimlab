@@ -34,6 +34,13 @@ export const FIRST_VISIT_PRECACHE_EXCLUSIONS: readonly PrecacheExclusion[] = [
       + 'renders nothing when the chunk will not load. A learner who has practised has loaded a '
       + 'module index online at least once, which is when the runtime cache takes it.',
   },
+  {
+    chunk: 'FacilitatorGuideRoute',
+    reason: 'The facilitator guide and the reference transcripts it reads. The guides are '
+      + 'noindex, so their prerendered HTML is not in the precache either: a first visit cannot '
+      + 'open one offline whether this chunk is there or not, and precaching it only buys the '
+      + 'shell fallback for an educator surface that is already not offline-complete.',
+  },
 ];
 
 /** Is this built asset path one the first visit skips? */

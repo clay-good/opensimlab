@@ -17,6 +17,8 @@ import {
   NCJMM_NOT_EXERCISED_REASON, NCSBN_NCJMM, ncjmmMappings,
 } from '../../modules/medical-surgical-nursing/curriculum';
 import type { FacilitatedScenario } from './scenario-catalog';
+import type { ReferencePaths, ReferenceStep } from './reference-paths';
+import { REFERENCE_PATHS } from './reference-paths.generated';
 import { t, type MessageKey } from '@platform/i18n/messages';
 import '@platform/i18n/messages-educator';
 
@@ -39,6 +41,8 @@ export const GUIDE_TEMPLATES = {
   get analysisLead() { return t('guide.template.analysis-lead'); },
   get summary() { return t('guide.template.summary'); },
   get timelineLead() { return t('guide.template.timeline-lead'); },
+  get expectedLead() { return t('guide.template.expected-lead'); },
+  get errorLead() { return t('guide.template.error-lead'); },
   get unsigned() { return t('guide.template.unsigned'); },
   get report() { return t('guide.template.report'); },
 };
@@ -75,6 +79,43 @@ function timelineItems(scenario: Scenario): GuideItem[] {
     const what = event.message ?? `${event.type}${event.target === undefined ? '' : `: ${event.target}`}`;
     return { label: at, text: what };
   });
+}
+
+/** One recorded step: the tick it happened at, and what the transcript sent. */
+function stepItems(steps: readonly ReferenceStep[]): GuideItem[] {
+  return steps.map((step) => ({
+    label: step.tick === 0 ? t('guide.at-start') : t('guide.tick', { tick: step.tick }),
+    text: step.detail === undefined ? step.label : `${step.label} (${step.detail})`,
+  }));
+}
+
+/** This lesson's checked-in reference transcripts, or nothing if it has none. */
+function referencePathsFor(entry: FacilitatedScenario): ReferencePaths | undefined {
+  return REFERENCE_PATHS.find((paths) => paths.moduleId === entry.moduleRoute
+    && paths.scenarioId === entry.scenario.metadata.id);
+}
+
+function expectedActionItems(entry: FacilitatedScenario): GuideItem[] {
+  const steps = referencePathsFor(entry)?.expert ?? [];
+  return steps.length === 0 ? [] : [{ text: GUIDE_TEMPLATES.expectedLead }, ...stepItems(steps)];
+}
+
+/**
+ * The error the lesson exists to make visible, then a path out of it. Shown as
+ * two labelled runs rather than one list, because a facilitator reading them
+ * together has to be able to tell which transcript a line came from.
+ */
+function errorAndRecoveryItems(entry: FacilitatedScenario): GuideItem[] {
+  const paths = referencePathsFor(entry);
+  if (paths === undefined) return [];
+  const error = stepItems(paths.commonError);
+  const recovery = stepItems(paths.recovery);
+  if (error.length === 0 && recovery.length === 0) return [];
+  return [
+    { text: GUIDE_TEMPLATES.errorLead },
+    ...(error.length === 0 ? [] : [{ label: t('guide.error-path'), text: '' }, ...error]),
+    ...(recovery.length === 0 ? [] : [{ label: t('guide.recovery-path'), text: '' }, ...recovery]),
+  ];
 }
 
 /** Framework domains this scenario is mapped to, with the objectives that carry each. */
@@ -161,10 +202,10 @@ export function facilitatorGuide(entry: FacilitatedScenario): readonly GuideSect
     present('timeline', t('guide.section.timeline'), scenario.timeline.length === 0 ? []
       : [{ text: GUIDE_TEMPLATES.timelineLead }, ...timelineItems(scenario)],
     t('guide.absent.timeline')),
-    absent('expected-actions', t('guide.section.expected-actions'),
-      t('guide.absent.expected-actions')),
-    absent('error-and-recovery', t('guide.section.error-and-recovery'),
-      t('guide.absent.error-and-recovery')),
+    present('expected-actions', t('guide.section.expected-actions'),
+      expectedActionItems(entry), t('guide.absent.expected-actions')),
+    present('error-and-recovery', t('guide.section.error-and-recovery'),
+      errorAndRecoveryItems(entry), t('guide.absent.error-and-recovery')),
     present('debrief', t('guide.section.debrief'), debriefItems(scenario),
       t('guide.absent.debrief')),
     present('pause-points', t('guide.section.pause-points'), (scenario.pausePoints ?? []).map((point) => ({

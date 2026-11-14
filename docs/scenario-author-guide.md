@@ -140,6 +140,12 @@ contract. Review the cited evidence, distinguish authored conventions from sourc
 leave unverified work open. Whitespace-only strings technically satisfy the existing schemas'
 `minLength` rule; they are not meaningful authoring evidence.
 
+Run `npm run reference-paths` after changing any lesson's reference transcripts. The facilitator
+guide reads the expert, common-error and recovery paths out of
+`src/platform/facilitation/reference-paths.generated.ts`, and
+`tests/unit/reference-paths.test.ts` fails on a stale copy, because a guide showing a path the
+lesson no longer takes is worse than a guide showing none.
+
 Run `npm run return-index` after changing any scenario's title, estimated duration or objective
 statements. The spaced-return suggestion ranks across every module and so needs the whole
 catalogue's own words, which `src/platform/catalog/return-index.generated.ts` carries; `npm run

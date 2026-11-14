@@ -9,18 +9,32 @@
   disclaimer, and is absent for the 217 scenarios in modules with no mapping yet (the
   framework-mapping-expansion change adds them). Pause points now have a field and two lessons
   declare them, and a content note is its own section (nine lessons carry one). Expected actions
-  and common error and recovery are still absent everywhere, and the reason is more specific than
-  "not yet read from the fixtures": the fixtures are not one shape. Fifteen modules export a
-  single `*_FIXTURES` object of `[tick, actionId]` tuples keyed `expert`, `commonError` and
-  `recovery`; anaesthesia exports several named `readonly LearnerAction[]` constants of
-  `{ tick, type, payload }`. Filling the two sections therefore means normalising two
-  representations into one guide-facing row, deciding how a payload reads to a facilitator (a
-  dose is authored scenario data, so the guide may print it, but a tray step id and an engine
-  action type do not read alike), and generating the aggregation, because a 256-file glob is not
-  available to the prerender step, which runs under tsx rather than Vite. The data is large
-  enough to need its own chunk kept out of the first visit; the mechanism for that now exists
-  (`FIRST_VISIT_PRECACHE_EXCLUSIONS`), and guides are noindex so none of it is precached as a
-  document either. Timeline entries show ticks as recorded rather
+  and common error and recovery now fill for all 256, from the reference transcripts every lesson
+  already ships: the expert path under "Expected actions", and the common-error and recovery
+  paths under "Common error and recovery" as two labelled runs, each step showing the tick it was
+  recorded at. The guide still interprets nothing. It does not say an action was correct or
+  compare the error path to the expert one; it shows a facilitator what the checked-in
+  transcripts do.
+  Getting there meant normalising three shapes, not one. 216 lessons write `[tick, stepId]`, the
+  tray control a learner presses. 39 anaesthesia lessons write whole actions,
+  `{ tick, type, payload }`, because that module's trays send doses rather than named steps. And
+  emergency medicine's tension pneumothorax writes `[tick, { type, payload }]`, keeping the tick
+  outside the action because its own helper does. Reading only the first two shapes left that one
+  lesson with both sections absent while 255 filled - a gap nothing but a count would have
+  noticed, and `tests/unit/facilitator-guide.test.ts` now asserts the count rather than a sample.
+  A payload prints as authored scenario data (`doseMg 1, route iv`), which does not breach the
+  rule that the only prose this module owns is its fixed templates.
+  The aggregation is generated (`npm run reference-paths`), because `import.meta.glob` is not
+  available to the prerender step, which runs under tsx rather than Vite, and a hand-written list
+  of 256 imports is one more thing to forget when a lesson is added.
+  `tests/unit/reference-paths.test.ts` holds the committed file against the real fixtures, so an
+  edited transcript cannot leave a guide showing an expert path the lesson no longer takes -
+  which is worse than showing none, because a facilitator cannot tell.
+  It cost the first visit nothing. The data lands in the facilitator-guide route chunk, and that
+  chunk is now in `FIRST_VISIT_PRECACHE_EXCLUSIONS`: the guides are noindex, so their prerendered
+  HTML was never in the precache either, and a first visit could not open one offline whether the
+  chunk was there or not. First-visit precache went from 1,913.6 KB to 1,912.0 KB across the whole
+  change. Timeline entries show ticks as recorded rather
   than clock time, because tick length differs by module timescale.
 - [x] Prerender `/<module>/scenario/<id>/facilitator` with print styles and `noindex`; link from
   the briefing's educator disclosure and the educator pages. Served at
@@ -38,8 +52,10 @@
 - [x] Catalog gate: report every scenario with an absent guide field. `npm run gate` prints the
   guide count and each absent section's scenario count. It reports and does not block, because
   the page already says the section is absent.
-- [ ] Automated offline run over the catalog. Open: the guides are noindex and so outside the
-  precache, which today takes indexable routes only.
+- [ ] Automated offline run over the catalog. Open, and now deliberate on both sides: the guides
+  are noindex and so outside the document precache, which takes indexable routes only, and their
+  route chunk is a named first-visit exclusion for the same reason. Making the guides work
+  offline is a decision to precache an educator surface, not an oversight to fix.
 
 ## 2. Pause points
 

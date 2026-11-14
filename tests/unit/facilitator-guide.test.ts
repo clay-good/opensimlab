@@ -36,7 +36,8 @@ describe('facilitator guide', () => {
     for (const entry of FACILITATED_SCENARIOS) {
       const guide = facilitatorGuide(entry);
       expect(guide.map((section) => section.id)).toEqual(ORDER);
-      for (const id of ['at-a-glance', 'objectives', 'patient', 'prebrief', 'timeline', 'debrief', 'sources', 'provenance']) {
+      for (const id of ['at-a-glance', 'objectives', 'patient', 'prebrief', 'timeline', 'debrief',
+        'sources', 'provenance', 'expected-actions', 'error-and-recovery']) {
         expect(guide.find((section) => section.id === id)?.status, `${entry.scenario.metadata.id} ${id}`)
           .toBe('present');
       }
@@ -77,11 +78,9 @@ describe('facilitator guide', () => {
     }
   });
 
-  it('reports the same absent sections for every scenario until their fields exist', () => {
-    const reported = new Set(FACILITATED_SCENARIOS.map((entry) => absentGuideSections(entry).join('|')));
-    expect([...reported].every((ids) =>
-      ['expected-actions', 'error-and-recovery']
-        .every((id) => ids.split('|').includes(id)))).toBe(true);
+  it('leaves no section absent across the catalogue but the ones with no field yet', () => {
+    const everAbsent = new Set(FACILITATED_SCENARIOS.flatMap((entry) => absentGuideSections(entry)));
+    expect([...everAbsent].sort()).toEqual(['content-note', 'frameworks', 'pause-points']);
   });
 
   it('renders every section, absent ones as absent, with nothing collapsed', () => {
