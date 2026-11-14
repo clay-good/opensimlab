@@ -203,8 +203,18 @@ its own, none changes the engine, and none produces a score.
   clinical-time statements, each attempt's calendar day instead of its timestamp, and
   the module the lesson belongs to. Version 1 and version 2 files still import. `/privacy` offers merge (duplicates skipped) or replace (confirmed), and
   reports what it added and every objective whose latest status moved, from what to what.
-  Remaining: the file does not yet carry goal-suggestion dismissals or reasoning notes. The notes
-  do not exist yet, and the dismissals live in their own store.
+  Version 4 carries a hidden spaced-return suggestion, as the calendar day it runs out and never
+  as the stored millisecond: the file drops the time of day from every attempt precisely so it
+  cannot place a learner at a moment, and a dismissal timestamp would put one straight back by
+  saying when they last opened a module index. It is restored as the END of that day, because
+  rounding down would quietly shorten a hide the learner asked for on the other device. A version
+  1, 2 or 3 file still imports and simply carries no hide.
+  Remaining: the file does not carry reasoning notes. That one is not plumbing. Notes are the
+  learner's own free text, the transcript and the reporting package are held structurally apart
+  from them by `tests/arch/private-tutor-reporting.test.ts`, and the task says they belong in the
+  full export only after a preview of exactly what would leave. So it needs a decision about the
+  export's shape - a second file, or a wrapper around the transcript that the architecture test
+  would have to be taught about - before it needs code.
 - [ ] Tests: round trip, newer-map recomputation, identifier/device/sub-day timestamp absence,
   zero network requests. Round trip, status-change reporting, duplicate-safe merge, version-1
   compatibility, and the absence of identifiers, device fields, and sub-day timestamps are in

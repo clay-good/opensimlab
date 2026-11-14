@@ -131,3 +131,34 @@ export function dismissSpacedReturn(now: number, storage?: Storage): number {
   try { (storage ?? localStorage).setItem(DISMISSAL_KEY, String(until)); } catch { /* Storage may be blocked. */ }
   return until;
 }
+
+/**
+ * The day the current dismissal runs out, for the progress file, or null.
+ *
+ * A calendar day and not the stored millisecond. The file drops the time of day
+ * from every attempt precisely so it cannot place a learner at a moment, and a
+ * dismissal timestamp would put one back: it says when they were last looking
+ * at a module index, to the millisecond.
+ */
+export function dismissedUntilDay(storage?: Storage): string | null {
+  try {
+    const until = Number((storage ?? localStorage).getItem(DISMISSAL_KEY));
+    if (!Number.isFinite(until) || until <= 0) return null;
+    return new Date(until).toISOString().slice(0, 10);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Restore a dismissal from a progress file, as the END of that calendar day.
+ *
+ * Rounding up rather than down keeps the import from silently shortening a hide
+ * the learner asked for on their other device.
+ */
+export function restoreDismissalDay(day: string, storage?: Storage): void {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(day)) return;
+  const until = Date.parse(`${day}T23:59:59.999Z`);
+  if (Number.isNaN(until)) return;
+  try { (storage ?? localStorage).setItem(DISMISSAL_KEY, String(until)); } catch { /* Storage may be blocked. */ }
+}

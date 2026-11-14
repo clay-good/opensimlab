@@ -8,8 +8,8 @@ import { EMERGENCY_MEDICINE_SCENARIOS } from '../../src/modules/emergency-medici
 import { CRITICAL_CARE_SCENARIOS } from '../../src/modules/critical-care/scenarios';
 import type { PracticeAttempt, PracticeOutcome } from '@anesthesia/catalog/practice-history';
 import {
-  dismissSpacedReturn, returnIntervalDays, spacedReturnDismissed, spacedReturnSuggestion,
-  SPACED_RETURN_CONVENTION,
+  dismissedUntilDay, dismissSpacedReturn, restoreDismissalDay, returnIntervalDays,
+  spacedReturnDismissed, spacedReturnSuggestion, SPACED_RETURN_CONVENTION,
 } from '@anesthesia/catalog/spaced-return';
 import { buildReturnIndex, type ReturnIndexEntry } from '@platform/catalog/return-index';
 import { SpacedReturnSuggestion } from '@anesthesia/ui/SpacedReturnSuggestion';
@@ -121,6 +121,33 @@ describe('spaced return to weak areas', () => {
     dismissSpacedReturn(now, storage);
     expect(spacedReturnDismissed(now + 6 * 86_400_000, storage)).toBe(true);
     expect(spacedReturnDismissed(now + 7 * 86_400_000 + 1, storage)).toBe(false);
+  });
+
+  /**
+   * The dismissal moves between devices as a calendar day, restored as the END
+   * of that day: rounding down would quietly shorten a hide the learner asked
+   * for on the other device.
+   */
+  it('carries a dismissal between devices as a day, without shortening it', () => {
+    const source = memoryStorage();
+    const now = Date.parse(day(10));
+    dismissSpacedReturn(now, source);
+    const carried = dismissedUntilDay(source);
+    expect(carried).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+
+    const target = memoryStorage();
+    expect(dismissedUntilDay(target)).toBeNull();
+    restoreDismissalDay(carried!, target);
+    expect(spacedReturnDismissed(now, target)).toBe(true);
+    expect(spacedReturnDismissed(Date.parse(`${carried!}T12:00:00.000Z`), target)).toBe(true);
+    expect(spacedReturnDismissed(Date.parse(`${carried!}T23:59:59.999Z`) + 1, target)).toBe(false);
+  });
+
+  it('ignores a malformed day rather than hiding the suggestion forever', () => {
+    const storage = memoryStorage();
+    restoreDismissalDay('not-a-day', storage);
+    restoreDismissalDay('2026-13-45', storage);
+    expect(spacedReturnDismissed(Date.parse(day(10)), storage)).toBe(false);
   });
 });
 

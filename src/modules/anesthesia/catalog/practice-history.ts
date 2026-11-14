@@ -186,10 +186,10 @@ export const SIMULATED_PRACTICE_NOT_CLINICAL_TIME =
   'This file records simulated practice. It is not clinical time, a case log, or a procedure log, '
   + 'and it does not count toward any case requirement, clinical hour, or supervised experience.';
 
-export const PROGRESS_FILE_SCHEMA_VERSION = 3;
+export const PROGRESS_FILE_SCHEMA_VERSION = 4;
 
 /** Every progress-file version this build can read. */
-const READABLE_PROGRESS_FILE_VERSIONS: readonly number[] = [1, 2, PROGRESS_FILE_SCHEMA_VERSION];
+const READABLE_PROGRESS_FILE_VERSIONS: readonly number[] = [1, 2, 3, PROGRESS_FILE_SCHEMA_VERSION];
 
 /** The calendar day of an attempt; the progress file carries nothing finer. */
 const dayOf = (timestamp: string) => timestamp.slice(0, 10);
@@ -199,9 +199,15 @@ const dayOf = (timestamp: string) => timestamp.slice(0, 10);
  * keeps each attempt's calendar day and drops its time of day, so the file
  * cannot place a learner at a moment. Version 3 adds the module each attempt
  * belongs to, so a scenario id that two modules share arrives on the other
- * device as the lesson it actually was.
+ * device as the lesson it actually was. Version 4 carries a hidden
+ * spaced-return suggestion, as the calendar day it runs out and never as the
+ * stored millisecond, so moving devices does not bring back a suggestion the
+ * learner has already put away.
  */
-export function practiceHistoryExport(history: readonly PracticeAttempt[]): string {
+export function practiceHistoryExport(
+  history: readonly PracticeAttempt[],
+  suggestionHiddenUntil: string | null = null,
+): string {
   return `${JSON.stringify({
     schemaVersion: PROGRESS_FILE_SCHEMA_VERSION,
     notForClinicalUse: NOT_FOR_CLINICAL_USE,
@@ -210,7 +216,20 @@ export function practiceHistoryExport(history: readonly PracticeAttempt[]): stri
     attempts: history.map(({ completedAt, schemaVersion: _version, ...rest }) => ({
       ...rest, completedOn: dayOf(completedAt),
     })),
+    ...(suggestionHiddenUntil === null ? {} : { suggestionHiddenUntil }),
   }, null, 2)}\n`;
+}
+
+/** The hidden-until day a progress file carries, or null; version 4 and later. */
+export function progressFileHiddenUntil(text: string): string | null {
+  try {
+    const value: unknown = JSON.parse(text);
+    if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
+    const day = (value as Record<string, unknown>).suggestionHiddenUntil;
+    return typeof day === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(day) ? day : null;
+  } catch {
+    return null;
+  }
 }
 
 /**

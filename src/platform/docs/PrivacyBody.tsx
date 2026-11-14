@@ -8,8 +8,10 @@ import {
   importProgressFile,
   loadPracticeHistory,
   practiceHistoryExport,
+  progressFileHiddenUntil,
   PRACTICE_HISTORY_KEY,
 } from '@anesthesia/catalog/practice-history';
+import { dismissedUntilDay, restoreDismissalDay } from '@anesthesia/catalog/spaced-return';
 import { eraseOne } from '@platform/offline/local-data';
 
 /**
@@ -23,7 +25,10 @@ export function PrivacyBody() {
   const [historyMessage, setHistoryMessage] = useState('');
   const [historyImport, setHistoryImport] = useState('');
   const downloadHistory = () => {
-    const blob = new Blob([practiceHistoryExport(loadPracticeHistory())], { type: 'application/json' });
+    const blob = new Blob(
+      [practiceHistoryExport(loadPracticeHistory(), dismissedUntilDay())],
+      { type: 'application/json' },
+    );
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement('a');
     anchor.href = url;
@@ -34,6 +39,9 @@ export function PrivacyBody() {
   const importHistory = (mode: 'merge' | 'replace') => {
     try {
       const result = importProgressFile(historyImport, mode);
+      // A suggestion the learner put away on the other device stays away here.
+      const hiddenUntil = progressFileHiddenUntil(historyImport);
+      if (hiddenUntil !== null) restoreDismissalDay(hiddenUntil);
       setAttemptCount(result.history.length);
       setHistoryImport('');
       const moved = result.changes.map((change) =>

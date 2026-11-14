@@ -11,6 +11,7 @@ import {
   loadPracticeHistory,
   objectiveChanges,
   practiceHistoryExport,
+  progressFileHiddenUntil,
   PRACTICE_HISTORY_LIMIT,
   type PracticeAttempt,
 } from '@anesthesia/catalog/practice-history';
@@ -103,7 +104,7 @@ describe('bounded private practice history', () => {
     it('carries the module between devices, and reads a version 2 file without one', () => {
       const target = memoryStorage();
       const file = JSON.parse(practiceHistoryExport([emergency])) as { schemaVersion: number };
-      expect(file.schemaVersion).toBe(3);
+      expect(file.schemaVersion).toBe(4);
       expect(importProgressFile(practiceHistoryExport([emergency]), 'replace', target).history)
         .toEqual([{ ...emergency, completedAt: '2026-08-24T00:00:00.000Z' }]);
       const { moduleId: _module, completedAt: _at, schemaVersion: _version, ...rest } = emergency;
@@ -188,11 +189,46 @@ describe('bounded private practice history', () => {
         previous: 'not-met', current: 'met' }]);
     });
 
+    /**
+     * A 7-day hide is a small thing, but it is the one piece of state that
+     * made moving devices feel like being nagged again. It travels as a
+     * calendar day: the file drops the time of day from every attempt so it
+     * cannot place a learner at a moment, and a dismissal millisecond would
+     * put one straight back by saying when they last opened a module index.
+     */
+    it('carries a hidden suggestion as a day, and no finer', () => {
+      const text = practiceHistoryExport([attempt(0)], '2026-11-21');
+      const file = JSON.parse(text) as Record<string, unknown>;
+      expect(file.schemaVersion).toBe(4);
+      expect(file.suggestionHiddenUntil).toBe('2026-11-21');
+      expect(text).not.toMatch(/T\d{2}:\d{2}|\d{2}:\d{2}:\d{2}/);
+      expect(progressFileHiddenUntil(text)).toBe('2026-11-21');
+    });
+
+    it('omits the field when nothing is hidden, and reads a file without it', () => {
+      const text = practiceHistoryExport([attempt(0)]);
+      expect(JSON.parse(text)).not.toHaveProperty('suggestionHiddenUntil');
+      expect(progressFileHiddenUntil(text)).toBeNull();
+      expect(progressFileHiddenUntil('not json')).toBeNull();
+      expect(progressFileHiddenUntil(JSON.stringify({ suggestionHiddenUntil: '2026-11-21T09:00' })))
+        .toBeNull();
+    });
+
+    it('still imports the attempts from a version 3 file, which carries no hide', () => {
+      const storage = memoryStorage();
+      const { schemaVersion: _version, completedAt: _at, ...rest } = attempt(0);
+      const v3 = JSON.stringify({
+        schemaVersion: 3, attempts: [{ ...rest, completedOn: '2026-08-24' }],
+      });
+      expect(importProgressFile(v3, 'replace', storage).history).toHaveLength(1);
+      expect(progressFileHiddenUntil(v3)).toBeNull();
+    });
+
     it('still reads a version 1 file, and refuses an unknown version atomically', () => {
       const storage = memoryStorage();
       const v1 = JSON.stringify({ schemaVersion: 1, attempts: [attempt(0)] });
       expect(importProgressFile(v1, 'merge', storage).history).toEqual([attempt(0)]);
-      expect(() => importProgressFile(JSON.stringify({ schemaVersion: 4, attempts: [] }), 'replace', storage))
+      expect(() => importProgressFile(JSON.stringify({ schemaVersion: 5, attempts: [] }), 'replace', storage))
         .toThrow('Invalid practice history file.');
       expect(loadPracticeHistory(storage)).toEqual([attempt(0)]);
       const badDay = JSON.stringify({ schemaVersion: 2, attempts: [{ ...attempt(0), completedOn: '2026-08-24T10:00' }] });
