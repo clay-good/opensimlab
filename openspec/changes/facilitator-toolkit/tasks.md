@@ -95,16 +95,24 @@
 
 ## 4. Run sheet
 
-- [ ] Write the run-sheet exporter for both fidelity families; sample closed-loop vitals at event
+- [x] Write the run-sheet exporter for both fidelity families; sample closed-loop vitals at event
   ticks under the expert transcript.
-  Written, and it covers both families, because the states are the authored timeline either way:
-  the 217 state-transition lessons carry their observations in each state's own text, and the 39
-  closed-loop anaesthesia lessons have the same timeline. What is NOT done is the second half of
-  this line. No sheet samples the engine. That needs the anaesthesia engine run over each lesson's
-  expert transcript at build time and the modelled vitals recorded at each event tick, which is a
-  fourth generated artifact; the pattern is there in `scripts/build-reference-paths.ts` if someone
-  picks it up. Every sheet carries `vitalsNote` saying so in as many words, so a facilitator
-  reading one never takes the absence of vitals to mean the lesson has none.
+  Both families, and the states are the authored timeline either way. The 39 closed-loop
+  anaesthesia lessons now carry the numbers their model produced at each of their own timeline
+  events, sampled by replaying the checked-in expert transcript under the fixture's seed
+  (`scripts/sample-expert-vitals.ts`, run by `npm run reference-paths`). All 116 anaesthesia
+  timeline events are tick-scheduled, so the sampling is deterministic and nothing has to guess
+  when an event fired. Eight parameters are kept - heart rate, systolic, diastolic and mean
+  pressure, saturation, respiratory rate, end-tidal CO2 and temperature - out of the 27 the model
+  computes, because a sheet listing all 27 is a sheet nobody reads in a room.
+  The sampler lives beside the generator rather than in `src/`: running the engine is a build-time
+  job, and nothing shipped to a browser should be able to reach it. The numbers are recomputed in
+  `tests/unit/reference-paths.test.ts` by replaying the engine rather than trusted, because a
+  committed number nobody re-derives is a number that can drift from the model that produced it.
+  Each sheet says which kind of numbers it carries: a closed-loop sheet says they are a model
+  output under one reference path and not a prediction about any patient, and a state-transition
+  sheet says the lesson runs no model and its observations are in each state's authored text - so
+  an absent number is never read as "this lesson has none".
 - [x] Emit plain text and JSON with identical fields; carry licence, statements, maturity, version,
   sources; exclude transcript, identifiers, timestamps. `runSheetText` and `runSheetJson` in
   `src/platform/facilitation/run-sheet.ts`, offered from each facilitator guide as two downloads

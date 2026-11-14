@@ -35,12 +35,25 @@ export interface ReferenceStep {
   readonly detail?: string;
 }
 
+/** The model's own output at one of the lesson's timeline events. */
+export interface ReferenceVitals {
+  readonly tick: number;
+  readonly vitals: Readonly<Record<string, number>>;
+}
+
 export interface ReferencePaths {
   readonly moduleId: string;
   readonly scenarioId: string;
   readonly expert: readonly ReferenceStep[];
   readonly commonError: readonly ReferenceStep[];
   readonly recovery: readonly ReferenceStep[];
+  /**
+   * For a closed-loop lesson: what its model produced at each of its own
+   * timeline events, replaying the expert transcript under the fixture's seed.
+   * Absent for the 217 state-transition lessons, which have no model to run and
+   * carry their observations in each state's authored text.
+   */
+  readonly expertVitals?: readonly ReferenceVitals[];
 }
 
 /** `{ doseMg: 1, route: 'iv' }` becomes `doseMg 1, route iv`. */

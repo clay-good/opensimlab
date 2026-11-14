@@ -13,18 +13,20 @@
  * vendor format: none is open, and producing one would imply this content is a
  * validated mannequin scenario, which it is not.
  *
- * WHAT IT DOES NOT YET CARRY. The design asks that a closed-loop lesson's
- * states also show the vitals the engine produces at each event under the
- * expert transcript. That needs the engine run at build time for the 39
- * anaesthesia lessons, and is not done; `vitalsNote` says so on every sheet
- * rather than leaving a facilitator to assume the absence means the lesson has
- * no vitals. The other 217 lessons are state-transition and carry their
- * observations in the authored text of each state, where they already are.
+ * VITALS. A closed-loop lesson's states carry the numbers its model produced at
+ * that event, replaying the checked-in expert transcript under the fixture's
+ * seed — sampled at build time, because the engine is not something a printed
+ * sheet can run. They are a model output under one reference path and not a
+ * prediction about any patient, and `vitalsNote` says exactly that where they
+ * appear. The 217 state-transition lessons have no model to run and carry their
+ * observations in the authored text of each state, which `vitalsNote` also says
+ * rather than leaving a facilitator to read the absence as "this lesson has
+ * none".
  */
 import type { Scenario } from '@anesthesia/scenarios/types';
 import { NOT_FOR_CLINICAL_USE, NOT_CLINICALLY_REVIEWED } from '@platform/transcript/transcript';
 import { MATURITY_LABELS } from '@platform/governance/publication';
-import type { ReferenceStep } from './reference-paths';
+import type { ReferenceStep, ReferenceVitals } from './reference-paths';
 
 /** One authored state of the scenario, in the order the timeline declares it. */
 export interface RunSheetState {
@@ -34,6 +36,8 @@ export interface RunSheetState {
   readonly severity: string;
   /** The authored narration of this state, or the event's own type and target. */
   readonly text: string;
+  /** What the model produced here, for a closed-loop lesson only. */
+  readonly vitals?: Readonly<Record<string, number>>;
 }
 
 /** One step of the checked-in expert transcript. */
@@ -57,14 +61,19 @@ export interface RunSheet {
   readonly sources: readonly string[];
   readonly notForClinicalUse: string;
   readonly notClinicallyReviewed: string;
-  /** Why no engine-sampled vitals appear, so absence is never read as "none". */
+  /** What the numbers are, or why there are none; absence is never read as "none". */
   readonly vitalsNote: string;
 }
 
-export const RUN_SHEET_VITALS_NOTE =
-  'This sheet carries no engine-sampled vital signs. Any observations below are the lesson\'s '
-  + 'own authored text. Sampling a closed-loop lesson\'s modelled vitals at each event under the '
-  + 'expert transcript is designed and not built.';
+export const RUN_SHEET_MODELLED_VITALS_NOTE =
+  'The numbers beside each state are what this lesson\'s model produced at that moment while '
+  + 'replaying its checked-in expert transcript. They are a model output under one reference '
+  + 'path, not a prediction about any patient, and a learner taking a different path will see '
+  + 'different numbers.';
+
+export const RUN_SHEET_AUTHORED_VITALS_NOTE =
+  'This lesson runs no physiological model, so no numbers are sampled for it. Its observations '
+  + 'are in the authored text of each state below, where its author put them.';
 
 export const RUN_SHEET_EXPECTED_ACTIONS_NOTE =
   'The expected actions are one checked-in reference transcript through this lesson. They are '
@@ -81,8 +90,10 @@ export function buildRunSheet(
   moduleId: string,
   scenario: Scenario,
   expert: readonly ReferenceStep[],
+  expertVitals: readonly ReferenceVitals[] = [],
 ): RunSheet {
   const { metadata } = scenario;
+  const vitalsByTick = new Map(expertVitals.map((sample) => [sample.tick, sample.vitals]));
   return {
     moduleId,
     scenarioId: metadata.id,
@@ -92,12 +103,16 @@ export function buildRunSheet(
     licence: metadata.license,
     estimatedMinutes: metadata.estimatedMinutes,
     objectives: metadata.objectives.map((objective) => objective.statement),
-    states: scenario.timeline.map((event) => ({
-      id: event.id,
-      at: timingOf(event),
-      severity: event.severity ?? 'info',
-      text: event.message ?? `${event.type}${event.target === undefined ? '' : `: ${event.target}`}`,
-    })),
+    states: scenario.timeline.map((event) => {
+      const vitals = event.atTick === undefined ? undefined : vitalsByTick.get(event.atTick);
+      return {
+        id: event.id,
+        at: timingOf(event),
+        severity: event.severity ?? 'info',
+        text: event.message ?? `${event.type}${event.target === undefined ? '' : `: ${event.target}`}`,
+        ...(vitals === undefined ? {} : { vitals }),
+      };
+    }),
     expectedActions: expert.map((step) => ({
       at: step.tick === 0 ? 'At start' : `Tick ${step.tick}`,
       action: step.label,
@@ -106,7 +121,8 @@ export function buildRunSheet(
     sources: metadata.clinicalReview.sources,
     notForClinicalUse: NOT_FOR_CLINICAL_USE,
     notClinicallyReviewed: NOT_CLINICALLY_REVIEWED,
-    vitalsNote: RUN_SHEET_VITALS_NOTE,
+    vitalsNote: expertVitals.length > 0
+      ? RUN_SHEET_MODELLED_VITALS_NOTE : RUN_SHEET_AUTHORED_VITALS_NOTE,
   };
 }
 
@@ -137,6 +153,9 @@ export function runSheetText(sheet: RunSheet): string {
   ];
   sheet.states.forEach((state, index) => {
     lines.push(`  ${index + 1}. [${state.at}] (${state.severity}) ${state.id}`);
+    if (state.vitals !== undefined) {
+      lines.push(`     ${Object.entries(state.vitals).map(([key, value]) => `${key} ${value}`).join('  ')}`);
+    }
     lines.push(`     ${state.text}`);
   });
   lines.push('', 'EXPECTED LEARNER ACTIONS', `  ${RUN_SHEET_EXPECTED_ACTIONS_NOTE}`);

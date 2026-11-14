@@ -10,7 +10,8 @@
 import { describe, expect, it } from 'vitest';
 import {
   buildRunSheet, runSheetJson, runSheetText,
-  RUN_SHEET_EXPECTED_ACTIONS_NOTE, RUN_SHEET_VITALS_NOTE, type RunSheet,
+  RUN_SHEET_AUTHORED_VITALS_NOTE, RUN_SHEET_EXPECTED_ACTIONS_NOTE,
+  RUN_SHEET_MODELLED_VITALS_NOTE, type RunSheet,
 } from '@platform/facilitation/run-sheet';
 import { REFERENCE_PATHS } from '@platform/facilitation/reference-paths.generated';
 import { FACILITATED_SCENARIOS } from '@platform/facilitation/scenario-catalog';
@@ -19,7 +20,7 @@ import { NOT_CLINICALLY_REVIEWED, NOT_FOR_CLINICAL_USE } from '@platform/transcr
 const sheets: readonly RunSheet[] = FACILITATED_SCENARIOS.map((entry) => {
   const paths = REFERENCE_PATHS.find((candidate) => candidate.moduleId === entry.moduleRoute
     && candidate.scenarioId === entry.scenario.metadata.id);
-  return buildRunSheet(entry.moduleRoute, entry.scenario, paths?.expert ?? []);
+  return buildRunSheet(entry.moduleRoute, entry.scenario, paths?.expert ?? [], paths?.expertVitals);
 });
 
 describe('the run sheet', () => {
@@ -44,9 +45,35 @@ describe('the run sheet', () => {
     }
   });
 
-  it('says in every sheet that no engine-sampled vitals are included', () => {
-    for (const sheet of sheets) expect(sheet.vitalsNote).toBe(RUN_SHEET_VITALS_NOTE);
-    expect(RUN_SHEET_VITALS_NOTE).toContain('designed and not built');
+  /**
+   * Both notes exist so that a number is never mistaken for a prediction, and
+   * an absent number is never mistaken for "this lesson has none".
+   */
+  it('says on every sheet what its numbers are, or why there are none', () => {
+    const modelled = sheets.filter((sheet) => sheet.vitalsNote === RUN_SHEET_MODELLED_VITALS_NOTE);
+    const authored = sheets.filter((sheet) => sheet.vitalsNote === RUN_SHEET_AUTHORED_VITALS_NOTE);
+    expect(modelled.length + authored.length).toBe(sheets.length);
+    // Exactly the closed-loop family carries sampled numbers.
+    expect(modelled.every((sheet) => sheet.moduleId === 'anesthesia')).toBe(true);
+    expect(modelled).toHaveLength(39);
+    expect(RUN_SHEET_MODELLED_VITALS_NOTE).toContain('not a prediction about any patient');
+    expect(RUN_SHEET_AUTHORED_VITALS_NOTE).toContain('authored text');
+  });
+
+  it('gives every closed-loop state its model\'s numbers, and no others any', () => {
+    for (const sheet of sheets) {
+      const withVitals = sheet.states.filter((state) => state.vitals !== undefined);
+      if (sheet.vitalsNote === RUN_SHEET_AUTHORED_VITALS_NOTE) {
+        expect(withVitals, sheet.scenarioId).toHaveLength(0);
+        continue;
+      }
+      expect(withVitals.length, sheet.scenarioId).toBe(sheet.states.length);
+      for (const state of withVitals) {
+        expect(Object.keys(state.vitals!).length, `${sheet.scenarioId} ${state.id}`)
+          .toBeGreaterThan(0);
+        for (const value of Object.values(state.vitals!)) expect(Number.isFinite(value)).toBe(true);
+      }
+    }
   });
 
   it('writes the same fields in both forms', () => {
@@ -91,7 +118,7 @@ describe('the run sheet', () => {
    */
   it('claims nothing about the learner in the prose it owns', () => {
     const owned = [
-      RUN_SHEET_VITALS_NOTE, RUN_SHEET_EXPECTED_ACTIONS_NOTE,
+      RUN_SHEET_MODELLED_VITALS_NOTE, RUN_SHEET_AUTHORED_VITALS_NOTE, RUN_SHEET_EXPECTED_ACTIONS_NOTE,
       ...runSheetText(sheets[0]!).split('\n').filter((line) => /^[A-Z][A-Z ]+$/.test(line.trim())),
     ].join(' ').toLowerCase();
     expect(owned).toContain('states');

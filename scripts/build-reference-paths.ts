@@ -16,11 +16,18 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { MODULES } from '@platform/modules/registry';
 import { referencePath, type ReferencePaths } from '@platform/facilitation/reference-paths';
+import { SCENARIOS } from '@anesthesia/scenarios';
+import type { LearnerAction } from '@platform/kernel/protocol';
+import { sampleExpertVitals } from './sample-expert-vitals';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 
+/** The one module whose lessons run a physiological model. */
+const CLOSED_LOOP_MODULE = 'anesthesia';
+
 interface FixtureObject {
   readonly scenarioId: string;
+  readonly seed: number;
   readonly expert: readonly unknown[];
   readonly commonError: readonly unknown[];
   readonly recovery: readonly unknown[];
@@ -29,7 +36,8 @@ interface FixtureObject {
 function isFixtureObject(value: unknown): value is FixtureObject {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
   const record = value as Record<string, unknown>;
-  return typeof record.scenarioId === 'string' && Array.isArray(record.expert)
+  return typeof record.scenarioId === 'string' && typeof record.seed === 'number'
+    && Array.isArray(record.expert)
     && Array.isArray(record.commonError) && Array.isArray(record.recovery);
 }
 
@@ -44,12 +52,20 @@ async function pathsFor(moduleId: string): Promise<ReferencePaths[]> {
       throw new Error(`reference-paths: ${moduleId}/${file} exports ${fixtures.length} fixture objects, expected 1`);
     }
     const fixture = fixtures[0]!;
+    // Only the closed-loop family has a model to replay. The others carry their
+    // observations in each state's authored text, where they already are.
+    const scenario = moduleId === CLOSED_LOOP_MODULE
+      ? SCENARIOS.find((candidate) => candidate.metadata.id === fixture.scenarioId)
+      : undefined;
+    const expertVitals = scenario === undefined ? undefined
+      : sampleExpertVitals(scenario, fixture.seed, fixture.expert as readonly LearnerAction[]);
     found.push({
       moduleId,
       scenarioId: fixture.scenarioId,
       expert: referencePath(fixture.expert),
       commonError: referencePath(fixture.commonError),
       recovery: referencePath(fixture.recovery),
+      ...(expertVitals === undefined || expertVitals.length === 0 ? {} : { expertVitals }),
     });
   }
   return found;
@@ -83,6 +99,14 @@ for (const entry of entries) {
   for (const key of ['expert', 'commonError', 'recovery'] as const) {
     lines.push(`    ${key}: [`);
     for (const value of entry[key]) lines.push(step(value));
+    lines.push('    ],');
+  }
+  if (entry.expertVitals !== undefined) {
+    lines.push('    expertVitals: [');
+    for (const sample of entry.expertVitals) {
+      const vitals = Object.entries(sample.vitals).map(([key, value]) => `${key}: ${value}`).join(', ');
+      lines.push(`      { tick: ${sample.tick}, vitals: { ${vitals} } },`);
+    }
     lines.push('    ],');
   }
   lines.push('  },');

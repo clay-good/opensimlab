@@ -29,6 +29,11 @@ export const REFERENCE_PATHS: readonly ReferencePaths[] = [
       { tick: 1200, label: "arterial-line", detail: "action assess-waveform" },
       { tick: 1300, label: "arterial-line", detail: "action restore-dynamic-response" },
     ],
+    expertVitals: [
+      { tick: 0, vitals: { heartRateBpm: 68, systolicMmHg: 109.5, diastolicMmHg: 62.3, meanArterialMmHg: 78, spo2Percent: 96.9, respiratoryRateBpm: 14, etco2MmHg: 37, coreTemperatureC: 36.7 } },
+      { tick: 600, vitals: { heartRateBpm: 68, systolicMmHg: 109.5, diastolicMmHg: 62.3, meanArterialMmHg: 78, spo2Percent: 98.1, respiratoryRateBpm: 14, etco2MmHg: 36.6, coreTemperatureC: 36.7 } },
+      { tick: 3600, vitals: { heartRateBpm: 68, systolicMmHg: 109.5, diastolicMmHg: 62.3, meanArterialMmHg: 78, spo2Percent: 98.2, respiratoryRateBpm: 14, etco2MmHg: 35.1, coreTemperatureC: 36.7 } },
+    ],
   },
   {
     moduleId: "anesthesia",
@@ -47,6 +52,9 @@ export const REFERENCE_PATHS: readonly ReferencePaths[] = [
       { tick: 300, label: "aspiration-risk-assessment", detail: "action review-cues" },
       { tick: 600, label: "aspiration-risk-assessment", detail: "action classify-routine" },
       { tick: 900, label: "aspiration-risk-assessment", detail: "action defer-and-replan" },
+    ],
+    expertVitals: [
+      { tick: 0, vitals: { heartRateBpm: 78, systolicMmHg: 120.4, diastolicMmHg: 77.8, meanArterialMmHg: 92, spo2Percent: 96.9, respiratoryRateBpm: 14, etco2MmHg: 37, coreTemperatureC: 36.7 } },
     ],
   },
   {
@@ -80,6 +88,12 @@ export const REFERENCE_PATHS: readonly ReferencePaths[] = [
       { tick: 2900, label: "hypnotic-line", detail: "action reconnect" },
       { tick: 2950, label: "infusion", detail: "drugId propofol, rate 0.06, unit mg/kg/min" },
     ],
+    expertVitals: [
+      { tick: 0, vitals: { heartRateBpm: 76, systolicMmHg: 116.3, diastolicMmHg: 76.9, meanArterialMmHg: 90, spo2Percent: 96.9, respiratoryRateBpm: 14, etco2MmHg: 37, coreTemperatureC: 36.7 } },
+      { tick: 1200, vitals: { heartRateBpm: 76.1, systolicMmHg: 106.2, diastolicMmHg: 68.5, meanArterialMmHg: 81.1, spo2Percent: 100, respiratoryRateBpm: 0, etco2MmHg: 0, coreTemperatureC: 36.7 } },
+      { tick: 1800, vitals: { heartRateBpm: 85.9, systolicMmHg: 105.6, diastolicMmHg: 71.7, meanArterialMmHg: 83, spo2Percent: 100, respiratoryRateBpm: 12, etco2MmHg: 39.7, coreTemperatureC: 36.7 } },
+      { tick: 5400, vitals: { heartRateBpm: 89.8, systolicMmHg: 110.2, diastolicMmHg: 76.4, meanArterialMmHg: 87.7, spo2Percent: 100, respiratoryRateBpm: 12, etco2MmHg: 41.4, coreTemperatureC: 36.7 } },
+    ],
   },
   {
     moduleId: "anesthesia",
@@ -96,6 +110,12 @@ export const REFERENCE_PATHS: readonly ReferencePaths[] = [
       { tick: 700, label: "fluid", detail: "fluidId balanced-crystalloid, volumeMl 1000" },
       { tick: 1400, label: "blood-bank-request" },
       { tick: 1600, label: "blood-product", detail: "productId packed-red-blood-cells, units 2" },
+    ],
+    expertVitals: [
+      { tick: 0, vitals: { heartRateBpm: 84, systolicMmHg: 107.8, diastolicMmHg: 69, meanArterialMmHg: 81.9, spo2Percent: 99.9, respiratoryRateBpm: 12, etco2MmHg: 37, coreTemperatureC: 36.2 } },
+      { tick: 600, vitals: { heartRateBpm: 87.7, systolicMmHg: 90.2, diastolicMmHg: 57.7, meanArterialMmHg: 68.5, spo2Percent: 99.9, respiratoryRateBpm: 12, etco2MmHg: 36.6, coreTemperatureC: 36.2 } },
+      { tick: 2400, vitals: { heartRateBpm: 87.9, systolicMmHg: 89.8, diastolicMmHg: 57.4, meanArterialMmHg: 68.2, spo2Percent: 99.9, respiratoryRateBpm: 12, etco2MmHg: 37.9, coreTemperatureC: 36.2 } },
+      { tick: 3600, vitals: { heartRateBpm: 87.9, systolicMmHg: 89.8, diastolicMmHg: 57.4, meanArterialMmHg: 68.2, spo2Percent: 99.9, respiratoryRateBpm: 12, etco2MmHg: 38.6, coreTemperatureC: 36.2 } },
     ],
   },
   {
@@ -134,6 +154,12 @@ export const REFERENCE_PATHS: readonly ReferencePaths[] = [
       { tick: 2600, label: "bolus", detail: "drugId propofol, amount 30, unit mg" },
       { tick: 2800, label: "inhaled-bronchodilator", detail: "agentId salbutamol, route nebulized, doseMg 5" },
     ],
+    expertVitals: [
+      { tick: 0, vitals: { heartRateBpm: 78, systolicMmHg: 114, diastolicMmHg: 75, meanArterialMmHg: 88, spo2Percent: 96.9, respiratoryRateBpm: 14, etco2MmHg: 37, coreTemperatureC: 36.7 } },
+      { tick: 2400, vitals: { heartRateBpm: 79.2, systolicMmHg: 95.3, diastolicMmHg: 60.8, meanArterialMmHg: 72.3, spo2Percent: 100, respiratoryRateBpm: 12, etco2MmHg: 38, coreTemperatureC: 36.7 } },
+      { tick: 3300, vitals: { heartRateBpm: 83, systolicMmHg: 87.3, diastolicMmHg: 55.9, meanArterialMmHg: 66.4, spo2Percent: 100, respiratoryRateBpm: 12, etco2MmHg: 38.8, coreTemperatureC: 36.7 } },
+      { tick: 3600, vitals: { heartRateBpm: 83.7, systolicMmHg: 87, diastolicMmHg: 55.7, meanArterialMmHg: 66.2, spo2Percent: 100, respiratoryRateBpm: 12, etco2MmHg: 39.4, coreTemperatureC: 36.7 } },
+    ],
   },
   {
     moduleId: "anesthesia",
@@ -152,6 +178,11 @@ export const REFERENCE_PATHS: readonly ReferencePaths[] = [
       { tick: 1500, label: "capnography-line", detail: "action cross-check-ventilation" },
       { tick: 1700, label: "capnography-line", detail: "action reconnect" },
     ],
+    expertVitals: [
+      { tick: 0, vitals: { heartRateBpm: 70, systolicMmHg: 115.5, diastolicMmHg: 74.3, meanArterialMmHg: 88, spo2Percent: 96.9, respiratoryRateBpm: 14, etco2MmHg: 37, coreTemperatureC: 36.6 } },
+      { tick: 1200, vitals: { heartRateBpm: 70, systolicMmHg: 115.5, diastolicMmHg: 74.3, meanArterialMmHg: 88, spo2Percent: 98.2, respiratoryRateBpm: 14, etco2MmHg: 36.2, coreTemperatureC: 36.6 } },
+      { tick: 3600, vitals: { heartRateBpm: 70, systolicMmHg: 115.5, diastolicMmHg: 74.3, meanArterialMmHg: 88, spo2Percent: 98.2, respiratoryRateBpm: 14, etco2MmHg: 35.1, coreTemperatureC: 36.6 } },
+    ],
   },
   {
     moduleId: "anesthesia",
@@ -169,6 +200,11 @@ export const REFERENCE_PATHS: readonly ReferencePaths[] = [
       { tick: 1900, label: "breathing-circuit", detail: "action assess-capnogram" },
       { tick: 2000, label: "ventilator", detail: "freshGasFlowLPerMin 10" },
       { tick: 2600, label: "breathing-circuit", detail: "action replace-absorbent" },
+    ],
+    expertVitals: [
+      { tick: 0, vitals: { heartRateBpm: 72, systolicMmHg: 108.1, diastolicMmHg: 68.8, meanArterialMmHg: 81.9, spo2Percent: 99.9, respiratoryRateBpm: 12, etco2MmHg: 37, coreTemperatureC: 36.6 } },
+      { tick: 1800, vitals: { heartRateBpm: 75.8, systolicMmHg: 87, diastolicMmHg: 55.1, meanArterialMmHg: 65.7, spo2Percent: 99.9, respiratoryRateBpm: 12, etco2MmHg: 37.3, coreTemperatureC: 36.6 } },
+      { tick: 4800, vitals: { heartRateBpm: 75.8, systolicMmHg: 87, diastolicMmHg: 55.1, meanArterialMmHg: 65.7, spo2Percent: 99.9, respiratoryRateBpm: 12, etco2MmHg: 39.1, coreTemperatureC: 36.6 } },
     ],
   },
   {
@@ -193,6 +229,9 @@ export const REFERENCE_PATHS: readonly ReferencePaths[] = [
       { tick: 1500, label: "delayed-emergence-assessment", detail: "action check-metabolic-causes" },
       { tick: 1800, label: "delayed-emergence-assessment", detail: "action perform-focused-neurologic-exam" },
       { tick: 2100, label: "delayed-emergence-assessment", detail: "action urgent-neurologic-evaluation" },
+    ],
+    expertVitals: [
+      { tick: 0, vitals: { heartRateBpm: 74, systolicMmHg: 119.1, diastolicMmHg: 72.4, meanArterialMmHg: 88, spo2Percent: 99.9, respiratoryRateBpm: 12, etco2MmHg: 37, coreTemperatureC: 36.7 } },
     ],
   },
   {
@@ -223,6 +262,10 @@ export const REFERENCE_PATHS: readonly ReferencePaths[] = [
       { tick: 3000, label: "airway-device", detail: "device supraglottic-airway" },
       { tick: 3300, label: "ventilator", detail: "delivering true, mode volume-control, fio2 1, tidalVolumeMl 500, respiratoryRateBpm 12" },
     ],
+    expertVitals: [
+      { tick: 0, vitals: { heartRateBpm: 78, systolicMmHg: 118.5, diastolicMmHg: 78.8, meanArterialMmHg: 92, spo2Percent: 96.9, respiratoryRateBpm: 14, etco2MmHg: 37, coreTemperatureC: 36.6 } },
+      { tick: 5400, vitals: { heartRateBpm: 85.6, systolicMmHg: 90.3, diastolicMmHg: 58.8, meanArterialMmHg: 69.3, spo2Percent: 100, respiratoryRateBpm: 12, etco2MmHg: 40.8, coreTemperatureC: 36.6 } },
+    ],
   },
   {
     moduleId: "anesthesia",
@@ -246,6 +289,11 @@ export const REFERENCE_PATHS: readonly ReferencePaths[] = [
       { tick: 1600, label: "blood-product", detail: "productId fresh-frozen-plasma, units 4" },
       { tick: 2000, label: "coagulation-labs" },
     ],
+    expertVitals: [
+      { tick: 0, vitals: { heartRateBpm: 96, systolicMmHg: 102.5, diastolicMmHg: 62.7, meanArterialMmHg: 76, spo2Percent: 96.9, respiratoryRateBpm: 14, etco2MmHg: 37, coreTemperatureC: 36.1 } },
+      { tick: 600, vitals: { heartRateBpm: 96.3, systolicMmHg: 101.4, diastolicMmHg: 62.2, meanArterialMmHg: 75.3, spo2Percent: 98, respiratoryRateBpm: 14, etco2MmHg: 36.6, coreTemperatureC: 36.1 } },
+      { tick: 3000, vitals: { heartRateBpm: 96, systolicMmHg: 102.5, diastolicMmHg: 62.7, meanArterialMmHg: 76, spo2Percent: 98.1, respiratoryRateBpm: 14, etco2MmHg: 35.3, coreTemperatureC: 36.1 } },
+    ],
   },
   {
     moduleId: "anesthesia",
@@ -262,6 +310,11 @@ export const REFERENCE_PATHS: readonly ReferencePaths[] = [
       { tick: 60, label: "ventilator", detail: "fio2 1, delivering true, mode volume-control, tidalVolumeMl 500, respiratoryRateBpm 12, freshGasFlowLPerMin 2, sevofluranePercent 2" },
       { tick: 3200, label: "ventilator", detail: "sevofluranePercent 0, fio2 1, freshGasFlowLPerMin 15, tidalVolumeMl 600, respiratoryRateBpm 24, delivering true, mode volume-control" },
       { tick: 3600, label: "dantrolene", detail: "route iv, doseMgPerKg 2.5" },
+    ],
+    expertVitals: [
+      { tick: 0, vitals: { heartRateBpm: 68, systolicMmHg: 120.4, diastolicMmHg: 77.8, meanArterialMmHg: 92, spo2Percent: 96.9, respiratoryRateBpm: 14, etco2MmHg: 37, coreTemperatureC: 36.7 } },
+      { tick: 2400, vitals: { heartRateBpm: 72.4, systolicMmHg: 97.2, diastolicMmHg: 62.6, meanArterialMmHg: 74.1, spo2Percent: 100, respiratoryRateBpm: 12, etco2MmHg: 36.3, coreTemperatureC: 36.7 } },
+      { tick: 5400, vitals: { heartRateBpm: 83.1, systolicMmHg: 124.7, diastolicMmHg: 85.9, meanArterialMmHg: 98.8, spo2Percent: 100, respiratoryRateBpm: 24, etco2MmHg: 38.9, coreTemperatureC: 37.2 } },
     ],
   },
   {
@@ -281,6 +334,9 @@ export const REFERENCE_PATHS: readonly ReferencePaths[] = [
       { tick: 300, label: "emergence-residual-block-assessment", detail: "action review-quantitative-monitor" },
       { tick: 600, label: "emergence-residual-block-assessment", detail: "action classify-recovered" },
       { tick: 900, label: "emergence-residual-block-assessment", detail: "action defer-extubation-and-support" },
+    ],
+    expertVitals: [
+      { tick: 0, vitals: { heartRateBpm: 72, systolicMmHg: 116.4, diastolicMmHg: 70.7, meanArterialMmHg: 86, spo2Percent: 99.9, respiratoryRateBpm: 12, etco2MmHg: 37, coreTemperatureC: 36.6 } },
     ],
   },
   {
@@ -304,6 +360,9 @@ export const REFERENCE_PATHS: readonly ReferencePaths[] = [
       { tick: 1500, label: "extubation-readiness-assessment", detail: "action review-airway-risk-and-rescue" },
       { tick: 1800, label: "extubation-readiness-assessment", detail: "action ready-for-planned-awake-extubation" },
     ],
+    expertVitals: [
+      { tick: 0, vitals: { heartRateBpm: 72, systolicMmHg: 115, diastolicMmHg: 71.4, meanArterialMmHg: 86, spo2Percent: 99.8, respiratoryRateBpm: 10, etco2MmHg: 37, coreTemperatureC: 36.8 } },
+    ],
   },
   {
     moduleId: "anesthesia",
@@ -324,6 +383,11 @@ export const REFERENCE_PATHS: readonly ReferencePaths[] = [
       { tick: 900, label: "fluid", detail: "fluidId balanced-crystalloid, volumeMl 500" },
       { tick: 1000, label: "ephedrine", detail: "doseMg 12, route iv" },
       { tick: 1200, label: "ventilator", detail: "delivering true, mode volume-control, fio2 1, tidalVolumeMl 500, respiratoryRateBpm 12" },
+    ],
+    expertVitals: [
+      { tick: 0, vitals: { heartRateBpm: 92, systolicMmHg: 113.2, diastolicMmHg: 78.4, meanArterialMmHg: 90, spo2Percent: 96.9, respiratoryRateBpm: 14, etco2MmHg: 37, coreTemperatureC: 36.7 } },
+      { tick: 600, vitals: { heartRateBpm: 91.7, systolicMmHg: 112.9, diastolicMmHg: 78.1, meanArterialMmHg: 89.7, spo2Percent: 98.1, respiratoryRateBpm: 14, etco2MmHg: 36.6, coreTemperatureC: 36.7 } },
+      { tick: 2400, vitals: { heartRateBpm: 42.3, systolicMmHg: 43.2, diastolicMmHg: 30.3, meanArterialMmHg: 34.6, spo2Percent: 100, respiratoryRateBpm: 12, etco2MmHg: 36.9, coreTemperatureC: 36.7 } },
     ],
   },
   {
@@ -367,6 +431,13 @@ export const REFERENCE_PATHS: readonly ReferencePaths[] = [
       { tick: 3600, label: "fluid", detail: "fluidId balanced-crystalloid, volumeMl 1000" },
       { tick: 4500, label: "fluid", detail: "fluidId balanced-crystalloid, volumeMl 500" },
     ],
+    expertVitals: [
+      { tick: 0, vitals: { heartRateBpm: 96, systolicMmHg: 111, diastolicMmHg: 73.5, meanArterialMmHg: 86, spo2Percent: 95.7, respiratoryRateBpm: 14, etco2MmHg: 37, coreTemperatureC: 36.1 } },
+      { tick: 600, vitals: { heartRateBpm: 96, systolicMmHg: 111, diastolicMmHg: 73.5, meanArterialMmHg: 86, spo2Percent: 100, respiratoryRateBpm: 14, etco2MmHg: 37.4, coreTemperatureC: 36.1 } },
+      { tick: 3000, vitals: { heartRateBpm: 98.1, systolicMmHg: 93.3, diastolicMmHg: 61.8, meanArterialMmHg: 72.3, spo2Percent: 100, respiratoryRateBpm: 14, etco2MmHg: 39.2, coreTemperatureC: 36.1 } },
+      { tick: 3600, vitals: { heartRateBpm: 100.2, systolicMmHg: 84.8, diastolicMmHg: 56.5, meanArterialMmHg: 65.9, spo2Percent: 100, respiratoryRateBpm: 14, etco2MmHg: 39.2, coreTemperatureC: 36.1 } },
+      { tick: 5400, vitals: { heartRateBpm: 101.1, systolicMmHg: 83.8, diastolicMmHg: 56.3, meanArterialMmHg: 65.5, spo2Percent: 100, respiratoryRateBpm: 14, etco2MmHg: 41.4, coreTemperatureC: 36.1 } },
+    ],
   },
   {
     moduleId: "anesthesia",
@@ -384,6 +455,11 @@ export const REFERENCE_PATHS: readonly ReferencePaths[] = [
       { tick: 600, label: "thermal-response", detail: "response confirm-core-temperature" },
       { tick: 800, label: "thermal-response", detail: "response record-warmed-bulk-fluids" },
       { tick: 2400, label: "thermal-response", detail: "response start-forced-air-warming" },
+    ],
+    expertVitals: [
+      { tick: 0, vitals: { heartRateBpm: 68, systolicMmHg: 120.5, diastolicMmHg: 74.6, meanArterialMmHg: 89.9, spo2Percent: 99.9, respiratoryRateBpm: 12, etco2MmHg: 37, coreTemperatureC: 36.7 } },
+      { tick: 100, vitals: { heartRateBpm: 68.9, systolicMmHg: 110.8, diastolicMmHg: 68.2, meanArterialMmHg: 82.4, spo2Percent: 99.9, respiratoryRateBpm: 12, etco2MmHg: 36.8, coreTemperatureC: 36.7 } },
+      { tick: 7200, vitals: { heartRateBpm: 71.6, systolicMmHg: 100.3, diastolicMmHg: 62.1, meanArterialMmHg: 74.8, spo2Percent: 99.9, respiratoryRateBpm: 12, etco2MmHg: 40.4, coreTemperatureC: 36.6 } },
     ],
   },
   {
@@ -403,6 +479,12 @@ export const REFERENCE_PATHS: readonly ReferencePaths[] = [
       { tick: 2420, label: "ventilator", detail: "fio2 1, delivering true, mode volume-control" },
       { tick: 2450, label: "airway-maneuver", detail: "maneuver jaw-thrust-cpap" },
       { tick: 2500, label: "bolus", detail: "drugId propofol, amount 2, unit mg/kg" },
+    ],
+    expertVitals: [
+      { tick: 0, vitals: { heartRateBpm: 76, systolicMmHg: 120.1, diastolicMmHg: 78, meanArterialMmHg: 92, spo2Percent: 96.9, respiratoryRateBpm: 14, etco2MmHg: 37, coreTemperatureC: 36.7 } },
+      { tick: 2340, vitals: { heartRateBpm: 78, systolicMmHg: 114.7, diastolicMmHg: 75.8, meanArterialMmHg: 88.7, spo2Percent: 100, respiratoryRateBpm: 12, etco2MmHg: 36.9, coreTemperatureC: 36.7 } },
+      { tick: 2400, vitals: { heartRateBpm: 78, systolicMmHg: 114.7, diastolicMmHg: 75.8, meanArterialMmHg: 88.7, spo2Percent: 100, respiratoryRateBpm: 0, etco2MmHg: 0, coreTemperatureC: 36.7 } },
+      { tick: 4200, vitals: { heartRateBpm: 84.1, systolicMmHg: 93, diastolicMmHg: 59.4, meanArterialMmHg: 70.6, spo2Percent: 100, respiratoryRateBpm: 12, etco2MmHg: 40.8, coreTemperatureC: 36.7 } },
     ],
   },
   {
@@ -427,6 +509,11 @@ export const REFERENCE_PATHS: readonly ReferencePaths[] = [
       { tick: 860, label: "lipid-emulsion", detail: "route iv, protocol initial, concentrationPercent 20" },
       { tick: 1000, label: "epinephrine", detail: "route iv, doseMicrograms 50" },
     ],
+    expertVitals: [
+      { tick: 0, vitals: { heartRateBpm: 76, systolicMmHg: 119.8, diastolicMmHg: 78.1, meanArterialMmHg: 92, spo2Percent: 96.9, respiratoryRateBpm: 14, etco2MmHg: 37, coreTemperatureC: 36.8 } },
+      { tick: 600, vitals: { heartRateBpm: 75.6, systolicMmHg: 119, diastolicMmHg: 77.4, meanArterialMmHg: 91.3, spo2Percent: 98, respiratoryRateBpm: 14, etco2MmHg: 36.6, coreTemperatureC: 36.8 } },
+      { tick: 2400, vitals: { heartRateBpm: 70.1, systolicMmHg: 81.2, diastolicMmHg: 55.7, meanArterialMmHg: 64.2, spo2Percent: 100, respiratoryRateBpm: 12, etco2MmHg: 29.9, coreTemperatureC: 36.8 } },
+    ],
   },
   {
     moduleId: "anesthesia",
@@ -450,6 +537,10 @@ export const REFERENCE_PATHS: readonly ReferencePaths[] = [
       { tick: 900, label: "laryngoscopy", detail: "technique video" },
       { tick: 1000, label: "ventilator", detail: "delivering true, mode volume-control" },
     ],
+    expertVitals: [
+      { tick: 0, vitals: { heartRateBpm: 94, systolicMmHg: 111.5, diastolicMmHg: 76.3, meanArterialMmHg: 88, spo2Percent: 96.7, respiratoryRateBpm: 14, etco2MmHg: 37, coreTemperatureC: 36.7 } },
+      { tick: 2400, vitals: { heartRateBpm: 101, systolicMmHg: 86.3, diastolicMmHg: 57.7, meanArterialMmHg: 67.2, spo2Percent: 100, respiratoryRateBpm: 12, etco2MmHg: 41.9, coreTemperatureC: 36.7 } },
+    ],
   },
   {
     moduleId: "anesthesia",
@@ -471,6 +562,11 @@ export const REFERENCE_PATHS: readonly ReferencePaths[] = [
       { tick: 1100, label: "opioid-ventilatory-response", detail: "response hold-further-opioid" },
       { tick: 1200, label: "opioid-ventilatory-response", detail: "response record-naloxone-titration" },
       { tick: 2100, label: "ventilator", detail: "delivering false" },
+    ],
+    expertVitals: [
+      { tick: 0, vitals: { heartRateBpm: 70, systolicMmHg: 121, diastolicMmHg: 71.5, meanArterialMmHg: 88, spo2Percent: 99.6, respiratoryRateBpm: 14, etco2MmHg: 37, coreTemperatureC: 36.5 } },
+      { tick: 100, vitals: { heartRateBpm: 70, systolicMmHg: 121, diastolicMmHg: 71.5, meanArterialMmHg: 88, spo2Percent: 99.6, respiratoryRateBpm: 4, etco2MmHg: 37.1, coreTemperatureC: 36.5 } },
+      { tick: 1200, vitals: { heartRateBpm: 71.6, systolicMmHg: 114.9, diastolicMmHg: 69.1, meanArterialMmHg: 84.4, spo2Percent: 100, respiratoryRateBpm: 12, etco2MmHg: 38.8, coreTemperatureC: 36.5 } },
     ],
   },
   {
@@ -495,6 +591,9 @@ export const REFERENCE_PATHS: readonly ReferencePaths[] = [
       { tick: 1200, label: "cied-planning-assessment", detail: "action coordinate-asynchronous-pacing" },
       { tick: 1500, label: "cied-planning-assessment", detail: "action document-backup-and-restoration" },
     ],
+    expertVitals: [
+      { tick: 0, vitals: { heartRateBpm: 70, systolicMmHg: 123.4, diastolicMmHg: 74.8, meanArterialMmHg: 91, spo2Percent: 96.9, respiratoryRateBpm: 14, etco2MmHg: 37, coreTemperatureC: 36.7 } },
+    ],
   },
   {
     moduleId: "anesthesia",
@@ -517,6 +616,11 @@ export const REFERENCE_PATHS: readonly ReferencePaths[] = [
       { tick: 2000, label: "fluid", detail: "fluidId balanced-crystalloid, volumeMl 1000" },
       { tick: 2600, label: "epinephrine", detail: "route iv, doseMicrograms 50" },
     ],
+    expertVitals: [
+      { tick: 0, vitals: { heartRateBpm: 74, systolicMmHg: 123.3, diastolicMmHg: 79.3, meanArterialMmHg: 94, spo2Percent: 96.9, respiratoryRateBpm: 14, etco2MmHg: 37, coreTemperatureC: 36.7 } },
+      { tick: 1800, vitals: { heartRateBpm: 75.9, systolicMmHg: 117.4, diastolicMmHg: 76.7, meanArterialMmHg: 90.3, spo2Percent: 100, respiratoryRateBpm: 12, etco2MmHg: 36.8, coreTemperatureC: 36.7 } },
+      { tick: 3000, vitals: { heartRateBpm: 88, systolicMmHg: 97.3, diastolicMmHg: 60.3, meanArterialMmHg: 72.6, spo2Percent: 100, respiratoryRateBpm: 12, etco2MmHg: 40.8, coreTemperatureC: 36.7 } },
+    ],
   },
   {
     moduleId: "anesthesia",
@@ -537,6 +641,11 @@ export const REFERENCE_PATHS: readonly ReferencePaths[] = [
       { tick: 9000, label: "glycemic-response", detail: "response repeat-point-of-care-glucose" },
       { tick: 18800, label: "glycemic-response", detail: "response repeat-point-of-care-glucose" },
     ],
+    expertVitals: [
+      { tick: 0, vitals: { heartRateBpm: 72, systolicMmHg: 123.6, diastolicMmHg: 76, meanArterialMmHg: 91.9, spo2Percent: 99.8, respiratoryRateBpm: 12, etco2MmHg: 37, coreTemperatureC: 36.8 } },
+      { tick: 100, vitals: { heartRateBpm: 73, systolicMmHg: 113.8, diastolicMmHg: 69.6, meanArterialMmHg: 84.3, spo2Percent: 99.8, respiratoryRateBpm: 12, etco2MmHg: 36.8, coreTemperatureC: 36.8 } },
+      { tick: 18100, vitals: { heartRateBpm: 75.7, systolicMmHg: 103.3, diastolicMmHg: 63.5, meanArterialMmHg: 76.8, spo2Percent: 99.8, respiratoryRateBpm: 12, etco2MmHg: 39.3, coreTemperatureC: 36.8 } },
+    ],
   },
   {
     moduleId: "anesthesia",
@@ -555,6 +664,11 @@ export const REFERENCE_PATHS: readonly ReferencePaths[] = [
       { tick: 900, label: "defibrillation", detail: "waveform biphasic, energyJ 200" },
       { tick: 1000, label: "cardiac-arrest-epinephrine", detail: "doseMg 1, route iv" },
       { tick: 1300, label: "defibrillation", detail: "waveform biphasic, energyJ 200" },
+    ],
+    expertVitals: [
+      { tick: 0, vitals: { heartRateBpm: 72, systolicMmHg: 120, diastolicMmHg: 71.9, meanArterialMmHg: 88, spo2Percent: 100, respiratoryRateBpm: 10, etco2MmHg: 37, coreTemperatureC: 36.7 } },
+      { tick: 300, vitals: { heartRateBpm: 0, systolicMmHg: 0, diastolicMmHg: 0, meanArterialMmHg: 0, spo2Percent: 100, respiratoryRateBpm: 10, etco2MmHg: 0, coreTemperatureC: 36.7 } },
+      { tick: 2100, vitals: { heartRateBpm: 73.7, systolicMmHg: 114.1, diastolicMmHg: 69.6, meanArterialMmHg: 84.5, spo2Percent: 100, respiratoryRateBpm: 10, etco2MmHg: 38.4, coreTemperatureC: 36.7 } },
     ],
   },
   {
@@ -575,6 +689,11 @@ export const REFERENCE_PATHS: readonly ReferencePaths[] = [
       { tick: 1050, label: "call-for-help", detail: "context tension-pneumothorax" },
       { tick: 1150, label: "pneumothorax-response", detail: "action decompress-left-chest" },
     ],
+    expertVitals: [
+      { tick: 0, vitals: { heartRateBpm: 76, systolicMmHg: 120.3, diastolicMmHg: 74.6, meanArterialMmHg: 89.8, spo2Percent: 99.8, respiratoryRateBpm: 12, etco2MmHg: 37, coreTemperatureC: 36.7 } },
+      { tick: 600, vitals: { heartRateBpm: 79.7, systolicMmHg: 88.1, diastolicMmHg: 53, meanArterialMmHg: 64.7, spo2Percent: 99.4, respiratoryRateBpm: 12, etco2MmHg: 35.7, coreTemperatureC: 36.7 } },
+      { tick: 1800, vitals: { heartRateBpm: 79.6, systolicMmHg: 88.1, diastolicMmHg: 53, meanArterialMmHg: 64.7, spo2Percent: 100, respiratoryRateBpm: 12, etco2MmHg: 36.1, coreTemperatureC: 36.7 } },
+    ],
   },
   {
     moduleId: "anesthesia",
@@ -591,6 +710,11 @@ export const REFERENCE_PATHS: readonly ReferencePaths[] = [
       { tick: 300, label: "ventilator", detail: "delivering true, mode volume-control, fio2 1, tidalVolumeMl 500, respiratoryRateBpm 12" },
       { tick: 700, label: "call-for-help", detail: "context airway" },
       { tick: 850, label: "airway-maneuver", detail: "maneuver jaw-thrust-cpap" },
+    ],
+    expertVitals: [
+      { tick: 0, vitals: { heartRateBpm: 76, systolicMmHg: 125.3, diastolicMmHg: 75.3, meanArterialMmHg: 92, spo2Percent: 99.7, respiratoryRateBpm: 14, etco2MmHg: 37, coreTemperatureC: 36.6 } },
+      { tick: 100, vitals: { heartRateBpm: 76, systolicMmHg: 125.3, diastolicMmHg: 75.3, meanArterialMmHg: 92, spo2Percent: 99.7, respiratoryRateBpm: 14, etco2MmHg: 37.2, coreTemperatureC: 36.6 } },
+      { tick: 1000, vitals: { heartRateBpm: 77.7, systolicMmHg: 119.1, diastolicMmHg: 72.9, meanArterialMmHg: 88.3, spo2Percent: 100, respiratoryRateBpm: 12, etco2MmHg: 40.5, coreTemperatureC: 36.6 } },
     ],
   },
   {
@@ -620,6 +744,9 @@ export const REFERENCE_PATHS: readonly ReferencePaths[] = [
       { tick: 1800, label: "postoperative-handoff-assessment", detail: "action receiver-readback" },
       { tick: 2100, label: "postoperative-handoff-assessment", detail: "action accept-transfer" },
     ],
+    expertVitals: [
+      { tick: 0, vitals: { heartRateBpm: 76, systolicMmHg: 118.6, diastolicMmHg: 72.7, meanArterialMmHg: 88, spo2Percent: 99.5, respiratoryRateBpm: 14, etco2MmHg: 37, coreTemperatureC: 36.6 } },
+    ],
   },
   {
     moduleId: "anesthesia",
@@ -642,6 +769,10 @@ export const REFERENCE_PATHS: readonly ReferencePaths[] = [
       { tick: 2700, label: "preeclampsia-response", detail: "action labetalol-20mg-iv" },
       { tick: 4200, label: "preeclampsia-response", detail: "action repeat-blood-pressure" },
     ],
+    expertVitals: [
+      { tick: 0, vitals: { heartRateBpm: 96, systolicMmHg: 164.6, diastolicMmHg: 120.2, meanArterialMmHg: 135, spo2Percent: 96.7, respiratoryRateBpm: 14, etco2MmHg: 37, coreTemperatureC: 36.8 } },
+      { tick: 1200, vitals: { heartRateBpm: 90.3, systolicMmHg: 142.8, diastolicMmHg: 104.2, meanArterialMmHg: 117.1, spo2Percent: 97.8, respiratoryRateBpm: 14, etco2MmHg: 37.4, coreTemperatureC: 36.8 } },
+    ],
   },
   {
     moduleId: "anesthesia",
@@ -658,6 +789,11 @@ export const REFERENCE_PATHS: readonly ReferencePaths[] = [
       { tick: 600, label: "bolus", detail: "drugId rocuronium, amount 0.6, unit mg/kg" },
       { tick: 1000, label: "neuromuscular-reversal", detail: "agent sugammadex, route iv, doseMgPerKg 4" },
       { tick: 3700, label: "neuromuscular-reversal", detail: "agent sugammadex, route iv, doseMgPerKg 4" },
+    ],
+    expertVitals: [
+      { tick: 0, vitals: { heartRateBpm: 70, systolicMmHg: 110.4, diastolicMmHg: 70.6, meanArterialMmHg: 83.9, spo2Percent: 99.9, respiratoryRateBpm: 12, etco2MmHg: 37, coreTemperatureC: 36.6 } },
+      { tick: 3000, vitals: { heartRateBpm: 73.8, systolicMmHg: 93.4, diastolicMmHg: 60, meanArterialMmHg: 71.1, spo2Percent: 99.9, respiratoryRateBpm: 12, etco2MmHg: 38.4, coreTemperatureC: 36.6 } },
+      { tick: 6000, vitals: { heartRateBpm: 73.8, systolicMmHg: 93.4, diastolicMmHg: 60, meanArterialMmHg: 71.1, spo2Percent: 99.9, respiratoryRateBpm: 12, etco2MmHg: 39.9, coreTemperatureC: 36.6 } },
     ],
   },
   {
@@ -682,6 +818,11 @@ export const REFERENCE_PATHS: readonly ReferencePaths[] = [
       { tick: 1550, label: "bolus", detail: "drugId propofol, amount 160, unit mg" },
       { tick: 2050, label: "laryngoscopy", detail: "technique video" },
       { tick: 2650, label: "ventilator", detail: "delivering true, mode volume-control" },
+    ],
+    expertVitals: [
+      { tick: 0, vitals: { heartRateBpm: 82, systolicMmHg: 131.9, diastolicMmHg: 81, meanArterialMmHg: 98, spo2Percent: 93.8, respiratoryRateBpm: 14, etco2MmHg: 37, coreTemperatureC: 36.5 } },
+      { tick: 3000, vitals: { heartRateBpm: 79.7, systolicMmHg: 119.4, diastolicMmHg: 70.5, meanArterialMmHg: 86.8, spo2Percent: 100, respiratoryRateBpm: 0, etco2MmHg: 0, coreTemperatureC: 36.5 } },
+      { tick: 3600, vitals: { heartRateBpm: 80.6, systolicMmHg: 107.5, diastolicMmHg: 61.5, meanArterialMmHg: 76.8, spo2Percent: 99.9, respiratoryRateBpm: 12, etco2MmHg: 48.1, coreTemperatureC: 36.5 } },
     ],
   },
   {
@@ -711,6 +852,10 @@ export const REFERENCE_PATHS: readonly ReferencePaths[] = [
       { tick: 1350, label: "ventilator", detail: "delivering true, mode volume-control" },
       { tick: 3200, label: "bolus", detail: "drugId propofol, amount 50, unit mg" },
       { tick: 3900, label: "neuromuscular-reversal", detail: "agent sugammadex, route iv, doseMgPerKg 4" },
+    ],
+    expertVitals: [
+      { tick: 0, vitals: { heartRateBpm: 96, systolicMmHg: 109.6, diastolicMmHg: 74.2, meanArterialMmHg: 86, spo2Percent: 96.9, respiratoryRateBpm: 14, etco2MmHg: 37, coreTemperatureC: 36.5 } },
+      { tick: 3000, vitals: { heartRateBpm: 90.8, systolicMmHg: 90, diastolicMmHg: 57.3, meanArterialMmHg: 68.2, spo2Percent: 100, respiratoryRateBpm: 0, etco2MmHg: 0, coreTemperatureC: 36.5 } },
     ],
   },
   {
@@ -743,6 +888,10 @@ export const REFERENCE_PATHS: readonly ReferencePaths[] = [
       { tick: 3600, label: "airway-device", detail: "device supraglottic-airway" },
       { tick: 3900, label: "ventilator", detail: "delivering true, mode volume-control, fio2 1, tidalVolumeMl 500, respiratoryRateBpm 12" },
     ],
+    expertVitals: [
+      { tick: 0, vitals: { heartRateBpm: 72, systolicMmHg: 126.6, diastolicMmHg: 77.7, meanArterialMmHg: 94, spo2Percent: 96.9, respiratoryRateBpm: 14, etco2MmHg: 37, coreTemperatureC: 36.5 } },
+      { tick: 4800, vitals: { heartRateBpm: 79.2, systolicMmHg: 94.8, diastolicMmHg: 56.4, meanArterialMmHg: 69.2, spo2Percent: 100, respiratoryRateBpm: 12, etco2MmHg: 38.8, coreTemperatureC: 36.5 } },
+    ],
   },
   {
     moduleId: "anesthesia",
@@ -765,6 +914,11 @@ export const REFERENCE_PATHS: readonly ReferencePaths[] = [
       { tick: 60, label: "ventilator", detail: "fio2 1" },
       { tick: 1500, label: "bolus", detail: "drugId propofol, amount 100, unit mg" },
       { tick: 2400, label: "ventilator", detail: "delivering true, mode volume-control, tidalVolumeMl 500" },
+    ],
+    expertVitals: [
+      { tick: 0, vitals: { heartRateBpm: 68, systolicMmHg: 128.2, diastolicMmHg: 73.9, meanArterialMmHg: 92, spo2Percent: 96.9, respiratoryRateBpm: 14, etco2MmHg: 37, coreTemperatureC: 36.4 } },
+      { tick: 1200, vitals: { heartRateBpm: 68, systolicMmHg: 128.2, diastolicMmHg: 73.9, meanArterialMmHg: 92, spo2Percent: 100, respiratoryRateBpm: 14, etco2MmHg: 36.2, coreTemperatureC: 36.4 } },
+      { tick: 4800, vitals: { heartRateBpm: 74.1, systolicMmHg: 98.5, diastolicMmHg: 55.1, meanArterialMmHg: 69.6, spo2Percent: 100, respiratoryRateBpm: 12, etco2MmHg: 36.3, coreTemperatureC: 36.4 } },
     ],
   },
   {
@@ -792,6 +946,12 @@ export const REFERENCE_PATHS: readonly ReferencePaths[] = [
       { tick: 3000, label: "laryngoscopy", detail: "technique video" },
       { tick: 3100, label: "ventilator", detail: "delivering true, mode volume-control" },
     ],
+    expertVitals: [
+      { tick: 0, vitals: { heartRateBpm: 74, systolicMmHg: 118.8, diastolicMmHg: 78.6, meanArterialMmHg: 92, spo2Percent: 96.9, respiratoryRateBpm: 14, etco2MmHg: 37, coreTemperatureC: 36.6 } },
+      { tick: 3000, vitals: { heartRateBpm: 71.3, systolicMmHg: 98.1, diastolicMmHg: 61.1, meanArterialMmHg: 73.4, spo2Percent: 100, respiratoryRateBpm: 0, etco2MmHg: 0, coreTemperatureC: 36.6 } },
+      { tick: 3600, vitals: { heartRateBpm: 73.4, systolicMmHg: 89, diastolicMmHg: 54.5, meanArterialMmHg: 66, spo2Percent: 100, respiratoryRateBpm: 0, etco2MmHg: 0, coreTemperatureC: 36.6 } },
+      { tick: 4800, vitals: { heartRateBpm: 77.6, systolicMmHg: 86.8, diastolicMmHg: 55.2, meanArterialMmHg: 65.7, spo2Percent: 100, respiratoryRateBpm: 12, etco2MmHg: 40, coreTemperatureC: 36.6 } },
+    ],
   },
   {
     moduleId: "anesthesia",
@@ -813,6 +973,13 @@ export const REFERENCE_PATHS: readonly ReferencePaths[] = [
       { tick: 3000, label: "ventilator", detail: "sevofluranePercent 1.4" },
       { tick: 3700, label: "infusion", detail: "drugId remifentanil, rate 0" },
     ],
+    expertVitals: [
+      { tick: 0, vitals: { heartRateBpm: 72, systolicMmHg: 108.1, diastolicMmHg: 68.8, meanArterialMmHg: 81.9, spo2Percent: 99.9, respiratoryRateBpm: 12, etco2MmHg: 37, coreTemperatureC: 36.6 } },
+      { tick: 1200, vitals: { heartRateBpm: 75.7, systolicMmHg: 91.7, diastolicMmHg: 58.7, meanArterialMmHg: 69.7, spo2Percent: 99.9, respiratoryRateBpm: 12, etco2MmHg: 37.2, coreTemperatureC: 36.6 } },
+      { tick: 2400, vitals: { heartRateBpm: 75.9, systolicMmHg: 91.6, diastolicMmHg: 58.6, meanArterialMmHg: 69.6, spo2Percent: 99.9, respiratoryRateBpm: 12, etco2MmHg: 38, coreTemperatureC: 36.6 } },
+      { tick: 3600, vitals: { heartRateBpm: 87.2, systolicMmHg: 106.9, diastolicMmHg: 73.8, meanArterialMmHg: 84.8, spo2Percent: 99.9, respiratoryRateBpm: 12, etco2MmHg: 39.5, coreTemperatureC: 36.6 } },
+      { tick: 5400, vitals: { heartRateBpm: 75.8, systolicMmHg: 89.2, diastolicMmHg: 56.7, meanArterialMmHg: 67.6, spo2Percent: 99.9, respiratoryRateBpm: 12, etco2MmHg: 39.5, coreTemperatureC: 36.6 } },
+    ],
   },
   {
     moduleId: "anesthesia",
@@ -830,6 +997,11 @@ export const REFERENCE_PATHS: readonly ReferencePaths[] = [
       { tick: 100, label: "ventilator", detail: "delivering true, fio2 1, freshGasFlowLPerMin 6, sevofluranePercent 0" },
       { tick: 400, label: "ventilator", detail: "sevofluranePercent 6" },
       { tick: 1800, label: "ventilator", detail: "sevofluranePercent 2" },
+    ],
+    expertVitals: [
+      { tick: 0, vitals: { heartRateBpm: 96, systolicMmHg: 79, diastolicMmHg: 65.5, meanArterialMmHg: 70, spo2Percent: 96.9, respiratoryRateBpm: 29, etco2MmHg: 37, coreTemperatureC: 36.7 } },
+      { tick: 1200, vitals: { heartRateBpm: 98.7, systolicMmHg: 67.7, diastolicMmHg: 55.7, meanArterialMmHg: 59.7, spo2Percent: 100, respiratoryRateBpm: 29, etco2MmHg: 36.6, coreTemperatureC: 36.7 } },
+      { tick: 4200, vitals: { heartRateBpm: 98.8, systolicMmHg: 67.6, diastolicMmHg: 55.6, meanArterialMmHg: 59.6, spo2Percent: 100, respiratoryRateBpm: 29, etco2MmHg: 36.6, coreTemperatureC: 36.7 } },
     ],
   },
   {
@@ -850,6 +1022,10 @@ export const REFERENCE_PATHS: readonly ReferencePaths[] = [
       { tick: 1500, label: "bolus", detail: "drugId propofol, amount 3, unit mg/kg" },
       { tick: 1800, label: "ventilator", detail: "delivering true, mode volume-control, fio2 1, tidalVolumeMl 450, respiratoryRateBpm 18" },
       { tick: 2400, label: "ventilator", detail: "delivering true, mode volume-control, fio2 1, tidalVolumeMl 140, respiratoryRateBpm 18" },
+    ],
+    expertVitals: [
+      { tick: 0, vitals: { heartRateBpm: 95, systolicMmHg: 79, diastolicMmHg: 65.5, meanArterialMmHg: 70, spo2Percent: 96.9, respiratoryRateBpm: 29, etco2MmHg: 37, coreTemperatureC: 36.7 } },
+      { tick: 4200, vitals: { heartRateBpm: 101.4, systolicMmHg: 62.2, diastolicMmHg: 50.2, meanArterialMmHg: 54.2, spo2Percent: 100, respiratoryRateBpm: 18, etco2MmHg: 42, coreTemperatureC: 36.7 } },
     ],
   },
   {
@@ -890,6 +1066,13 @@ export const REFERENCE_PATHS: readonly ReferencePaths[] = [
       { tick: 2600, label: "blood-product", detail: "productId packed-red-blood-cells, units 2" },
       { tick: 3000, label: "fluid", detail: "fluidId balanced-crystalloid, volumeMl 2000" },
     ],
+    expertVitals: [
+      { tick: 0, vitals: { heartRateBpm: 112, systolicMmHg: 94.1, diastolicMmHg: 70, meanArterialMmHg: 78, spo2Percent: 96.9, respiratoryRateBpm: 14, etco2MmHg: 37, coreTemperatureC: 35.9 } },
+      { tick: 300, vitals: { heartRateBpm: 112, systolicMmHg: 94.1, diastolicMmHg: 70, meanArterialMmHg: 78, spo2Percent: 99.9, respiratoryRateBpm: 14, etco2MmHg: 36.8, coreTemperatureC: 35.9 } },
+      { tick: 2100, vitals: { heartRateBpm: 114.5, systolicMmHg: 86.3, diastolicMmHg: 64.8, meanArterialMmHg: 71.9, spo2Percent: 100, respiratoryRateBpm: 14, etco2MmHg: 36.4, coreTemperatureC: 35.9 } },
+      { tick: 2400, vitals: { heartRateBpm: 144.3, systolicMmHg: 104.9, diastolicMmHg: 84.5, meanArterialMmHg: 91.3, spo2Percent: 100, respiratoryRateBpm: 14, etco2MmHg: 37.1, coreTemperatureC: 35.9 } },
+      { tick: 3900, vitals: { heartRateBpm: 114.8, systolicMmHg: 87.2, diastolicMmHg: 65.3, meanArterialMmHg: 72.6, spo2Percent: 100, respiratoryRateBpm: 14, etco2MmHg: 36.9, coreTemperatureC: 35.9 } },
+    ],
   },
   {
     moduleId: "anesthesia",
@@ -907,6 +1090,11 @@ export const REFERENCE_PATHS: readonly ReferencePaths[] = [
       { tick: 700, label: "call-for-help", detail: "context venous-air-embolism" },
       { tick: 800, label: "ventilator", detail: "delivering true, mode volume-control, fio2 1, tidalVolumeMl 500, respiratoryRateBpm 12" },
       { tick: 1400, label: "control-venous-air-entry", detail: "method stop-entry" },
+    ],
+    expertVitals: [
+      { tick: 0, vitals: { heartRateBpm: 78, systolicMmHg: 122.4, diastolicMmHg: 76.8, meanArterialMmHg: 92, spo2Percent: 96.9, respiratoryRateBpm: 14, etco2MmHg: 37, coreTemperatureC: 36.8 } },
+      { tick: 600, vitals: { heartRateBpm: 78.5, systolicMmHg: 120, diastolicMmHg: 75.3, meanArterialMmHg: 90.2, spo2Percent: 97.7, respiratoryRateBpm: 14, etco2MmHg: 35.6, coreTemperatureC: 36.8 } },
+      { tick: 2400, vitals: { heartRateBpm: 80.5, systolicMmHg: 113.5, diastolicMmHg: 72.4, meanArterialMmHg: 86.1, spo2Percent: 99.5, respiratoryRateBpm: 12, etco2MmHg: 35.2, coreTemperatureC: 36.8 } },
     ],
   },
   {

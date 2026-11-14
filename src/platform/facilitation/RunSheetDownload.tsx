@@ -31,9 +31,9 @@ export function RunSheetDownload({ moduleId, scenario }: {
   readonly moduleId: string;
   readonly scenario: Scenario;
 }) {
-  const expert = REFERENCE_PATHS.find((paths) => paths.moduleId === moduleId
-    && paths.scenarioId === scenario.metadata.id)?.expert ?? [];
-  const sheet = buildRunSheet(moduleId, scenario, expert);
+  const paths = REFERENCE_PATHS.find((candidate) => candidate.moduleId === moduleId
+    && candidate.scenarioId === scenario.metadata.id);
+  const sheet = buildRunSheet(moduleId, scenario, paths?.expert ?? [], paths?.expertVitals);
   const stem = `opensimlab-${moduleId}-${scenario.metadata.id}-run-sheet`;
   return (
     <section className="document__group guide__screen-only" aria-labelledby="guide-run-sheet">

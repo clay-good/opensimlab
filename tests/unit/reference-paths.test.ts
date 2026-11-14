@@ -18,16 +18,20 @@ import { MODULES } from '@platform/modules/registry';
 import { formatPayload, referencePath, referenceStep } from '@platform/facilitation/reference-paths';
 import { REFERENCE_PATHS } from '@platform/facilitation/reference-paths.generated';
 import { FACILITATED_SCENARIOS } from '@platform/facilitation/scenario-catalog';
+import { SCENARIOS } from '@anesthesia/scenarios';
+import type { LearnerAction } from '@platform/kernel/protocol';
+import { sampleExpertVitals } from '../../scripts/sample-expert-vitals';
 
 const available = MODULES.filter((module) => module.status === 'available');
 
 function isFixtureObject(value: unknown): value is {
-  scenarioId: string; expert: readonly unknown[];
+  scenarioId: string; seed: number; expert: readonly unknown[];
   commonError: readonly unknown[]; recovery: readonly unknown[];
 } {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
   const record = value as Record<string, unknown>;
-  return typeof record.scenarioId === 'string' && Array.isArray(record.expert)
+  return typeof record.scenarioId === 'string' && typeof record.seed === 'number'
+    && Array.isArray(record.expert)
     && Array.isArray(record.commonError) && Array.isArray(record.recovery);
 }
 
@@ -42,12 +46,21 @@ describe('the generated reference paths', () => {
         const fixtures = Object.values(namespace).filter(isFixtureObject);
         expect([`${module.id}/${file}`, fixtures.length]).toEqual([`${module.id}/${file}`, 1]);
         const fixture = fixtures[0]!;
+        // The sampled vitals are recomputed by replaying the engine, not
+        // trusted: a committed number nobody re-derives is a number that can
+        // drift from the model that produced it.
+        const scenario = module.id === 'anesthesia'
+          ? SCENARIOS.find((candidate) => candidate.metadata.id === fixture.scenarioId)
+          : undefined;
+        const expertVitals = scenario === undefined ? undefined
+          : sampleExpertVitals(scenario, fixture.seed, fixture.expert as readonly LearnerAction[]);
         built.push({
           moduleId: module.id,
           scenarioId: fixture.scenarioId,
           expert: referencePath(fixture.expert),
           commonError: referencePath(fixture.commonError),
           recovery: referencePath(fixture.recovery),
+          ...(expertVitals === undefined || expertVitals.length === 0 ? {} : { expertVitals }),
         });
       }
     }
@@ -61,6 +74,18 @@ describe('the generated reference paths', () => {
       expect(covered, `${key} has no reference paths`).toContain(key);
     }
     expect(REFERENCE_PATHS).toHaveLength(FACILITATED_SCENARIOS.length);
+  });
+
+  it('samples the model only for the closed-loop family', () => {
+    const sampled = REFERENCE_PATHS.filter((paths) => paths.expertVitals !== undefined);
+    expect(sampled).toHaveLength(39);
+    expect(sampled.every((paths) => paths.moduleId === 'anesthesia')).toBe(true);
+    for (const paths of sampled) {
+      expect(paths.expertVitals!.length, paths.scenarioId).toBeGreaterThan(0);
+      for (const sample of paths.expertVitals!) {
+        expect(Object.values(sample.vitals).every(Number.isFinite), paths.scenarioId).toBe(true);
+      }
+    }
   });
 
   it('leaves no lesson with an empty expert path', () => {
