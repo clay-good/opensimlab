@@ -860,3 +860,11 @@ button.vital-tile__value {
   min-block-size: 44px;
 }
 .disclosure--group .disclosure .disclosure__summary:hover { color: var(--text-primary); }
+
+/* The transcript scrubber (learning/facilitation → bookmarks and scrubbing).
+   A range input is used as-is rather than restyled into a custom control: the
+   browser's own keyboard handling, focus ring and assistive-technology
+   semantics are the point, and every custom slider this project could write
+   would have to re-earn them. */
+.scrubber { display: flex; flex-direction: column; gap: var(--space-1); margin-block-start: var(--space-3); }
+.scrubber__range { inline-size: 100%; }

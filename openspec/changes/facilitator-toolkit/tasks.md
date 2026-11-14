@@ -89,7 +89,25 @@
   transcript; build test that the transcript reaches each tick.
 - [ ] Implement jump-to-bookmark on the rehearsal-branch mechanism with fixture transcripts;
   measure replay time on the reference device and record it.
-- [ ] Implement the transcript scrubber with keyboard operation and live-region announcement.
+- [x] Implement the transcript scrubber with keyboard operation and live-region announcement.
+  `src/modules/anesthesia/ui/TranscriptScrubber.tsx`, under the debrief's timeline. A completed
+  run already had marks a reader could click; what it had no way to do was stop between them, so
+  an instructor wanting the moment thirty seconds before the alarm had to describe it rather than
+  show it. A timeline mark and the scrubber now set the same cursor, so clicking an alarm and
+  stepping back from it with the arrow keys is one movement.
+  It is a range input rather than a custom control on purpose: arrow keys, Home and End, the focus
+  ring and the assistive-technology semantics all come with it, and any slider written here would
+  have to re-earn every one of them. Moving it announces the moment and the patient's state
+  through a polite live region - polite and not assertive, because a reader dragging the handle is
+  reading, and interrupting each announcement with the next is unusable. Five parameters are read
+  back, and only where the sample has them: a scrubber that recites twenty-seven numbers on every
+  arrow key is one nobody listens to twice.
+  It reads the recorded history and nothing else - it cannot run the engine, cannot change the
+  run, and shows no value the run did not produce. `tests/unit/transcript-scrubber.test.tsx` holds
+  the keyboard and announcement properties a mouse-only check would miss, that it reads the latest
+  sample at or before the cursor rather than the next one, and that a run with nothing in it
+  renders no control at all rather than a dead one.
+  Still open in this section: the cursor moves the scrubber's own readout, not yet every panel.
 - [x] Implement presentation mode as adoption specifies (enlarged numerics, doubled stroke,
   receded chrome) and compose it with classroom mode. A session-only toggle in the session menu,
   beside classroom mode and deliberately not remembered on the device for the same reason: a

@@ -13,6 +13,7 @@ import type { ScenarioRapidCycle } from '@anesthesia/scenarios/types';
 import { NcjmmCoverageList } from './NcjmmCoverageList';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Badge, Button, CitationLink, Panel } from '@platform/ui';
+import { TranscriptScrubber } from './TranscriptScrubber';
 import { Timeline } from '@platform/ui';
 import { formatElapsed, TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
 import type { Attribution, EngineEvent, LearnerAction } from '@platform/kernel/protocol';
@@ -152,6 +153,10 @@ export function Debrief(props: DebriefProps) {
   const [phase, setPhase] = useState<PearlsPhase>('reactions');
   const [account, setAccount] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  // Where the reader is looking in the completed run. A mark on the timeline
+  // and the scrubber set the same cursor, so clicking an alarm and then
+  // stepping back from it with the arrow keys is one continuous movement.
+  const [reviewTick, setReviewTick] = useState(0);
   const [priorAttempts] = useState(() => loadPracticeHistory());
   const historySaved = useRef(false);
 
@@ -329,7 +334,8 @@ export function Debrief(props: DebriefProps) {
       {phase === 'description' && (
         <section>
           <h2>{t('debrief.what-happened')}</h2>
-          <Timeline marks={marks} totalTicks={totalTicks} />
+          <Timeline marks={marks} totalTicks={totalTicks} onSelect={setReviewTick} />
+          <TranscriptScrubber history={props.history} tick={reviewTick} onTick={setReviewTick} />
           <ol>
             {describedEvents(props.log).map((entry) => (
               <li key={`${entry.tick}-${entry.eventId}`}>
