@@ -12,6 +12,44 @@
   AAMC Core EPAs (2014); RCoA 2021 Stage 1 domains and key capabilities; NCSBN CJMM Layer 3;
   NCLEX-RN Test Plan 2026 client-needs categories; USMLE Step 2 CK content outline; Primary FRCA.
   Record issuing body, version, date checked, locator, fidelity.
+  **Blocked, and not on the lookups.** Attempted for the AAMC Core EPAs on 2026-11-14 and backed
+  out, because the build will not accept a framework this catalogue does not wholly speak to.
+  `tests/unit/curriculum.test.ts` holds that *every scenario appears against every framework* -
+  "a programme looking at their own framework should see the whole catalogue under it, not a
+  subset". That is true and worth keeping for the three readings that exist, because all three
+  are anaesthesia frameworks and the anaesthesia catalogue does speak to all of them.
+  It stops being true for the frameworks this task asks for next. The AAMC Core EPAs are for
+  medical students entering residency, and several of the thirteen - document a clinical
+  encounter, give an oral presentation, obtain informed consent, retrieve evidence - are simply
+  not exercised anywhere in this simulator. Under the invariant, adding the record forces a
+  mapping for all 39 anaesthesia lessons against all 13 activities, which means claiming coverage
+  that does not exist. The same will be true of the USMLE Step 2 CK outline, and of ACGME
+  Milestones for a specialty whose module is not the one being mapped.
+  So the two tasks in this change are one task, and the order is wrong: a record cannot be added
+  before its mappings, and its mappings cannot be honest for a framework that applies to only
+  part of the catalogue. **The fix is a maintainer's design call, not an authoring one:** make
+  applicability structured so the coverage invariant can be scoped by it. `appliesTo` already
+  exists on the record and was added by this change's own first task, but it is free text
+  ("Student registered nurse anesthetists preparing for certification"), so nothing can read it.
+  Give it a machine-readable companion - the modules or the learner stage a framework applies to
+  - and the invariant becomes "every scenario appears against every framework that applies to
+  it", which is the guarantee the sentence above was always trying to make.
+  Two findings from the AAMC lookup are worth keeping whoever does this next, because both came
+  from reading the documents rather than assuming, and neither would be caught by reviewing a
+  finished record:
+  - The locator the AAMC's own 2017 toolkits document prints for itself
+    (`aamc.org/initiatives/coreepas/publicationsandpresentations`) returns 404; the body has
+    restructured its site. Check every locator resolves before recording it.
+  - The AAMC's Competency-Based Medical Education page says the Core EPAs were developed in 2014,
+    piloted by ten schools from 2014 to 2021, and that their use "is currently being evaluated in
+    light of the release of the Foundational Competencies in 2024". The most obvious framework to
+    map a medical catalogue against is one the issuing body has under review, and the 2024
+    Foundational Competencies are the better record to add in its place.
+  The thirteen activity titles are on the contents page of *Core Entrustable Professional
+  Activities for Entering Residency: Toolkits for the 13 Core EPAs* (AAMC, 2017), whose copyright
+  page permits reproduction with attribution for educational use. Nothing was committed, so the
+  record has to be rebuilt from that document rather than recovered from here.
+
 - [x] Build check: a verbatim item longer than a short name fails; `review_by` ≤ 24 months. `tests/unit/framework-records.test.ts`.
 
 ## 2. Scenario mappings
@@ -59,4 +97,9 @@
 - [x] List overdue framework records on the governance dashboard with overdue guidelines. A
   "Framework readings" section on `/governance` lists every reading with its re-check date and
   counts the overdue ones, dated by the build so the prerendered page and the client agree.
-- [ ] Document each framework's source and date checked in the sources register.
+- [ ] Document each framework's source and date checked in the sources register. Done for the
+  three frameworks that exist: the COA standards, the ACGME anaesthesiology milestones and the
+  NBCRNA outline each carry an entry with what the citation was checked against and when. Each
+  further reading brings its own entry with it, and the entry is written when the reading ships,
+  not before: a register entry whose `usedFor` describes a framework nothing uses is itself a
+  false claim.
