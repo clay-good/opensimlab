@@ -5,11 +5,27 @@ done here, and none is required for this proposal to stand.
 
 ## 1. Record the proposal
 
-- [ ] Add `docs/module-proposals/radiology.md` from this change's design, at status `proposed`, with
-  the twelve scenario proposals and every required section.
-- [ ] Mirror it in `src/platform/modules/proposals.ts` so `tests/unit/module-proposals.test.ts` holds
+- [x] Add `docs/module-proposals/radiology.md` from this change's design, at status `proposed`, with
+  the twelve scenario proposals and every required section. Lifted from the design rather than
+  rewritten, so the proposal and the change that argued for it cannot drift: all seven required
+  sections, all twelve scenario proposals, and 12 of 12 pass the training-value rule.
+- [x] Mirror it in `src/platform/modules/proposals.ts` so `tests/unit/module-proposals.test.ts` holds
   the About list in step with the document, and confirm it earns only `proposed`.
-- [ ] Render radiology under "Proposed, not planned" on the About page, with no date and no landing card.
+  One correction to that last clause: the document earns `breadth-test-passed`, not `proposed`.
+  Structural completeness is all the validator can judge, and this document is structurally
+  complete. It CLAIMS `proposed` anyway, which the validator allows in that direction only, because
+  the next status is earned by a person reviewing the twelve against the training-value rule and the
+  non-interpretive boundary, and nobody has. `tests/unit/radiology-proposal.test.ts` pins that gap
+  deliberately - claimed `proposed`, earned `breadth-test-passed` - so neither half can drift.
+- [x] Render radiology under "Proposed, not planned" on the About page, with no date and no landing card.
+  The About page renders every proposal whose status is not `planned`, so this needed no change
+  beyond the mirror; the existing test already holds that every proposal's title appears there, and
+  the new test holds that the document promises no date.
+  One guard was added beyond the tasks, because the module's whole claim rests on it: the proposal
+  teaches decisions, never perception, and the first way that erodes is a later author adding one
+  scenario that asks what the scan shows. The test refuses an interpretive verb against an image in
+  any proposal's title, Actions or Choices, and holds that the out-of-scope paragraph still names
+  detection, localization and characterization from pixels.
 
 ## 2. Earn the breadth test (later)
 
