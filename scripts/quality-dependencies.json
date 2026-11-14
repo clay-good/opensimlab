@@ -12,7 +12,7 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "a53a04fa0745c6f601bc6f81790a206d86b86219bd3efb9ea2f5256ed99458b6"
+        "sha256": "76df35e7c5d3c0195db4ed2fb5c7bfe6ac3bea1b352fc3490e7cbc7c83d9aadd"
       },
       {
         "path": "src/modules/anesthesia/catalog/scenario-completion.ts",
@@ -221,7 +221,7 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "a53a04fa0745c6f601bc6f81790a206d86b86219bd3efb9ea2f5256ed99458b6"
+        "sha256": "76df35e7c5d3c0195db4ed2fb5c7bfe6ac3bea1b352fc3490e7cbc7c83d9aadd"
       },
       {
         "path": "src/modules/anesthesia/catalog/scenario-completion.ts",
@@ -486,7 +486,7 @@
       },
       {
         "path": "package-lock.json",
-        "sha256": "a53a04fa0745c6f601bc6f81790a206d86b86219bd3efb9ea2f5256ed99458b6"
+        "sha256": "76df35e7c5d3c0195db4ed2fb5c7bfe6ac3bea1b352fc3490e7cbc7c83d9aadd"
       },
       {
         "path": "src/modules/anesthesia/catalog/scenario-completion.ts",
