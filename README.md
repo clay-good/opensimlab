@@ -66,6 +66,18 @@ literature, each carrying its citation and the range it is valid over. Nothing i
 at build or run time, and tests assert published reference values so a mistyped digit
 fails immediately.
 
+**It can be run in a room, not only alone.** Every lesson has a printable
+[facilitator guide](https://opensimlab.com/facilitator/anesthesia/scenario/routine-induction) at
+`/facilitator/<module>/scenario/<id>`, generated from the scenario rather than written beside it,
+so it cannot drift from the lesson it describes. Each one carries the objectives, the patient, the
+timeline, the debrief questions, and the lesson's three checked-in reference transcripts: what an
+expert does, the error the lesson exists to make visible, and a path that recovers from it. Each
+also exports a **run sheet** — plain text or JSON — for running the lesson on a mannequin or on
+paper, with the model's own vital signs at each state for the 39 closed-loop labs. A classroom
+mode forces the unassisted setting and enables authored pause points.
+Honestly incomplete: 2 of 256 lessons declare pause points, bookmarks are designed and not built,
+and the guides are deliberately outside the offline precache.
+
 **Claims are sourced and correctable.** Crisis protocols trace to their issuing bodies,
 physiology is checked against published benchmarks, the limitations register is public,
 and confirmed mistakes stay in a permanent [corrections log](CORRECTIONS.md) — published
