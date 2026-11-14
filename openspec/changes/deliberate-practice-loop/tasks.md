@@ -9,6 +9,18 @@ its own, none changes the engine, and none produces a score.
   installed) using the session seed, with an "unseen only" filter defaulting on.
 - [ ] Define the withheld field set and the pre-start field set; render the pre-start briefing
   from the latter only. Record `blindDraw: { pool }` in the transcript.
+  Blocked, and worth stating before anyone starts the draw: three of the five fields the design
+  shows before start do not exist. A scenario declares id, version, maturity, title, author,
+  licence, estimated minutes, difficulty, objectives, clinical review and limitations. There is no
+  content note, no environment and no fidelity class anywhere in the schema, and
+  `grep -rn "contentNote\|fidelity"` over `src/` finds none. The content note is the one that
+  matters: the design shows it precisely so a learner can decline a distressing case without being
+  told what it is, and this change's own spec says a drawn scenario carrying one must show it
+  first. A blind draw shipped without it would spring exactly the harm the note exists to prevent
+  - on a catalogue that includes paediatric arrest, obstetric haemorrhage and end-of-life
+  oncology. So the draw is not blocked on its own logic, which is small, but on a scenario field
+  and the per-lesson authoring behind it. Add `contentNote` to the schema, author it wherever a
+  lesson has a sensitive outcome, and only then build the draw.
 - [ ] Test over every scenario with a recognition objective that no withheld field reaches the
   DOM, the accessible tree, the document title, or the URL before the reveal condition.
 - [ ] Test reproducibility of the draw from the transcript seed and pool.
