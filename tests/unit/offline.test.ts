@@ -11,6 +11,9 @@ import { describe, expect, it } from 'vitest';
 import { BUDGETS, largestCockpitDocument, manifestAssetPaths } from '../../scripts/check-budgets';
 import { precacheVersion } from '../../scripts/prerender';
 import { isCrawler } from '@platform/offline/register';
+import {
+  excludedFromFirstVisit, FIRST_VISIT_PRECACHE_EXCLUSIONS,
+} from '@platform/offline/precache';
 import { AnesthesiaEngine } from '@anesthesia/engine';
 import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
 import { ROUTES } from '@routes/routes';
@@ -252,14 +255,33 @@ describe('Requirement: Everything The Offline Claim Names Is Actually Precached'
     expect(precache.some((url) => url.includes('solver.worker'))).toBe(true);
   });
 
-  it('Scenario: every built asset is precached', () => {
+  it('Scenario: every built asset is precached but the named non-lesson ones', () => {
     const built = [
       ...readdirSync(join(process.cwd(), 'dist/assets')).map((file) => `/assets/${file}`),
       ...readdirSync(join(process.cwd(), 'dist/fonts')).map((file) => `/fonts/${file}`),
     ];
-    for (const asset of built) {
+    for (const asset of built.filter((path) => !excludedFromFirstVisit(path))) {
       expect(precache, `${asset} is not precached`).toContain(asset);
     }
+  });
+
+  /**
+   * The exception list is pinned, not merely filtered. The promise the precache
+   * encodes is that every scenario works offline after a first visit, and the
+   * only way that promise stays true is if each thing left out has to be argued
+   * for in a diff. A new entry fails here until it is named with its reason.
+   */
+  it('Scenario: the first visit skips exactly the assets it is allowed to skip', () => {
+    expect(FIRST_VISIT_PRECACHE_EXCLUSIONS.map((exclusion) => exclusion.chunk))
+      .toEqual(['return-index.generated']);
+    for (const exclusion of FIRST_VISIT_PRECACHE_EXCLUSIONS) {
+      expect(exclusion.reason.length).toBeGreaterThan(80);
+    }
+    const built = readdirSync(join(process.cwd(), 'dist/assets')).map((file) => `/assets/${file}`);
+    const skipped = built.filter((path) => excludedFromFirstVisit(path));
+    // Each named chunk is built, and is left out of the first visit.
+    expect(skipped).toHaveLength(FIRST_VISIT_PRECACHE_EXCLUSIONS.length);
+    for (const asset of skipped) expect(precache).not.toContain(asset);
   });
 
   it('precaches every public machine-readable catalog artifact', () => {

@@ -20,6 +20,7 @@ import {
 } from '../src/routes/routes.ts';
 import { structuredDataFor } from '../src/platform/docs/structured-data.ts';
 import { PUBLIC_CATALOG_ARTIFACTS } from '../src/platform/catalog/public-artifacts.ts';
+import { excludedFromFirstVisit } from '../src/platform/offline/precache';
 import { prerenderTree } from '../src/routes/Prerendered.tsx';
 import { notFoundHtml } from '../src/routes/not-found.ts';
 import {
@@ -224,9 +225,13 @@ function main(): void {
     // learner who had already opened the simulator before losing the network,
     // which is exactly the learner who did not need it.
     //
-    // The whole bundle remains within the enforced 8 MB budget, so
-    // there is no reason to be clever about which parts of it to keep.
-    const assets = readdirSync(join(dist, 'assets')).map((file) => `/assets/${file}`);
+    // The whole bundle remains within the enforced 8 MB budget. The FIRST
+    // VISIT is the scarce one (2 MiB), and a very small number of assets are
+    // not lesson content and cannot be wanted before a learner has practised;
+    // those are named, with their reasons, in `offline/precache.ts`, and
+    // `tests/unit/offline.test.ts` pins the list so it cannot quietly grow.
+    const assets = readdirSync(join(dist, 'assets')).map((file) => `/assets/${file}`)
+      .filter((path) => !excludedFromFirstVisit(path));
     const fontsDir = join(dist, 'fonts');
     const fonts = existsSync(fontsDir)
       ? readdirSync(fontsDir).map((file) => `/fonts/${file}`)
