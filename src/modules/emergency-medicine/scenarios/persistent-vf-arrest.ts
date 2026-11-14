@@ -6,7 +6,7 @@ export const PERSISTENT_VF_ARREST: Scenario = {
   schemaVersion: 1,
   metadata: {
     id: 'persistent-vf-arrest', version: '0.1.0', maturity: 'preview',
-    title: 'Persistent VF arrest', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
+    title: 'Persistent VF arrest', contentNote: 'This lesson includes a patient whose heart stops, with chest compressions and shocks delivered throughout.', author: 'Open Sim Lab', license: 'CC BY-SA 4.0',
     estimatedMinutes: 8, difficulty: 'advanced',
     objectives: [
       { id: 'resume-arrest-compressions', statement: 'Recognize pulseless ventricular fibrillation and resume chest compressions.', measure: 'Modeled 110/min chest compressions were accepted within 20 seconds of the VF event.' },

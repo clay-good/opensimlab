@@ -6,7 +6,7 @@ export const PEDIATRIC_BRADYCARDIC_ARREST: Scenario = {
   schemaVersion: 1,
   metadata: {
     id: 'pediatric-bradycardic-arrest', version: '0.1.0', maturity: 'preview',
-    title: 'Pediatric bradycardic arrest transition', author: 'Open Sim Lab',
+    title: 'Pediatric bradycardic arrest transition', contentNote: 'This lesson includes a six-year-old child whose heart stops, and the chest compressions and resuscitation that follow.', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 8, difficulty: 'advanced', objectives: [
       {
         id: 'reconcile-pediatric-bradycardic-arrest-support-and-trajectory',

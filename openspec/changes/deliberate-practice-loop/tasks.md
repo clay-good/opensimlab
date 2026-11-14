@@ -24,14 +24,22 @@ its own, none changes the engine, and none produces a score.
   at the top of the briefing above the fiction contract and carried as its own facilitator-guide
   section. The validator enforces the length and refuses a note that repeats a distinctive word
   from its own title, which is the way this goes wrong: the note is shown while the title is
-  withheld, so a note naming its lesson defeats the point of showing it. No lesson declares one
-  yet, `tests/unit/content-note.test.ts` holds that none does, and the guide, the gate and the
-  author guide all say plainly that absence is not an assurance because the catalogue has not
-  been surveyed. The environment and fidelity class the design also lists remain unwritten;
+  withheld, so a note naming its lesson defeats the point of showing it.
+  Nine lessons carry one, chosen by a rule narrow enough to check rather than argue about: a
+  cardiac arrest, a death, or the resuscitation of a newborn or a child is that lesson's own
+  modelled course. Not a risk it hands off, which is why the amniotic-fluid-embolism lesson has
+  none, and not an arrest that happened before it starts, which is why post-arrest temperature
+  control has none. The set is the two persistent-VF lessons and PEA arrest, the paediatric
+  bradycardic arrest and foreign-body obstruction, maternal cardiac arrest and the maternal-to-
+  neonatal handoff, and neonatal bradycardia and ineffective newborn ventilation.
+  `tests/unit/content-note.test.ts` pins that set by name in both directions, so a lesson cannot
+  join it without its course being read or leave it without someone noticing that a warning
+  stopped being shown. The environment and fidelity class the design also lists remain unwritten;
   neither gates a learner's consent, so neither blocks the draw.
-  What is left before the draw can ship: survey the catalogue for distressing outcomes and author
-  the notes. Until that is done a blind draw would still be showing nothing to warn about for a
-  lesson nobody has read for the purpose.
+  What is left before the draw can ship: the other 247 lessons have not been read for this
+  purpose, and the guide, the gate and the author guide all say so rather than letting absence
+  read as an assurance. A blind draw over the whole catalogue needs that survey finished first,
+  because the draw is the one surface where a learner has nothing else to judge by.
 - [ ] Test over every scenario with a recognition objective that no withheld field reaches the
   DOM, the accessible tree, the document title, or the URL before the reveal condition.
 - [ ] Test reproducibility of the draw from the transcript seed and pool.

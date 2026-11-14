@@ -68,9 +68,12 @@ learner who declines should have learned only that something distressing happens
 refuses a note that repeats a distinctive word (five letters or more) from its own title, which is
 the common way this goes wrong.
 
-Absence is not an assurance today. The catalogue has not been surveyed for distressing outcomes,
-so `npm run gate` reports how many lessons carry a note, and the facilitator guide says in as many
-words that a missing note means nobody has written one.
+Absence is not an assurance today. Nine lessons carry a note, chosen by one rule: a cardiac
+arrest, a death, or the resuscitation of a newborn or a child is that lesson's own modelled course
+- not a risk it hands off, and not an arrest that happened before it starts. The rest of the
+catalogue has not been read for this purpose. `npm run gate` reports how many lessons carry a note,
+`tests/unit/content-note.test.ts` pins which ones, and the facilitator guide tells a reader that a
+missing note means nobody has written one.
 
 ## Add pause points for a facilitator (optional)
 

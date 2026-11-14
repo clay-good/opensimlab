@@ -48,10 +48,12 @@ export interface ScenarioMetadata {
    * objectives (learning/deliberate-practice). A learner who declines has then
    * learned only that something distressing happens, which is the point.
    *
-   * Absent is not an assurance. The catalogue has not been surveyed for
-   * distressing outcomes yet, so today absence means only that no note has
-   * been written; `npm run gate` reports how many lessons carry one, and the
-   * facilitator guide says the same thing in as many words.
+   * Absent is not an assurance. Only the lessons whose own modelled course is
+   * an arrest, a death, or the resuscitation of a newborn or a child have been
+   * surveyed; the rest carry no note because nobody has read them for this
+   * purpose. `npm run gate` reports how many lessons carry one, the facilitator
+   * guide says the same thing in as many words, and
+   * `tests/unit/content-note.test.ts` pins the surveyed set by name.
    */
   readonly contentNote?: string;
 }

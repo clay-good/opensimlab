@@ -6,7 +6,7 @@ export const PEDIATRIC_FOREIGN_BODY_AIRWAY_OBSTRUCTION: Scenario = {
   schemaVersion: 1,
   metadata: {
     id: 'pediatric-foreign-body-airway-obstruction', version: '0.1.0', maturity: 'preview',
-    title: 'Pediatric foreign-body airway obstruction', author: 'Open Sim Lab',
+    title: 'Pediatric foreign-body airway obstruction', contentNote: 'This lesson includes a six-year-old child who chokes, becomes unresponsive, and needs chest compressions.', author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0', estimatedMinutes: 7, difficulty: 'intermediate', objectives: [
       {
         id: 'reconcile-pediatric-foreign-body-airway-obstruction-event-cough-and-whole-child',

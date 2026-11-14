@@ -8,7 +8,7 @@ export const PERSISTENT_VF_CARDIAC_ARREST: Scenario = {
     id: 'persistent-vf-cardiac-arrest',
     version: '0.1.0',
     maturity: 'preview',
-    title: 'Persistent ventricular-fibrillation cardiac arrest',
+    title: 'Persistent ventricular-fibrillation cardiac arrest', contentNote: 'This lesson includes a patient whose heart stops, with chest compressions and shocks delivered throughout.',
     author: 'Open Sim Lab',
     license: 'CC BY-SA 4.0',
     estimatedMinutes: 8,

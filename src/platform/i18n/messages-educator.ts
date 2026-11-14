@@ -60,7 +60,7 @@ export const EDUCATOR_MESSAGES = {
   'guide.absent.frameworks': { class: 'educator', text: 'No framework mapping exists for this scenario yet. Mapped frameworks are listed on /curriculum.' },
   'guide.absent.patient': { class: 'educator', text: 'The scenario declares no patient.' },
   'guide.none-declared': { class: 'educator', text: 'none declared' },
-  'guide.absent.content-note': { class: 'educator', text: 'This lesson declares no content note. The catalogue has not yet been surveyed for distressing outcomes, so read the timeline below before running it with a group: absence here is not an assurance.' },
+  'guide.absent.content-note': { class: 'educator', text: 'This lesson declares no content note. Only lessons that model an arrest, a death, or the resuscitation of a newborn or child have been surveyed, so read the timeline below before running it with a group: absence here is not an assurance.' },
   'guide.absent.prebrief': { class: 'educator', text: 'No prebrief could be built.' },
   'guide.absent.timeline': { class: 'educator', text: 'The scenario declares no timeline events.' },
   'guide.absent.expected-actions': { class: 'educator', text: 'Accepted actions, windows, and order are not yet read from the expert transcript.' },

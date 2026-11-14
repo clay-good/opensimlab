@@ -56,10 +56,53 @@ describe('a scenario content note', () => {
     expect(section?.status === 'absent' && section.reason).toContain('not an assurance');
   });
 
-  it('is declared by no lesson yet, across the whole catalogue', () => {
+  /**
+   * The set is pinned by name, both ways. A lesson added to it has had its own
+   * course read, and a lesson dropped from it stops warning someone, so neither
+   * should be possible without saying so in a diff.
+   *
+   * The rule the set follows: a cardiac arrest, a death, or the resuscitation
+   * of a newborn or a child is this lesson's own modelled course. Not a risk it
+   * hands off, and not an arrest that happened before it starts - post-arrest
+   * temperature control is deliberately absent for that reason.
+   */
+  it('is declared by exactly the lessons whose course was read for it', () => {
     const declared = FACILITATED_SCENARIOS
       .filter((entry) => entry.scenario.metadata.contentNote !== undefined)
-      .map((entry) => `${entry.moduleRoute}:${entry.scenario.metadata.id}`);
-    expect(declared).toEqual([]);
+      .map((entry) => `${entry.moduleRoute}:${entry.scenario.metadata.id}`)
+      .sort();
+    expect(declared).toEqual([
+      'anesthesia:persistent-vf-cardiac-arrest',
+      'emergency-medicine:pea-arrest',
+      'emergency-medicine:persistent-vf-arrest',
+      'neonatology:ineffective-ventilation-correction',
+      'neonatology:neonatal-bradycardia',
+      'obstetrics:maternal-cardiac-arrest-coordinated-response',
+      'obstetrics:maternal-to-neonatal-resuscitation-handoff',
+      'pediatrics:pediatric-bradycardic-arrest',
+      'pediatrics:pediatric-foreign-body-airway-obstruction',
+    ]);
+  });
+
+  it('writes every declared note as one plain sentence that passes the validator', () => {
+    for (const entry of FACILITATED_SCENARIOS) {
+      const note = entry.scenario.metadata.contentNote;
+      if (note === undefined) continue;
+      const where = `${entry.moduleRoute}:${entry.scenario.metadata.id}`;
+      expect([where, validateScenario(entry.scenario)]).toEqual([where, []]);
+      expect([where, note.length <= CONTENT_NOTE_LIMIT]).toEqual([where, true]);
+      expect([where, note.endsWith('.')]).toEqual([where, true]);
+      // It says what happens, not what the learner will be judged on.
+      expect([where, /score|fail|should|must/i.test(note)]).toEqual([where, false]);
+    }
+  });
+
+  it('shows a declared note on the briefing, above everything else about the lesson', () => {
+    const entry = FACILITATED_SCENARIOS
+      .find((candidate) => candidate.scenario.metadata.id === 'pea-arrest')!;
+    const section = facilitatorGuide(entry).find((item) => item.id === 'content-note');
+    expect(section?.status).toBe('present');
+    expect(section?.status === 'present' && section.items[0]?.text)
+      .toBe(entry.scenario.metadata.contentNote);
   });
 });
