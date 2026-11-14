@@ -62,7 +62,7 @@ describe('Requirement: antibiotic-triggered perioperative anaphylaxis is a compl
       (entry) => entry.scenarioId === PERIOPERATIVE_ANAPHYLAXIS_AFTER_ANTIBIOTIC.metadata.id,
     );
     expect(new Set(mappings.map((entry) => entry.frameworkId))).toEqual(new Set([
-      'nbcrna-nce', 'coa-standards', 'acgme-anesthesiology-milestones-2',
+      'nbcrna-nce', 'coa-standards', 'acgme-anesthesiology-milestones-2', 'aamc-core-epas',
     ]));
   });
 

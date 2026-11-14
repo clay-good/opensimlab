@@ -77,7 +77,7 @@ describe('Requirement: Rapid-sequence induction is a complete bundled scenario',
       (entry) => entry.scenarioId === RAPID_SEQUENCE_INDUCTION.metadata.id,
     );
     expect(new Set(mappings.map((entry) => entry.frameworkId))).toEqual(new Set([
-      'nbcrna-nce', 'coa-standards', 'acgme-anesthesiology-milestones-2',
+      'nbcrna-nce', 'coa-standards', 'acgme-anesthesiology-milestones-2', 'aamc-core-epas',
     ]));
     const declared = new Set(
       RAPID_SEQUENCE_INDUCTION.metadata.objectives.map((objective) => objective.id),

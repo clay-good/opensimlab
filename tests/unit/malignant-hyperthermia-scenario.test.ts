@@ -85,7 +85,7 @@ describe('Requirement: early volatile-triggered malignant hyperthermia is a comp
   it('maps its objectives into every supported framework', () => {
     const mappings = SCENARIO_MAPPINGS.filter((entry) => entry.scenarioId === SCENARIO.metadata.id);
     expect(new Set(mappings.map((entry) => entry.frameworkId))).toEqual(new Set([
-      'nbcrna-nce', 'coa-standards', 'acgme-anesthesiology-milestones-2',
+      'nbcrna-nce', 'coa-standards', 'acgme-anesthesiology-milestones-2', 'aamc-core-epas',
     ]));
   });
 

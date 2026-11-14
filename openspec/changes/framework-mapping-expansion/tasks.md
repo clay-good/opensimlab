@@ -12,50 +12,51 @@
   AAMC Core EPAs (2014); RCoA 2021 Stage 1 domains and key capabilities; NCSBN CJMM Layer 3;
   NCLEX-RN Test Plan 2026 client-needs categories; USMLE Step 2 CK content outline; Primary FRCA.
   Record issuing body, version, date checked, locator, fidelity.
-  **Blocked, and not on the lookups.** Attempted for the AAMC Core EPAs on 2026-11-14 and backed
-  out, because the build will not accept a framework this catalogue does not wholly speak to.
-  `tests/unit/curriculum.test.ts` holds that *every scenario appears against every framework* -
-  "a programme looking at their own framework should see the whole catalogue under it, not a
-  subset". That is true and worth keeping for the three readings that exist, because all three
-  are anaesthesia frameworks and the anaesthesia catalogue does speak to all of them.
-  It stops being true for the frameworks this task asks for next. The AAMC Core EPAs are for
-  medical students entering residency, and several of the thirteen - document a clinical
-  encounter, give an oral presentation, obtain informed consent, retrieve evidence - are simply
-  not exercised anywhere in this simulator. Under the invariant, adding the record forces a
-  mapping for all 39 anaesthesia lessons against all 13 activities, which means claiming coverage
-  that does not exist. The same will be true of the USMLE Step 2 CK outline, and of ACGME
-  Milestones for a specialty whose module is not the one being mapped.
-  So the two tasks in this change are one task, and the order is wrong: a record cannot be added
-  before its mappings, and its mappings cannot be honest for a framework that applies to only
-  part of the catalogue. **The fix is a maintainer's design call, not an authoring one:** make
-  applicability structured so the coverage invariant can be scoped by it. `appliesTo` already
-  exists on the record and was added by this change's own first task, but it is free text
-  ("Student registered nurse anesthetists preparing for certification"), so nothing can read it.
-  Give it a machine-readable companion - the modules or the learner stage a framework applies to
-  - and the invariant becomes "every scenario appears against every framework that applies to
-  it", which is the guarantee the sentence above was always trying to make.
-  Two findings from the AAMC lookup are worth keeping whoever does this next, because both came
-  from reading the documents rather than assuming, and neither would be caught by reviewing a
-  finished record:
-  - The locator the AAMC's own 2017 toolkits document prints for itself
+  **One of the seven is done: the AAMC Core EPAs**, in `src/platform/curriculum/aamc-core-epas.ts`,
+  with all 39 anaesthesia lessons mapped to it. It is the first reading that lives in the platform
+  rather than a specialty module, because unlike the three anaesthesia readings it belongs to no
+  specialty - the AAMC's claim is that every entering resident performs these "regardless of
+  specialty choice".
+  This was recorded as blocked earlier in the same session, and that was a misreading worth
+  recording so nobody repeats it. `tests/unit/curriculum.test.ts` requires every scenario to
+  appear against every framework, and I read that as every scenario against every DOMAIN, which
+  would have forced claiming coverage that does not exist. It requires each scenario to map to at
+  least ONE domain, which is a different and entirely satisfiable thing.
+  Five of the thirteen activities are mapped by nothing, and that is the honest result rather than
+  a gap: this simulator takes no history, writes no note, gives no oral presentation, retrieves no
+  evidence and takes no consent. The mapping CSV already names an uncovered domain by name, and
+  `tests/unit/aamc-core-epas.test.ts` pins those five, so a later mapping cannot quietly claim one.
+  It also pins the thirteen titles verbatim, because the value of a mapping is that a programme
+  director recognises the domains as the ones in their own document.
+  The titles are transcribed from the contents page of the AAMC's 2017 toolkits document, read
+  directly rather than from a summary, and the sources register carries the document with what it
+  was checked against. Two findings from that lookup, both from reading rather than assuming:
+  - The locator the document prints for itself
     (`aamc.org/initiatives/coreepas/publicationsandpresentations`) returns 404; the body has
     restructured its site. Check every locator resolves before recording it.
-  - The AAMC's Competency-Based Medical Education page says the Core EPAs were developed in 2014,
-    piloted by ten schools from 2014 to 2021, and that their use "is currently being evaluated in
-    light of the release of the Foundational Competencies in 2024". The most obvious framework to
-    map a medical catalogue against is one the issuing body has under review, and the 2024
-    Foundational Competencies are the better record to add in its place.
-  The thirteen activity titles are on the contents page of *Core Entrustable Professional
-  Activities for Entering Residency: Toolkits for the 13 Core EPAs* (AAMC, 2017), whose copyright
-  page permits reproduction with attribution for educational use. Nothing was committed, so the
-  record has to be rebuilt from that document rather than recovered from here.
-
+  - The AAMC's own Competency-Based Medical Education page says the Core EPAs were developed in
+    2014, piloted by ten schools from 2014 to 2021, and that their use "is currently being
+    evaluated in light of the release of the Foundational Competencies in 2024". So the framework
+    is one its issuing body has under review; the record's note says so, and the 2024 Foundational
+    Competencies are the better next record to add.
+  The record is marked `summarised` although its labels are exact, because six of the thirteen
+  titles are longer than the shared verbatim-label limit and the descriptions are this project's
+  words. Under-claiming fidelity is the safe direction, and the note carries the truth.
+  A new body's URL also has to join `documentationHosts` in `tests/arch/boundaries.test.ts`, which
+  is the gate that caught this one.
 - [x] Build check: a verbatim item longer than a short name fails; `review_by` ≤ 24 months. `tests/unit/framework-records.test.ts`.
 
 ## 2. Scenario mappings
 
 - [ ] Map every scenario in every module to at least one applicable framework; list unmapped by
   name in the curriculum view and fail the build on an unmapped scenario once authoring is done.
+  The anaesthesia module is mapped to all four of its frameworks, including the new cross-specialty
+  one. The other 217 lessons in fifteen modules are mapped to none, and the build already fails on
+  an unmapped ANAESTHESIA scenario - `unmappedScenarios()` and the coverage test both read the
+  anaesthesia catalogue only. Widening either to the whole catalogue is what this line asks for,
+  and it cannot happen before those modules have a framework that applies to them: mapping a
+  nursing lesson to an anaesthesia certification outline would be the kind of claim this change
+  exists to avoid.
 - [x] Map every nursing scenario's objectives to NCJMM functions with named evidence; build check.
   `src/modules/medical-surgical-nursing/curriculum.ts` records NCSBN's six step names verbatim
   from the 2026 NCLEX-RN Test Plan (PDF page 8), with this project's own descriptions because the

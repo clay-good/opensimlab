@@ -62,7 +62,7 @@ describe('Requirement: routine geriatric induction is incremental and bounded', 
     expect(initial.state.meanArterialMmHg).toBeCloseTo(92, 6);
     const mappings = SCENARIO_MAPPINGS.filter((entry) => entry.scenarioId === SCENARIO.metadata.id);
     expect(new Set(mappings.map((entry) => entry.frameworkId))).toEqual(new Set([
-      'nbcrna-nce', 'coa-standards', 'acgme-anesthesiology-milestones-2',
+      'nbcrna-nce', 'coa-standards', 'acgme-anesthesiology-milestones-2', 'aamc-core-epas',
     ]));
     const mapped = new Set(mappings.flatMap((entry) => entry.objectiveIds));
     for (const objective of SCENARIO.metadata.objectives) expect(mapped).toContain(objective.id);

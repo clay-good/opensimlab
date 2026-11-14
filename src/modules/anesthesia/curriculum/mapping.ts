@@ -1275,6 +1275,157 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
     domainId: 'pc-anesthetic-plan-and-conduct',
     objectiveIds: ['confirm-handoff-readiness', 'share-handoff-critical-content', 'assign-handoff-risks-and-ownership', 'close-loop-and-accept-transfer'],
   },
+
+  // --- AAMC Core EPAs -------------------------------------------------------
+  //
+  // A cross-specialty reading, so unlike the three above it maps anaesthesia
+  // lessons to activities written for any entering resident. Each lesson is
+  // mapped to the activities its OWN objectives exercise, which is why five of
+  // the thirteen appear nowhere: this simulator takes no history, writes no
+  // note, gives no oral presentation, retrieves no evidence and takes no
+  // consent. The coverage report names those five rather than hiding them.
+  // --- routine-induction ---
+  { scenarioId: 'routine-induction', frameworkId: 'aamc-core-epas', domainId: 'epa-4-orders-and-prescriptions', objectiveIds: ['hysteresis', 'blunt-incision', 'manage-hypotension'] },
+  { scenarioId: 'routine-induction', frameworkId: 'aamc-core-epas', domainId: 'epa-12-general-procedures', objectiveIds: ['preoxygenate', 'ventilate-before-desaturation'] },
+  // --- rapid-desaturation ---
+  { scenarioId: 'rapid-desaturation', frameworkId: 'aamc-core-epas', domainId: 'epa-12-general-procedures', objectiveIds: ['preoxygenate', 'ventilate-before-desaturation', 'limit-attempts'] },
+  { scenarioId: 'rapid-desaturation', frameworkId: 'aamc-core-epas', domainId: 'epa-4-orders-and-prescriptions', objectiveIds: ['hysteresis'] },
+  // --- hypotension-after-induction ---
+  { scenarioId: 'hypotension-after-induction', frameworkId: 'aamc-core-epas', domainId: 'epa-2-differential-diagnosis', objectiveIds: ['read-the-mechanism'] },
+  { scenarioId: 'hypotension-after-induction', frameworkId: 'aamc-core-epas', domainId: 'epa-4-orders-and-prescriptions', objectiveIds: ['dose-for-the-patient', 'manage-hypotension'] },
+  { scenarioId: 'hypotension-after-induction', frameworkId: 'aamc-core-epas', domainId: 'epa-12-general-procedures', objectiveIds: ['ventilate-before-desaturation'] },
+  // --- bronchospasm ---
+  { scenarioId: 'bronchospasm', frameworkId: 'aamc-core-epas', domainId: 'epa-2-differential-diagnosis', objectiveIds: ['read-the-capnogram'] },
+  { scenarioId: 'bronchospasm', frameworkId: 'aamc-core-epas', domainId: 'epa-10-urgent-and-emergent-care', objectiveIds: ['escalate-bronchospasm', 'ventilate-before-desaturation'] },
+  { scenarioId: 'bronchospasm', frameworkId: 'aamc-core-epas', domainId: 'epa-4-orders-and-prescriptions', objectiveIds: ['deepen-before-reaching-for-anything-else', 'give-first-line-bronchodilator', 'manage-hypotension'] },
+  // --- unexpected-intraoperative-hemorrhage ---
+  { scenarioId: 'unexpected-intraoperative-hemorrhage', frameworkId: 'aamc-core-epas', domainId: 'epa-10-urgent-and-emergent-care', objectiveIds: ['recognize-hemorrhage'] },
+  { scenarioId: 'unexpected-intraoperative-hemorrhage', frameworkId: 'aamc-core-epas', domainId: 'epa-4-orders-and-prescriptions', objectiveIds: ['temporize-volume-loss', 'avoid-full-dose-induction', 'manage-hypotension'] },
+  // --- rapid-sequence-induction ---
+  { scenarioId: 'rapid-sequence-induction', frameworkId: 'aamc-core-epas', domainId: 'epa-12-general-procedures', objectiveIds: ['preoxygenate-before-induction', 'protect-the-apnea-margin', 'secure-and-confirm'] },
+  { scenarioId: 'rapid-sequence-induction', frameworkId: 'aamc-core-epas', domainId: 'epa-4-orders-and-prescriptions', objectiveIds: ['wait-for-intubating-block', 'reverse-observed-block'] },
+  // --- awareness-under-paralysis ---
+  { scenarioId: 'awareness-under-paralysis', frameworkId: 'aamc-core-epas', domainId: 'epa-13-system-failures-and-safety', objectiveIds: ['inspect-the-tiva-line', 'restore-hypnotic-delivery'] },
+  { scenarioId: 'awareness-under-paralysis', frameworkId: 'aamc-core-epas', domainId: 'epa-2-differential-diagnosis', objectiveIds: ['recognize-paralysis-risk'] },
+  { scenarioId: 'awareness-under-paralysis', frameworkId: 'aamc-core-epas', domainId: 'epa-4-orders-and-prescriptions', objectiveIds: ['hypnosis-before-paralysis'] },
+  // --- laryngospasm-after-airway-stimulation ---
+  { scenarioId: 'laryngospasm-after-airway-stimulation', frameworkId: 'aamc-core-epas', domainId: 'epa-10-urgent-and-emergent-care', objectiveIds: ['apply-initial-laryngospasm-measures'] },
+  { scenarioId: 'laryngospasm-after-airway-stimulation', frameworkId: 'aamc-core-epas', domainId: 'epa-12-general-procedures', objectiveIds: ['preoxygenate-before-laryngospasm', 'protect-oxygenation-during-laryngospasm'] },
+  { scenarioId: 'laryngospasm-after-airway-stimulation', frameworkId: 'aamc-core-epas', domainId: 'epa-4-orders-and-prescriptions', objectiveIds: ['deepen-during-laryngospasm'] },
+  // --- perioperative-anaphylaxis-after-antibiotic ---
+  { scenarioId: 'perioperative-anaphylaxis-after-antibiotic', frameworkId: 'aamc-core-epas', domainId: 'epa-10-urgent-and-emergent-care', objectiveIds: ['recognize-anaphylaxis-pattern'] },
+  { scenarioId: 'perioperative-anaphylaxis-after-antibiotic', frameworkId: 'aamc-core-epas', domainId: 'epa-4-orders-and-prescriptions', objectiveIds: ['give-initial-epinephrine', 'support-anaphylaxis-circulation'] },
+  { scenarioId: 'perioperative-anaphylaxis-after-antibiotic', frameworkId: 'aamc-core-epas', domainId: 'epa-12-general-procedures', objectiveIds: ['support-anaphylaxis-oxygenation'] },
+  // --- early-malignant-hyperthermia-during-volatile-anesthesia ---
+  { scenarioId: 'early-malignant-hyperthermia-during-volatile-anesthesia', frameworkId: 'aamc-core-epas', domainId: 'epa-10-urgent-and-emergent-care', objectiveIds: ['recognize-mh-hypermetabolism', 'stop-trigger-and-hyperventilate'] },
+  { scenarioId: 'early-malignant-hyperthermia-during-volatile-anesthesia', frameworkId: 'aamc-core-epas', domainId: 'epa-4-orders-and-prescriptions', objectiveIds: ['give-initial-dantrolene'] },
+  { scenarioId: 'early-malignant-hyperthermia-during-volatile-anesthesia', frameworkId: 'aamc-core-epas', domainId: 'epa-3-diagnostic-and-screening-tests', objectiveIds: ['reassess-mh-response'] },
+  // --- routine-pediatric-iv-induction ---
+  { scenarioId: 'routine-pediatric-iv-induction', frameworkId: 'aamc-core-epas', domainId: 'epa-4-orders-and-prescriptions', objectiveIds: ['dose-pediatric-propofol'] },
+  { scenarioId: 'routine-pediatric-iv-induction', frameworkId: 'aamc-core-epas', domainId: 'epa-12-general-procedures', objectiveIds: ['preoxygenate-child', 'ventilate-child-by-weight', 'avoid-pediatric-desaturation'] },
+  // --- difficult-airway-supraglottic-rescue ---
+  { scenarioId: 'difficult-airway-supraglottic-rescue', frameworkId: 'aamc-core-epas', domainId: 'epa-9-interprofessional-team', objectiveIds: ['limit-attempts-and-call-for-help'] },
+  { scenarioId: 'difficult-airway-supraglottic-rescue', frameworkId: 'aamc-core-epas', domainId: 'epa-12-general-procedures', objectiveIds: ['prepare-rescue-oxygen-reserve', 'place-supraglottic-rescue', 'confirm-rescue-gas-exchange'] },
+  // --- local-anesthetic-systemic-toxicity ---
+  { scenarioId: 'local-anesthetic-systemic-toxicity', frameworkId: 'aamc-core-epas', domainId: 'epa-10-urgent-and-emergent-care', objectiveIds: ['recognize-last-pattern'] },
+  { scenarioId: 'local-anesthetic-systemic-toxicity', frameworkId: 'aamc-core-epas', domainId: 'epa-4-orders-and-prescriptions', objectiveIds: ['start-last-lipid', 'use-reduced-last-epinephrine'] },
+  { scenarioId: 'local-anesthetic-systemic-toxicity', frameworkId: 'aamc-core-epas', domainId: 'epa-12-general-procedures', objectiveIds: ['support-last-airway-and-seizure'] },
+  // --- persistent-vf-cardiac-arrest ---
+  { scenarioId: 'persistent-vf-cardiac-arrest', frameworkId: 'aamc-core-epas', domainId: 'epa-10-urgent-and-emergent-care', objectiveIds: ['resume-arrest-compressions', 'defibrillate-persistent-vf'] },
+  { scenarioId: 'persistent-vf-cardiac-arrest', frameworkId: 'aamc-core-epas', domainId: 'epa-4-orders-and-prescriptions', objectiveIds: ['give-arrest-epinephrine'] },
+  { scenarioId: 'persistent-vf-cardiac-arrest', frameworkId: 'aamc-core-epas', domainId: 'epa-2-differential-diagnosis', objectiveIds: ['avoid-shocking-nonshockable-rhythm'] },
+  // --- high-spinal-after-epidural-top-up ---
+  { scenarioId: 'high-spinal-after-epidural-top-up', frameworkId: 'aamc-core-epas', domainId: 'epa-9-interprofessional-team', objectiveIds: ['call-for-high-spinal-help'] },
+  { scenarioId: 'high-spinal-after-epidural-top-up', frameworkId: 'aamc-core-epas', domainId: 'epa-10-urgent-and-emergent-care', objectiveIds: ['support-high-spinal-breathing'] },
+  { scenarioId: 'high-spinal-after-epidural-top-up', frameworkId: 'aamc-core-epas', domainId: 'epa-4-orders-and-prescriptions', objectiveIds: ['support-high-spinal-circulation'] },
+  { scenarioId: 'high-spinal-after-epidural-top-up', frameworkId: 'aamc-core-epas', domainId: 'epa-12-general-procedures', objectiveIds: ['protect-high-spinal-oxygenation'] },
+  // --- venous-air-embolism-during-line-removal ---
+  { scenarioId: 'venous-air-embolism-during-line-removal', frameworkId: 'aamc-core-epas', domainId: 'epa-10-urgent-and-emergent-care', objectiveIds: ['escalate-venous-air-pattern', 'control-venous-air-entry'] },
+  { scenarioId: 'venous-air-embolism-during-line-removal', frameworkId: 'aamc-core-epas', domainId: 'epa-12-general-procedures', objectiveIds: ['support-venous-air-oxygenation'] },
+  { scenarioId: 'venous-air-embolism-during-line-removal', frameworkId: 'aamc-core-epas', domainId: 'epa-3-diagnostic-and-screening-tests', objectiveIds: ['reassess-venous-air-recovery'] },
+  // --- repeated-laryngoscopy-harm ---
+  { scenarioId: 'repeated-laryngoscopy-harm', frameworkId: 'aamc-core-epas', domainId: 'epa-9-interprofessional-team', objectiveIds: ['limit-attempts-and-call-for-help'] },
+  { scenarioId: 'repeated-laryngoscopy-harm', frameworkId: 'aamc-core-epas', domainId: 'epa-12-general-procedures', objectiveIds: ['prepare-rescue-oxygen-reserve', 'place-supraglottic-rescue', 'confirm-rescue-gas-exchange'] },
+  { scenarioId: 'repeated-laryngoscopy-harm', frameworkId: 'aamc-core-epas', domainId: 'epa-2-differential-diagnosis', objectiveIds: ['act-on-prior-airway-record'] },
+  // --- capnography-sampling-line-obstruction ---
+  { scenarioId: 'capnography-sampling-line-obstruction', frameworkId: 'aamc-core-epas', domainId: 'epa-13-system-failures-and-safety', objectiveIds: ['restore-capnography-sampling'] },
+  { scenarioId: 'capnography-sampling-line-obstruction', frameworkId: 'aamc-core-epas', domainId: 'epa-3-diagnostic-and-screening-tests', objectiveIds: ['cross-check-capnography-loss'] },
+  { scenarioId: 'capnography-sampling-line-obstruction', frameworkId: 'aamc-core-epas', domainId: 'epa-12-general-procedures', objectiveIds: ['preserve-stable-ventilation'] },
+  // --- dilutional-coagulopathy ---
+  { scenarioId: 'dilutional-coagulopathy', frameworkId: 'aamc-core-epas', domainId: 'epa-3-diagnostic-and-screening-tests', objectiveIds: ['identify-dilutional-coagulopathy', 'reassess-coagulation-response'] },
+  { scenarioId: 'dilutional-coagulopathy', frameworkId: 'aamc-core-epas', domainId: 'epa-4-orders-and-prescriptions', objectiveIds: ['give-lab-guided-plasma'] },
+  // --- arterial-pressure-transducer-artifact ---
+  { scenarioId: 'arterial-pressure-transducer-artifact', frameworkId: 'aamc-core-epas', domainId: 'epa-13-system-failures-and-safety', objectiveIds: ['correct-transducer-level', 'assess-arterial-dynamic-response'] },
+  { scenarioId: 'arterial-pressure-transducer-artifact', frameworkId: 'aamc-core-epas', domainId: 'epa-3-diagnostic-and-screening-tests', objectiveIds: ['verify-invasive-pressure-independently'] },
+  // --- circle-system-rebreathing ---
+  { scenarioId: 'circle-system-rebreathing', frameworkId: 'aamc-core-epas', domainId: 'epa-13-system-failures-and-safety', objectiveIds: ['bridge-with-fresh-gas-flow', 'replace-exhausted-absorbent'] },
+  { scenarioId: 'circle-system-rebreathing', frameworkId: 'aamc-core-epas', domainId: 'epa-3-diagnostic-and-screening-tests', objectiveIds: ['recognize-inspired-carbon-dioxide'] },
+  // --- routine-inhalational-maintenance ---
+  { scenarioId: 'routine-inhalational-maintenance', frameworkId: 'aamc-core-epas', domainId: 'epa-4-orders-and-prescriptions', objectiveIds: ['anticipate-surgical-stimulus', 'reassess-when-stimulus-falls'] },
+  { scenarioId: 'routine-inhalational-maintenance', frameworkId: 'aamc-core-epas', domainId: 'epa-3-diagnostic-and-screening-tests', objectiveIds: ['maintain-bounded-depth'] },
+  // --- blood-bank-handoff ---
+  { scenarioId: 'blood-bank-handoff', frameworkId: 'aamc-core-epas', domainId: 'epa-9-interprofessional-team', objectiveIds: ['request-blood-bank-release'] },
+  { scenarioId: 'blood-bank-handoff', frameworkId: 'aamc-core-epas', domainId: 'epa-4-orders-and-prescriptions', objectiveIds: ['use-released-red-cells'] },
+  { scenarioId: 'blood-bank-handoff', frameworkId: 'aamc-core-epas', domainId: 'epa-3-diagnostic-and-screening-tests', objectiveIds: ['reassess-red-cell-response'] },
+  // --- routine-geriatric-induction ---
+  { scenarioId: 'routine-geriatric-induction', frameworkId: 'aamc-core-epas', domainId: 'epa-4-orders-and-prescriptions', objectiveIds: ['titrate-geriatric-propofol', 'protect-geriatric-perfusion'] },
+  { scenarioId: 'routine-geriatric-induction', frameworkId: 'aamc-core-epas', domainId: 'epa-12-general-procedures', objectiveIds: ['preoxygenate-older-adult', 'ventilate-geriatric-induction'] },
+  // --- quantitative-neuromuscular-reversal ---
+  { scenarioId: 'quantitative-neuromuscular-reversal', frameworkId: 'aamc-core-epas', domainId: 'epa-3-diagnostic-and-screening-tests', objectiveIds: ['establish-quantitative-baseline', 'confirm-quantitative-recovery'] },
+  { scenarioId: 'quantitative-neuromuscular-reversal', frameworkId: 'aamc-core-epas', domainId: 'epa-4-orders-and-prescriptions', objectiveIds: ['reverse-recovering-block'] },
+  { scenarioId: 'quantitative-neuromuscular-reversal', frameworkId: 'aamc-core-epas', domainId: 'epa-12-general-procedures', objectiveIds: ['maintain-anesthesia-during-block'] },
+  // --- routine-pediatric-inhalational-induction ---
+  { scenarioId: 'routine-pediatric-inhalational-induction', frameworkId: 'aamc-core-epas', domainId: 'epa-12-general-procedures', objectiveIds: ['prepare-pediatric-inhalational-circuit'] },
+  { scenarioId: 'routine-pediatric-inhalational-induction', frameworkId: 'aamc-core-epas', domainId: 'epa-3-diagnostic-and-screening-tests', objectiveIds: ['follow-pediatric-end-tidal-wash-in'] },
+  { scenarioId: 'routine-pediatric-inhalational-induction', frameworkId: 'aamc-core-epas', domainId: 'epa-4-orders-and-prescriptions', objectiveIds: ['settle-pediatric-volatile-depth'] },
+  // --- obstetric-general-anesthesia ---
+  { scenarioId: 'obstetric-general-anesthesia', frameworkId: 'aamc-core-epas', domainId: 'epa-12-general-procedures', objectiveIds: ['prepare-obstetric-oxygen-reserve', 'protect-obstetric-apnea-margin', 'confirm-obstetric-ventilation'] },
+  { scenarioId: 'obstetric-general-anesthesia', frameworkId: 'aamc-core-epas', domainId: 'epa-4-orders-and-prescriptions', objectiveIds: ['wait-for-intubating-block'] },
+  // --- preeclampsia-urgent-delivery ---
+  { scenarioId: 'preeclampsia-urgent-delivery', frameworkId: 'aamc-core-epas', domainId: 'epa-3-diagnostic-and-screening-tests', objectiveIds: ['confirm-persistent-severe-hypertension', 'reassess-preeclampsia-response'] },
+  { scenarioId: 'preeclampsia-urgent-delivery', frameworkId: 'aamc-core-epas', domainId: 'epa-4-orders-and-prescriptions', objectiveIds: ['treat-severe-pregnancy-hypertension', 'start-preeclampsia-seizure-prophylaxis'] },
+  // --- pneumothorax-under-positive-pressure ---
+  { scenarioId: 'pneumothorax-under-positive-pressure', frameworkId: 'aamc-core-epas', domainId: 'epa-10-urgent-and-emergent-care', objectiveIds: ['assess-pneumothorax-pattern', 'decompress-pneumothorax'] },
+  { scenarioId: 'pneumothorax-under-positive-pressure', frameworkId: 'aamc-core-epas', domainId: 'epa-9-interprofessional-team', objectiveIds: ['escalate-pneumothorax-pattern'] },
+  { scenarioId: 'pneumothorax-under-positive-pressure', frameworkId: 'aamc-core-epas', domainId: 'epa-12-general-procedures', objectiveIds: ['support-pneumothorax-oxygenation'] },
+  { scenarioId: 'pneumothorax-under-positive-pressure', frameworkId: 'aamc-core-epas', domainId: 'epa-3-diagnostic-and-screening-tests', objectiveIds: ['reassess-pneumothorax-recovery'] },
+  // --- aspiration-risk-recognition ---
+  { scenarioId: 'aspiration-risk-recognition', frameworkId: 'aamc-core-epas', domainId: 'epa-2-differential-diagnosis', objectiveIds: ['review-aspiration-risk-cues', 'classify-elevated-aspiration-risk', 'avoid-blanket-glp1-rule'] },
+  { scenarioId: 'aspiration-risk-recognition', frameworkId: 'aamc-core-epas', domainId: 'epa-9-interprofessional-team', objectiveIds: ['choose-shared-elective-plan'] },
+  // --- emergence-with-residual-blockade ---
+  { scenarioId: 'emergence-with-residual-blockade', frameworkId: 'aamc-core-epas', domainId: 'epa-3-diagnostic-and-screening-tests', objectiveIds: ['review-emergence-quantitative-monitor'] },
+  { scenarioId: 'emergence-with-residual-blockade', frameworkId: 'aamc-core-epas', domainId: 'epa-2-differential-diagnosis', objectiveIds: ['recognize-emergence-residual-blockade', 'separate-recovery-from-extubation-readiness'] },
+  { scenarioId: 'emergence-with-residual-blockade', frameworkId: 'aamc-core-epas', domainId: 'epa-12-general-procedures', objectiveIds: ['defer-extubation-during-residual-blockade'] },
+  // --- delayed-emergence-differential ---
+  { scenarioId: 'delayed-emergence-differential', frameworkId: 'aamc-core-epas', domainId: 'epa-2-differential-diagnosis', objectiveIds: ['reconcile-delayed-emergence-exposures', 'find-delayed-emergence-lateralizing-sign'] },
+  { scenarioId: 'delayed-emergence-differential', frameworkId: 'aamc-core-epas', domainId: 'epa-3-diagnostic-and-screening-tests', objectiveIds: ['check-delayed-emergence-metabolic-causes'] },
+  { scenarioId: 'delayed-emergence-differential', frameworkId: 'aamc-core-epas', domainId: 'epa-10-urgent-and-emergent-care', objectiveIds: ['escalate-delayed-emergence-neurologic-pattern'] },
+  { scenarioId: 'delayed-emergence-differential', frameworkId: 'aamc-core-epas', domainId: 'epa-12-general-procedures', objectiveIds: ['support-delayed-emergence-patient'] },
+  // --- extubation-readiness ---
+  { scenarioId: 'extubation-readiness', frameworkId: 'aamc-core-epas', domainId: 'epa-2-differential-diagnosis', objectiveIds: ['integrate-awake-extubation-readiness', 'plan-extubation-risk-and-rescue'] },
+  { scenarioId: 'extubation-readiness', frameworkId: 'aamc-core-epas', domainId: 'epa-3-diagnostic-and-screening-tests', objectiveIds: ['confirm-extubation-quantitative-recovery', 'assess-extubation-gas-exchange'] },
+  { scenarioId: 'extubation-readiness', frameworkId: 'aamc-core-epas', domainId: 'epa-12-general-procedures', objectiveIds: ['assess-awake-airway-protection'] },
+  // --- post-extubation-obstruction ---
+  { scenarioId: 'post-extubation-obstruction', frameworkId: 'aamc-core-epas', domainId: 'epa-10-urgent-and-emergent-care', objectiveIds: ['recognize-post-extubation-obstruction'] },
+  { scenarioId: 'post-extubation-obstruction', frameworkId: 'aamc-core-epas', domainId: 'epa-12-general-procedures', objectiveIds: ['support-post-extubation-airway'] },
+  { scenarioId: 'post-extubation-obstruction', frameworkId: 'aamc-core-epas', domainId: 'epa-3-diagnostic-and-screening-tests', objectiveIds: ['confirm-post-extubation-recovery'] },
+  // --- opioid-induced-ventilatory-impairment ---
+  { scenarioId: 'opioid-induced-ventilatory-impairment', frameworkId: 'aamc-core-epas', domainId: 'epa-10-urgent-and-emergent-care', objectiveIds: ['recognize-opioid-ventilatory-impairment'] },
+  { scenarioId: 'opioid-induced-ventilatory-impairment', frameworkId: 'aamc-core-epas', domainId: 'epa-4-orders-and-prescriptions', objectiveIds: ['prevent-further-opioid-harm', 'escalate-opioid-reversal'] },
+  { scenarioId: 'opioid-induced-ventilatory-impairment', frameworkId: 'aamc-core-epas', domainId: 'epa-12-general-procedures', objectiveIds: ['support-opioid-impaired-ventilation'] },
+  { scenarioId: 'opioid-induced-ventilatory-impairment', frameworkId: 'aamc-core-epas', domainId: 'epa-3-diagnostic-and-screening-tests', objectiveIds: ['reassess-opioid-ventilatory-recovery'] },
+  // --- hypothermia-and-rewarming ---
+  { scenarioId: 'hypothermia-and-rewarming', frameworkId: 'aamc-core-epas', domainId: 'epa-3-diagnostic-and-screening-tests', objectiveIds: ['recognize-perioperative-hypothermia', 'reassess-perioperative-rewarming'] },
+  { scenarioId: 'hypothermia-and-rewarming', frameworkId: 'aamc-core-epas', domainId: 'epa-4-orders-and-prescriptions', objectiveIds: ['start-active-surface-warming', 'warm-bulk-perioperative-fluids'] },
+  // --- perioperative-hyperglycemia ---
+  { scenarioId: 'perioperative-hyperglycemia', frameworkId: 'aamc-core-epas', domainId: 'epa-3-diagnostic-and-screening-tests', objectiveIds: ['confirm-perioperative-hyperglycemia', 'reassess-perioperative-glucose'] },
+  { scenarioId: 'perioperative-hyperglycemia', frameworkId: 'aamc-core-epas', domainId: 'epa-4-orders-and-prescriptions', objectiveIds: ['use-bounded-insulin-protocol'] },
+  // --- pacemaker-and-cautery-planning ---
+  { scenarioId: 'pacemaker-and-cautery-planning', frameworkId: 'aamc-core-epas', domainId: 'epa-2-differential-diagnosis', objectiveIds: ['review-cied-device-record', 'review-cied-procedure-risk'] },
+  { scenarioId: 'pacemaker-and-cautery-planning', frameworkId: 'aamc-core-epas', domainId: 'epa-9-interprofessional-team', objectiveIds: ['choose-coordinated-cied-plan'] },
+  { scenarioId: 'pacemaker-and-cautery-planning', frameworkId: 'aamc-core-epas', domainId: 'epa-13-system-failures-and-safety', objectiveIds: ['document-cied-backup-and-restoration'] },
+  // --- postoperative-handoff ---
+  { scenarioId: 'postoperative-handoff', frameworkId: 'aamc-core-epas', domainId: 'epa-8-handover', objectiveIds: ['confirm-handoff-readiness', 'share-handoff-critical-content', 'assign-handoff-risks-and-ownership', 'close-loop-and-accept-transfer'] },
 ];
 
 export interface DomainCoverage {

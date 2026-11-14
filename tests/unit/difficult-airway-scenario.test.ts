@@ -93,7 +93,7 @@ describe('Requirement: difficult-airway supraglottic rescue is a complete bounde
   it('maps its objectives into every supported framework', () => {
     const mappings = SCENARIO_MAPPINGS.filter((entry) => entry.scenarioId === SCENARIO.metadata.id);
     expect(new Set(mappings.map((entry) => entry.frameworkId))).toEqual(new Set([
-      'nbcrna-nce', 'coa-standards', 'acgme-anesthesiology-milestones-2',
+      'nbcrna-nce', 'coa-standards', 'acgme-anesthesiology-milestones-2', 'aamc-core-epas',
     ]));
     const objectiveIds = new Set(SCENARIO.metadata.objectives.map((entry) => entry.id));
     for (const mapping of mappings) {

@@ -62,7 +62,7 @@ describe('Requirement: laryngospasm initial response is a complete bundled scena
       (entry) => entry.scenarioId === LARYNGOSPASM_AFTER_AIRWAY_STIMULATION.metadata.id,
     );
     expect(new Set(mappings.map((entry) => entry.frameworkId))).toEqual(new Set([
-      'nbcrna-nce', 'coa-standards', 'acgme-anesthesiology-milestones-2',
+      'nbcrna-nce', 'coa-standards', 'acgme-anesthesiology-milestones-2', 'aamc-core-epas',
     ]));
     const declared = new Set(
       LARYNGOSPASM_AFTER_AIRWAY_STIMULATION.metadata.objectives.map((entry) => entry.id),

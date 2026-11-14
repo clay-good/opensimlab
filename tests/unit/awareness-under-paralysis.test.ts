@@ -100,7 +100,7 @@ describe('Requirement: awareness under paralysis is a complete bundled scenario'
       (entry) => entry.scenarioId === AWARENESS_UNDER_PARALYSIS.metadata.id,
     );
     expect(new Set(mappings.map((entry) => entry.frameworkId))).toEqual(new Set([
-      'nbcrna-nce', 'coa-standards', 'acgme-anesthesiology-milestones-2',
+      'nbcrna-nce', 'coa-standards', 'acgme-anesthesiology-milestones-2', 'aamc-core-epas',
     ]));
     const declared = new Set(AWARENESS_UNDER_PARALYSIS.metadata.objectives.map((entry) => entry.id));
     for (const mapping of mappings) {

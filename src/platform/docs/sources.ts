@@ -1479,6 +1479,32 @@ export const SOURCES: readonly Source[] = [
   // registered because the interface names them to educators, and a named
   // framework whose version is stale is worse than one with no version at all.
   {
+    id: 'aamc-core-epas-toolkits',
+    authors: 'Obeso V, Brown D, Aiyer M, Barron B, Bull J, Carter T, Emery M, Gillespie C, '
+      + 'Hormann M, Hyderi A, Lupi C, Schwartz M, Uthman M, Vasilevskis EE, Yingling S, '
+      + 'Phillipi C, eds.; for Core EPAs for Entering Residency Pilot Program',
+    title: 'Core Entrustable Professional Activities for Entering Residency: Toolkits for the 13 Core EPAs',
+    publication: 'Association of American Medical Colleges',
+    year: 2017,
+    locator: 'Contents page, listing the thirteen activity titles; the underlying Core EPAs were published 2014',
+    usedFor: 'The thirteen activity titles the cross-specialty framework reading carries in the '
+      + 'AAMC\'s own words, with this project\'s descriptions beneath them. Every anaesthesia '
+      + 'lesson is mapped to the activities its own objectives exercise.',
+    verifiedAgainst: 'The AAMC document itself, read directly: the contents page gives all '
+      + 'thirteen titles, and the copyright page gives the 2017 date, the Washington DC imprint, '
+      + 'and the licence permitting reproduction with attribution for educational or '
+      + 'noncommercial use. Two things were found by looking rather than assumed. The locator '
+      + 'the document prints for itself, aamc.org/initiatives/coreepas/publicationsandpresentations, '
+      + 'returns 404, so the record cites the live page instead. And the AAMC\'s own '
+      + 'Competency-Based Medical Education page states that the Core EPAs "were developed by '
+      + 'the AAMC in 2014", that "implementation was piloted by 10 medical schools from '
+      + '2014-2021", and that "use of the Core EPAs is currently being evaluated in light of the '
+      + 'release of the Foundational Competencies in 2024" - so this is a framework the issuing '
+      + 'body itself has under review, and the record says so.',
+    verifiedOn: '2026-11-14',
+    currency: { lastAmended: '2017-01-01', checkedAt: '2026-11-14' },
+  },
+  {
     id: 'coa-practice-doctorate-standards',
     authors: 'Council on Accreditation of Nurse Anesthesia Educational Programs',
     title: 'Standards for Accreditation of Nurse Anesthesia Programs — Practice Doctorate',

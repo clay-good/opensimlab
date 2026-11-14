@@ -17,6 +17,7 @@
  */
 
 import type { FrameworkDomainRecord, FrameworkRecord } from '@platform/curriculum/framework-records';
+import { AAMC_CORE_EPAS } from '@platform/curriculum/aamc-core-epas';
 
 export type FrameworkDomain = FrameworkDomainRecord;
 export type Framework = FrameworkRecord;
@@ -198,10 +199,20 @@ export const ACGME_ANESTHESIOLOGY_MILESTONES: Framework = {
   ],
 };
 
+/**
+ * Every framework reading this build ships.
+ *
+ * The three anaesthesia readings are defined above, beside the mappings that
+ * use them. A reading belonging to no single specialty is defined in the
+ * platform and listed here, because this array is still what every surface
+ * reads: the curriculum page, the CSV export, the facilitator guide, the
+ * structured data and the governance dashboard.
+ */
 export const FRAMEWORKS: readonly Framework[] = [
   NBCRNA_NCE,
   COA_STANDARDS,
   ACGME_ANESTHESIOLOGY_MILESTONES,
+  AAMC_CORE_EPAS,
 ];
 
 export function getFramework(id: string): Framework | undefined {
