@@ -19,8 +19,19 @@ its own, none changes the engine, and none produces a score.
   first. A blind draw shipped without it would spring exactly the harm the note exists to prevent
   - on a catalogue that includes paediatric arrest, obstetric haemorrhage and end-of-life
   oncology. So the draw is not blocked on its own logic, which is small, but on a scenario field
-  and the per-lesson authoring behind it. Add `contentNote` to the schema, author it wherever a
-  lesson has a sensitive outcome, and only then build the draw.
+  and the per-lesson authoring behind it.
+  The field now exists. `metadata.contentNote` is one sentence of at most 160 characters, shown
+  at the top of the briefing above the fiction contract and carried as its own facilitator-guide
+  section. The validator enforces the length and refuses a note that repeats a distinctive word
+  from its own title, which is the way this goes wrong: the note is shown while the title is
+  withheld, so a note naming its lesson defeats the point of showing it. No lesson declares one
+  yet, `tests/unit/content-note.test.ts` holds that none does, and the guide, the gate and the
+  author guide all say plainly that absence is not an assurance because the catalogue has not
+  been surveyed. The environment and fidelity class the design also lists remain unwritten;
+  neither gates a learner's consent, so neither blocks the draw.
+  What is left before the draw can ship: survey the catalogue for distressing outcomes and author
+  the notes. Until that is done a blind draw would still be showing nothing to warn about for a
+  lesson nobody has read for the purpose.
 - [ ] Test over every scenario with a recognition objective that no withheld field reaches the
   DOM, the accessible tree, the document title, or the URL before the reveal condition.
 - [ ] Test reproducibility of the draw from the transcript seed and pool.

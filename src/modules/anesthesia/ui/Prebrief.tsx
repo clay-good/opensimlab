@@ -105,6 +105,16 @@ export function Prebrief({
           ? `, for ${patient.procedure}.`
           : `, ASA ${patient.asaClass}, for ${patient.procedure}.`}</p>
 
+      {/* First, and before anything that makes the lesson sound inviting: a
+          learner who would rather not meet this outcome today should be able to
+          close the page without having had it described to them. */}
+      {scenario.metadata.contentNote !== undefined && (
+        <section className="prebrief__content-note">
+          <h2>{t('briefing.content-note')}</h2>
+          <p>{scenario.metadata.contentNote}</p>
+        </section>
+      )}
+
       <Panel title="The fiction contract">
         <p>{FICTION_CONTRACT}</p>
       </Panel>

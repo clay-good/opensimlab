@@ -150,6 +150,9 @@ export function facilitatorGuide(entry: FacilitatedScenario): readonly GuideSect
     present('frameworks', t('guide.section.frameworks'), frameworkItems(entry),
       t('guide.absent.frameworks')),
     present('patient', t('guide.section.patient'), patientItems(scenario), t('guide.absent.patient')),
+    present('content-note', t('guide.section.content-note'),
+      metadata.contentNote === undefined ? [] : [{ text: metadata.contentNote }],
+      t('guide.absent.content-note')),
     present('prebrief', t('guide.section.prebrief'), [
       { text: GUIDE_TEMPLATES.fiction },
       { text: GUIDE_TEMPLATES.confidentiality },

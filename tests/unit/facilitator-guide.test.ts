@@ -14,9 +14,9 @@ import {
   FACILITATED_SCENARIOS, facilitatedScenarioFor, facilitatorGuidePath,
 } from '@platform/facilitation/scenario-catalog';
 
-const ORDER = ['at-a-glance', 'objectives', 'frameworks', 'patient', 'prebrief', 'timeline',
-  'expected-actions', 'error-and-recovery', 'debrief', 'pause-points', 'limitations', 'sources',
-  'provenance'];
+const ORDER = ['at-a-glance', 'objectives', 'frameworks', 'patient', 'content-note', 'prebrief',
+  'timeline', 'expected-actions', 'error-and-recovery', 'debrief', 'pause-points', 'limitations',
+  'sources', 'provenance'];
 
 describe('facilitator guide', () => {
   it('covers every scenario in every available module exactly once', () => {

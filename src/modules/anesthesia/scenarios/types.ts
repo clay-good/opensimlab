@@ -38,6 +38,22 @@ export interface ScenarioMetadata {
   readonly objectives: readonly ScenarioObjective[];
   readonly clinicalReview: ClinicalReviewRecord;
   readonly limitations?: readonly string[];
+  /**
+   * What a learner may want to decline before starting, in one sentence.
+   *
+   * Present only on a lesson whose course would distress someone who did not
+   * expect it - a death, a child's arrest, a pregnancy loss. It names the
+   * nature of the outcome and not the lesson: it is shown before start, and a
+   * blind draw shows it while still withholding the title, the module and the
+   * objectives (learning/deliberate-practice). A learner who declines has then
+   * learned only that something distressing happens, which is the point.
+   *
+   * Absent is not an assurance. The catalogue has not been surveyed for
+   * distressing outcomes yet, so today absence means only that no note has
+   * been written; `npm run gate` reports how many lessons carry one, and the
+   * facilitator guide says the same thing in as many words.
+   */
+  readonly contentNote?: string;
 }
 
 export interface PatientBaseline {

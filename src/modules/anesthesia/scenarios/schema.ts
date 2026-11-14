@@ -42,6 +42,17 @@ export interface ValidationError {
   readonly message: string;
 }
 
+/** A content note is shown in place of the title, so it stays one short sentence. */
+export const CONTENT_NOTE_LIMIT = 160;
+
+/**
+ * The distinctive words of a title: everything but the short, common ones, so
+ * "the", "of" and "a" do not read as a leak while "tamponade" does.
+ */
+function titleWords(text: string): string[] {
+  return [...new Set(text.toLowerCase().match(/[a-z]{5,}/g) ?? [])];
+}
+
 const NUMBER_FIELD = (description: string, minimum?: number, maximum?: number): SchemaNode => ({
   type: 'number', description,
   ...(minimum !== undefined ? { minimum } : {}),
@@ -105,6 +116,10 @@ export const SCENARIO_SCHEMA: SchemaNode = {
           type: 'array', description: 'Known limitations that bite near this scenario\'s teaching points.',
           items: STRING_FIELD('One limitation, named in the briefing.', 10),
         },
+        contentNote: STRING_FIELD(
+          'One sentence naming a distressing outcome a learner may want to decline, without naming the lesson.',
+          10,
+        ),
       },
     },
     patient: {
@@ -490,6 +505,31 @@ export function validateScenarioSemantics(scenario: unknown): ValidationError[] 
       });
     }
   });
+
+  /**
+   * A content note is shown before start, including on a blind draw where the
+   * title is withheld. A note that repeats a distinctive word from its own
+   * title gives the lesson away, which is the one thing it must not do, so the
+   * overlap is refused rather than left to an author's eye.
+   */
+  const contentNote = metadata?.contentNote;
+  if (typeof contentNote === 'string') {
+    if (contentNote.length > CONTENT_NOTE_LIMIT) {
+      errors.push({
+        pointer: '/metadata/contentNote', rule: 'bounds',
+        message: `A content note is at most ${CONTENT_NOTE_LIMIT} characters; this one is ${contentNote.length}.`,
+      });
+    }
+    const leaked = titleWords(String(metadata?.title ?? ''))
+      .filter((word) => titleWords(contentNote).includes(word));
+    if (leaked.length > 0) {
+      errors.push({
+        pointer: '/metadata/contentNote', rule: 'leak',
+        message: `A content note is shown while the title is withheld, so it may not repeat the title's `
+          + `own words. Remove: ${leaked.join(', ')}.`,
+      });
+    }
+  }
 
   const declaredObjectives = new Set(((metadata?.objectives ?? []) as readonly { id?: unknown }[])
     .map((objective) => String(objective.id)));

@@ -55,6 +55,23 @@ all sixteen modules download, which is what `tests/unit/module-chunking.test.ts`
 lessons still written out there are ones that read more than the resuscitation snapshot; a new
 lesson should not join them.
 
+## Write a content note if the lesson would distress someone (optional)
+
+`metadata.contentNote` is one sentence, at most 160 characters, naming a distressing outcome a
+learner may want to decline before starting: a death, a child's arrest, a pregnancy loss. It is
+shown at the top of the briefing, above the fiction contract, and it appears in the facilitator
+guide.
+
+Write it to be read **without the title**. A blind draw shows the note while withholding the
+title, the module and the objectives, so the note has to warn without identifying the lesson: a
+learner who declines should have learned only that something distressing happens. The validator
+refuses a note that repeats a distinctive word (five letters or more) from its own title, which is
+the common way this goes wrong.
+
+Absence is not an assurance today. The catalogue has not been surveyed for distressing outcomes,
+so `npm run gate` reports how many lessons carry a note, and the facilitator guide says in as many
+words that a missing note means nobody has written one.
+
 ## Add pause points for a facilitator (optional)
 
 A scenario may declare `pausePoints`: moments where a facilitator running it with a group stops

@@ -69,6 +69,7 @@ export const SESSION_MESSAGES = {
   'rapid-cycle.offer': { class: 'interface', text: 'Rehearse one timed step up to {cap} times from {time}, at normal speed. If the window closes, you see one directive line and try again.' },
   'rapid-cycle.start': { class: 'interface', text: 'Start rapid-cycle rehearsal' },
   'rapid-cycle.evidence': { class: 'interface', text: 'In a 2024 ILCOR systematic review, rapid cycle deliberate practice shortened time to defibrillation and to epinephrine in simulated resuscitation, at very low certainty of evidence.' },
+  'briefing.content-note': { class: 'interface', text: 'Before you start' },
   'briefing.objectives': { class: 'interface', text: 'What you are here to do' },
   'briefing.patient': { class: 'interface', text: 'The patient' },
   'briefing.environment': { class: 'interface', text: 'The environment' },
