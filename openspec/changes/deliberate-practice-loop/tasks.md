@@ -48,6 +48,22 @@ its own, none changes the engine, and none produces a score.
 
 - [ ] Replay the expert fixture through the replay worker under the learner's seed, engine, and
   content version; compare against the fixture's declared tolerance and withhold on mismatch.
+  Blocked on the fixture schema, checked 2026-11-14. **No fixture declares a tolerance.** All 256
+  export one object carrying `scenarioId`, `contentVersion`, `seed`, `noAction`, `expert`,
+  `commonError` and `recovery`, and the only occurrences of the word "tolerance" anywhere in them
+  are clinical step ids - `review-heart-failure-tolerance-and-precipitant` and
+  `assess-unplanned-extubation-tolerance`. There is nothing to compare a replay against.
+  That matters more than a missing field usually would, because the tolerance is what makes this
+  task safe. The design's rule is that if the expert transcript cannot be replayed under the
+  learner's seed within the fixture's own tolerance, the overlay withholds the trace rather than
+  drawing two different patients. Without a declared tolerance there is no threshold to withhold
+  on, and an overlay that always draws is an overlay that will one day draw a second patient
+  beside the learner's and call it the expert.
+  So this needs a `replayTolerance` on the fixture - per parameter, or one bound on state
+  divergence - authored per lesson by someone who can say what counts as the same patient, before
+  any of section 2 is written. `scripts/sample-expert-vitals.ts` already replays every closed-loop
+  lesson's expert path deterministically and would give whoever authors it the numbers to choose
+  from.
 - [ ] Render both traces and action marks on the existing debrief axes; list per-objective tick
   differences and order agreement for order-sensitive actions only.
 - [ ] Offer every declared equivalent-path transcript as a selectable reference.
