@@ -1194,7 +1194,7 @@ function EmergencyMedicineScenarioIndex({ config }: { config: ClinicalModuleConf
         <p>
           {config.catalogIntroduction}
         </p>
-        <SpacedReturnSuggestion scenarios={config.scenarios} basePath={config.basePath} moduleId={config.id} />
+        <SpacedReturnSuggestion />
         <ul className="scenario-index">
           {config.scenarios.map((entry) => (
             <li key={entry.metadata.id} className="scenario-index__item">
@@ -1241,9 +1241,6 @@ function EmergencyMedicineScenarioIndex({ config }: { config: ClinicalModuleConf
  * Fifteen scenarios is a list you read, not a corpus you query. The shared index
  * below is what every other module shows, and it is what this shows now.
  */
-/** A stable list, so the suggestion's effect does not rerun on every render. */
-const SCENARIOS_FOR_RETURN = scenariosByDifficulty();
-
 export function ScenarioIndex() {
   return (
     <>
@@ -1252,7 +1249,7 @@ export function ScenarioIndex() {
         <p className="catalog-path__eyebrow">{t('route.eyebrow')}</p>
         <h1>{t('route.anesthesia-heading')}</h1>
         <p>{t('route.index-intro')}</p>
-        <SpacedReturnSuggestion scenarios={SCENARIOS_FOR_RETURN} basePath="/anesthesia" moduleId="anesthesia" />
+        <SpacedReturnSuggestion />
         <ul className="scenario-index">
           {scenariosByDifficulty().map((entry) => (
             <li key={entry.metadata.id} className="scenario-index__item">

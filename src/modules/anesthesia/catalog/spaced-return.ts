@@ -8,10 +8,13 @@
  * the suggestion says so. Of the scenarios that are due, the one with the
  * weakest latest evidence wins, and among equals the one practised longest ago.
  * At most one suggestion is ever returned, and nothing here measures competence.
+ *
+ * The ranking runs over the whole catalogue, not one module. The history is
+ * what it ranks — module, scenario, objectives, outcomes and days are all in
+ * it — and the return index is only how the winner gets its own words back.
  */
-import type { Scenario } from '../scenarios/types';
 import type { PracticeAttempt, PracticeOutcome } from './practice-history';
-import { attemptIsOf } from './practice-history';
+import type { ReturnIndexEntry } from '@platform/catalog/return-index';
 import { t, type MessageKey } from '@platform/i18n/messages';
 import { SESSION_MESSAGES } from '@platform/i18n/messages-session';
 
@@ -21,7 +24,6 @@ export const SPACED_RETURN_CONVENTION = SESSION_MESSAGES['spaced.convention'].te
 const OUTCOME_RANK: Readonly<Record<PracticeOutcome, number>> = {
   'not-met': 0, 'partly-met': 1, 'not-exercised': 2, met: 3,
 };
-
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const dayNumber = (iso: string) => Math.floor(Date.parse(`${iso.slice(0, 10)}T00:00:00.000Z`) / DAY_MS);
@@ -33,7 +35,10 @@ export function returnIntervalDays(separateDays: number): number {
 }
 
 export interface SpacedReturnSuggestion {
-  readonly scenario: Scenario;
+  readonly moduleId: string;
+  readonly scenarioId: string;
+  readonly title: string;
+  readonly estimatedMinutes: number;
   /** The objectives with the weakest latest evidence, in the scenario's own words. */
   readonly practises: readonly string[];
   readonly daysSince: number;
@@ -42,25 +47,36 @@ export interface SpacedReturnSuggestion {
 }
 
 /**
- * @param moduleId The module these scenarios belong to. An attempt from another
- *   module that happens to share a scenario id is not practice of this lesson;
- *   passing `null` falls back to matching by scenario id alone, which is what a
- *   record written before modules were recorded can support.
+ * Is this attempt practice of this lesson?
+ *
+ * The module decides it when the record names one. When it does not — a record
+ * written before the module was recorded — the objectives decide instead: an
+ * attempt that shares a scenario id with this lesson but declares none of its
+ * objectives is the other module's lesson of the same name. That reads more of
+ * an old record than the module field could, and it never reads it wrong.
+ */
+function isPracticeOf(
+  attempt: PracticeAttempt, entry: ReturnIndexEntry, declared: ReadonlySet<string>,
+): boolean {
+  if (attempt.scenarioId !== entry.scenarioId) return false;
+  if (attempt.moduleId !== null && attempt.moduleId !== entry.moduleId) return false;
+  return attempt.objectives.some((objective) => declared.has(objective.objectiveId));
+}
+
+/**
+ * At most one suggestion, ranked weakest-then-oldest across every module in the
+ * index, or nothing when no practised lesson is past its interval.
  */
 export function spacedReturnSuggestion(
   history: readonly PracticeAttempt[],
-  scenarios: readonly Scenario[],
+  index: readonly ReturnIndexEntry[],
   now: Date,
-  moduleId: string | null = null,
 ): SpacedReturnSuggestion | null {
   const today = dayNumber(now.toISOString());
-  const candidates = scenarios.flatMap((scenario) => {
-    const declared = new Set(scenario.metadata.objectives.map((objective) => objective.id));
+  const candidates = index.flatMap((entry) => {
+    const declared = new Set(entry.objectives.map((objective) => objective.id));
     const attempts = history
-      .filter((attempt) => attemptIsOf(attempt, moduleId, scenario.metadata.id)
-        // An attempt that shares this scenario's id but none of its objectives
-        // is another module's lesson, recorded before modules were recorded.
-        && attempt.objectives.some((objective) => declared.has(objective.objectiveId)))
+      .filter((attempt) => isPracticeOf(attempt, entry, declared))
       .sort((a, b) => a.completedAt.localeCompare(b.completedAt));
     if (attempts.length === 0) return [];
     const latest = new Map<string, PracticeOutcome>();
@@ -77,16 +93,19 @@ export function spacedReturnSuggestion(
     const weakest = Math.min(...[...latest.values()].map((outcome) => OUTCOME_RANK[outcome]));
     const weakOutcome = (Object.keys(OUTCOME_RANK) as PracticeOutcome[])
       .find((outcome) => OUTCOME_RANK[outcome] === weakest)!;
-    const statements = new Map(scenario.metadata.objectives.map((objective) => [objective.id, objective.statement]));
+    const statements = new Map(entry.objectives.map((objective) => [objective.id, objective.statement]));
     const practises = [...latest].filter(([, outcome]) => OUTCOME_RANK[outcome] === weakest)
       .map(([id]) => statements.get(id)).filter((statement): statement is string => statement !== undefined);
-    return [{ scenario, practises, daysSince, intervalDays, weakest, lastDay, weakOutcome }];
+    return [{ entry, practises, daysSince, intervalDays, weakest, lastDay, weakOutcome }];
   });
   candidates.sort((a, b) => a.weakest - b.weakest || a.lastDay - b.lastDay);
   const chosen = candidates[0];
   if (chosen === undefined) return null;
   return {
-    scenario: chosen.scenario,
+    moduleId: chosen.entry.moduleId,
+    scenarioId: chosen.entry.scenarioId,
+    title: chosen.entry.title,
+    estimatedMinutes: chosen.entry.estimatedMinutes,
     practises: chosen.practises,
     daysSince: chosen.daysSince,
     intervalDays: chosen.intervalDays,

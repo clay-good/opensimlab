@@ -176,7 +176,7 @@
       },
       {
         "path": "src/routes/AnesthesiaRoute.tsx",
-        "sha256": "dadd6db1b5d2386b4fdaac35e19bec724081a2ce3d55f858892617542fa67ed1"
+        "sha256": "3a0060e3850f28db8b03383695849f71d25554d1739189a3f00dcd18ab446dc3"
       },
       {
         "path": "tests/integration/demonstration-runs.test.tsx",
@@ -437,7 +437,7 @@
       },
       {
         "path": "src/routes/AnesthesiaRoute.tsx",
-        "sha256": "dadd6db1b5d2386b4fdaac35e19bec724081a2ce3d55f858892617542fa67ed1"
+        "sha256": "3a0060e3850f28db8b03383695849f71d25554d1739189a3f00dcd18ab446dc3"
       },
       {
         "path": "tests/integration/hyponatremia-correction-runs.test.ts",
@@ -706,7 +706,7 @@
       },
       {
         "path": "src/routes/AnesthesiaRoute.tsx",
-        "sha256": "dadd6db1b5d2386b4fdaac35e19bec724081a2ce3d55f858892617542fa67ed1"
+        "sha256": "3a0060e3850f28db8b03383695849f71d25554d1739189a3f00dcd18ab446dc3"
       },
       {
         "path": "tests/integration/avp-deficiency-demonstration-session.test.tsx",

@@ -120,6 +120,12 @@ contract. Review the cited evidence, distinguish authored conventions from sourc
 leave unverified work open. Whitespace-only strings technically satisfy the existing schemas'
 `minLength` rule; they are not meaningful authoring evidence.
 
+Run `npm run return-index` after changing any scenario's title, estimated duration or objective
+statements. The spaced-return suggestion ranks across every module and so needs the whole
+catalogue's own words, which `src/platform/catalog/return-index.generated.ts` carries; `npm run
+build` regenerates it and `tests/unit/return-index.test.ts` fails on a stale copy, so forgetting
+is caught rather than shipped.
+
 Run `npm run catalog`, the relevant tests, and `npm run ci` after changing records. The
 hypocalcemia records demonstrate partial publication with honest missing matrix evidence; synthetic
 all-passing validator fixtures belong only in tests. Capability, source, and review changes still

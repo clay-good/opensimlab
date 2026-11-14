@@ -124,9 +124,9 @@ its own, none changes the engine, and none produces a score.
 
 ## 5. Spaced return and progress file (curriculum requirements)
 
-- [ ] Compute weakest-then-oldest across all modules from the tutor's local evidence; one
+- [x] Compute weakest-then-oldest across all modules from the tutor's local evidence; one
   suggestion; 7-day dismissal; interval schedule 7 → 14 → 28 → 56 days labelled as convention.
-  Mostly done: `catalog/spaced-return.ts` ranks practised scenarios weakest-then-oldest among
+  `catalog/spaced-return.ts` ranks practised scenarios weakest-then-oldest among
   those past their interval (7 days after one day of practice, doubling per further separate day,
   capped at 56, labelled as a convention). Each module's index shows at most one "worth coming
   back to" suggestion with its duration, the objectives behind it, and a 7-day hide, read after
@@ -147,12 +147,25 @@ its own, none changes the engine, and none produces a score.
   so a second cannot appear unnoticed, and holds that no two lessons share a scenario AND
   objective pair, which is what lets `objectiveStatus` and the import's duplicate check stay
   module-free and so keep reading an older file without reporting every status as moved.
-  Remaining: the suggestion itself is still per module. Ranking across modules needs no catalog -
-  the history alone carries module, scenario, objectives, outcomes and days - but rendering the
-  winner needs its title and duration, and a module index holds only its own. A build-generated
-  index of all 256 titles would cost about 5 KB Brotli; carrying their objective statements too
-  costs 48 KB, which is a tenth of the precache headroom for one suggestion line. The cheap index,
-  with the objectives shown only when the winner is this module's, is the shape to build.
+  The suggestion now ranks across all sixteen modules, which is what this task asked for. The
+  ranking itself needs no catalogue: the history carries module, scenario, objectives, outcomes
+  and days, and that is everything the ordering uses. What it could not do is name a winner that
+  is not this module's, so `src/platform/catalog/return-index.generated.ts` is the smallest
+  derived view of the whole catalogue that lets any page name any lesson - module, scenario id,
+  title, duration, and each objective's statement, and none of the physiology, timeline, branches
+  or trays that make a scenario large. It is written by `npm run return-index` and held in step by
+  `tests/unit/return-index.test.ts`, so a reworded objective cannot leave the suggestion quoting
+  the old words. The panel takes no props now: it loads the index lazily, after mount, and only
+  when this device has practice to rank, so a first-time visitor never downloads it. When the
+  winner is another module's lesson the panel names that module and links into it.
+  The cost is stated rather than hidden: the index is its own chunk at 273 KB raw and 49 KB
+  Brotli, and it is precached like every other asset, because the offline promise is that every
+  scenario works offline and prerender deliberately keeps no exceptions. That took the first-visit
+  precache from 1,911 KB to 1,960.8 KB against a 2,048 KB budget - 87 KB of headroom left, down
+  from 136 KB. The encoding is already at the floor: the same data as bare JSON is 48.1 KB Brotli,
+  so there is no cheaper shape, only a smaller promise. If that headroom is needed later, the
+  lever is to drop the objective statements (5 KB Brotli without them) and show what a lesson
+  practises only when it is this module's - which costs the requirement its second clause.
 - [ ] Define the progress file schema; export with both statements; import with replace/merge and
   recomputation report. Mostly done: the practice-history export is now progress file version 3.
   It carries the not-for-clinical-use, not-clinically-reviewed, and simulated-practice-not-
