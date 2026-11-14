@@ -134,3 +134,23 @@
 - [ ] Add a "Running this in a room" page to the educator documentation describing classroom
   mode, pause points, bookmarks, the guide, and the run sheet, with the INACSL standards each
   element supports and which standards still need a human facilitator.
+  Four of the five now exist to describe: classroom mode, pause points, the facilitator guide and
+  the run sheet. Bookmarks do not (section 3).
+  The INACSL half is blocked on sourcing, and the block is worth stating because it also puts a
+  question over two lines already in the codebase. `src/platform/facilitation/guide.ts` and
+  `ui/Prebrief.tsx` both name "the INACSL Healthcare Simulation Standards of Best Practice
+  (2021)", and neither the standards nor that edition are in the sources register. Attempted to
+  add them on 2026-11-14 and could not verify to this project's own bar:
+  - Clinical Simulation in Nursing, which publishes the standards, returns 403 to an automated
+    fetch, and the journal is not indexed in PubMed - `esearch` for the standards by title in
+    that journal returns zero - so the NCBI E-utilities route the register uses for every other
+    citation does not reach them.
+  - A search surfaced 2025 articles in that journal carrying Preamble, Prebriefing, Professional
+    Integrity and Debriefing as separate standards, which suggests the 2021 edition those two
+    comments name has been superseded. That is the same failure the register already records
+    against the COA standards, where the project named a revision two behind the current one.
+  So: do not write this page's standards claims until someone with journal access can establish
+  the current edition and its composition, and add the register entry at the same time. Naming a
+  standard the project has not read is the thing this register exists to prevent, and the page is
+  worth less than the claim is worth getting wrong. The two existing comments should be corrected
+  or qualified in the same pass.
