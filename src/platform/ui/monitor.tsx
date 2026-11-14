@@ -112,6 +112,8 @@ export interface WaveformCanvasProps {
   /** Called with each measured frame time, for the budget harness. */
   readonly onFrame?: (durationMs: number) => void;
   readonly quality?: QualityLevel;
+  /** Presentation mode doubles the trace stroke for a projected display. */
+  readonly presentation?: boolean;
 }
 
 /**
@@ -120,7 +122,7 @@ export interface WaveformCanvasProps {
  * blurred (cockpit/patient-monitor → Canvas is resolution-aware).
  */
 export function WaveformCanvas({
-  tracks, blocks, reducedMotion, height, onFrame, quality,
+  tracks, blocks, reducedMotion, height, onFrame, quality, presentation = false,
 }: WaveformCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rendererRef = useRef<SweepRenderer | null>(null);
@@ -133,6 +135,10 @@ export function WaveformCanvas({
   // which changes on every render of the parent.
   const tracksRef = useRef(tracks);
   tracksRef.current = tracks;
+  // Read through a ref for the same reason as the tracks: the render loop is
+  // set up once, and toggling presentation mode must not tear it down.
+  const presentationRef = useRef(presentation);
+  presentationRef.current = presentation;
 
   // The renderer is created ONCE and then mutated in place. Re-creating it on a
   // prop change would clear the canvas and discard the pending samples, and since
@@ -158,6 +164,7 @@ export function WaveformCanvas({
       return undefined;
     }
     rendererRef.current = renderer;
+    renderer.setTraceScale(presentationRef.current ? 2 : 1);
 
     const loop = (time: number) => {
       const elapsed = lastTimeRef.current === 0 ? 16.7 : time - lastTimeRef.current;
@@ -174,6 +181,12 @@ export function WaveformCanvas({
       rendererRef.current = null;
     };
   }, []);
+
+  // Toggling presentation mode must not restart the sweep, so the scale is set
+  // on the live renderer rather than by rebuilding it.
+  useEffect(() => {
+    rendererRef.current?.setTraceScale(presentation ? 2 : 1);
+  }, [presentation]);
 
   // Track configuration, applied in place. `setTracks` restarts the sweep, so it
   // runs only when the configuration genuinely differs, not on every render.

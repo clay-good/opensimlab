@@ -10,6 +10,7 @@ const voice = { name: 'Alex', lang: 'en-US', localService: true };
 const props = (overrides: Partial<SessionPreferencesProps> = {}): SessionPreferencesProps => ({
   note: { draft: '', saved: '', onDraft: () => {}, onSave: () => {} },
   classroom: { on: false, pausePoints: 0, onChange: () => {} },
+  presentation: { on: false, onChange: () => {} },
   vibration: { on: false, supported: true, onChange: () => {} },
   narration: { settings: DEFAULT_NARRATION_SETTINGS, choice: { preferred: voice, others: [] }, voice, onChange: () => {} },
   ...overrides,

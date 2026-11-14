@@ -788,3 +788,37 @@
 @media (max-width: 400px) and (max-height: 400px) {
   .cockpit[data-demo-focus] .status-bar { gap: 0; }
 }
+
+/* Presentation mode (platform/adoption → Classroom And Lecture Use).
+   The requirement is that a vital numeric renders "at no less than the
+   equivalent of 120 px on a 1080p projection". 120/1920 is 6.25vw, so a
+   viewport-relative size satisfies it at any projection width rather than only
+   at the one the requirement names. `max()` keeps it from shrinking below the
+   ordinary 40 px size when the mode is left on at a desk.
+   The chrome recedes rather than disappearing: a facilitator still needs the
+   controls they are driving, and hiding them would break the keyboard path a
+   room full of people cannot see anyway. */
+.cockpit[data-presentation='true'] .vital-tile__value {
+  font-size: max(6.25vw, 40px);
+  line-height: 1;
+}
+
+.cockpit[data-presentation='true'] .vital-tile__label-row,
+.cockpit[data-presentation='true'] .vital-tile__unit {
+  font-size: max(1.5vw, 14px);
+}
+
+.cockpit[data-presentation='true'] .cockpit__status,
+.cockpit[data-presentation='true'] .cockpit__actions,
+.cockpit[data-presentation='true'] .cockpit__analysis {
+  opacity: 0.72;
+}
+
+.cockpit[data-presentation='true'] .cockpit__status:hover,
+.cockpit[data-presentation='true'] .cockpit__status:focus-within,
+.cockpit[data-presentation='true'] .cockpit__actions:hover,
+.cockpit[data-presentation='true'] .cockpit__actions:focus-within,
+.cockpit[data-presentation='true'] .cockpit__analysis:hover,
+.cockpit[data-presentation='true'] .cockpit__analysis:focus-within {
+  opacity: 1;
+}

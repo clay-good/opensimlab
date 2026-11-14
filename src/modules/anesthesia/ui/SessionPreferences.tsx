@@ -15,6 +15,7 @@ const SOURCES: readonly NarrationSource[] = ['beat', 'tutor', 'alarm', 'summary'
 export interface SessionPreferencesProps {
   readonly note: { readonly draft: string; readonly saved: string; readonly onDraft: (text: string) => void; readonly onSave: () => void };
   readonly classroom: { readonly on: boolean; readonly pausePoints: number; readonly onChange: (next: boolean) => void };
+  readonly presentation: { readonly on: boolean; readonly onChange: (next: boolean) => void };
   readonly vibration: { readonly on: boolean; readonly supported: boolean; readonly onChange: (next: boolean) => void };
   readonly narration: {
     readonly settings: NarrationSettings;
@@ -24,7 +25,7 @@ export interface SessionPreferencesProps {
   };
 }
 
-export function SessionPreferences({ note, classroom, vibration, narration }: SessionPreferencesProps) {
+export function SessionPreferences({ note, classroom, presentation, vibration, narration }: SessionPreferencesProps) {
   const voiceAvailable = narration.choice.preferred !== null;
   const narrating = narration.settings.enabled && voiceAvailable;
   const set = (patch: Partial<NarrationSettings>) => narration.onChange({ ...narration.settings, ...patch });
@@ -46,6 +47,9 @@ export function SessionPreferences({ note, classroom, vibration, narration }: Se
         <p className="field__hint" id="classroom-hint">
           {t(classroom.pausePoints > 0 ? 'prefs.classroom.hint' : 'prefs.classroom.hint-none')}
         </p>
+        <Toggle checked={presentation.on} describedBy="presentation-hint" onChange={presentation.onChange}
+          label={t(presentation.on ? 'prefs.presentation.on' : 'prefs.presentation.off')} />
+        <p className="field__hint" id="presentation-hint">{t('prefs.presentation.hint')}</p>
       </div>
       <div className="overflow-menu__sound">
         <Toggle checked={vibration.on && vibration.supported} disabled={!vibration.supported} describedBy="haptics-hint"

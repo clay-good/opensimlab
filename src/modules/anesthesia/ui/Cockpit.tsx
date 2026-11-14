@@ -1395,6 +1395,11 @@ export function Cockpit({
   const [noteDraft, setNoteDraft] = useState('');
   const [noteSaved, setNoteSaved] = useState('');
   const [classroom, setClassroom] = useState(false);
+  // Presentation mode is a facilitator's setting for this session only, like
+  // classroom mode and for the same reason: a projected display is a room the
+  // learner left, and it should not follow them to the next session at a desk.
+  // The two compose — neither reads the other — because a lecture is often both.
+  const [presentation, setPresentation] = useState(false);
   const guidanceBeforeClassroom = useRef<typeof session.guidance | null>(null);
   const firedPauses = useRef(new Set<string>());
   const [pausePoint, setPausePoint] = useState<ScenarioPausePoint | null>(null);
@@ -1728,6 +1733,7 @@ export function Cockpit({
       ref={cockpitRef}
       {...(demonstration.beat ? { 'data-demo-focus': demonstration.beat.focus } : {})}
       {...(pausePoint ? { 'data-pause-focus': pausePoint.region } : {})}
+      {...(presentation ? { 'data-presentation': 'true' } : {})}
     >
       <a className="skip-link" href="#monitor-region">{t('cockpit.skip')}</a>
 
@@ -1776,6 +1782,7 @@ export function Cockpit({
 
       <div className="cockpit__monitor" id="monitor-region">
         <MonitorRegion
+          presentation={presentation}
           state={displayedState}
           blocks={session.waveformBlocks}
           alarms={monitorAlarms}
@@ -2220,6 +2227,7 @@ export function Cockpit({
             }
           } }}
           classroom={{ on: classroom, pausePoints: scenario.pausePoints?.length ?? 0, onChange: toggleClassroom }}
+          presentation={{ on: presentation, onChange: setPresentation }}
           vibration={{ on: hapticsOn, supported: hapticsSupported(vibration), onChange: setHapticsOn }}
           narration={{ settings: narration, choice: voiceChoice, voice: narrationVoice, onChange: setNarration }}
         />

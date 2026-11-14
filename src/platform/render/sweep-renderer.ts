@@ -96,6 +96,15 @@ export class SweepRenderer {
   private artifactHatch: string;
   /** When true, the sweep is replaced by a stepped update for reduced motion. */
   private stepped = false;
+  /**
+   * Multiplies the trace stroke, and nothing else.
+   *
+   * Presentation mode doubles it so a trace carries to the back of a lecture
+   * hall (platform/adoption → "trace stroke width doubles"). The grid keeps its
+   * hairline deliberately: the requirement in the same sentence is that the
+   * chrome RECEDES, so thickening the rules with the signal would undo it.
+   */
+  private traceScale = 1;
   private steppedAccumulatorPx = 0;
 
   constructor(
@@ -109,6 +118,11 @@ export class SweepRenderer {
     this.background = options.background;
     this.gridColor = options.gridColor;
     this.artifactHatch = options.artifactHatch;
+  }
+
+  /** 1 for ordinary use, 2 for presentation mode. Clamped: a trace is a trace. */
+  setTraceScale(scale: number): void {
+    this.traceScale = Math.min(Math.max(scale, 1), 2);
   }
 
   /** Replace the track set; clears the canvas and restarts the sweep. */
@@ -258,7 +272,7 @@ export class SweepRenderer {
         const yHigh = this.toY(track, high);
         const yLow = this.toY(track, low);
         context.strokeStyle = track.config.color;
-        context.lineWidth = 1.5;
+        context.lineWidth = 1.5 * this.traceScale;
         context.setLineDash(track.config.dash ? [...track.config.dash] : []);
         context.beginPath();
         if (track.lastY !== null) context.moveTo(x, track.lastY);

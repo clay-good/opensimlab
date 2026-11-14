@@ -35,6 +35,8 @@ export interface MonitorRegionProps {
   readonly ventilating?: boolean;
   readonly mechanicalPulse: boolean;
   readonly reducedMotion: boolean;
+  /** Presentation mode doubles the trace stroke for a projected display. */
+  readonly presentation?: boolean;
   readonly colorblindSafe: boolean;
   readonly showLimits: boolean;
   readonly primaryTracesOnly: boolean;
@@ -113,6 +115,7 @@ export function MonitorRegion(props: MonitorRegionProps) {
             blocks={props.blocks}
             reducedMotion={props.reducedMotion}
             height={props.canvasHeight}
+            presentation={props.presentation ?? false}
             {...(props.onFrame ? { onFrame: props.onFrame } : {})}
           />
           {/* Each trace's persistent text label, so identity never rests on colour. */}

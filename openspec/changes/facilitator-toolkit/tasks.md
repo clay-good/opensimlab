@@ -90,8 +90,25 @@
 - [ ] Implement jump-to-bookmark on the rehearsal-branch mechanism with fixture transcripts;
   measure replay time on the reference device and record it.
 - [ ] Implement the transcript scrubber with keyboard operation and live-region announcement.
-- [ ] Implement presentation mode as adoption specifies (enlarged numerics, doubled stroke,
-  receded chrome) and compose it with classroom mode.
+- [x] Implement presentation mode as adoption specifies (enlarged numerics, doubled stroke,
+  receded chrome) and compose it with classroom mode. A session-only toggle in the session menu,
+  beside classroom mode and deliberately not remembered on the device for the same reason: a
+  projected display is a room the learner left, and it should not follow them to the next session
+  at a desk. The two compose because neither reads the other, which is what a lecture usually
+  needs.
+  The numerics requirement is "no less than the equivalent of 120 px on a 1080p projection", and
+  120 of 1920 is 6.25vw, so the size is written that way: it holds at any projection width rather
+  than only at the one the requirement names, with `max()` keeping it from shrinking below the
+  ordinary 40 px at a desk. The trace stroke doubles through a clamped `setTraceScale` on the
+  renderer, applied to the live renderer so toggling the mode does not restart the sweep; the grid
+  hairline deliberately does NOT scale, because the same sentence asks the chrome to recede and
+  thickening the rules with the signal would undo it. The chrome recedes to 0.72 opacity rather
+  than disappearing, and returns to full on hover or focus-within, so the control a facilitator is
+  actually driving is never the dim one.
+  `tests/unit/presentation-mode.test.ts` checks each of the three against the thing that produces
+  it, and holds that every enlarging or dimming rule is scoped to the attribute by reading each
+  rule's own selector - searching the file cannot tell a scoped descendant from an unscoped rule,
+  which is how the first version of that check passed while proving nothing.
 
 ## 4. Run sheet
 
