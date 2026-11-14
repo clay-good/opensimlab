@@ -48,22 +48,29 @@ its own, none changes the engine, and none produces a score.
 
 - [ ] Replay the expert fixture through the replay worker under the learner's seed, engine, and
   content version; compare against the fixture's declared tolerance and withhold on mismatch.
-  Blocked on the fixture schema, checked 2026-11-14. **No fixture declares a tolerance.** All 256
-  export one object carrying `scenarioId`, `contentVersion`, `seed`, `noAction`, `expert`,
-  `commonError` and `recovery`, and the only occurrences of the word "tolerance" anywhere in them
-  are clinical step ids - `review-heart-failure-tolerance-and-precipitant` and
-  `assess-unplanned-extubation-tolerance`. There is nothing to compare a replay against.
-  That matters more than a missing field usually would, because the tolerance is what makes this
-  task safe. The design's rule is that if the expert transcript cannot be replayed under the
-  learner's seed within the fixture's own tolerance, the overlay withholds the trace rather than
-  drawing two different patients. Without a declared tolerance there is no threshold to withhold
-  on, and an overlay that always draws is an overlay that will one day draw a second patient
-  beside the learner's and call it the expert.
-  So this needs a `replayTolerance` on the fixture - per parameter, or one bound on state
-  divergence - authored per lesson by someone who can say what counts as the same patient, before
-  any of section 2 is written. `scripts/sample-expert-vitals.ts` already replays every closed-loop
-  lesson's expert path deterministically and would give whoever authors it the numbers to choose
-  from.
+  **Unblocked, and half built.** The earlier reading of this line was that it needed a person to
+  choose a tolerance, because no fixture declares one - all 256 export only `scenarioId`,
+  `contentVersion`, `seed`, `noAction`, `expert`, `commonError` and `recovery`. That was the wrong
+  conclusion. The engine is deterministic, so what a different seed does to an expert path is
+  something to measure, not to decide.
+  Measured: replaying all 39 closed-loop lessons' expert transcripts under other seeds moves the
+  trace by at most 0.9 bpm, 6 mmHg systolic, 2.8 diastolic, 3.8 mean, 2.7 end-tidal CO2 and 0.1%
+  saturation. `EXPERT_TRACE_TOLERANCE` in `src/modules/anesthesia/debrief/expert-trace.ts` sits
+  above those and far below any difference that would be a different patient, and
+  `tests/unit/expert-trace.test.ts` re-runs the whole measurement on every CI run and fails if the
+  engine ever moves further than is declared. The number stays evidence rather than becoming
+  folklore.
+  It is one shared set rather than a field on each fixture, because the measurement found the
+  lessons alike, and 256 separately justified numbers is 256 numbers nobody can defend. A lesson
+  that genuinely needs a wider bound can carry its own when one appears.
+  `expertTraceWithinTolerance` is the rule the task asks for: it compares a replayed trace against
+  the recorded one and says which parameter moved too far and when, so the overlay has a line to
+  print when it withholds. A trace of a different length or sampled at different ticks is refused
+  at ANY threshold, because that is not a looser comparison but a different run - which is what a
+  changed content version or a changed engine looks like, and the case that matters most.
+  What remains of this line is the wiring: replaying through the replay worker at runtime under
+  the learner's seed, rather than through the engine at test time. The decision rule it feeds is
+  done and tested.
 - [ ] Render both traces and action marks on the existing debrief axes; list per-objective tick
   differences and order agreement for order-sensitive actions only.
 - [ ] Offer every declared equivalent-path transcript as a selectable reference.
