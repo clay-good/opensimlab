@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import {
   appendPracticeAttempt,
+  attemptIsOf,
   completedScenarioIds,
+  previousScenarioAttempt,
   importPracticeHistory,
   importProgressFile,
   objectiveStatus,
@@ -26,7 +28,8 @@ function memoryStorage(): Storage {
 }
 
 const attempt = (index = 0): PracticeAttempt => ({
-  schemaVersion: 1,
+  schemaVersion: 2,
+  moduleId: 'anesthesia',
   scenarioId: index % 2 === 0 ? 'routine-induction' : 'rapid-desaturation',
   contentVersion: '0.1.0', goalId: 'first-lab',
   completedAt: new Date(Date.UTC(2026, 7, 24, 12, 0, index)).toISOString(),
@@ -48,11 +51,65 @@ describe('bounded private practice history', () => {
 
   it('derives completed scenarios and behavior-specific changes without a score', () => {
     const first = attempt();
-    expect([...completedScenarioIds([first])]).toEqual(['routine-induction']);
+    expect([...completedScenarioIds([first], 'anesthesia')]).toEqual(['routine-induction']);
     expect(objectiveChanges(first, [{ objectiveId: 'preoxygenate', outcome: 'met' }]))
       .toEqual([{ objectiveId: 'preoxygenate', previous: 'partly-met', current: 'met' }]);
     expect(Object.keys(objectiveChanges(first, [{ objectiveId: 'preoxygenate', outcome: 'met' }])[0]!))
       .not.toContain('score');
+  });
+
+  describe('the module each attempt belongs to', () => {
+    // `status-epilepticus` is one lesson in emergency medicine and a different
+    // one in critical care. Without a module the history treated them as one.
+    const shared = (moduleId: string, objectiveId: string): PracticeAttempt => ({
+      ...attempt(), moduleId, scenarioId: 'status-epilepticus', objectives: [{ objectiveId, outcome: 'met' }],
+    });
+    const emergency = shared('emergency-medicine', 'recognize-convulsive-status-epilepticus');
+    const critical = shared('critical-care', 'recognize-refractory-status-epilepticus');
+
+    it('keeps two modules that share a scenario id apart', () => {
+      expect([...completedScenarioIds([emergency], 'critical-care')]).toEqual([]);
+      expect([...completedScenarioIds([emergency], 'emergency-medicine')]).toEqual(['status-epilepticus']);
+      expect(previousScenarioAttempt([emergency], 'critical-care', 'status-epilepticus', '0.1.0'))
+        .toBeUndefined();
+      expect(previousScenarioAttempt([emergency, critical], 'critical-care', 'status-epilepticus', '0.1.0'))
+        .toEqual(critical);
+    });
+
+    it('still matches a record written before modules were recorded', () => {
+      const legacy = { ...attempt(), moduleId: null };
+      expect(attemptIsOf(legacy, 'anesthesia', 'routine-induction')).toBe(true);
+      expect(attemptIsOf(legacy, 'cardiology', 'routine-induction')).toBe(true);
+      expect(attemptIsOf(emergency, 'cardiology', 'status-epilepticus')).toBe(false);
+    });
+
+    it('reads a version 1 record as one whose module is unknown', () => {
+      const storage = memoryStorage();
+      const { moduleId: _module, ...version1 } = attempt();
+      storage.setItem('opensimlab.practice-history', JSON.stringify([{ ...version1, schemaVersion: 1 }]));
+      expect(loadPracticeHistory(storage)).toEqual([{ ...attempt(), moduleId: null }]);
+    });
+
+    it('refuses a module that is not registered', () => {
+      const storage = memoryStorage();
+      storage.setItem('opensimlab.practice-history',
+        JSON.stringify([{ ...attempt(), moduleId: 'not-a-module' }]));
+      expect(loadPracticeHistory(storage)).toEqual([]);
+      expect(() => importPracticeHistory(JSON.stringify({
+        schemaVersion: 3, attempts: [{ ...attempt(), moduleId: '../../x', completedOn: '2026-08-24' }],
+      }), storage)).toThrow('Invalid practice history file.');
+    });
+
+    it('carries the module between devices, and reads a version 2 file without one', () => {
+      const target = memoryStorage();
+      const file = JSON.parse(practiceHistoryExport([emergency])) as { schemaVersion: number };
+      expect(file.schemaVersion).toBe(3);
+      expect(importProgressFile(practiceHistoryExport([emergency]), 'replace', target).history)
+        .toEqual([{ ...emergency, completedAt: '2026-08-24T00:00:00.000Z' }]);
+      const { moduleId: _module, completedAt: _at, schemaVersion: _version, ...rest } = emergency;
+      const version2 = JSON.stringify({ schemaVersion: 2, attempts: [{ ...rest, completedOn: '2026-08-24' }] });
+      expect(importProgressFile(version2, 'replace', target).history[0]?.moduleId).toBeNull();
+    });
   });
 
   it('round-trips an explicit export/import and rejects hostile records atomically', () => {
@@ -135,7 +192,7 @@ describe('bounded private practice history', () => {
       const storage = memoryStorage();
       const v1 = JSON.stringify({ schemaVersion: 1, attempts: [attempt(0)] });
       expect(importProgressFile(v1, 'merge', storage).history).toEqual([attempt(0)]);
-      expect(() => importProgressFile(JSON.stringify({ schemaVersion: 3, attempts: [] }), 'replace', storage))
+      expect(() => importProgressFile(JSON.stringify({ schemaVersion: 4, attempts: [] }), 'replace', storage))
         .toThrow('Invalid practice history file.');
       expect(loadPracticeHistory(storage)).toEqual([attempt(0)]);
       const badDay = JSON.stringify({ schemaVersion: 2, attempts: [{ ...attempt(0), completedOn: '2026-08-24T10:00' }] });

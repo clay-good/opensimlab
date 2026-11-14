@@ -2,15 +2,33 @@ import type { ObjectiveFinding } from '@anesthesia/debrief/analysis';
 import type { PreparationPathId } from './preparation-paths';
 import { PREPARATION_PATH_IDS } from './preparation-paths';
 import { NOT_CLINICALLY_REVIEWED, NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
+import { MODULES } from '@platform/modules/registry';
 
-export const PRACTICE_HISTORY_SCHEMA_VERSION = 1;
+export const PRACTICE_HISTORY_SCHEMA_VERSION = 2;
 export const PRACTICE_HISTORY_LIMIT = 50;
 export const PRACTICE_HISTORY_KEY = 'opensimlab.practice-history';
+
+/** Only a registered module may name itself in a record this device stores. */
+const REGISTERED_MODULE_IDS: ReadonlySet<string> = new Set(MODULES.map((module) => module.id));
 
 export type PracticeOutcome = ObjectiveFinding['outcome'];
 
 export interface PracticeAttempt {
-  readonly schemaVersion: 1;
+  readonly schemaVersion: 2;
+  /**
+   * The module whose lesson this was.
+   *
+   * Scenario ids are unique inside a module, not across the catalogue:
+   * `status-epilepticus` is one lesson in emergency medicine and a different
+   * one in critical care. Without this field an attempt names two patients, and
+   * the history treated them as one — practising either marked both complete and
+   * made both due for a spaced return.
+   *
+   * `null` means a record written before this field existed. Such a record is
+   * still matched by scenario id alone, which is exactly what it used to do, so
+   * an existing learner loses nothing on upgrade.
+   */
+  readonly moduleId: string | null;
   readonly scenarioId: string;
   readonly contentVersion: string;
   readonly goalId: PreparationPathId | null;
@@ -36,10 +54,17 @@ function validIsoTimestamp(value: unknown): value is string {
   return !Number.isNaN(timestamp) && new Date(timestamp).toISOString() === value;
 }
 
-function validAttempt(value: unknown): value is PracticeAttempt {
+/** A module field is absent (version 1), explicitly unknown, or a registered module. */
+function validModuleId(value: unknown): boolean {
+  return value === undefined || value === null
+    || (typeof value === 'string' && REGISTERED_MODULE_IDS.has(value));
+}
+
+function validAttempt(value: unknown): boolean {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
   const record = value as Record<string, unknown>;
-  return record.schemaVersion === PRACTICE_HISTORY_SCHEMA_VERSION
+  return (record.schemaVersion === 1 || record.schemaVersion === PRACTICE_HISTORY_SCHEMA_VERSION)
+    && validModuleId(record.moduleId)
     && typeof record.scenarioId === 'string' && /^[a-z0-9-]+$/.test(record.scenarioId)
     && typeof record.contentVersion === 'string' && /^\d+\.\d+\.\d+$/.test(record.contentVersion)
     && (record.goalId === null || PREPARATION_PATH_IDS.includes(record.goalId as PreparationPathId))
@@ -55,16 +80,23 @@ function validAttempt(value: unknown): value is PracticeAttempt {
     });
 }
 
+/**
+ * Read any accepted record into the current shape, dropping every field the
+ * schema does not declare. A version 1 record simply has no module.
+ */
 function normalizedAttempt(value: unknown): PracticeAttempt | undefined {
   if (!validAttempt(value)) return undefined;
+  const record = value as Omit<PracticeAttempt, 'schemaVersion' | 'moduleId'>
+    & { readonly moduleId?: string | null };
   return {
     schemaVersion: PRACTICE_HISTORY_SCHEMA_VERSION,
-    scenarioId: value.scenarioId,
-    contentVersion: value.contentVersion,
-    goalId: value.goalId,
-    completedAt: value.completedAt,
-    simulatedSeconds: value.simulatedSeconds,
-    objectives: value.objectives.map(({ objectiveId, outcome }) => ({ objectiveId, outcome })),
+    moduleId: record.moduleId ?? null,
+    scenarioId: record.scenarioId,
+    contentVersion: record.contentVersion,
+    goalId: record.goalId,
+    completedAt: record.completedAt,
+    simulatedSeconds: record.simulatedSeconds,
+    objectives: record.objectives.map(({ objectiveId, outcome }) => ({ objectiveId, outcome })),
   };
 }
 
@@ -96,17 +128,40 @@ export function appendPracticeAttempt(
   return next;
 }
 
-export function completedScenarioIds(history: readonly PracticeAttempt[]): Set<string> {
-  return new Set(history.map((attempt) => attempt.scenarioId));
+/**
+ * Does this attempt record practice of this lesson?
+ *
+ * A module-less record (version 1, or a caller that does not know its module)
+ * matches by scenario id alone. That is the pre-module behaviour, kept so an
+ * upgrade neither forgets a learner's practice nor invents a module for it.
+ */
+export function attemptIsOf(
+  attempt: PracticeAttempt,
+  moduleId: string | null,
+  scenarioId: string,
+): boolean {
+  if (attempt.scenarioId !== scenarioId) return false;
+  return moduleId === null || attempt.moduleId === null || attempt.moduleId === moduleId;
+}
+
+/** The scenarios of one module this device has practised. */
+export function completedScenarioIds(
+  history: readonly PracticeAttempt[],
+  moduleId: string | null,
+): Set<string> {
+  return new Set(history
+    .filter((attempt) => moduleId === null || attempt.moduleId === null || attempt.moduleId === moduleId)
+    .map((attempt) => attempt.scenarioId));
 }
 
 export function previousScenarioAttempt(
   history: readonly PracticeAttempt[],
+  moduleId: string | null,
   scenarioId: string,
   contentVersion: string,
 ): PracticeAttempt | undefined {
   return [...history].reverse().find((attempt) => (
-    attempt.scenarioId === scenarioId && attempt.contentVersion === contentVersion
+    attemptIsOf(attempt, moduleId, scenarioId) && attempt.contentVersion === contentVersion
   ));
 }
 
@@ -131,7 +186,10 @@ export const SIMULATED_PRACTICE_NOT_CLINICAL_TIME =
   'This file records simulated practice. It is not clinical time, a case log, or a procedure log, '
   + 'and it does not count toward any case requirement, clinical hour, or supervised experience.';
 
-export const PROGRESS_FILE_SCHEMA_VERSION = 2;
+export const PROGRESS_FILE_SCHEMA_VERSION = 3;
+
+/** Every progress-file version this build can read. */
+const READABLE_PROGRESS_FILE_VERSIONS: readonly number[] = [1, 2, PROGRESS_FILE_SCHEMA_VERSION];
 
 /** The calendar day of an attempt; the progress file carries nothing finer. */
 const dayOf = (timestamp: string) => timestamp.slice(0, 10);
@@ -139,7 +197,9 @@ const dayOf = (timestamp: string) => timestamp.slice(0, 10);
 /**
  * The progress file: the only way practice moves between devices. Version 2
  * keeps each attempt's calendar day and drops its time of day, so the file
- * cannot place a learner at a moment.
+ * cannot place a learner at a moment. Version 3 adds the module each attempt
+ * belongs to, so a scenario id that two modules share arrives on the other
+ * device as the lesson it actually was.
  */
 export function practiceHistoryExport(history: readonly PracticeAttempt[]): string {
   return `${JSON.stringify({
@@ -153,7 +213,10 @@ export function practiceHistoryExport(history: readonly PracticeAttempt[]): stri
   }, null, 2)}\n`;
 }
 
-/** Read a version 1 (full timestamp) or version 2 (calendar day) attempt. */
+/**
+ * Read a version 1 (full timestamp) or version 2/3 (calendar day) attempt. A
+ * version 2 file carries no module, which `normalizedAttempt` reads as unknown.
+ */
 function fileAttempt(value: unknown, fileVersion: number): PracticeAttempt | undefined {
   if (fileVersion === 1) return normalizedAttempt(value);
   if (!value || typeof value !== 'object' || Array.isArray(value)) return undefined;
@@ -169,20 +232,38 @@ function parseProgressFile(text: string): PracticeAttempt[] {
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('Invalid practice history file.');
   const record = value as Record<string, unknown>;
   const version = record.schemaVersion;
-  if ((version !== 1 && version !== PROGRESS_FILE_SCHEMA_VERSION) || !Array.isArray(record.attempts)
+  if (typeof version !== 'number' || !READABLE_PROGRESS_FILE_VERSIONS.includes(version)
+    || !Array.isArray(record.attempts)
     || record.attempts.length > PRACTICE_HISTORY_LIMIT) throw new Error('Invalid practice history file.');
   const imported = record.attempts.map((attempt) => fileAttempt(attempt, version));
   if (imported.some((attempt) => !attempt)) throw new Error('Invalid practice history file.');
   return imported as PracticeAttempt[];
 }
 
-/** One attempt as the progress file sees it, so a re-import does not double-count. */
+/**
+ * One attempt as the progress file sees it, so a re-import does not
+ * double-count.
+ *
+ * The module is deliberately not part of the key. A version 2 file carries no
+ * module, and including one would make every record it holds look new beside
+ * the same practice recorded here. Two different modules' attempts cannot
+ * collide on this key anyway: their objective ids differ, and
+ * `tests/unit/scenario-identity.test.ts` holds that across the whole catalogue.
+ */
 const attemptKey = (attempt: PracticeAttempt) => JSON.stringify([
   attempt.scenarioId, attempt.contentVersion, attempt.goalId, dayOf(attempt.completedAt),
   attempt.simulatedSeconds, attempt.objectives,
 ]);
 
-/** The latest recorded outcome of every scenario objective. */
+/**
+ * The latest recorded outcome of every scenario objective.
+ *
+ * Keyed by scenario and objective rather than by module: an objective id names
+ * its own lesson, and no two lessons in the catalogue share a scenario-and-
+ * objective pair even where they share a scenario id. Keying by module as well
+ * would split a version 2 file's records from this device's own and report
+ * every one of them as a status that moved.
+ */
 export function objectiveStatus(history: readonly PracticeAttempt[]): Map<string, PracticeOutcome> {
   const status = new Map<string, PracticeOutcome>();
   for (const attempt of [...history].sort((a, b) => a.completedAt.localeCompare(b.completedAt))) {

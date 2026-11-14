@@ -97,6 +97,7 @@ import type { ScenarioReplayPoint } from '@anesthesia/scenarios/types';
 import {
   appendPracticeAttempt,
   loadPracticeHistory,
+  PRACTICE_HISTORY_SCHEMA_VERSION,
   objectiveChanges,
   previousScenarioAttempt,
 } from '@anesthesia/catalog/practice-history';
@@ -212,7 +213,7 @@ export function Debrief(props: DebriefProps) {
     .map((entry) => ({ tick: entry.tick, severity: entry.severity, label: entry.message }));
   const totalTicks = props.history[props.history.length - 1]?.tick ?? 1;
   const previousAttempt = previousScenarioAttempt(
-    priorAttempts, props.scenario.metadata.id, props.scenario.metadata.version,
+    priorAttempts, props.moduleId ?? null, props.scenario.metadata.id, props.scenario.metadata.version,
   );
   const changes = objectiveChanges(previousAttempt, findings);
   const replayPoint = applicableReplayPoint(props.scenario, findings, totalTicks);
@@ -224,7 +225,8 @@ export function Debrief(props: DebriefProps) {
     if (phase !== 'summary' || historySaved.current) return;
     historySaved.current = true;
     appendPracticeAttempt({
-      schemaVersion: 1,
+      schemaVersion: PRACTICE_HISTORY_SCHEMA_VERSION,
+      moduleId: props.moduleId ?? null,
       scenarioId: props.scenario.metadata.id,
       contentVersion: props.scenario.metadata.version,
       goalId: props.nextRecommendation?.pathId ?? null,
@@ -234,7 +236,7 @@ export function Debrief(props: DebriefProps) {
         objectiveId: finding.objectiveId, outcome: finding.outcome,
       })),
     });
-  }, [phase, props.scenario.metadata.id, props.scenario.metadata.version,
+  }, [phase, props.scenario.metadata.id, props.scenario.metadata.version, props.moduleId,
     props.nextRecommendation?.pathId, props.completedAt, totalTicks, findings]);
 
   return (

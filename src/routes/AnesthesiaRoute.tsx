@@ -1037,7 +1037,7 @@ export function ClinicalModuleRoute({ path, config }: { path: string; config: Cl
     const internals = sessionInternals();
     const nextRecommendation = config.id !== 'anesthesia' || selectedGoal === 'all' ? undefined : (() => {
       const goal = preparationPath(selectedGoal);
-      const completed = completedScenarioIds(loadPracticeHistory());
+      const completed = completedScenarioIds(loadPracticeHistory(), config.id);
       completed.add(scenario.metadata.id);
       const next = recommendNextScenario(goal, scenariosByDifficulty(), completed);
       return {
@@ -1194,7 +1194,7 @@ function EmergencyMedicineScenarioIndex({ config }: { config: ClinicalModuleConf
         <p>
           {config.catalogIntroduction}
         </p>
-        <SpacedReturnSuggestion scenarios={config.scenarios} basePath={config.basePath} />
+        <SpacedReturnSuggestion scenarios={config.scenarios} basePath={config.basePath} moduleId={config.id} />
         <ul className="scenario-index">
           {config.scenarios.map((entry) => (
             <li key={entry.metadata.id} className="scenario-index__item">
@@ -1252,7 +1252,7 @@ export function ScenarioIndex() {
         <p className="catalog-path__eyebrow">{t('route.eyebrow')}</p>
         <h1>{t('route.anesthesia-heading')}</h1>
         <p>{t('route.index-intro')}</p>
-        <SpacedReturnSuggestion scenarios={SCENARIOS_FOR_RETURN} basePath="/anesthesia" />
+        <SpacedReturnSuggestion scenarios={SCENARIOS_FOR_RETURN} basePath="/anesthesia" moduleId="anesthesia" />
         <ul className="scenario-index">
           {scenariosByDifficulty().map((entry) => (
             <li key={entry.metadata.id} className="scenario-index__item">

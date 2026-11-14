@@ -130,15 +130,34 @@ its own, none changes the engine, and none produces a score.
   those past their interval (7 days after one day of practice, doubling per further separate day,
   capped at 56, labelled as a convention). Each module's index shows at most one "worth coming
   back to" suggestion with its duration, the objectives behind it, and a 7-day hide, read after
-  mount so the prerendered page still hydrates. Remaining: each module's index suggests from its
-  own scenarios only. The practice history records scenario ids without a module, so one
-  suggestion across all sixteen modules needs either a module field on each attempt or a
-  cross-module lookup on a page that can afford to load every catalog.
+  mount so the prerendered page still hydrates.
+  The module field this needed now exists, and building it found a live defect rather than only
+  an obstacle. A scenario id is unique inside its module and not across the catalogue:
+  `status-epilepticus` is one lesson in emergency medicine and a different one in critical care.
+  The history keyed practice by scenario id alone, so practising either marked both complete,
+  offered the other as a previous attempt, and made the one never opened due for a spaced return
+  with no objectives under it. Each attempt now records its `moduleId`, the progress file is
+  version 3 and carries it between devices, and `completedScenarioIds`, `previousScenarioAttempt`
+  and the suggestion all match on module and scenario together. A record written before the field
+  existed keeps `moduleId: null` and still matches by scenario id alone, so no existing learner
+  loses practice on upgrade; a version 1 or 2 progress file still imports; and an unregistered
+  module id is refused on the way in. The remaining bleed from those module-less records is closed
+  from the other side: an attempt that shares a scenario id but declares none of that lesson's own
+  objectives is not practice of it. `tests/unit/scenario-identity.test.ts` names the one shared id
+  so a second cannot appear unnoticed, and holds that no two lessons share a scenario AND
+  objective pair, which is what lets `objectiveStatus` and the import's duplicate check stay
+  module-free and so keep reading an older file without reporting every status as moved.
+  Remaining: the suggestion itself is still per module. Ranking across modules needs no catalog -
+  the history alone carries module, scenario, objectives, outcomes and days - but rendering the
+  winner needs its title and duration, and a module index holds only its own. A build-generated
+  index of all 256 titles would cost about 5 KB Brotli; carrying their objective statements too
+  costs 48 KB, which is a tenth of the precache headroom for one suggestion line. The cheap index,
+  with the objectives shown only when the winner is this module's, is the shape to build.
 - [ ] Define the progress file schema; export with both statements; import with replace/merge and
-  recomputation report. Mostly done: the practice-history export is now progress file version 2.
+  recomputation report. Mostly done: the practice-history export is now progress file version 3.
   It carries the not-for-clinical-use, not-clinically-reviewed, and simulated-practice-not-
-  clinical-time statements and each attempt's calendar day instead of its timestamp. Version 1
-  files still import. `/privacy` offers merge (duplicates skipped) or replace (confirmed), and
+  clinical-time statements, each attempt's calendar day instead of its timestamp, and
+  the module the lesson belongs to. Version 1 and version 2 files still import. `/privacy` offers merge (duplicates skipped) or replace (confirmed), and
   reports what it added and every objective whose latest status moved, from what to what.
   Remaining: the file does not yet carry goal-suggestion dismissals or reasoning notes. The notes
   do not exist yet, and the dismissals live in their own store.

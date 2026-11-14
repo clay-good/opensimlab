@@ -18,17 +18,19 @@ const defaultNow = () => new Date().getTime();
  * Read after mount, never during render: the index is prerendered and hydrated,
  * and local practice history exists only in this browser.
  */
-export function SpacedReturnSuggestion({ scenarios, basePath, now = defaultNow }: {
+export function SpacedReturnSuggestion({ scenarios, basePath, moduleId, now = defaultNow }: {
   readonly scenarios: readonly Scenario[];
   readonly basePath: string;
+  /** The module these scenarios belong to; another module's practice is not this lesson's. */
+  readonly moduleId: string;
   readonly now?: () => number;
 }) {
   const [suggestion, setSuggestion] = useState<Suggestion | null>(null);
   useEffect(() => {
     const at = now();
     if (spacedReturnDismissed(at)) return;
-    setSuggestion(spacedReturnSuggestion(loadPracticeHistory(), scenarios, new Date(at)));
-  }, [scenarios, now]);
+    setSuggestion(spacedReturnSuggestion(loadPracticeHistory(), scenarios, new Date(at), moduleId));
+  }, [scenarios, moduleId, now]);
   if (suggestion === null) return null;
   const { scenario } = suggestion;
   return (

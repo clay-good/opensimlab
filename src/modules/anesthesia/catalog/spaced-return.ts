@@ -11,6 +11,7 @@
  */
 import type { Scenario } from '../scenarios/types';
 import type { PracticeAttempt, PracticeOutcome } from './practice-history';
+import { attemptIsOf } from './practice-history';
 import { t, type MessageKey } from '@platform/i18n/messages';
 import { SESSION_MESSAGES } from '@platform/i18n/messages-session';
 
@@ -40,20 +41,33 @@ export interface SpacedReturnSuggestion {
   readonly reason: string;
 }
 
+/**
+ * @param moduleId The module these scenarios belong to. An attempt from another
+ *   module that happens to share a scenario id is not practice of this lesson;
+ *   passing `null` falls back to matching by scenario id alone, which is what a
+ *   record written before modules were recorded can support.
+ */
 export function spacedReturnSuggestion(
   history: readonly PracticeAttempt[],
   scenarios: readonly Scenario[],
   now: Date,
+  moduleId: string | null = null,
 ): SpacedReturnSuggestion | null {
   const today = dayNumber(now.toISOString());
   const candidates = scenarios.flatMap((scenario) => {
+    const declared = new Set(scenario.metadata.objectives.map((objective) => objective.id));
     const attempts = history
-      .filter((attempt) => attempt.scenarioId === scenario.metadata.id)
+      .filter((attempt) => attemptIsOf(attempt, moduleId, scenario.metadata.id)
+        // An attempt that shares this scenario's id but none of its objectives
+        // is another module's lesson, recorded before modules were recorded.
+        && attempt.objectives.some((objective) => declared.has(objective.objectiveId)))
       .sort((a, b) => a.completedAt.localeCompare(b.completedAt));
     if (attempts.length === 0) return [];
     const latest = new Map<string, PracticeOutcome>();
     for (const attempt of attempts) {
-      for (const { objectiveId, outcome } of attempt.objectives) latest.set(objectiveId, outcome);
+      for (const { objectiveId, outcome } of attempt.objectives) {
+        if (declared.has(objectiveId)) latest.set(objectiveId, outcome);
+      }
     }
     const days = new Set(attempts.map((attempt) => dayNumber(attempt.completedAt)));
     const lastDay = Math.max(...days);

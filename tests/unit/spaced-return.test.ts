@@ -3,6 +3,8 @@ import { act, createElement } from 'react';
 import { createRoot } from 'react-dom/client';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { SCENARIOS } from '@anesthesia/scenarios';
+import { EMERGENCY_MEDICINE_SCENARIOS } from '../../src/modules/emergency-medicine/scenarios';
+import { CRITICAL_CARE_SCENARIOS } from '../../src/modules/critical-care/scenarios';
 import type { PracticeAttempt, PracticeOutcome } from '@anesthesia/catalog/practice-history';
 import {
   dismissSpacedReturn, returnIntervalDays, spacedReturnDismissed, spacedReturnSuggestion,
@@ -13,7 +15,8 @@ import { SpacedReturnSuggestion } from '@anesthesia/ui/SpacedReturnSuggestion';
 const [first, second, third] = SCENARIOS;
 const day = (n: number) => new Date(Date.UTC(2026, 8, 1 + n, 15, 0)).toISOString();
 const attempt = (scenario = first!, onDay = 0, outcome: PracticeOutcome = 'partly-met'): PracticeAttempt => ({
-  schemaVersion: 1, scenarioId: scenario.metadata.id, contentVersion: scenario.metadata.version,
+  schemaVersion: 2, moduleId: 'anesthesia', scenarioId: scenario.metadata.id,
+  contentVersion: scenario.metadata.version,
   goalId: null, completedAt: day(onDay), simulatedSeconds: 300,
   objectives: scenario.metadata.objectives.map((objective, index) => ({
     objectiveId: objective.id, outcome: index === 0 ? outcome : 'met',
@@ -67,6 +70,25 @@ describe('spaced return to weak areas', () => {
     expect(spacedReturnSuggestion([], SCENARIOS, new Date(day(30)))).toBeNull();
   });
 
+  it('does not make another module\'s lesson due because it shares a scenario id', () => {
+    const [emergency] = EMERGENCY_MEDICINE_SCENARIOS.filter((s) => s.metadata.id === 'status-epilepticus');
+    const [critical] = CRITICAL_CARE_SCENARIOS.filter((s) => s.metadata.id === 'status-epilepticus');
+    expect([emergency, critical].every(Boolean)).toBe(true);
+    const practised = { ...attempt(emergency!, 0, 'not-met'), moduleId: 'emergency-medicine' };
+    expect(spacedReturnSuggestion([practised], [critical!], new Date(day(30)), 'critical-care')).toBeNull();
+    expect(spacedReturnSuggestion([practised], [emergency!], new Date(day(30)), 'emergency-medicine'))
+      .not.toBeNull();
+  });
+
+  it('ignores a module-less record whose objectives belong to a different lesson', () => {
+    const [emergency] = EMERGENCY_MEDICINE_SCENARIOS.filter((s) => s.metadata.id === 'status-epilepticus');
+    const [critical] = CRITICAL_CARE_SCENARIOS.filter((s) => s.metadata.id === 'status-epilepticus');
+    const legacy = { ...attempt(emergency!, 0, 'not-met'), moduleId: null };
+    expect(spacedReturnSuggestion([legacy], [critical!], new Date(day(30)), 'critical-care')).toBeNull();
+    expect(spacedReturnSuggestion([legacy], [emergency!], new Date(day(30)), 'emergency-medicine'))
+      .not.toBeNull();
+  });
+
   it('respects a 7-day dismissal', () => {
     const storage = memoryStorage();
     const now = Date.parse(day(10));
@@ -94,7 +116,7 @@ describe('the suggestion panel', () => {
     document.body.appendChild(container);
     const root = createRoot(container);
     const now = () => Date.parse(day(21));
-    act(() => root.render(createElement(SpacedReturnSuggestion, { scenarios: SCENARIOS, basePath: '/anesthesia', now })));
+    act(() => root.render(createElement(SpacedReturnSuggestion, { scenarios: SCENARIOS, basePath: '/anesthesia', moduleId: 'anesthesia', now })));
     expect(container.textContent).toContain(first!.metadata.title);
     expect(container.textContent).toContain(`about ${first!.metadata.estimatedMinutes} simulated minutes`);
     expect(container.textContent).toContain(SPACED_RETURN_CONVENTION);

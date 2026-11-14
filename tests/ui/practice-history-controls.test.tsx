@@ -34,7 +34,7 @@ describe('private practice history controls', () => {
     document.body.appendChild(container);
     const root = createRoot(container);
     act(() => root.render(createElement(DocumentRoute, { path: '/privacy' })));
-    const attempt: PracticeAttempt = { schemaVersion: 1, scenarioId: 'routine-induction',
+    const attempt: PracticeAttempt = { schemaVersion: 2, moduleId: 'anesthesia', scenarioId: 'routine-induction',
       contentVersion: '0.1.0', goalId: null, completedAt: '2026-09-03T09:30:00.000Z',
       simulatedSeconds: 120, objectives: [{ objectiveId: 'preoxygenate', outcome: 'met' }] };
     const textarea = container.querySelector<HTMLTextAreaElement>('#practice-history-import')!;
