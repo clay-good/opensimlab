@@ -7,9 +7,20 @@
   renders 13 sections in the design's order; nine fill from fields every scenario has. Framework
   mapping fills for the 39 anesthesia scenarios from `curriculum/mapping.ts`, with the mapping
   disclaimer, and is absent for the 217 scenarios in modules with no mapping yet (the
-  framework-mapping-expansion change adds them). Three are absent everywhere, each with its reason
-  on the page: expected actions and common error and recovery (not yet read from the fixtures),
-  and pause points (no such field yet). Timeline entries show ticks as recorded rather
+  framework-mapping-expansion change adds them). Pause points now have a field and two lessons
+  declare them, and a content note is its own section (nine lessons carry one). Expected actions
+  and common error and recovery are still absent everywhere, and the reason is more specific than
+  "not yet read from the fixtures": the fixtures are not one shape. Fifteen modules export a
+  single `*_FIXTURES` object of `[tick, actionId]` tuples keyed `expert`, `commonError` and
+  `recovery`; anaesthesia exports several named `readonly LearnerAction[]` constants of
+  `{ tick, type, payload }`. Filling the two sections therefore means normalising two
+  representations into one guide-facing row, deciding how a payload reads to a facilitator (a
+  dose is authored scenario data, so the guide may print it, but a tray step id and an engine
+  action type do not read alike), and generating the aggregation, because a 256-file glob is not
+  available to the prerender step, which runs under tsx rather than Vite. The data is large
+  enough to need its own chunk kept out of the first visit; the mechanism for that now exists
+  (`FIRST_VISIT_PRECACHE_EXCLUSIONS`), and guides are noindex so none of it is precached as a
+  document either. Timeline entries show ticks as recorded rather
   than clock time, because tick length differs by module timescale.
 - [x] Prerender `/<module>/scenario/<id>/facilitator` with print styles and `noindex`; link from
   the briefing's educator disclosure and the educator pages. Served at
