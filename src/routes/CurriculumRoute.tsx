@@ -28,6 +28,10 @@ import { PEDIATRICS_SCENARIOS } from '../modules/pediatrics/scenarios';
 import {
   PEDIATRICS_FRAMEWORKS, PEDIATRICS_SCENARIO_MAPPINGS,
 } from '../modules/pediatrics/curriculum';
+import { NEUROLOGY_SCENARIOS } from '../modules/neurology/scenarios';
+import {
+  NEUROLOGY_FRAMEWORKS, NEUROLOGY_SCENARIO_MAPPINGS,
+} from '../modules/neurology/curriculum';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { t } from '@platform/i18n/messages';
 import '@platform/i18n/messages-educator';
@@ -49,6 +53,13 @@ const MAPPED_MODULES: readonly CurriculumModule[] = [
     frameworks: PEDIATRICS_FRAMEWORKS,
     scenarios: PEDIATRICS_SCENARIOS,
     mappings: PEDIATRICS_SCENARIO_MAPPINGS,
+  },
+  {
+    moduleRoute: 'neurology',
+    displayName: 'Neurology',
+    frameworks: NEUROLOGY_FRAMEWORKS,
+    scenarios: NEUROLOGY_SCENARIOS,
+    mappings: NEUROLOGY_SCENARIO_MAPPINGS,
   },
 ];
 

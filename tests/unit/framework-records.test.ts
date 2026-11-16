@@ -61,6 +61,7 @@ describe('framework records', () => {
     'ncsbn-ncjmm': 'ncsbn-nclex-rn-test-plan-2026',
     'acgme-emergency-medicine': 'acgme-emergency-medicine-milestones',
     'acgme-pediatrics': 'acgme-pediatrics-milestones',
+    'acgme-neurology': 'acgme-neurology-milestones',
   };
 
   it('registers every framework reading as a source, checked no earlier than the reading', () => {

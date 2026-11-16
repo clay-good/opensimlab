@@ -1614,6 +1614,31 @@ export const SOURCES: readonly Source[] = [
     currency: { lastAmended: '2021-03-01', checkedAt: '2026-11-16' },
   },
   {
+    id: 'acgme-neurology-milestones',
+    authors: 'Accreditation Council for Graduate Medical Education',
+    title: 'Neurology Milestones',
+    publication: 'Accreditation Council for Graduate Medical Education',
+    year: 2020,
+    locator: 'Version 2.1; second revision December 2020, implementation 1 July 2021. '
+      + 'Subcompetency headings of the ACGME Report Worksheet',
+    usedFor: 'The twenty-seven subcompetency titles the neurology module\u2019s fifteen lessons are '
+      + 'mapped against, one reading per objective. Titles are the ACGME\u2019s own; the '
+      + 'descriptions beneath them are this project\u2019s summary.',
+    verifiedAgainst: 'The document itself, retrieved from the locator above and read page by '
+      + 'page. It carries the same scope statement and educational-use permission as the other '
+      + 'two ACGME readings, and the copyright year on it is 2020 rather than 2021 - the '
+      + 'implementation date - which is why the record\u2019s year and its version line differ. '
+      + 'The division is the finest of the three: twenty-seven subcompetencies, with '
+      + 'neuroimaging, EEG, nerve conduction and the lumbar puncture given one each, and '
+      + 'management split between outpatient, inpatient and emergencies. That shaped the mapping '
+      + 'rather than only the record: a procedure subcompetency is claimed only where an '
+      + 'objective names the procedure, and no lesson claims outpatient management, because all '
+      + 'fifteen are declared ward lessons. The five level descriptors are omitted as in the '
+      + 'other two readings.',
+    verifiedOn: '2026-11-16',
+    currency: { lastAmended: '2020-12-01', checkedAt: '2026-11-16' },
+  },
+  {
     id: 'nbcrna-nce-content-outline',
     authors: 'National Board of Certification and Recertification for Nurse Anesthetists',
     title: 'National Certification Examination content outline',
