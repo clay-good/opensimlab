@@ -45,3 +45,38 @@ export const useReasoningNotes = create<ReasoningNotesState>((set) => ({
 export function actionAtNote<A extends { readonly tick: number }>(note: ReasoningNote, actions: readonly A[]): A | undefined {
   return [...actions].filter((action) => action.tick <= note.tick).sort((a, b) => b.tick - a.tick)[0];
 }
+
+/**
+ * The one file a learner's notes may leave the device in, and its shape.
+ *
+ * Notes are not in the transcript and cannot be: the transcript's hash is what
+ * makes a session replayable, and `tests/unit/reasoning-notes.test.ts` holds
+ * that nothing a learner wrote reaches it, the reporting package, or the report
+ * context. So the export that carries them WRAPS the transcript rather than
+ * extending it. The transcript object inside is the same object the plain
+ * export writes, byte for byte, which is what keeps that file the one an
+ * instructor opens and this one additional.
+ *
+ * It is written only after the learner has read, in a preview, every word that
+ * would be in it. Notes are free text they wrote in the moment, and a learner
+ * may have typed a real name into one; nothing here can detect that, so the
+ * only honest control is showing them the file before it exists.
+ */
+export const SESSION_WITH_NOTES_KIND = 'opensimlab.session-with-reasoning-notes.v1';
+
+export interface SessionWithNotes<T> {
+  readonly kind: typeof SESSION_WITH_NOTES_KIND;
+  /** Exactly the transcript the plain export writes, unchanged. */
+  readonly transcript: T;
+  readonly reasoningNotes: readonly ReasoningNote[];
+}
+
+export function sessionWithNotes<T>(
+  transcript: T, notes: readonly ReasoningNote[],
+): SessionWithNotes<T> {
+  return {
+    kind: SESSION_WITH_NOTES_KIND,
+    transcript,
+    reasoningNotes: [...notes].sort((a, b) => a.tick - b.tick),
+  };
+}

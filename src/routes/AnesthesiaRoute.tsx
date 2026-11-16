@@ -12,7 +12,7 @@ import {
   attributionAfter, useSession, sessionInternals, type GuidanceLevel, type SessionState,
 } from '@platform/session/session-store';
 import { NotForClinicalUseGate, hasAcknowledged, recordAcknowledgement } from '@platform/safety/not-for-clinical-use';
-import { useReasoningNotes } from '@platform/session/reasoning-notes';
+import { sessionWithNotes, useReasoningNotes } from '@platform/session/reasoning-notes';
 import { rapidCycleStatus } from '@anesthesia/catalog/rapid-cycle';
 import type { ScenarioRapidCycle } from '@anesthesia/scenarios/types';
 import { SonificationEngine } from '@platform/audio/sonification';
@@ -1002,18 +1002,37 @@ export function ClinicalModuleRoute({ path, config }: { path: string; config: Cl
     session.play();
   }, [session, scenario.metadata.id]);
 
+  const writeJson = (name: string, body: unknown) => {
+    const blob = new Blob([JSON.stringify(body, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = name;
+    anchor.click();
+    URL.revokeObjectURL(url);
+  };
+
   const exportTranscript = useCallback(async () => {
     const transcript = await session.exportTranscript();
     // Nothing identifying may leave the device, so the export is checked first.
     assertTranscriptIsAnonymous(transcript);
-    const blob = new Blob([JSON.stringify(transcript, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement('a');
-    anchor.href = url;
-    anchor.download = `opensimlab-${transcript.scenarioId}-transcript.json`;
-    anchor.click();
-    URL.revokeObjectURL(url);
+    writeJson(`opensimlab-${transcript.scenarioId}-transcript.json`, transcript);
   }, [session]);
+
+  /**
+   * The same session with the learner's own notes beside it, written only after
+   * the debrief has shown them every word it would contain. The transcript
+   * inside is the one above, unchanged: the notes wrap it rather than join it,
+   * so the file an instructor opens stays the file an instructor opens.
+   */
+  const exportWithNotes = useCallback(async () => {
+    const transcript = await session.exportTranscript();
+    assertTranscriptIsAnonymous(transcript);
+    writeJson(
+      `opensimlab-${transcript.scenarioId}-session-with-notes.json`,
+      sessionWithNotes(transcript, reasoningNotes),
+    );
+  }, [session, reasoningNotes]);
 
   // Browsing the catalog is not simulator interaction. Let a learner understand
   // what exists before asking for the safety acknowledgement.
@@ -1073,6 +1092,7 @@ export function ClinicalModuleRoute({ path, config }: { path: string; config: Cl
         moduleId={config.id}
         onOpenExplainer={() => { /* the debrief opens explainers inline */ }}
         onExportTranscript={() => { void exportTranscript(); }}
+        onExportWithNotes={() => { void exportWithNotes(); }}
         onReplayScenario={session.resetSession}
         onReplayDecisionPoint={(point) => session.rehearseFromDecisionPoint(point.id, point.atTick)}
         guidance={session.guidance}

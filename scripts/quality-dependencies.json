@@ -28,7 +28,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
-        "sha256": "0b42f0149c596b208c5a0df670d1e5724676d3e38f7d343fa7068f8062a61f63"
+        "sha256": "32c059ebc4d0a400dc4c5a988461d505427836310ac7deae65b419241e1270c0"
       },
       {
         "path": "src/modules/endocrine-metabolic/HypocalcemiaTray.tsx",
@@ -176,7 +176,7 @@
       },
       {
         "path": "src/routes/AnesthesiaRoute.tsx",
-        "sha256": "91f624ad56358d7a2e9258a0163a888d346fd7ddeee9bb66a01bc794af6cdbdc"
+        "sha256": "b67976a02c6ab88311de29e5f650e5ae943391de22033c4239c1f67053316340"
       },
       {
         "path": "tests/integration/demonstration-runs.test.tsx",
@@ -253,7 +253,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
-        "sha256": "0b42f0149c596b208c5a0df670d1e5724676d3e38f7d343fa7068f8062a61f63"
+        "sha256": "32c059ebc4d0a400dc4c5a988461d505427836310ac7deae65b419241e1270c0"
       },
       {
         "path": "src/modules/anesthesia/ui/Prebrief.tsx",
@@ -437,7 +437,7 @@
       },
       {
         "path": "src/routes/AnesthesiaRoute.tsx",
-        "sha256": "91f624ad56358d7a2e9258a0163a888d346fd7ddeee9bb66a01bc794af6cdbdc"
+        "sha256": "b67976a02c6ab88311de29e5f650e5ae943391de22033c4239c1f67053316340"
       },
       {
         "path": "tests/integration/hyponatremia-correction-runs.test.ts",
@@ -518,7 +518,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
-        "sha256": "0b42f0149c596b208c5a0df670d1e5724676d3e38f7d343fa7068f8062a61f63"
+        "sha256": "32c059ebc4d0a400dc4c5a988461d505427836310ac7deae65b419241e1270c0"
       },
       {
         "path": "src/modules/anesthesia/ui/DemonstrationBar.tsx",
@@ -706,7 +706,7 @@
       },
       {
         "path": "src/routes/AnesthesiaRoute.tsx",
-        "sha256": "91f624ad56358d7a2e9258a0163a888d346fd7ddeee9bb66a01bc794af6cdbdc"
+        "sha256": "b67976a02c6ab88311de29e5f650e5ae943391de22033c4239c1f67053316340"
       },
       {
         "path": "tests/integration/avp-deficiency-demonstration-session.test.tsx",

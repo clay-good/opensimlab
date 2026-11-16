@@ -12,7 +12,7 @@ import '@platform/i18n/messages-session';
 import type { ScenarioRapidCycle } from '@anesthesia/scenarios/types';
 import { NcjmmCoverageList } from './NcjmmCoverageList';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Badge, Button, CitationLink, Panel } from '@platform/ui';
+import { Badge, Button, CitationLink, Modal, Panel } from '@platform/ui';
 import { TranscriptScrubber } from './TranscriptScrubber';
 import { Timeline } from '@platform/ui';
 import { formatElapsed, TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
@@ -126,6 +126,13 @@ export interface DebriefProps {
   readonly preoxygenationSeconds: number;
   readonly onOpenExplainer: (id: string) => void;
   readonly onExportTranscript: () => void;
+  /**
+   * Write the session with the learner's own notes in it. Offered only when
+   * there are notes, and only behind the preview below: these are words the
+   * learner wrote in the moment, and nothing here can tell whether one of them
+   * names somebody.
+   */
+  readonly onExportWithNotes?: () => void;
   readonly onReplayScenario: () => void;
   readonly onReplayDecisionPoint?: (point: ScenarioReplayPoint) => void;
   readonly nextRecommendation?: GoalRecommendationProps;
@@ -152,6 +159,7 @@ export function analysisIssue(episodes: readonly Episode[]): string {
 export function Debrief(props: DebriefProps) {
   const [phase, setPhase] = useState<PearlsPhase>('reactions');
   const [account, setAccount] = useState('');
+  const [notesPreviewOpen, setNotesPreviewOpen] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   // Where the reader is looking in the completed run. A mark on the timeline
   // and the scrubber set the same cursor, so clicking an alarm and then
@@ -522,7 +530,37 @@ export function Debrief(props: DebriefProps) {
           <div className="phase-nav">
             <Button onClick={props.onReplayScenario}>{t('debrief.run-again')}</Button>
             <Button onClick={props.onExportTranscript}>{t('debrief.export')}</Button>
+            {(props.reasoningNotes?.length ?? 0) > 0 && props.onExportWithNotes && (
+              <Button onClick={() => setNotesPreviewOpen(true)}>{t('debrief.export-notes')}</Button>
+            )}
           </div>
+
+          <Modal
+            open={notesPreviewOpen}
+            title={t('debrief.export-notes-title')}
+            onClose={() => setNotesPreviewOpen(false)}
+            footer={(
+              <>
+                <Button onClick={() => setNotesPreviewOpen(false)}>{t('debrief.export-notes-cancel')}</Button>
+                <Button
+                  variant="primary"
+                  onClick={() => { setNotesPreviewOpen(false); props.onExportWithNotes?.(); }}
+                >
+                  {t('debrief.export-notes-confirm')}
+                </Button>
+              </>
+            )}
+          >
+            <p>{t('debrief.export-notes-intro')}</p>
+            <ul>
+              {(props.reasoningNotes ?? []).map((note) => (
+                <li key={`${note.tick}-${note.text}`}>
+                  <span className="numeric">{formatElapsed(note.tick)}</span> — {note.text}
+                </li>
+              ))}
+            </ul>
+            <p className="reading__aside">{t('debrief.export-notes-warning')}</p>
+          </Modal>
 
           <h3>{t('debrief.about')}</h3>
           <p className="reading__aside">{PEARLS_CITATION}</p>
