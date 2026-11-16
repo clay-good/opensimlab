@@ -123,9 +123,22 @@
 - [x] List overdue framework records on the governance dashboard with overdue guidelines. A
   "Framework readings" section on `/governance` lists every reading with its re-check date and
   counts the overdue ones, dated by the build so the prerendered page and the client agree.
-- [ ] Document each framework's source and date checked in the sources register. Done for the
-  three frameworks that exist: the COA standards, the ACGME anaesthesiology milestones and the
-  NBCRNA outline each carry an entry with what the citation was checked against and when. Each
-  further reading brings its own entry with it, and the entry is written when the reading ships,
-  not before: a register entry whose `usedFor` describes a framework nothing uses is itself a
-  false claim.
+- [x] Document each framework's source and date checked in the sources register. All five readings
+  now carry an entry: the COA standards, the ACGME anaesthesiology milestones, the NBCRNA outline,
+  the AAMC Core EPAs, and - new here - the 2026 NCLEX-RN Test Plan behind the NCSBN clinical
+  judgment reading. That last one is why this line is no longer "done for the frameworks that
+  exist": the nursing mapping shipped, the blueprint filter started citing it, and nothing noticed
+  the register had no entry for it. The rule that an entry ships with its reading only works if
+  something checks, so `tests/unit/framework-records.test.ts` now pairs every reading with its
+  register id, exhaustively in both directions, and fails if a reading is uncited or an entry
+  outlives its reading.
+  The document was read rather than recalled, and reading it found three things:
+  - Its permission statement allows a nonprofit educational reproduction and requires material
+    incorporating one to carry "Portions copyrighted by the National Council of State Boards of
+    Nursing, Inc. All rights reserved." This project reproduces the six step names verbatim, so
+    the record now carries that credit and a test holds it there.
+  - The document never writes "Clinical Judgment Measurement Model" or "layer". That designation
+    comes from NCSBN's own model publications, which this reading does not cite, so the register
+    says the step names are sourced and the layer-3 label is not.
+  - It presents clinical judgment as one of six integrated processes rather than as a scoring
+    scheme, which is the framing the mapping surfaces already keep.

@@ -26,7 +26,8 @@ export const NCSBN_NCJMM: FrameworkRecord = {
   fidelity: 'verbatim',
   note: 'Step names as listed under "Clinical Judgment" in the 2026 NCLEX-RN Test Plan (PDF page 8). '
     + 'Descriptions are this project\'s summary. Mapping these lessons to the model is this project\'s '
-    + 'reading; NCSBN has not reviewed or endorsed it, and it says nothing about examination readiness.',
+    + 'reading; NCSBN has not reviewed or endorsed it, and it says nothing about examination readiness. '
+    + 'Portions copyrighted by the National Council of State Boards of Nursing, Inc. All rights reserved.',
   recordedOn: '2026-10-19',
   reviewBy: '2028-10-19',
   domains: [

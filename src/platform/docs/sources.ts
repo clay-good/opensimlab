@@ -1505,6 +1505,34 @@ export const SOURCES: readonly Source[] = [
     currency: { lastAmended: '2017-01-01', checkedAt: '2026-11-14' },
   },
   {
+    id: 'ncsbn-nclex-rn-test-plan-2026',
+    authors: 'National Council of State Boards of Nursing',
+    title: '2026 NCLEX-RN Test Plan',
+    publication: 'National Council of State Boards of Nursing',
+    year: 2026,
+    locator: 'Effective April 2026. Clinical Judgment, printed page 4 (PDF page 8)',
+    usedFor: 'The six clinical judgment step names the nursing module maps every objective to, '
+      + 'and the reading a learner selects on the "preparing for" page. The step names are '
+      + 'NCSBN\u2019s own; every description beneath them is this project\u2019s wording.',
+    verifiedAgainst: 'The document itself, retrieved from the locator the record cites and read '
+      + 'page by page. The cover gives the title and "Effective April 2026"; the copyright page '
+      + 'gives \u00a9 2026 NCSBN and the suggested citation used above; printed page 4 lists all '
+      + 'six steps under the heading Clinical Judgment, in the sentence case the mapping copies. '
+      + 'Three things were found by reading rather than assumed. The permission statement allows '
+      + 'nonprofit education programs to reproduce part of the document for educational purposes, '
+      + 'prohibits commercial or for-profit use, and requires any reproduction incorporated in '
+      + 'other material to carry the credit "Portions copyrighted by the National Council of '
+      + 'State Boards of Nursing, Inc. All rights reserved." - which the framework record now '
+      + 'carries, because it reproduces the six names verbatim. The document never uses the '
+      + 'phrase "Clinical Judgment Measurement Model" or the word "layer": that designation comes '
+      + 'from NCSBN\u2019s own model publications, which this reading does not cite, so the step '
+      + 'names are sourced here and the layer-3 label is not. And the plan describes clinical '
+      + 'judgment as one of six integrated processes rather than as a scoring scheme, which is '
+      + 'the framing the mapping surfaces already keep.',
+    verifiedOn: '2026-11-16',
+    currency: { lastAmended: '2026-04-01', checkedAt: '2026-11-16' },
+  },
+  {
     id: 'coa-practice-doctorate-standards',
     authors: 'Council on Accreditation of Nurse Anesthesia Educational Programs',
     title: 'Standards for Accreditation of Nurse Anesthesia Programs — Practice Doctorate',

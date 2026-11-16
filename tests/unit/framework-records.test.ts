@@ -3,6 +3,8 @@ import { createElement } from 'react';
 import { describe, expect, it } from 'vitest';
 import { DocumentRoute } from '@routes/DocumentRoute';
 import { FRAMEWORKS } from '@anesthesia/curriculum/frameworks';
+import { NCSBN_NCJMM } from '../../src/modules/medical-surgical-nursing/curriculum';
+import { SOURCES } from '@platform/docs/sources';
 import { mappingCsv } from '@anesthesia/curriculum/mapping';
 import {
   frameworkRecordProblems, latestReviewBy, overdueFrameworks, type FrameworkRecord,
@@ -41,6 +43,44 @@ describe('framework records', () => {
     const markup = renderToStaticMarkup(createElement(DocumentRoute, { path: '/governance' }));
     expect(markup).toContain('Framework readings');
     for (const framework of FRAMEWORKS) expect(markup).toContain(framework.reviewBy);
+  });
+
+  /**
+   * A reading names a published document to an educator, and the register is
+   * where this project records what that document actually said and when
+   * somebody looked. The NCSBN reading shipped without an entry and nothing
+   * noticed, which is what this pairing exists to stop: the map is exhaustive
+   * in both directions, so a new reading cannot ship uncited and an entry
+   * cannot outlive the reading it supports.
+   */
+  const REGISTERED: Readonly<Record<string, string>> = {
+    'nbcrna-nce': 'nbcrna-nce-content-outline',
+    'coa-standards': 'coa-practice-doctorate-standards',
+    'acgme-anesthesiology-milestones-2': 'acgme-anesthesiology-milestones-2',
+    'aamc-core-epas': 'aamc-core-epas-toolkits',
+    'ncsbn-ncjmm': 'ncsbn-nclex-rn-test-plan-2026',
+  };
+
+  it('registers every framework reading as a source, checked no earlier than the reading', () => {
+    const readings = [...FRAMEWORKS, NCSBN_NCJMM];
+    expect(readings.map((reading) => reading.id).sort()).toEqual(Object.keys(REGISTERED).sort());
+    for (const reading of readings) {
+      const source = SOURCES.find((entry) => entry.id === REGISTERED[reading.id]);
+      expect(source, `${reading.id} has no register entry`).toBeDefined();
+      expect(source!.verifiedOn >= reading.recordedOn, `${source!.id} was checked before the reading was recorded`).toBe(true);
+      expect(source!.usedFor.length).toBeGreaterThan(0);
+      expect(source!.verifiedAgainst.length).toBeGreaterThan(0);
+    }
+  });
+
+  /**
+   * The 2026 NCLEX-RN Test Plan permits a nonprofit educational reproduction
+   * and requires this credit on material that incorporates one. The six step
+   * names are reproduced verbatim, so the credit travels with them.
+   */
+  it('carries the credit the NCSBN document requires wherever its names are reproduced', () => {
+    expect(NCSBN_NCJMM.note)
+      .toContain('Portions copyrighted by the National Council of State Boards of Nursing, Inc. All rights reserved.');
   });
 
   it('exports every framework with its version in the mapping CSV', () => {
