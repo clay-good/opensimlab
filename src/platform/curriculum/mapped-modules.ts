@@ -33,6 +33,9 @@ import {
 import {
   RESPIRATORY_MEDICINE_FRAMEWORKS, RESPIRATORY_MEDICINE_SCENARIO_MAPPINGS,
 } from '../../modules/respiratory-medicine/curriculum';
+import {
+  CRITICAL_CARE_FRAMEWORKS, CRITICAL_CARE_SCENARIO_MAPPINGS,
+} from '../../modules/critical-care/curriculum';
 import type { FrameworkDomainRecord, FrameworkRecord } from './framework-records';
 import type { ScenarioMapping } from './mapping';
 
@@ -52,6 +55,9 @@ const BY_ROUTE: Readonly<Record<string, MappedModule>> = {
   cardiology: { frameworks: CARDIOLOGY_FRAMEWORKS, mappings: CARDIOLOGY_SCENARIO_MAPPINGS },
   'respiratory-medicine': {
     frameworks: RESPIRATORY_MEDICINE_FRAMEWORKS, mappings: RESPIRATORY_MEDICINE_SCENARIO_MAPPINGS,
+  },
+  'critical-care': {
+    frameworks: CRITICAL_CARE_FRAMEWORKS, mappings: CRITICAL_CARE_SCENARIO_MAPPINGS,
   },
 };
 

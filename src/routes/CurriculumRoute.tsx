@@ -44,6 +44,10 @@ import { RESPIRATORY_MEDICINE_SCENARIOS } from '../modules/respiratory-medicine/
 import {
   RESPIRATORY_MEDICINE_FRAMEWORKS, RESPIRATORY_MEDICINE_SCENARIO_MAPPINGS,
 } from '../modules/respiratory-medicine/curriculum';
+import { CRITICAL_CARE_SCENARIOS } from '../modules/critical-care/scenarios';
+import {
+  CRITICAL_CARE_FRAMEWORKS, CRITICAL_CARE_SCENARIO_MAPPINGS,
+} from '../modules/critical-care/curriculum';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { t } from '@platform/i18n/messages';
 import '@platform/i18n/messages-educator';
@@ -93,6 +97,13 @@ const MAPPED_MODULES: readonly CurriculumModule[] = [
     frameworks: RESPIRATORY_MEDICINE_FRAMEWORKS,
     scenarios: RESPIRATORY_MEDICINE_SCENARIOS,
     mappings: RESPIRATORY_MEDICINE_SCENARIO_MAPPINGS,
+  },
+  {
+    moduleRoute: 'critical-care',
+    displayName: 'Critical care',
+    frameworks: CRITICAL_CARE_FRAMEWORKS,
+    scenarios: CRITICAL_CARE_SCENARIOS,
+    mappings: CRITICAL_CARE_SCENARIO_MAPPINGS,
   },
 ];
 

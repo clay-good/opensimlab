@@ -27,14 +27,18 @@ describe('the README module table', () => {
   });
 
   it('states how many lessons actually carry a framework mapping', () => {
+    // Keyed by module and id, not id alone: emergency medicine and critical
+    // care each ship a lesson called `status-epilepticus`, and counting ids
+    // would quietly report one lesson fewer than the catalogue has.
     const mapped = new Set([
       ...FACILITATED_SCENARIOS
         .filter((entry) => mappedDomainsFor(entry.moduleRoute, entry.scenario.metadata.id).length > 0)
-        .map((entry) => entry.scenario.metadata.id),
+        .map((entry) => `${entry.moduleRoute}/${entry.scenario.metadata.id}`),
       // Nursing's mapping is derived from its objectives rather than authored,
       // so it reaches the count through the blueprint it feeds.
       ...BLUEPRINTS.flatMap((blueprint) => blueprint.categories
-        .flatMap((category) => category.lessons.map((lesson) => lesson.scenarioId))),
+        .flatMap((category) => category.lessons
+          .map((lesson) => `${blueprint.moduleRoute}/${lesson.scenarioId}`))),
     ]);
     const claim = /(\d+) of (\d+) lessons\s+carry a mapping/.exec(readme);
     expect(Number(claim?.[1])).toBe(mapped.size);

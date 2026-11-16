@@ -124,17 +124,29 @@
   of the eight carries a management subcompetency - giving one to a lesson that changes nothing
   would claim the learner changed it. The eight are named in the test, so a later management
   objective cannot join them silently.
+  Critical care joined next: 24 lessons, all `icu`, the largest module in the catalogue and the one
+  with the most varied objectives - twenty-five distinct leading verbs against cardiology's
+  thirteen. Each addition to the convention exists because an objective would otherwise have gone
+  unplaced, and the generator refusing them one at a time is what made that visible.
+  The finding here is an absence: no lesson in intensive care communicates with a patient or a
+  family, because every patient in the module is sedated, intubated or unresponsive. That is a
+  fact about the setting rather than an oversight, so the uncovered reason says it and a test
+  holds it - otherwise it reads as the one gap a reader would assume somebody forgot.
 - [x] Build check: a verbatim item longer than a short name fails; `review_by` ≤ 24 months. `tests/unit/framework-records.test.ts`.
 
 ## 2. Scenario mappings
 
 - [ ] Map every scenario in every module to at least one applicable framework; list unmapped by
   name in the curriculum view and fail the build on an unmapped scenario once authoring is done.
-  Eight of sixteen modules are mapped: anaesthesia to all four of its readings, nursing to the
+  Nine of sixteen modules are mapped: anaesthesia to all four of its readings, nursing to the
   NCJMM through its verb convention, emergency medicine, paediatrics, neurology and obstetrics
   each to their own ACGME milestone set, and cardiology and respiratory medicine to the internal
-  medicine one - 151 of 256 lessons. Each module after the first touched only the five wiring points the generalisation
-  established, which is the evidence that it worked. Six of the remaining eight modules are
+  medicine one, and critical care to it as well - 175 of 256 lessons. Counting those needed a fix
+  worth recording: the README count keyed on scenario id alone, and emergency medicine and
+  critical care each ship a lesson called `status-epilepticus`, so the catalogue reported one
+  mapped lesson fewer than it had. It keys on module and id now.
+  Each module after the first touched only the five wiring points the generalisation
+  established, which is the evidence that it worked. Five of the remaining seven modules are
   internal medicine by subject and will join the reading cardiology opened; the last two,
   neonatology and surgery and trauma, still have no reading that applies to them, which
   is the constraint this line runs into rather than a backlog: mapping a neonatology lesson to an
@@ -150,7 +162,7 @@
   either file learning about a second module.
   The build still fails only on an unmapped ANAESTHESIA lesson. Emergency medicine has its own
   equivalent - a test that no lesson is unmapped and that every objective is placed at least once,
-  per mapped module - and the whole-catalogue gate the line asks for waits on the other eight
+  per mapped module - and the whole-catalogue gate the line asks for waits on the other seven
   modules having something to map to.
 - [x] Map every nursing scenario's objectives to NCJMM functions with named evidence; build check.
   `src/modules/medical-surgical-nursing/curriculum.ts` records NCSBN's six step names verbatim
