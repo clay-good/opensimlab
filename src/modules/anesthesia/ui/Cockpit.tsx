@@ -26,6 +26,7 @@ import { MonitorRegion } from './MonitorRegion';
 import { AnalysisRegion } from './AnalysisRegion';
 import { ActionCockpit, crisisResponseAvailability } from './ActionCockpit';
 import { DemonstrationBar } from './DemonstrationBar';
+import { narrationHoldMs } from '@anesthesia/demo/demonstration';
 import { useDemonstration } from '@anesthesia/demo/useDemonstration';
 import { useObservedDemonstration, type ObservedStep } from '@anesthesia/demo/useObservedDemonstration';
 import type { LessonDemonstration } from '@anesthesia/demo/lesson-demonstration';
@@ -281,6 +282,31 @@ export function Cockpit({
   const reducedMotion = usePrefersReducedMotion();
   // The demonstration performs the same actions through the same path a learner
   // does, so what it shows is the engine and not a recording of it.
+  /**
+   * Handing the controls back without taking the closing words off the screen.
+   *
+   * Every worked example ends on a beat that says what the example was for, and
+   * finishing used to hand the controls back the instant that beat arrived —
+   * which removes the strip, so the one paragraph written to be remembered was
+   * the one nobody could read. The clock is already stopped by then; this holds
+   * the strip for as long as those words take, and the exit stays live
+   * throughout for a viewer who would rather leave now.
+   */
+  const closingNarration = useRef('');
+  const handover = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const clearHandover = useCallback(() => {
+    if (handover.current !== null) { clearTimeout(handover.current); handover.current = null; }
+  }, []);
+  const readTheEndingThenTakeControls = useCallback(() => {
+    if (handover.current !== null) return;
+    const holdMs = narrationHoldMs(closingNarration.current, 0);
+    if (holdMs === 0) { onTakeControls?.(); return; }
+    handover.current = setTimeout(() => {
+      handover.current = null;
+      onTakeControls?.();
+    }, holdMs);
+  }, [onTakeControls]);
+  useEffect(() => clearHandover, [clearHandover]);
   // The lesson this module's registry recognises, if it supplied one.
   const registryDemo = demonstrations?.find((entry) => entry.supports(scenario));
   const criticalCareStatusEpilepticusDemoSupported = supportsCriticalCareStatusEpilepticusDemonstration(scenario);
@@ -390,31 +416,32 @@ export function Cockpit({
     active: demonstrating && !scenarioDemoSupported,
     tick: session.tick,
     act: session.act,
-    onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, speed: session.speed,
+    onFinished: readTheEndingThenTakeControls,
   });
   const criticalCareStatusEpilepticusDemonstration = useCriticalCareStatusEpilepticusDemonstration({
     active: demonstrating && criticalCareStatusEpilepticusDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.criticalCareStatusEpilepticusAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   const obstructivePleuralShockDemonstration = useObstructivePleuralShockDemonstration({
     active: demonstrating && obstructivePleuralShockDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment ? obstructivePleuralShockProgress(session.equipment) : undefined,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   const emergencySvtDemonstration = useEmergencyUnstableNarrowTachycardiaDemonstration({
     active: demonstrating && emergencySvtDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.unstableNarrowTachycardiaAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   const peaArrestDemonstration = usePeaArrestDemonstration({
     active: demonstrating && peaArrestDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   /**
    * This lesson has no assessment sidecar, so its worked example reads the
@@ -441,7 +468,7 @@ export function Cockpit({
     active: demonstrating && rapidDesaturationDemoSupported,
     running: session.transport === 'running',
     patient: rapidDesaturationProgress,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   /**
    * The same four sources as the lesson before it, plus two the pressure lesson
@@ -467,7 +494,7 @@ export function Cockpit({
     active: demonstrating && hypotensionAfterInductionDemoSupported,
     running: session.transport === 'running',
     patient: hypotensionAfterInductionProgress,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   /**
    * The block lesson needs two sources the others do not: the post-tetanic count,
@@ -500,7 +527,7 @@ export function Cockpit({
     active: demonstrating && rapidSequenceInductionDemoSupported,
     running: session.transport === 'running',
     patient: rapidSequenceInductionProgress,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   /**
    * The silent-failure lesson reads the delivery path itself rather than any
@@ -530,7 +557,7 @@ export function Cockpit({
     active: demonstrating && awarenessUnderParalysisDemoSupported,
     running: session.transport === 'running',
     patient: awarenessUnderParalysisProgress,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   /**
    * The closure lesson reads the airway's own patency fraction alongside the
@@ -551,7 +578,7 @@ export function Cockpit({
     active: demonstrating && laryngospasmDemoSupported,
     running: session.transport === 'running',
     patient: laryngospasmProgress,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   /**
    * The obstruction lesson reads the engine's own bronchospasm severity rather
@@ -580,7 +607,7 @@ export function Cockpit({
     active: demonstrating && bronchospasmDemoSupported,
     running: session.transport === 'running',
     patient: bronchospasmProgress,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   /**
    * The haemorrhage lesson reads the accepted crystalloid total and the released
@@ -608,7 +635,7 @@ export function Cockpit({
     active: demonstrating && unexpectedHemorrhageDemoSupported,
     running: session.transport === 'running',
     patient: unexpectedHemorrhageProgress,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   /**
    * The only demonstration in this module that reads the session's event log.
@@ -629,7 +656,7 @@ export function Cockpit({
     active: demonstrating && dilutionalCoagulopathyDemoSupported,
     running: session.transport === 'running',
     patient: dilutionalCoagulopathyProgress,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   /**
    * The obstetric lesson is the only one that needs the fresh-gas flow, because
@@ -655,7 +682,7 @@ export function Cockpit({
     active: demonstrating && obstetricGeneralAnesthesiaDemoSupported,
     running: session.transport === 'running',
     patient: obstetricGeneralAnesthesiaProgress,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   /**
    * The geriatric lesson counts accepted milligrams rather than clicks, and
@@ -681,7 +708,7 @@ export function Cockpit({
     active: demonstrating && geriatricInductionDemoSupported,
     running: session.transport === 'running',
     patient: geriatricInductionProgress,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   /**
    * The LAST lesson is sequenced on quantities that only rise or latch. The
@@ -703,7 +730,7 @@ export function Cockpit({
     active: demonstrating && lastDemoSupported,
     running: session.transport === 'running',
     patient: lastProgress,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   /**
    * The MH lesson is sequenced on the dantrolene total, the only quantity here
@@ -726,7 +753,7 @@ export function Cockpit({
     active: demonstrating && malignantHyperthermiaDemoSupported,
     running: session.transport === 'running',
     patient: malignantHyperthermiaProgress,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   /**
    * The anaphylaxis lesson has no severity field on the snapshot, so its example
@@ -745,7 +772,7 @@ export function Cockpit({
     active: demonstrating && anaphylaxisDemoSupported,
     running: session.transport === 'running',
     patient: anaphylaxisProgress,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   /**
    * The reversal lesson is sequenced on the rocuronium in the plasma and on the
@@ -768,7 +795,7 @@ export function Cockpit({
     active: demonstrating && quantitativeReversalDemoSupported,
     running: session.transport === 'running',
     patient: quantitativeReversalProgress,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   /**
    * The first anaesthesia lesson with an assessment sidecar to read: its
@@ -789,7 +816,7 @@ export function Cockpit({
     active: demonstrating && emergenceResidualBlockadeDemoSupported,
     running: session.transport === 'running',
     patient: emergenceResidualBlockadeProgress,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   /** The second sidecar lesson: recorded steps under `resuscitation`, no physiology. */
   const aspirationRiskProgress = session.equipment ? {
@@ -803,7 +830,7 @@ export function Cockpit({
     active: demonstrating && aspirationRiskDemoSupported,
     running: session.transport === 'running',
     patient: aspirationRiskProgress,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   /** The third sidecar lesson, and the longest: five recorded steps in order. */
   const delayedEmergenceProgress = session.equipment ? {
@@ -821,7 +848,7 @@ export function Cockpit({
     active: demonstrating && delayedEmergenceDemoSupported,
     running: session.transport === 'running',
     patient: delayedEmergenceProgress,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   /** The fourth sidecar lesson: four ordered reviews, then a decision. */
   const extubationReadinessProgress = session.state && session.equipment ? {
@@ -840,7 +867,7 @@ export function Cockpit({
     active: demonstrating && extubationReadinessDemoSupported,
     running: session.transport === 'running',
     patient: extubationReadinessProgress,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   /**
    * The laryngoscopy lesson keys on quantities that only rise, and holds a beat
@@ -862,13 +889,13 @@ export function Cockpit({
     active: demonstrating && repeatedLaryngoscopyDemoSupported,
     running: session.transport === 'running',
     patient: repeatedLaryngoscopyProgress,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   const supraglotticRescueDemonstration = useSupraglotticRescueDemonstration({
     active: demonstrating && supraglotticRescueDemoSupported,
     running: session.transport === 'running',
     patient: repeatedLaryngoscopyProgress,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   const pediatricGasProgress = session.state && session.equipment ? {
     inspiredOxygenFraction: session.equipment.ventilator.fio2,
@@ -881,7 +908,7 @@ export function Cockpit({
     active: demonstrating && pediatricGasDemoSupported,
     running: session.transport === 'running',
     patient: pediatricGasProgress,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   const pediatricIvPropofol = scenario.formulary.find((entry) => entry.drugId === 'propofol');
   const pediatricIvProgress = session.state && session.equipment && pediatricIvPropofol ? {
@@ -897,7 +924,7 @@ export function Cockpit({
     active: demonstrating && pediatricIvDemoSupported,
     running: session.transport === 'running',
     patient: pediatricIvProgress,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   const vfCardiacArrestProgress = session.state && session.equipment ? {
     arrestActive: session.equipment.resuscitation.cardiacArrestActive ?? false,
@@ -910,7 +937,7 @@ export function Cockpit({
     active: demonstrating && vfCardiacArrestDemoSupported,
     running: session.transport === 'running',
     patient: vfCardiacArrestProgress,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   const inhalationalMaintenanceProgress = session.state && session.equipment ? {
     tick: session.tick ?? 0,
@@ -924,13 +951,13 @@ export function Cockpit({
     active: demonstrating && inhalationalMaintenanceDemoSupported,
     running: session.transport === 'running',
     patient: inhalationalMaintenanceProgress,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   const hyperglycemiaDemonstration = usePerioperativeHyperglycemiaDemonstration({
     active: demonstrating && hyperglycemiaDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.glycemicResponse,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   const hypothermiaProgress = session.state && session.equipment ? {
     targetTemperatureC:
@@ -947,7 +974,7 @@ export function Cockpit({
     active: demonstrating && hypothermiaDemoSupported,
     running: session.transport === 'running',
     patient: hypothermiaProgress,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   const arterialTransducerProgress = session.state && session.equipment ? {
     mislevelingCm: session.equipment.arterialLine?.mislevelingCm ?? 0,
@@ -961,7 +988,7 @@ export function Cockpit({
     active: demonstrating && arterialTransducerDemoSupported,
     running: session.transport === 'running',
     patient: arterialTransducerProgress,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   const bloodBankProgress = session.state && session.equipment ? {
     hemorrhageActive: session.equipment.resuscitation.hemorrhageActive ?? false,
@@ -974,7 +1001,7 @@ export function Cockpit({
     active: demonstrating && bloodBankDemoSupported,
     running: session.transport === 'running',
     patient: bloodBankProgress,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   const capnographyLineProgress = session.state && session.equipment ? {
     samplingLineObstructed: session.equipment.capnographyLine?.obstructed ?? false,
@@ -986,7 +1013,7 @@ export function Cockpit({
     active: demonstrating && capnographyLineDemoSupported,
     running: session.transport === 'running',
     patient: capnographyLineProgress,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   const circleRebreathingProgress = session.state && session.equipment ? {
     absorbentExhausted: session.equipment.breathingCircuit?.co2Absorbent === 'exhausted',
@@ -999,7 +1026,7 @@ export function Cockpit({
     active: demonstrating && circleRebreathingDemoSupported,
     running: session.transport === 'running',
     patient: circleRebreathingProgress,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   const postExtubationProgress = session.state && session.equipment ? {
     obstructionSeverity: session.equipment.airway.postExtubationObstructionSeverity ?? 0,
@@ -1013,7 +1040,7 @@ export function Cockpit({
     active: demonstrating && postExtubationDemoSupported,
     running: session.transport === 'running',
     patient: postExtubationProgress,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   const venousAirProgress = session.state && session.equipment ? {
     severity: session.equipment.resuscitation.venousAirEmbolismFraction ?? 0,
@@ -1026,7 +1053,7 @@ export function Cockpit({
     active: demonstrating && venousAirDemoSupported,
     running: session.transport === 'running',
     patient: venousAirProgress,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   const highSpinalProgress = session.state && session.equipment ? {
     severity: session.equipment.resuscitation.highSpinalFraction ?? 0,
@@ -1040,7 +1067,7 @@ export function Cockpit({
     active: demonstrating && highSpinalDemoSupported,
     running: session.transport === 'running',
     patient: highSpinalProgress,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   const pneumothoraxProgress = session.state && session.equipment ? {
     severity: session.equipment.resuscitation.tensionPneumothoraxFraction ?? 0,
@@ -1054,7 +1081,7 @@ export function Cockpit({
     active: demonstrating && pneumothoraxDemoSupported,
     running: session.transport === 'running',
     patient: pneumothoraxProgress,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   /**
    * The opioid lesson never keys on the saturation, which reads 100% both when
@@ -1076,7 +1103,7 @@ export function Cockpit({
     active: demonstrating && opioidVentilatoryDemoSupported,
     running: session.transport === 'running',
     patient: opioidVentilatoryProgress,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   /**
    * The preeclampsia lesson keys on a check count and two cumulative doses,
@@ -1093,25 +1120,25 @@ export function Cockpit({
     active: demonstrating && preeclampsiaDemoSupported,
     running: session.transport === 'running',
     patient: preeclampsiaProgress,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   const ciedPlanningDemonstration = usePacemakerAndCauteryPlanningDemonstration({
     active: demonstrating && ciedPlanningDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.ciedPlanningAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   const postoperativeHandoffDemonstration = usePostoperativeHandoffDemonstration({
     active: demonstrating && postoperativeHandoffDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation.postoperativeHandoffAssessment,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   const persistentVfDemonstration = usePersistentVfArrestDemonstration({
     active: demonstrating && persistentVfDemoSupported,
     running: session.transport === 'running',
     patient: session.equipment?.resuscitation,
-    pause: session.pause, play: session.play, act: session.act, onFinished: () => onTakeControls?.(),
+    pause: session.pause, play: session.play, act: session.act, onFinished: readTheEndingThenTakeControls,
   });
   const registryDemonstration = useObservedDemonstration({
     active: demonstrating && !!registryDemo,
@@ -1119,7 +1146,7 @@ export function Cockpit({
     step: registryDemo?.step(session.equipment?.resuscitation) ?? IDLE_STEP,
     actionType: registryDemo?.actionType ?? '',
     pause: session.pause, play: session.play, act: session.act,
-    onFinished: () => onTakeControls?.(),
+    onFinished: readTheEndingThenTakeControls,
   });
   const demonstration = registryDemo ? registryDemonstration
     : criticalCareStatusEpilepticusDemoSupported ? criticalCareStatusEpilepticusDemonstration
@@ -1165,6 +1192,9 @@ export function Cockpit({
     : extubationReadinessDemoSupported ? extubationReadinessDemonstration
     : emergencySvtDemoSupported ? emergencySvtDemonstration
     : obstructivePleuralShockDemoSupported ? obstructivePleuralShockDemonstration : inductionDemonstration;
+  // Read during the render that puts the beat on screen, so the handover above
+  // knows how long the ending it is about to clear away takes to read.
+  closingNarration.current = demonstration.beat?.narration ?? '';
   const [colorblindSafe] = useLocalPreference('colorblind-safe', false);
   const [whyField, setWhyField] = useState<StateField | null>(null);
   const [explainerId, setExplainerId] = useState<string | null>(null);
@@ -1743,6 +1773,7 @@ export function Cockpit({
         onAdvance={demonstration.onAdvance}
         awaitingAdvance={demonstration.awaitingAdvance}
         onTakeControls={() => {
+          clearHandover();
           // The clicked strip disappears. Play/Pause stays reachable even when
           // the phone's action tray is closed; moving focus does not run it.
           cockpitRef.current?.querySelector<HTMLButtonElement>('.status-bar__transport button')?.focus({ preventScroll: true });

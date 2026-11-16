@@ -12,7 +12,7 @@ import { join } from 'node:path';
 import { EN_MESSAGES } from '@platform/i18n/all-messages';
 import {
   DEMONSTRATION_HREF, DEMONSTRATION_SCENARIO_ID, DEMONSTRATION_SECONDS, INDUCTION_DEMONSTRATION,
-  beatAt, beatsToFire, demonstrationRequested,
+  beatAt, beatsToFire, demonstrationRequested, demonstrationStartSpeed, narrationSeconds,
 } from '@anesthesia/demo/demonstration';
 import { SCENARIOS } from '@anesthesia/scenarios';
 import { ROUTINE_INDUCTION } from '@anesthesia/scenarios/routine-induction';
@@ -41,10 +41,22 @@ describe('the guided demonstration', () => {
     expect(new Set(times).size).toBe(times.length);
   });
 
-  it('fits in the ninety seconds the interface promises, at five times speed', () => {
-    // The Prebrief control says "90-second demonstration". If the script grows
-    // past that the control is lying, and this is the test that says so.
+  it('fits the three minutes the interface promises, read at reading pace', () => {
+    // The front door and the Prebrief control both say "three-minute
+    // demonstration", and this is the test that says so if the script grows past
+    // it. The simulated length alone is not the answer: at five times speed the
+    // script is seventy seconds of clock, and the beats are then held for
+    // whatever reading time their gaps do not provide, which is most of what a
+    // viewer actually spends. That sum is what the control is claiming.
+    // tests/ui/demonstration-pace.test.tsx holds the same figure against the
+    // hook that does the holding.
     expect(DEMONSTRATION_SECONDS / 5).toBeLessThanOrEqual(90);
+    const watched = INDUCTION_DEMONSTRATION.reduce((total, beat, index) => {
+      const next = INDUCTION_DEMONSTRATION[index + 1];
+      const gap = next ? (next.atSecond - beat.atSecond) / 5 : 0;
+      return total + Math.max(gap, narrationSeconds(beat.narration));
+    }, 0);
+    expect(watched).toBeLessThanOrEqual(180);
   });
 
   it('has something to say from the very first frame', () => {
@@ -262,6 +274,37 @@ describe.each(SEEDS)('what the narration promises actually happens (seed %i)', (
  * scenario, briefing, then the control. Three too many for someone deciding in
  * ten seconds whether any of this is worth their time.
  */
+/**
+ * The clock the demonstration starts on.
+ *
+ * The bug this covers shipped on the front door: routine induction is on the
+ * worked-example list as well as being the scripted script, the route decided
+ * the speed twice, and the `?demo=1` branch read the list first — so following
+ * "watch a demonstration" ran a script keyed to simulated seconds at sixty
+ * times speed. Ninety seconds of clock went past in six, with twelve
+ * paragraphs of narration inside it.
+ */
+describe('the speed a demonstration starts at', () => {
+  it('runs the scripted induction slowly enough for its beats to land', () => {
+    expect(demonstrationStartSpeed('anesthesia', DEMONSTRATION_SCENARIO_ID)).toBe(5);
+  });
+
+  it('keeps every learner-paced example at sixty, where authored waits are minutes', () => {
+    expect(demonstrationStartSpeed('endocrine-metabolic', 'severe-hypoglycemia-recurrence')).toBe(60);
+    expect(demonstrationStartSpeed('anesthesia', 'rapid-desaturation')).toBe(60);
+    // Same scenario id in another module is not the script.
+    expect(demonstrationStartSpeed('cardiology', DEMONSTRATION_SCENARIO_ID)).toBe(60);
+  });
+
+  it('is decided in one place, so the two ways in cannot disagree again', () => {
+    const route = readFileSync(join(process.cwd(), 'src/routes/AnesthesiaRoute.tsx'), 'utf8');
+    // Both the `?demo=1` link and the briefing's Watch control ask the same
+    // function, and neither carries a speed of its own.
+    expect(route.match(/demonstrationStartSpeed\(/g)).toHaveLength(2);
+    expect(route).not.toMatch(/setSpeed\((?:5|60)\)/);
+  });
+});
+
 describe('the demonstration link', () => {
   it('points at the scenario the script was authored against', () => {
     expect(DEMONSTRATION_HREF).toContain(DEMONSTRATION_SCENARIO_ID);
@@ -288,7 +331,7 @@ describe('the demonstration link', () => {
     const landing = readFileSync(join(process.cwd(), 'src/landing/Landing.tsx'), 'utf8');
     expect(landing).toContain('DEMONSTRATION_HREF');
     expect(landing).toContain("t('landing.watch')");
-    expect(EN_MESSAGES['landing.watch'].text).toBe('Watch a 90-second demonstration');
+    expect(EN_MESSAGES['landing.watch'].text).toBe('Watch a three-minute demonstration');
     // And it stays a quiet link. It used to be the quiet half of a pair beside a
     // primary anaesthesia button; the front door now offers all fifteen modules
     // at the same weight and has no primary button at all, so the thing to hold

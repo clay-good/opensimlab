@@ -22,7 +22,7 @@ import { ENGINE_VERSION } from '@anesthesia/engine';
 import { MODEL_SET_REVISION } from '@anesthesia/pharmacology/registry';
 import { createReplayWorker, workerReplay } from '@anesthesia/debrief/replay-client';
 import { Prebrief } from '@anesthesia/ui/Prebrief';
-import { DEMONSTRATION_SCENARIO_ID, demonstrationRequested } from '@anesthesia/demo/demonstration';
+import { DEMONSTRATION_SCENARIO_ID, demonstrationRequested, demonstrationStartSpeed } from '@anesthesia/demo/demonstration';
 import { HYPOCALCEMIA_ACTIONS } from '../modules/endocrine-metabolic/hypocalcemia';
 import { HYPONATREMIA_CORRECTION_ACTIONS, supportsHyponatremiaCorrection } from '../modules/endocrine-metabolic/hyponatremia-correction';
 import { hyponatremiaCorrectionReportActions } from '../modules/endocrine-metabolic/hyponatremia-correction-reporting';
@@ -858,7 +858,7 @@ export function ClinicalModuleRoute({ path, config }: { path: string; config: Cl
   /**
    * `?demo=1` starts the demonstration without the briefing.
    *
-   * Someone who followed "watch a 90-second demonstration" from the front door
+   * Someone who followed "watch a three-minute demonstration" from the front door
    * has already decided to watch. Putting the briefing in front of them is
    * asking the question they just answered.
    */
@@ -989,7 +989,16 @@ export function ClinicalModuleRoute({ path, config }: { path: string; config: Cl
     if (!endocrineDemo && (config.id !== 'anesthesia' || scenario.metadata.id !== DEMONSTRATION_SCENARIO_ID)) return;
     autoDemo.current = false;
     setDemonstrating(true);
-    session.setSpeed(endocrineDemo ? 60 : 5);
+    // The scripted induction is checked FIRST, exactly as the Watch control
+    // below checks it. Routine induction is also on the worked-example list —
+    // deliberately, so the completion audit and the product agree about whether
+    // an example exists here — and this line read that list first, so the front
+    // door's link started the scripted demonstration at sixty times speed. Its
+    // beats are keyed to simulated seconds, so the whole ninety seconds went by
+    // in six, with twelve paragraphs of narration inside them. Following the
+    // link and pressing Watch on the briefing now start the same thing at the
+    // same speed.
+    session.setSpeed(demonstrationStartSpeed(config.id, scenario.metadata.id));
     session.play();
   }, [session, scenario.metadata.id]);
 
@@ -1094,10 +1103,13 @@ export function ClinicalModuleRoute({ path, config }: { path: string; config: Cl
             if (demonstrating) session.setSpeed(1);
             setDemonstrating(false); session.play();
           }}
-          {...(config.id === 'anesthesia' && scenario.metadata.id === DEMONSTRATION_SCENARIO_ID
-            ? { onWatch: () => { setDemonstrating(true); session.setSpeed(5); session.play(); } }
-            : workedExampleSupported
-            ? { onWatch: () => { setDemonstrating(true); session.setSpeed(60); session.play(); } }
+          {...(workedExampleSupported
+            || (config.id === 'anesthesia' && scenario.metadata.id === DEMONSTRATION_SCENARIO_ID)
+            ? { onWatch: () => {
+              setDemonstrating(true);
+              session.setSpeed(demonstrationStartSpeed(config.id, scenario.metadata.id));
+              session.play();
+            } }
             : {})}
           {...(assignment.label ? { assignmentLabel: assignment.label } : {})}
           assignmentNotices={assignmentNotices(assignment, scenario)}

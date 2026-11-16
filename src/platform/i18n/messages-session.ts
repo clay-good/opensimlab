@@ -255,7 +255,7 @@ export const SESSION_MESSAGES = {
   'briefing.start': { class: 'interface', text: 'Start the scenario' },
   'briefing.watch-example': { class: 'interface', text: 'Watch a worked example' },
   'briefing.example-hint': { class: 'interface', text: 'The worked example pauses before each decision so you can read. Choose “Continue example” when ready; observation periods run at 60× speed. Reading time does not advance the patient.' },
-  'briefing.demo-hint': { class: 'interface', text: 'The demonstration runs this scenario at five times speed and explains what to look at.' },
+  'briefing.demo-hint': { class: 'interface', text: 'The demonstration runs this scenario at five times speed, explains what to look at, and stops on each line long enough to read it.' },
   'briefing.take-over': { class: 'interface', text: 'You can take the controls at any point and carry on from where it got to.' },
   'cockpit.skip': { class: 'interface', text: 'Skip to the monitor' },
   'cockpit.branch-title': { class: 'interface', text: 'Targeted repetition · {label}' },

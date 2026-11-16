@@ -23,6 +23,16 @@ import { useHyponatremiaCorrectionDemonstration } from '../../src/modules/endocr
 import { LIMITATIONS } from '@platform/docs/limitations';
 import { ENDOCRINE_METABOLIC_TRAYS } from '../../src/modules/endocrine-metabolic/trays';
 
+import { setNarrationPace } from '@anesthesia/demo/demonstration';
+
+/**
+ * This file drives the clock itself, a frame at a time, with no real time
+ * passing between frames. A reading hold is a real-time wait, so it would stop
+ * this run where a viewer would simply be reading the beat; the pacing itself is
+ * covered in tests/ui/demonstration-pace.test.tsx.
+ */
+setNarrationPace('instant');
+
 const VERSION = '0.1.0';
 const labels: Record<HyponatremiaCorrectionAction, string> = {
   'review-risk': 'Review correction window and risk', 'call-support': 'Call qualified support',

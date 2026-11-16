@@ -4,7 +4,7 @@
  * The solver's ready message used to set the phase to 'briefing'
  * unconditionally. A ready that arrived after the learner had already started
  * dropped a running session back to the briefing screen with the clock stopped.
- * It surfaced as the front door's "watch a 90-second demonstration" link
+ * It surfaced as the front door's "watch a three-minute demonstration" link
  * appearing to do nothing: the demonstration DID start, and a late ready
  * message put it straight back.
  */

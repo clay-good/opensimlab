@@ -212,3 +212,78 @@ export function beatsToFire(from: number, to: number): DemonstrationBeat[] {
  */
 export const PREPARING_NARRATION =
   'Preparing the fictional patient. This example uses the same controls and clock as your practice.';
+
+/**
+ * The speed a demonstration starts at.
+ *
+ * Two kinds run in this cockpit and they need opposite clocks. The scripted
+ * induction below is keyed to simulated seconds, so its clock has to be slow
+ * enough for the beats to land where the narration says they do: five times.
+ * Every other worked example is learner-paced and reads a patient rather than a
+ * timetable, so it runs at sixty to get through authored waits measured in
+ * minutes.
+ *
+ * Held in one function because the route decided it twice — once for the front
+ * door's `?demo=1` link and once for the briefing's Watch control — and the two
+ * disagreed: routine induction is on the worked-example list as well as being
+ * the scripted script, so the link started the script at sixty times speed and
+ * put the whole of it on screen in six seconds.
+ */
+export function demonstrationStartSpeed(moduleId: string, scenarioId: string): 5 | 60 {
+  return moduleId === 'anesthesia' && scenarioId === DEMONSTRATION_SCENARIO_ID ? 5 : 60;
+}
+
+/**
+ * How long a beat has to stay on screen before the clock moves past it.
+ *
+ * The beats are spaced by the physiology they narrate, not by the prose, and the
+ * prose is the part a first-time viewer is actually doing. At five times speed
+ * the gap between the induction dose and the beat that explains it was one real
+ * second for sixty-eight characters, and the beat before the dose had two
+ * seconds for four hundred — so the demonstration was unreadable at exactly the
+ * moments it was trying to teach. The script is unchanged; what changed is that
+ * the clock now waits for the reader.
+ *
+ * Thirteen characters a second is about 155 words a minute, which is unhurried
+ * for prose nobody has seen before, by someone who is also looking at a monitor.
+ * The floor is for the short beats, where the words are not the work.
+ */
+export const NARRATION_CHARS_PER_SECOND = 13;
+
+/** The shortest a beat is ever held, however little it says. */
+export const MINIMUM_NARRATION_SECONDS = 5;
+
+/** Real seconds a viewer needs for one beat's narration. */
+export function narrationSeconds(narration: string): number {
+  return Math.max(MINIMUM_NARRATION_SECONDS, narration.length / NARRATION_CHARS_PER_SECOND);
+}
+
+/**
+ * Whether beats are held at reading pace.
+ *
+ * 'read' everywhere a person is watching, and it is the default. The
+ * frame-for-frame replay tests drive the clock themselves and compress real
+ * time to nothing, so a real-time hold would stop them where a viewer would
+ * simply be reading: those set 'instant' and go on asserting the engine, which
+ * is what they are for. Nothing in the product sets it.
+ */
+export type NarrationPace = 'read' | 'instant';
+
+let pace: NarrationPace = 'read';
+
+export function setNarrationPace(next: NarrationPace): void { pace = next; }
+
+export function narrationPace(): NarrationPace { return pace; }
+
+/**
+ * Real milliseconds to hold the clock so a beat can be read.
+ *
+ * `realSecondsUntilNext` is the reading time the schedule already provides: a
+ * beat with a long gap after it needs no hold at all, and the viewer watches the
+ * patient rather than a frozen screen. Only the deficit is waited out, so the
+ * demonstration is slowed where it is unreadable and nowhere else.
+ */
+export function narrationHoldMs(narration: string, realSecondsUntilNext: number): number {
+  if (pace === 'instant') return 0;
+  return Math.max(0, (narrationSeconds(narration) - realSecondsUntilNext) * 1000);
+}

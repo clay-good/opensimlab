@@ -22,6 +22,8 @@ import { DEMONSTRATION_SECONDS } from '@anesthesia/demo/demonstration';
 interface HarnessProps {
   readonly second: number;
   readonly active: boolean;
+  readonly pause?: () => void;
+  readonly play?: () => void;
   readonly act: (action: Omit<LearnerAction, 'tick'>) => void;
   readonly onFinished: () => void;
   readonly onTakeControls: () => void;
@@ -32,6 +34,11 @@ function Harness(props: HarnessProps) {
     active: props.active,
     tick: Math.round(props.second * TICKS_PER_SECOND),
     act: props.act,
+    // The clock the hook holds while a beat is being read. The strip is driven
+    // from the `second` prop here, so holding it changes nothing but the count.
+    pause: props.pause ?? (() => {}),
+    play: props.play ?? (() => {}),
+    speed: 5,
     onFinished: props.onFinished,
   });
   return createElement(DemonstrationBar, {

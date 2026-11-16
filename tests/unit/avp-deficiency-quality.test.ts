@@ -24,6 +24,7 @@ import { AvpDeficiencyTray } from '../../src/modules/endocrine-metabolic/AvpDefi
 import { avpDeficiencyDemonstrationStep, supportsAvpDeficiencyDemonstration } from '../../src/modules/endocrine-metabolic/demo/avp-deficiency-demonstration';
 import { avpDeficiencyInlinePrompt } from '../../src/modules/endocrine-metabolic/avp-deficiency-tutor';
 
+import { demonstrationStartSpeed } from '@anesthesia/demo/demonstration';
 type Default = { id: string; category: string; value: string | number | boolean | null; sourceRefs: string[];
   rationale: string; practiceRegions: string[]; applicability: string; educationalEffect: string };
 const defaults = (RECORDS.find(({ kind }) => kind === 'authored-defaults')!.record as { defaults: Default[] }).defaults;
@@ -265,7 +266,15 @@ describe('Literal AVP-deficiency quality evidence, not independent approval', ()
     const route = readFileSync(join(process.cwd(), 'src/routes/AnesthesiaRoute.tsx'), 'utf8');
     const store = readFileSync(join(process.cwd(), 'src/platform/session/session-store.ts'), 'utf8');
     expect(route).toContain(`const DEFAULT_SEED = ${entry('shared-url-seed-default').value};`);
-    expect(route).toContain(`session.setSpeed(endocrineDemo ? ${entry('example-playback-speed').value} : 5)`);
+    // The route used to carry this speed as a literal in the `?demo=1` branch,
+    // and that branch read the worked-example list before the scripted script,
+    // so the front door started a script keyed to simulated seconds at sixty
+    // times speed. The speed is now decided in one function for both ways in;
+    // what the authored value governs is unchanged, so the citation points at
+    // the function and at what it answers for this scenario.
+    expect(route).toContain('session.setSpeed(demonstrationStartSpeed(config.id, scenario.metadata.id))');
+    expect(demonstrationStartSpeed('endocrine-metabolic', SCENARIO.metadata.id))
+      .toBe(entry('example-playback-speed').value);
     expect(route).toContain(`session.setSpeed(${entry('manual-restart-speed').value})`);
     expect(store).toContain(`guidance: '${entry('initial-guidance').value}'`);
     expect(entry('standalone-guidance').value).toBe('unassisted');

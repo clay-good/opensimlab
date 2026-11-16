@@ -19,6 +19,16 @@ import { renalHypokalemiaDemonstrationStep, supportsRenalHypokalemiaDemonstratio
 import { useRenalHypokalemiaDemonstration } from '../../src/modules/renal-electrolyte/demo/useRenalHypokalemiaDemonstration';
 import { LIMITATIONS } from '@platform/docs/limitations';
 
+import { setNarrationPace } from '@anesthesia/demo/demonstration';
+
+/**
+ * This file drives the clock itself, a frame at a time, with no real time
+ * passing between frames. A reading hold is a real-time wait, so it would stop
+ * this run where a viewer would simply be reading the beat; the pacing itself is
+ * covered in tests/ui/demonstration-pace.test.tsx.
+ */
+setNarrationPace('instant');
+
 const labels: Record<RenalHypokalemiaAction, string> = {
   potassium: 'Request qualified potassium replacement', magnesium: 'Request qualified magnesium replacement',
   'call-support': 'Call qualified acute-care support', 'review-context': 'Review electrolyte, medication, and loss context',

@@ -19,6 +19,16 @@ import { renalHypernatremiaDemonstrationStep, supportsRenalHypernatremiaDemonstr
 import { useRenalHypernatremiaDemonstration } from '../../src/modules/renal-electrolyte/demo/useRenalHypernatremiaDemonstration';
 import { LIMITATIONS } from '@platform/docs/limitations';
 
+import { setNarrationPace } from '@anesthesia/demo/demonstration';
+
+/**
+ * This file drives the clock itself, a frame at a time, with no real time
+ * passing between frames. A reading hold is a real-time wait, so it would stop
+ * this run where a viewer would simply be reading the beat; the pacing itself is
+ * covered in tests/ui/demonstration-pace.test.tsx.
+ */
+setNarrationPace('instant');
+
 const labels: Record<RenalHypernatremiaAction, string> = {
   'restore-volume': 'Request qualified circulation restoration', 'replace-water': 'Request qualified water replacement',
   'manage-losses': 'Deliver qualified ongoing-loss care', 'assist-water-access': 'Deliver safe water access and assistance',

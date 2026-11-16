@@ -49,6 +49,16 @@ import {
   DEMONSTRATION_SECONDS, INDUCTION_DEMONSTRATION,
 } from '@anesthesia/demo/demonstration';
 
+import { setNarrationPace } from '@anesthesia/demo/demonstration';
+
+/**
+ * This file drives the clock itself, a frame at a time, with no real time
+ * passing between frames. A reading hold is a real-time wait, so it would stop
+ * this run where a viewer would simply be reading the beat; the pacing itself is
+ * covered in tests/ui/demonstration-pace.test.tsx.
+ */
+setNarrationPace('instant');
+
 /** The same in-process solver the session integration test uses. */
 class InProcessWorker implements Partial<Worker> {
   onmessage: ((event: MessageEvent<FromWorkerMessage<PatientState>>) => void) | null = null;
@@ -152,6 +162,7 @@ function Harness({ onBeat }: { onBeat: (narration: string | null, focus: string 
     active: true,
     tick: session.tick,
     act: session.act,
+    pause: session.pause, play: session.play, speed: session.speed,
     onFinished: () => {},
   });
   useEffect(() => {

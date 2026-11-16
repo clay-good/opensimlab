@@ -14,6 +14,16 @@ import { hypercalcemiaInlinePrompt, HYPERCALCEMIA_SOURCE_HREF, HYPERCALCEMIA_ES_
 import { hypercalcemiaDemonstrationStep, supportsHypercalcemiaDemonstration, HYPERCALCEMIA_DEMONSTRATION_VERSION } from '../../src/modules/endocrine-metabolic/demo/hypercalcemia-demonstration';
 import { useHypercalcemiaDemonstration } from '../../src/modules/endocrine-metabolic/demo/useHypercalcemiaDemonstration';
 
+import { setNarrationPace } from '@anesthesia/demo/demonstration';
+
+/**
+ * This file drives the clock itself, a frame at a time, with no real time
+ * passing between frames. A reading hold is a real-time wait, so it would stop
+ * this run where a viewer would simply be reading the beat; the pacing itself is
+ * covered in tests/ui/demonstration-pace.test.tsx.
+ */
+setNarrationPace('instant');
+
 const VERSION = '0.1.0';
 const labels: Record<HypercalcemiaAction, string> = {
   'call-support': 'Call qualified support', 'tailored-fluids': 'Start qualified tailored hydration',

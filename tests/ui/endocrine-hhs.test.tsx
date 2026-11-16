@@ -104,6 +104,6 @@ describe('Offering the HHS worked example', () => {
       onGuidance: () => {}, onStart: () => {}, onWatch: () => {},
     }));
     expect(briefing).toContain('Watch a worked example');
-    expect(briefing).not.toContain('Watch a 90-second demonstration');
+    expect(briefing).not.toContain('Watch a three-minute demonstration');
   });
 });

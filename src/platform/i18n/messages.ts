@@ -90,7 +90,7 @@ export const CORE_MESSAGES = {
   'landing.modules': { class: 'root-prose', text: 'Specialty modules' },
   'landing.scenario-count': { class: 'root-prose', text: '{count, plural, one {# scenario} other {# scenarios}}' },
   'landing.planned': { class: 'root-prose', text: 'planned. No dates.' },
-  'landing.watch': { class: 'root-prose', text: 'Watch a 90-second demonstration' },
+  'landing.watch': { class: 'root-prose', text: 'Watch a three-minute demonstration' },
   'landing.about': { class: 'root-prose', text: 'About' },
   'about.heading': { class: 'root-prose', text: 'About Open Sim Lab' },
   'about.modules': { class: 'root-prose', text: 'Modules' },

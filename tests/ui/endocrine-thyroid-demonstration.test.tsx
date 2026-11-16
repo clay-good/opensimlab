@@ -8,6 +8,16 @@ import type { LearnerAction, ThyroidStormSnapshot } from '@platform/kernel/proto
 import { ThyroidStorm, THYROID_IODINE_WAIT_TICKS, THYROID_RESPONSE_TICKS, THYROID_TAKEOVER_TICKS } from '../../src/modules/endocrine-metabolic/thyroid-storm';
 import { useThyroidDemonstration } from '../../src/modules/endocrine-metabolic/demo/useThyroidDemonstration';
 
+import { setNarrationPace } from '@anesthesia/demo/demonstration';
+
+/**
+ * This file drives the clock itself, a frame at a time, with no real time
+ * passing between frames. A reading hold is a real-time wait, so it would stop
+ * this run where a viewer would simply be reading the beat; the pacing itself is
+ * covered in tests/ui/demonstration-pace.test.tsx.
+ */
+setNarrationPace('instant');
+
 function Harness(props: {
   active: boolean; running: boolean; patient?: ThyroidStormSnapshot;
   onAction: (action: Omit<LearnerAction, 'tick'>) => void;

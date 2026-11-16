@@ -31,7 +31,7 @@ describe('The worked-example control on the briefing', () => {
     'offers it for the oncology lesson %s', (_id, scenario) => {
       const html = briefing(scenario, 'oncology');
       expect(html).toContain('Watch a worked example');
-      expect(html).not.toContain('Watch a 90-second demonstration');
+      expect(html).not.toContain('Watch a three-minute demonstration');
     });
 
   it('offers it for a renal and an endocrine lesson too', () => {
@@ -58,7 +58,7 @@ describe('The worked-example control on the briefing', () => {
 
   it('keeps the scripted label for the anesthesia demonstration', () => {
     const html = briefing(ANESTHESIA_SCENARIOS[0]!, 'anesthesia');
-    expect(html).toContain('Watch a 90-second demonstration');
+    expect(html).toContain('Watch a three-minute demonstration');
     expect(html).not.toContain('Watch a worked example');
   });
 });

@@ -70,7 +70,7 @@ export function Prebrief({
   const hypoglycemia = supportsSevereHypoglycemia(scenario);
   /**
    * Whether this lesson has an OBSERVED-STATE worked example rather than the
-   * scripted 90-second demonstration. One list for whether an example exists at
+   * scripted three-minute demonstration. One list for whether an example exists at
    * all, shared with the route and the completion audit; one predicate for which
    * kind it is, because the two need different copy.
    *
