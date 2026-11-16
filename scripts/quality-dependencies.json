@@ -28,7 +28,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
-        "sha256": "32c059ebc4d0a400dc4c5a988461d505427836310ac7deae65b419241e1270c0"
+        "sha256": "7c6a27bb3598c147ddb579aafb6a3c5608b12750a0f153b244868ea364a8a9ae"
       },
       {
         "path": "src/modules/endocrine-metabolic/HypocalcemiaTray.tsx",
@@ -253,7 +253,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
-        "sha256": "32c059ebc4d0a400dc4c5a988461d505427836310ac7deae65b419241e1270c0"
+        "sha256": "7c6a27bb3598c147ddb579aafb6a3c5608b12750a0f153b244868ea364a8a9ae"
       },
       {
         "path": "src/modules/anesthesia/ui/Prebrief.tsx",
@@ -518,7 +518,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
-        "sha256": "32c059ebc4d0a400dc4c5a988461d505427836310ac7deae65b419241e1270c0"
+        "sha256": "7c6a27bb3598c147ddb579aafb6a3c5608b12750a0f153b244868ea364a8a9ae"
       },
       {
         "path": "src/modules/anesthesia/ui/DemonstrationBar.tsx",

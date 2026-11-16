@@ -68,15 +68,56 @@ its own, none changes the engine, and none produces a score.
   print when it withholds. A trace of a different length or sampled at different ticks is refused
   at ANY threshold, because that is not a looser comparison but a different run - which is what a
   changed content version or a changed engine looks like, and the case that matters most.
-  What remains of this line is the wiring: replaying through the replay worker at runtime under
-  the learner's seed, rather than through the engine at test time. The decision rule it feeds is
-  done and tested.
-- [ ] Render both traces and action marks on the existing debrief axes; list per-objective tick
+  The wiring is now done too. `npm run expert-paths` writes
+  `src/modules/anesthesia/debrief/expert-paths.generated.ts`: the 39 closed-loop lessons as
+  REPLAYABLE actions with the seed they were recorded under and the trace that recording produced.
+  It is a second generated file rather than a reuse of `reference-paths.generated.ts`, and the
+  reason is the bundle: that one is written for the facilitator guide, carries all 256 lessons in
+  7,400 lines of labels and formatted payloads a person reads, and the debrief lives in the
+  cockpit chunk every learner downloads. Pulling it in there would ship 217 lessons' prose to draw
+  39 lessons' traces.
+  At runtime the debrief asks the replay worker to run those actions under the LEARNER's seed and
+  region, and `expertTraceWithinTolerance` decides whether what came back is still the same
+  patient. `tests/unit/expert-paths.test.ts` recomputes every path from the fixtures, so a
+  committed file that nobody regenerated fails the build rather than being drawn.
+- [x] Render both traces and action marks on the existing debrief axes; list per-objective tick
   differences and order agreement for order-sensitive actions only.
+  `ExpertOverlayPanel` draws four parameters - heart rate, mean pressure, saturation, end-tidal
+  CO2 - with the learner's trace solid and the reference run's dashed on the same axis, both runs'
+  accepted actions on one list in time order, and one line per objective saying when each run met
+  it and the difference in seconds.
+  Two refusals are the substance of it. A difference is printed only where BOTH runs met the
+  objective: a gap between a moment and nothing is not a gap, and printing one would make an
+  unmet objective read as a slow one. And there is no figure anywhere saying how close the two
+  runs were - the panel's own closing line says there will not be one, because two runs can
+  differ for reasons that are not better or worse and a single number hides every one of them.
+  ORDER AGREEMENT IS NOT RENDERED, and that is not an omission to fix later. No scenario declares
+  which of its actions are order-sensitive; the schema has no such field. Reporting order
+  agreement without one would mean inferring it from the reference run, which would turn one
+  authored path into the order - exactly the claim the equivalent-paths requirement exists to
+  prevent. It needs a declaration before it needs code.
 - [ ] Offer every declared equivalent-path transcript as a selectable reference.
-- [ ] Architecture test: no sum, mean, score, or distance figure is exported by the overlay
-  module; snapshot the line format.
-- [ ] Automated run: the overlay renders offline for all 256 scenarios from their fixtures.
+- [x] Architecture test: no sum, mean, score, or distance figure is exported by the overlay
+  module; snapshot the line format. `tests/arch/expert-overlay-has-no-score.test.ts` holds three
+  things: no export whose name is a score, total or distance; no aggregation in the module's own
+  code, with comments stripped first so a rule cannot be satisfied by describing it; and an
+  exhaustive list of every numeric field the module declares - three moments and one difference
+  between two of them. The failure mode here is not a bug but the slow, reasonable-looking
+  addition of one number that says how close the runs were, and that test is what makes such an
+  addition visible in a diff.
+- [x] Automated run: the overlay renders offline for all 256 scenarios from their fixtures.
+  `tests/unit/expert-overlay-catalogue.test.ts` builds it for every lesson from its own fixture,
+  with no network and nothing stored. The 39 with a modelled patient are replayed under a
+  DIFFERENT seed from the one they were recorded with - which is the case the overlay exists to
+  survive, since an assignment link or a blind draw gives a learner their own patient - and all 39
+  come back inside the measured tolerance and draw.
+  One measurement decided where the data lives. Importing the 39 paths eagerly put the anaesthesia
+  module's graph at 576.2 KB gz against a 575 KB guard whose own comment says raising the number
+  is not the answer: measure and move the boundary. So the panel loads them with a dynamic import
+  when a debrief asks for one. They are data for a panel that appears after a run, and the cockpit
+  budget is measured on what a learner downloads to START one. The other 217 are refused with the reason that
+  says why: the lesson has no modelled patient, and the reference path is in the facilitator guide
+  instead. Either a trace or a reason; never a half-drawn panel.
 
 ## 3. Rapid-cycle rehearsal
 

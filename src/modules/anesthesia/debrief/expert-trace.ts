@@ -35,6 +35,20 @@ export const EXPERT_TRACE_TOLERANCE: Readonly<Record<string, number>> = {
   spo2Percent: 0.5,
 };
 
+/**
+ * One lesson's expert path, as the debrief needs it: actions an engine can
+ * apply, the seed they were recorded under, and the trace that recording
+ * produced. Written by `npm run expert-paths` from the lesson's own fixtures.
+ */
+export interface ExpertPath {
+  readonly scenarioId: string;
+  readonly seed: number;
+  readonly ticks: number;
+  readonly expert: readonly { readonly tick: number; readonly type: string; readonly payload?: unknown }[];
+  /** What the model produced at each timeline event, under the seed above. */
+  readonly recorded: readonly TraceSample[];
+}
+
 export interface TraceSample {
   readonly tick: number;
   readonly vitals: Readonly<Record<string, number>>;

@@ -15,6 +15,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Badge, Button, CitationLink, Modal, Panel } from '@platform/ui';
 import { TranscriptScrubber } from './TranscriptScrubber';
 import { Timeline } from '@platform/ui';
+import { ExpertOverlayPanel } from './ExpertOverlayPanel';
 import { formatElapsed, TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
 import type { Attribution, EngineEvent, LearnerAction } from '@platform/kernel/protocol';
 import type { HistorySample } from '@platform/session/session-store';
@@ -424,6 +425,15 @@ export function Debrief(props: DebriefProps) {
               ))}
             </Panel>
           )}
+
+          <ExpertOverlayPanel
+            scenario={props.scenario}
+            history={props.history}
+            actions={props.actions}
+            replayOptions={props.replayOptions}
+            runReplay={props.runReplay}
+            learnerFindings={findings}
+          />
 
           {(props.reasoningNotes?.length ?? 0) > 0 && (
             <Panel title={t('notes.title')}>
