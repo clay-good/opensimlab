@@ -309,8 +309,9 @@ describe('Renal and electrolyte medicine module foundation', () => {
     // does the seventh renal lab, the verification queue, and the translation status page. Each of the 256
     // scenarios also has a facilitator guide route, which is not indexed. The translation-coverage
     // tool adds one more noindex route, so the total is one above the indexable count's base.
-    expect(ROUTES).toHaveLength(545);
-    expect(indexableRoutes()).toHaveLength(285);
+    // The "preparing for" blueprint filter adds one indexable page on top of that.
+    expect(ROUTES).toHaveLength(546);
+    expect(indexableRoutes()).toHaveLength(286);
     // 59 module and shared artifacts, plus the release-wide adoption pack.
     expect(PUBLIC_CATALOG_ARTIFACTS).toHaveLength(60);
     expect(new Set(PUBLIC_CATALOG_ARTIFACTS).size).toBe(60);

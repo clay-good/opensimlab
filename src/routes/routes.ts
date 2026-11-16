@@ -372,6 +372,16 @@ export const ROUTES: readonly RouteMetadata[] = [
     heading: 'Curriculum coverage',
   },
   {
+    path: '/preparing-for',
+    title: formatTitle('Preparing for an examination'),
+    description:
+      'Pick the examination you are preparing for and read which lessons touch each of its '
+      + 'categories, including the categories nothing here touches.',
+    indexable: true,
+    structuredData: [],
+    heading: 'Preparing for an examination',
+  },
+  {
     path: '/review',
     title: formatTitle('Review submitted sessions'),
     description:

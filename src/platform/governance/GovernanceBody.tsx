@@ -5,7 +5,7 @@ import { EDITORIAL_BOARD, HONEST_STATUS, reviewableItems } from './records';
 import { reportCoverage } from './review-gate';
 import { APP_VERSION } from './status';
 import { FRAMEWORKS } from '@anesthesia/curriculum/frameworks';
-import { FRAMEWORK_REVIEW_MONTHS, overdueFrameworks } from '@platform/curriculum/framework-records';
+import { FRAMEWORK_REVIEW_MONTHS, frameworkToday, overdueFrameworks } from '@platform/curriculum/framework-records';
 
 /**
  * What each gate verdict means, said once for the whole group rather than
@@ -127,7 +127,7 @@ export function GovernanceBody() {
  * client share, so the list cannot change between the two.
  */
 function FrameworkReadings() {
-  const today = /^\d{4}-\d{2}-\d{2}/.exec(APP_VERSION)?.[0] ?? new Date().toISOString().slice(0, 10);
+  const today = frameworkToday(APP_VERSION);
   const overdue = new Set(overdueFrameworks(FRAMEWORKS, today).map((framework) => framework.id));
   return (
     <>

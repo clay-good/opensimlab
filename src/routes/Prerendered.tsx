@@ -14,6 +14,7 @@ import { Landing } from '@landing/Landing';
 import { About } from '@landing/About';
 import { EducatorsRoute } from './EducatorsRoute';
 import { CurriculumRoute } from './CurriculumRoute';
+import { PreparingForRoute } from './PreparingForRoute';
 import { DEFAULT_SCENARIO_ID, getScenario, scenariosByDifficulty } from '@anesthesia/scenarios';
 import { DocumentRoute } from './DocumentRoute';
 import { FacilitatorGuideRoute } from './FacilitatorGuideRoute';
@@ -106,6 +107,7 @@ export function PrerenderedBody({ path }: { path: string }) {
   if (path === '/for-educators') return <EducatorsRoute />;
   if (path.startsWith('/facilitator/')) return <FacilitatorGuideRoute path={path} />;
   if (path === '/curriculum') return <CurriculumRoute />;
+  if (path === '/preparing-for') return <PreparingForRoute />;
   const planned = MODULES.find((module) => `/${module.route}` === path && module.status === 'planned');
   if (planned) return <PlannedModuleRoute module={planned} />;
   if (path === '/anesthesia') return <AnesthesiaMarkup />;

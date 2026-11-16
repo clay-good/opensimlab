@@ -41,6 +41,7 @@ export const CORE_MESSAGES = {
   'sitebar.about': { class: 'interface', text: 'About' },
   'sitebar.for-educators': { class: 'interface', text: 'For educators' },
   'sitebar.curriculum': { class: 'interface', text: 'Curriculum' },
+  'sitebar.preparing-for': { class: 'interface', text: 'Preparing for' },
   'sitebar.validation': { class: 'interface', text: 'Validation' },
   'sitebar.governance': { class: 'interface', text: 'Governance' },
   'sitebar.limitations': { class: 'interface', text: 'Limitations' },

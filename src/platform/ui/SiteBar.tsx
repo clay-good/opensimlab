@@ -46,6 +46,7 @@ export const SITE_BAR_LINKS: readonly SiteBarLink[] = [
   link('/about', 'sitebar.about'),
   link('/for-educators', 'sitebar.for-educators'),
   link('/curriculum', 'sitebar.curriculum'),
+  link('/preparing-for', 'sitebar.preparing-for'),
   link('/validation', 'sitebar.validation'),
   link('/governance', 'sitebar.governance'),
   link('/limitations', 'sitebar.limitations'),

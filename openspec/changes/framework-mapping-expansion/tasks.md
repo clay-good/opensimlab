@@ -73,7 +73,32 @@
 
 ## 3. Catalog and exports
 
-- [ ] Add the "preparing for" blueprint filter; URL carries public values only; group by category.
+- [x] Add the "preparing for" blueprint filter; URL carries public values only; group by category.
+  `/preparing-for` offers the examination readings that exist - the NBCRNA content outline and the
+  NCSBN clinical judgment model - and nothing else. That exclusion is the design, not a gap waiting
+  on task 1: the COA standards, the ACGME milestones and the AAMC EPAs describe a programme or a
+  trainee rather than a paper anybody sits, and offering them under "preparing for" would
+  misdescribe both. A test names all three and fails if one appears. The USMLE, FRCA and NCLEX
+  client-needs readings the capability also asks for join by being added to `BLUEPRINTS`; no surface
+  changes when they do.
+  The URL carries two identifiers and nothing else, both drawn from the records, and reading one
+  back accepts only an identifier a record defines - a category belonging to a different blueprint
+  falls back to "every category" rather than reaching the page. Defaults never appear, so a shared
+  link stays short.
+  Two things found in the building, both worth keeping:
+  - The wording lint could not be pointed at this surface as written. Its bare `score` rule fires on
+    the nursing lesson *A low score: what the threshold does not exclude*, which is a deterioration
+    score nobody acted on, and its `examination readiness` rule fires on the NCSBN record's own note
+    saying the mapping "says nothing about examination readiness". A gate that forbids the
+    disclaimer the requirement demands is backwards. Each pattern now carries its own learner
+    context, and a match preceded by a negation in the same sentence is not a claim. The NCJMM
+    surface's denial is pinned as a test, so the negation rule cannot rot untested.
+  - The selected view is linted per blueprint, not once: the framework's own note and every mapped
+    lesson title only reach the page after a learner chooses, which is exactly where the two rules
+    above would have fired.
+  A category with no lesson stays on the page with its reason - Evaluate outcomes carries the
+  nursing module's structural one, that every lesson ends at the decision - for the same reason the
+  curriculum table keeps its uncovered domains.
 - [x] Lint mapping surfaces for "pass", "score", "readiness" wording; fail the build on a hit.
   `tests/unit/mapping-surfaces.test.ts` checks the curriculum page, the educator page, the
   facilitator guide, and the mapping CSV. It forbids claims about the learner (a score, passing an

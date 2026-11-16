@@ -107,7 +107,7 @@ describe('the externalised site bar and the status page', () => {
     expect(markup).toContain('Skip to main content');
     expect(markup).toContain('>Browse</summary>');
     expect(SITE_BAR_LINKS.find((link) => link.href === '/medical-surgical-nursing')?.label).toBe('Nursing');
-    expect(SITE_BAR_LINKS).toHaveLength(22);
+    expect(SITE_BAR_LINKS).toHaveLength(23);
   });
 
   it('publishes /translation-status with the counts first and clinical content stated as English', () => {

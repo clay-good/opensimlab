@@ -53,6 +53,7 @@ const DocumentRoute = lazy(async () => ({ default: (await import('./DocumentRout
 // The educator surfaces. Loaded on demand: most visitors are learners.
 const EducatorsRoute = lazy(async () => ({ default: (await import('./EducatorsRoute')).EducatorsRoute }));
 const CurriculumRoute = lazy(async () => ({ default: (await import('./CurriculumRoute')).CurriculumRoute }));
+const PreparingForRoute = lazy(async () => ({ default: (await import('./PreparingForRoute')).PreparingForRoute }));
 const ReviewRoute = lazy(async () => ({ default: (await import('./ReviewRoute')).ReviewRoute }));
 const ContentReviewRoute = lazy(async () => ({ default: (await import('./ContentReviewRoute')).ContentReviewRoute }));
 
@@ -286,6 +287,7 @@ function CurrentRoute() {
   }
   if (path === '/for-educators') return <Suspense fallback={<Loading />}><EducatorsRoute /></Suspense>;
   if (path === '/curriculum') return <Suspense fallback={<Loading />}><CurriculumRoute /></Suspense>;
+  if (path === '/preparing-for') return <Suspense fallback={<Loading />}><PreparingForRoute /></Suspense>;
   if (path === '/review') return <Suspense fallback={<Loading />}><ReviewRoute /></Suspense>;
   if (path === '/content-review') return <Suspense fallback={<Loading />}><ContentReviewRoute /></Suspense>;
   if (path === '/gallery') return <Suspense fallback={<Loading />}><GalleryRoute /></Suspense>;

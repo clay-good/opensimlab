@@ -8,6 +8,8 @@ import { describe, expect, it } from 'vitest';
 import { availableModules } from '@platform/modules/registry';
 import { FACILITATED_SCENARIOS } from '@platform/facilitation/scenario-catalog';
 import { READY_MODULE_COUNT, READY_SCENARIO_COUNT } from '@landing/content';
+import { SCENARIO_MAPPINGS } from '@anesthesia/curriculum/mapping';
+import { BLUEPRINTS } from '@platform/curriculum/blueprints';
 
 const readme = readFileSync('README.md', 'utf8');
 const rows = [...readme.matchAll(/^\| ([^|]+?) \| (\d+) \| `\/([a-z-]+)` \|$/gm)]
@@ -22,6 +24,17 @@ describe('the README module table', () => {
   it.each(rows)('states the real lab count for $route', ({ route, labs }) => {
     expect(labs).toBe(availableModules().find((module) => module.route === route)?.scenarioCount);
     expect(labs).toBe(FACILITATED_SCENARIOS.filter((entry) => entry.moduleRoute === route).length);
+  });
+
+  it('states how many lessons actually carry a framework mapping', () => {
+    const mapped = new Set([
+      ...SCENARIO_MAPPINGS.map((mapping) => mapping.scenarioId),
+      ...BLUEPRINTS.flatMap((blueprint) => blueprint.categories
+        .flatMap((category) => category.lessons.map((lesson) => lesson.scenarioId))),
+    ]);
+    const claim = /^(\d+) of (\d+) lessons carry a mapping/m.exec(readme);
+    expect(Number(claim?.[1])).toBe(mapped.size);
+    expect(Number(claim?.[2])).toBe(READY_SCENARIO_COUNT);
   });
 
   it('states the totals the landing page renders', () => {

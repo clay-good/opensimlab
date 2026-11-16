@@ -68,6 +68,14 @@ export function frameworkRecordProblems(record: FrameworkRecord): string[] {
   return problems;
 }
 
+/**
+ * The date a surface judges staleness by: the build's own, so a prerendered
+ * page and the client that hydrates it cannot disagree about what is overdue.
+ */
+export function frameworkToday(releaseId: string): string {
+  return /^\d{4}-\d{2}-\d{2}/.exec(releaseId)?.[0] ?? new Date().toISOString().slice(0, 10);
+}
+
 /** Records whose re-check date has passed, oldest first. */
 export function overdueFrameworks<T extends FrameworkRecord>(records: readonly T[], today: string): T[] {
   return records.filter((record) => record.reviewBy < today)
