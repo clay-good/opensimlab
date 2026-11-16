@@ -36,6 +36,15 @@ import {
 import {
   CRITICAL_CARE_FRAMEWORKS, CRITICAL_CARE_SCENARIO_MAPPINGS,
 } from '../../modules/critical-care/curriculum';
+import {
+  INFECTIOUS_DISEASE_FRAMEWORKS, INFECTIOUS_DISEASE_SCENARIO_MAPPINGS,
+} from '../../modules/infectious-disease/curriculum';
+import {
+  ONCOLOGY_FRAMEWORKS, ONCOLOGY_SCENARIO_MAPPINGS,
+} from '../../modules/oncology/curriculum';
+import {
+  TOXICOLOGY_FRAMEWORKS, TOXICOLOGY_SCENARIO_MAPPINGS,
+} from '../../modules/toxicology/curriculum';
 import type { FrameworkDomainRecord, FrameworkRecord } from './framework-records';
 import type { ScenarioMapping } from './mapping';
 
@@ -59,6 +68,11 @@ const BY_ROUTE: Readonly<Record<string, MappedModule>> = {
   'critical-care': {
     frameworks: CRITICAL_CARE_FRAMEWORKS, mappings: CRITICAL_CARE_SCENARIO_MAPPINGS,
   },
+  'infectious-disease': {
+    frameworks: INFECTIOUS_DISEASE_FRAMEWORKS, mappings: INFECTIOUS_DISEASE_SCENARIO_MAPPINGS,
+  },
+  oncology: { frameworks: ONCOLOGY_FRAMEWORKS, mappings: ONCOLOGY_SCENARIO_MAPPINGS },
+  toxicology: { frameworks: TOXICOLOGY_FRAMEWORKS, mappings: TOXICOLOGY_SCENARIO_MAPPINGS },
 };
 
 /** The module routes that carry an authored mapping table. */

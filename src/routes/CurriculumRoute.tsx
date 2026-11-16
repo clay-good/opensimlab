@@ -48,6 +48,18 @@ import { CRITICAL_CARE_SCENARIOS } from '../modules/critical-care/scenarios';
 import {
   CRITICAL_CARE_FRAMEWORKS, CRITICAL_CARE_SCENARIO_MAPPINGS,
 } from '../modules/critical-care/curriculum';
+import { INFECTIOUS_DISEASE_SCENARIOS } from '../modules/infectious-disease/scenarios';
+import {
+  INFECTIOUS_DISEASE_FRAMEWORKS, INFECTIOUS_DISEASE_SCENARIO_MAPPINGS,
+} from '../modules/infectious-disease/curriculum';
+import { ONCOLOGY_SCENARIOS } from '../modules/oncology/scenarios';
+import {
+  ONCOLOGY_FRAMEWORKS, ONCOLOGY_SCENARIO_MAPPINGS,
+} from '../modules/oncology/curriculum';
+import { TOXICOLOGY_SCENARIOS } from '../modules/toxicology/scenarios';
+import {
+  TOXICOLOGY_FRAMEWORKS, TOXICOLOGY_SCENARIO_MAPPINGS,
+} from '../modules/toxicology/curriculum';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { t } from '@platform/i18n/messages';
 import '@platform/i18n/messages-educator';
@@ -104,6 +116,27 @@ const MAPPED_MODULES: readonly CurriculumModule[] = [
     frameworks: CRITICAL_CARE_FRAMEWORKS,
     scenarios: CRITICAL_CARE_SCENARIOS,
     mappings: CRITICAL_CARE_SCENARIO_MAPPINGS,
+  },
+  {
+    moduleRoute: 'infectious-disease',
+    displayName: 'Infectious disease',
+    frameworks: INFECTIOUS_DISEASE_FRAMEWORKS,
+    scenarios: INFECTIOUS_DISEASE_SCENARIOS,
+    mappings: INFECTIOUS_DISEASE_SCENARIO_MAPPINGS,
+  },
+  {
+    moduleRoute: 'oncology',
+    displayName: 'Oncology',
+    frameworks: ONCOLOGY_FRAMEWORKS,
+    scenarios: ONCOLOGY_SCENARIOS,
+    mappings: ONCOLOGY_SCENARIO_MAPPINGS,
+  },
+  {
+    moduleRoute: 'toxicology',
+    displayName: 'Toxicology',
+    frameworks: TOXICOLOGY_FRAMEWORKS,
+    scenarios: TOXICOLOGY_SCENARIOS,
+    mappings: TOXICOLOGY_SCENARIO_MAPPINGS,
   },
 ];
 
