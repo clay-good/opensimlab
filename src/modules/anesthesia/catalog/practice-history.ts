@@ -204,6 +204,26 @@ const dayOf = (timestamp: string) => timestamp.slice(0, 10);
  * stored millisecond, so moving devices does not bring back a suggestion the
  * learner has already put away.
  */
+/**
+ * WHAT THE PROGRESS FILE DELIBERATELY DOES NOT CARRY: the learner's reasoning
+ * notes.
+ *
+ * The question was open while there was nowhere for notes to go. There is now
+ * (`sessionWithNotes` in `@platform/session/reasoning-notes`), and the answer
+ * is still no, for a reason that is about this file rather than about notes.
+ * This file is moved between devices by a learner who is asked to confirm
+ * nothing, because everything in it is already structured: an outcome, a
+ * scenario id, a calendar day. Nothing in it is free text, so nothing in it can
+ * name a person, and that is exactly what makes it safe to move without a
+ * preview of every word.
+ *
+ * Notes are free text. They belong to one session, not to a history of
+ * outcomes, and they leave the device only through an export that shows the
+ * learner every word first. Putting them here would mean either a preview on
+ * this file too, or a file that quietly carries sentences nobody re-read.
+ * `tests/unit/practice-history.test.ts` holds the attempt shape to the known
+ * structured fields so a later addition has to be argued for in a diff.
+ */
 export function practiceHistoryExport(
   history: readonly PracticeAttempt[],
   suggestionHiddenUntil: string | null = null,

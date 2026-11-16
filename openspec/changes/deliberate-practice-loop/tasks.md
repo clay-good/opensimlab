@@ -230,8 +230,8 @@ its own, none changes the engine, and none produces a score.
   so there is no cheaper shape, only a smaller promise. If that headroom is needed later, the
   lever is to drop the objective statements (5 KB Brotli without them) and show what a lesson
   practises only when it is this module's - which costs the requirement its second clause.
-- [ ] Define the progress file schema; export with both statements; import with replace/merge and
-  recomputation report. Mostly done: the practice-history export is now progress file version 3.
+- [x] Define the progress file schema; export with both statements; import with replace/merge and
+  recomputation report. Done: the practice-history export is now progress file version 3.
   It carries the not-for-clinical-use, not-clinically-reviewed, and simulated-practice-not-
   clinical-time statements, each attempt's calendar day instead of its timestamp, and
   the module the lesson belongs to. Version 1 and version 2 files still import. `/privacy` offers merge (duplicates skipped) or replace (confirmed), and
@@ -242,12 +242,16 @@ its own, none changes the engine, and none produces a score.
   saying when they last opened a module index. It is restored as the END of that day, because
   rounding down would quietly shorten a hide the learner asked for on the other device. A version
   1, 2 or 3 file still imports and simply carries no hide.
-  Remaining: the file does not carry reasoning notes. That one is not plumbing. Notes are the
-  learner's own free text, the transcript and the reporting package are held structurally apart
-  from them by `tests/arch/private-tutor-reporting.test.ts`, and the task says they belong in the
-  full export only after a preview of exactly what would leave. So it needs a decision about the
-  export's shape - a second file, or a wrapper around the transcript that the architecture test
-  would have to be taught about - before it needs code.
+  The open question was whether this file should carry reasoning notes, and the decision is no -
+  for a reason about THIS file rather than about notes. A progress file is moved between a
+  learner's devices with no preview of its contents, and that is only defensible while everything
+  in it is structured: an outcome, a scenario id, a calendar day. Nothing in it is free text, so
+  nothing in it can name a person. Notes are free text, they belong to one session rather than to
+  a history of outcomes, and they now leave the device through an export that shows the learner
+  every word first. Putting them here would mean either a preview on this file too, or a file
+  that quietly carries sentences nobody re-read.
+  `tests/unit/practice-history.test.ts` holds the attempt to its five known keys and holds the
+  writer to being unable to reach a note, so a later addition has to be argued for in a diff.
 - [ ] Tests: round trip, newer-map recomputation, identifier/device/sub-day timestamp absence,
   zero network requests. Round trip, status-change reporting, duplicate-safe merge, version-1
   compatibility, and the absence of identifiers, device fields, and sub-day timestamps are in

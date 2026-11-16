@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
   appendPracticeAttempt,
@@ -234,5 +235,47 @@ describe('bounded private practice history', () => {
       const badDay = JSON.stringify({ schemaVersion: 2, attempts: [{ ...attempt(0), completedOn: '2026-08-24T10:00' }] });
       expect(() => importProgressFile(badDay, 'merge', storage)).toThrow('Invalid practice history file.');
     });
+  });
+});
+
+/**
+ * deliberate-practice-loop → the progress file schema.
+ *
+ * This file moves between a learner's devices with no preview of its contents,
+ * which is only defensible while everything in it is structured. The test holds
+ * that: every field of every attempt is a known key, and nothing in the file is
+ * free text a learner wrote.
+ */
+describe('the progress file carries no free text', () => {
+  const attempt = {
+    schemaVersion: 2 as const,
+    moduleId: 'anesthesia',
+    scenarioId: 'routine-induction',
+    completedAt: '2026-11-16T09:30:00.000Z',
+    guidance: 'unassisted',
+    outcomes: [{ objectiveId: 'preoxygenate', outcome: 'met' }],
+  };
+
+  it('writes only the structured fields the schema names', () => {
+    const file: unknown = JSON.parse(practiceHistoryExport([attempt as never]));
+    const body = file as { attempts: Record<string, unknown>[] };
+    for (const written of body.attempts) {
+      expect(Object.keys(written).sort())
+        .toEqual(['completedOn', 'guidance', 'moduleId', 'outcomes', 'scenarioId']);
+      // The calendar day, never the moment: a time of day places a learner.
+      expect(written.completedOn).toBe('2026-11-16');
+    }
+  });
+
+  /**
+   * Reasoning notes are the one thing a learner writes in their own words, and
+   * they leave the device only through the session export that previews every
+   * word of them. They are not here, and the export cannot reach them.
+   */
+  it('cannot reach a reasoning note', () => {
+    const source = readFileSync('src/modules/anesthesia/catalog/practice-history.ts', 'utf8');
+    const writer = source.slice(source.indexOf('export function practiceHistoryExport'));
+    expect(writer.slice(0, writer.indexOf('\n}\n'))).not.toMatch(/note|reasoning/i);
+    expect(practiceHistoryExport([attempt as never])).not.toMatch(/reasoningNotes/);
   });
 });
