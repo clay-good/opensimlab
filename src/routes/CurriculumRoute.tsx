@@ -60,6 +60,14 @@ import { TOXICOLOGY_SCENARIOS } from '../modules/toxicology/scenarios';
 import {
   TOXICOLOGY_FRAMEWORKS, TOXICOLOGY_SCENARIO_MAPPINGS,
 } from '../modules/toxicology/curriculum';
+import { RENAL_ELECTROLYTE_SCENARIOS } from '../modules/renal-electrolyte/scenarios';
+import {
+  RENAL_ELECTROLYTE_FRAMEWORKS, RENAL_ELECTROLYTE_SCENARIO_MAPPINGS,
+} from '../modules/renal-electrolyte/curriculum';
+import { ENDOCRINE_METABOLIC_SCENARIOS } from '../modules/endocrine-metabolic/scenarios';
+import {
+  ENDOCRINE_METABOLIC_FRAMEWORKS, ENDOCRINE_METABOLIC_SCENARIO_MAPPINGS,
+} from '../modules/endocrine-metabolic/curriculum';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { t } from '@platform/i18n/messages';
 import '@platform/i18n/messages-educator';
@@ -137,6 +145,20 @@ const MAPPED_MODULES: readonly CurriculumModule[] = [
     frameworks: TOXICOLOGY_FRAMEWORKS,
     scenarios: TOXICOLOGY_SCENARIOS,
     mappings: TOXICOLOGY_SCENARIO_MAPPINGS,
+  },
+  {
+    moduleRoute: 'renal-electrolyte',
+    displayName: 'Renal + electrolyte',
+    frameworks: RENAL_ELECTROLYTE_FRAMEWORKS,
+    scenarios: RENAL_ELECTROLYTE_SCENARIOS,
+    mappings: RENAL_ELECTROLYTE_SCENARIO_MAPPINGS,
+  },
+  {
+    moduleRoute: 'endocrine-metabolic',
+    displayName: 'Endocrine + metabolic',
+    frameworks: ENDOCRINE_METABOLIC_FRAMEWORKS,
+    scenarios: ENDOCRINE_METABOLIC_SCENARIOS,
+    mappings: ENDOCRINE_METABOLIC_SCENARIO_MAPPINGS,
   },
 ];
 

@@ -143,26 +143,36 @@
   would read as oversights without their reasons. No objective there examines the patient and none
   carries a safety bound, because these are reasoning lessons about what a number, a scan or a
   label does and does not settle, and the harm they teach is a conclusion drawn too early.
+  Renal and electrolyte (12) and endocrine and metabolic (12) finished the internal medicine set,
+  and they are the two that needed per-objective authoring rather than a prefix rule. Renal names
+  every objective after its ROLE in the lesson - `renal-hyperkalemia-protection`,
+  `renal-estimate-precision` - so the convention is written against those roles, and endocrine
+  names half its lessons one way and half the other, so both shapes are placed and an id matching
+  neither fails the build.
+  Renal turned out to be the only module in the catalogue that reaches evidence-based and informed
+  practice, and it reaches it from exactly two objectives: the phosphate lesson's randomised
+  comparison and the contrast lesson's separation of what a controlled comparison shows from what
+  a before-and-after rise shows. Every other module records that subcompetency as uncovered. A
+  test pins those two objectives by name, because a third one appearing would be a claim that
+  somebody should have to make deliberately.
 - [x] Build check: a verbatim item longer than a short name fails; `review_by` ≤ 24 months. `tests/unit/framework-records.test.ts`.
 
 ## 2. Scenario mappings
 
 - [ ] Map every scenario in every module to at least one applicable framework; list unmapped by
   name in the curriculum view and fail the build on an unmapped scenario once authoring is done.
-  Twelve of sixteen modules are mapped: anaesthesia to all four of its readings, nursing to the
+  Fourteen of sixteen modules are mapped: anaesthesia to all four of its readings, nursing to the
   NCJMM through its verb convention, emergency medicine, paediatrics, neurology and obstetrics
   each to their own ACGME milestone set, and cardiology and respiratory medicine to the internal
-  medicine one, and critical care, infectious disease, oncology and toxicology to it as well -
-  211 of 256 lessons. Counting those needed a fix
+  medicine one, and critical care, infectious disease, oncology, toxicology, renal and
+  electrolyte, and endocrine and metabolic to it as well - 235 of 256 lessons. The eight
+  internal-medicine modules are done. Counting those needed a fix
   worth recording: the README count keyed on scenario id alone, and emergency medicine and
   critical care each ship a lesson called `status-epilepticus`, so the catalogue reported one
   mapped lesson fewer than it had. It keys on module and id now.
   Each module after the first touched only the five wiring points the generalisation
-  established, which is the evidence that it worked. Two of the remaining four modules are
-  internal medicine by subject - renal and electrolyte, and endocrine and metabolic - and need
-  per-objective authoring rather than a prefix convention, because their objective ids are named
-  after their topic rather than led by a verb. The last two, neonatology and surgery and trauma,
-  still have no reading that applies to them, which
+  established, which is the evidence that it worked. The last two, neonatology and surgery and
+  trauma, still have no reading that applies to them, which
   is the constraint this line runs into rather than a backlog: mapping a neonatology lesson to an
   emergency medicine subcompetency would be the kind of claim this change exists to avoid.
   What changed with emergency medicine is that the machinery is no longer anaesthesia's. The four
@@ -176,7 +186,7 @@
   either file learning about a second module.
   The build still fails only on an unmapped ANAESTHESIA lesson. Emergency medicine has its own
   equivalent - a test that no lesson is unmapped and that every objective is placed at least once,
-  per mapped module - and the whole-catalogue gate the line asks for waits on the other four
+  per mapped module - and the whole-catalogue gate the line asks for waits on the last two
   modules having something to map to.
 - [x] Map every nursing scenario's objectives to NCJMM functions with named evidence; build check.
   `src/modules/medical-surgical-nursing/curriculum.ts` records NCSBN's six step names verbatim

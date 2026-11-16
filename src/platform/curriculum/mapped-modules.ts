@@ -45,6 +45,12 @@ import {
 import {
   TOXICOLOGY_FRAMEWORKS, TOXICOLOGY_SCENARIO_MAPPINGS,
 } from '../../modules/toxicology/curriculum';
+import {
+  RENAL_ELECTROLYTE_FRAMEWORKS, RENAL_ELECTROLYTE_SCENARIO_MAPPINGS,
+} from '../../modules/renal-electrolyte/curriculum';
+import {
+  ENDOCRINE_METABOLIC_FRAMEWORKS, ENDOCRINE_METABOLIC_SCENARIO_MAPPINGS,
+} from '../../modules/endocrine-metabolic/curriculum';
 import type { FrameworkDomainRecord, FrameworkRecord } from './framework-records';
 import type { ScenarioMapping } from './mapping';
 
@@ -73,6 +79,12 @@ const BY_ROUTE: Readonly<Record<string, MappedModule>> = {
   },
   oncology: { frameworks: ONCOLOGY_FRAMEWORKS, mappings: ONCOLOGY_SCENARIO_MAPPINGS },
   toxicology: { frameworks: TOXICOLOGY_FRAMEWORKS, mappings: TOXICOLOGY_SCENARIO_MAPPINGS },
+  'renal-electrolyte': {
+    frameworks: RENAL_ELECTROLYTE_FRAMEWORKS, mappings: RENAL_ELECTROLYTE_SCENARIO_MAPPINGS,
+  },
+  'endocrine-metabolic': {
+    frameworks: ENDOCRINE_METABOLIC_FRAMEWORKS, mappings: ENDOCRINE_METABOLIC_SCENARIO_MAPPINGS,
+  },
 };
 
 /** The module routes that carry an authored mapping table. */
