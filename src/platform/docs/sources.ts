@@ -1511,9 +1511,11 @@ export const SOURCES: readonly Source[] = [
     publication: 'National Council of State Boards of Nursing',
     year: 2026,
     locator: 'Effective April 2026. Clinical Judgment, printed page 4 (PDF page 8)',
-    usedFor: 'The six clinical judgment step names the nursing module maps every objective to, '
-      + 'and the reading a learner selects on the "preparing for" page. The step names are '
-      + 'NCSBN\u2019s own; every description beneath them is this project\u2019s wording.',
+    usedFor: 'Two readings, both from this one document. The six clinical judgment step names the '
+      + 'nursing module maps every objective to, and the eight Client Needs categories and '
+      + 'subcategories a learner selects on the "preparing for" page. Both sets of names are '
+      + 'NCSBN\u2019s own; every description beneath them is this project\u2019s wording, and the item '
+      + 'percentages the test plan assigns to each category are deliberately not recorded.',
     verifiedAgainst: 'The document itself, retrieved from the locator the record cites and read '
       + 'page by page. The cover gives the title and "Effective April 2026"; the copyright page '
       + 'gives \u00a9 2026 NCSBN and the suggested citation used above; printed page 4 lists all '

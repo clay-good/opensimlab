@@ -22,8 +22,10 @@ import { FACILITATED_SCENARIOS } from '@platform/facilitation/scenario-catalog';
 import { NBCRNA_NCE } from '@anesthesia/curriculum/frameworks';
 import { SCENARIO_MAPPINGS } from '@anesthesia/curriculum/mapping';
 import {
-  NCSBN_NCJMM, NCJMM_NOT_EXERCISED_REASON, ncjmmMappings, type NcjmmStep,
+  NCSBN_NCJMM, NCJMM_NOT_EXERCISED_REASON, NCLEX_CLIENT_NEEDS_MAPPINGS,
+  NCLEX_CLIENT_NEEDS_UNCOVERED, ncjmmMappings, type NcjmmStep,
 } from '../../modules/medical-surgical-nursing/curriculum';
+import { NCSBN_NCLEX_CLIENT_NEEDS } from './nclex-client-needs';
 
 /** One lesson under one blueprint category. */
 export interface BlueprintLesson {
@@ -135,10 +137,38 @@ function ncjmmBlueprint(): Blueprint {
 }
 
 /**
+ * The nursing lessons under the Client Needs categories every NCLEX-RN item is
+ * assigned to. This is the blueprint the capability names by example - a
+ * learner selecting Physiological Adaptation - and unlike the clinical
+ * judgment one its categories are authored per lesson rather than derived.
+ */
+function clientNeedsBlueprint(): Blueprint {
+  const lessons = lessonsFor('medical-surgical-nursing');
+  return {
+    record: NCSBN_NCLEX_CLIENT_NEEDS,
+    moduleRoute: 'medical-surgical-nursing',
+    categories: NCSBN_NCLEX_CLIENT_NEEDS.domains.map((domain) => ({
+      id: domain.id,
+      label: domain.label,
+      description: domain.description,
+      emptyReason: NCLEX_CLIENT_NEEDS_UNCOVERED[domain.id] ?? '',
+      lessons: NCLEX_CLIENT_NEEDS_MAPPINGS
+        .filter((mapping) => mapping.domainId === domain.id)
+        .flatMap((mapping) => {
+          const lesson = lessons.get(mapping.scenarioId);
+          return lesson ? [{ ...lesson, via: mapping.objectiveIds }] : [];
+        }),
+    })),
+  };
+}
+
+/**
  * Every examination blueprint a learner can select, built once. A new reading of
  * an examination outline joins by being added here; nothing else changes.
  */
-export const BLUEPRINTS: readonly Blueprint[] = [nbcrnaBlueprint(), ncjmmBlueprint()];
+export const BLUEPRINTS: readonly Blueprint[] = [
+  nbcrnaBlueprint(), ncjmmBlueprint(), clientNeedsBlueprint(),
+];
 
 export const BLUEPRINT_IDS: readonly string[] = BLUEPRINTS.map((blueprint) => blueprint.record.id);
 

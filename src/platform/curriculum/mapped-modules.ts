@@ -8,10 +8,12 @@
  * in two files, with two chances of disagreeing about what a mapping is. They
  * ask here instead.
  *
- * Nursing is deliberately not here. Its mapping is DERIVED from each
- * objective's leading verb rather than authored per lesson, so it has no
- * mapping table to look a scenario up in; the two callers keep their own
- * branch for it, which reads from the convention itself.
+ * Nursing is here for its CLIENT NEEDS mapping only. Its clinical judgment
+ * mapping is derived from each objective's leading verb rather than authored
+ * per lesson, so it has no table to look a scenario up in and the two callers
+ * keep their own branch for it; the Client Needs categories are authored,
+ * because a lesson's category is about its subject and no verb can tell you
+ * that.
  */
 import { FRAMEWORKS } from '@anesthesia/curriculum/frameworks';
 import { SCENARIO_MAPPINGS } from '@anesthesia/curriculum/mapping';
@@ -57,6 +59,10 @@ import {
 import {
   SURGERY_TRAUMA_FRAMEWORKS, SURGERY_TRAUMA_SCENARIO_MAPPINGS,
 } from '../../modules/surgery-trauma/curriculum';
+import {
+  NCLEX_CLIENT_NEEDS_MAPPINGS,
+} from '../../modules/medical-surgical-nursing/curriculum';
+import { NCSBN_NCLEX_CLIENT_NEEDS } from './nclex-client-needs';
 import type { FrameworkDomainRecord, FrameworkRecord } from './framework-records';
 import type { ScenarioMapping } from './mapping';
 
@@ -94,6 +100,9 @@ const BY_ROUTE: Readonly<Record<string, MappedModule>> = {
   neonatology: { frameworks: NEONATOLOGY_FRAMEWORKS, mappings: NEONATOLOGY_SCENARIO_MAPPINGS },
   'surgery-trauma': {
     frameworks: SURGERY_TRAUMA_FRAMEWORKS, mappings: SURGERY_TRAUMA_SCENARIO_MAPPINGS,
+  },
+  'medical-surgical-nursing': {
+    frameworks: [NCSBN_NCLEX_CLIENT_NEEDS], mappings: NCLEX_CLIENT_NEEDS_MAPPINGS,
   },
 };
 

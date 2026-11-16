@@ -19,10 +19,11 @@ import { ROUTES } from '@routes/routes';
 
 const NBCRNA = 'nbcrna-nce';
 const NCJMM = 'ncsbn-ncjmm';
+const CLIENT_NEEDS = 'ncsbn-nclex-client-needs';
 
 describe('Requirement: Learners Can Filter The Catalog By Examination Blueprint', () => {
   it('offers the examination readings and no reading of something else', () => {
-    expect([...BLUEPRINT_IDS].sort()).toEqual([NBCRNA, NCJMM]);
+    expect([...BLUEPRINT_IDS].sort()).toEqual([NBCRNA, NCJMM, CLIENT_NEEDS].sort());
     // Accreditation standards and milestone sets describe a programme or a
     // trainee, never a paper a learner sits. They belong on /curriculum, and
     // naming them by their real ids is what makes this a guard rather than a
@@ -56,6 +57,36 @@ describe('Requirement: Learners Can Filter The Catalog By Examination Blueprint'
       // Selecting one opens its briefing, so the address has to be a real route.
       expect(ROUTES.some((route) => route.path === lesson.href), lesson.href).toBe(true);
     }
+  });
+
+  /**
+   * The capability names this one by example: "a learner selects the NCLEX-RN
+   * Test Plan and the category Physiological Adaptation". It is the Client
+   * Needs reading rather than the clinical judgment one that has that
+   * category, which is why the test plan is recorded as two readings.
+   */
+  it('Scenario: a student selects the NCLEX-RN Test Plan and Physiological Adaptation', () => {
+    const [category] = blueprintSelection({
+      blueprint: CLIENT_NEEDS, category: 'physiological-adaptation',
+    });
+    expect(category!.label).toBe('Physiological Adaptation');
+    expect(category!.lessons.length).toBeGreaterThan(0);
+    for (const lesson of category!.lessons) {
+      expect(ROUTES.some((route) => route.path === lesson.href), lesson.href).toBe(true);
+    }
+  });
+
+  /**
+   * The largest single subcategory on that examination is covered by nothing
+   * here, because no nursing lesson gives a medicine. A student has to be able
+   * to see that from the filter rather than infer it from an empty list.
+   */
+  it('says why the pharmacology subcategory is empty', () => {
+    const [category] = blueprintSelection({
+      blueprint: CLIENT_NEEDS, category: 'pharmacological-and-parenteral-therapies',
+    });
+    expect(category!.lessons).toEqual([]);
+    expect(category!.emptyReason).toMatch(/largest single subcategory/);
   });
 
   it('keeps a category nothing touches, with the reason when there is one', () => {

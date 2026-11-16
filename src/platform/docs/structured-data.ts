@@ -45,13 +45,23 @@ export function educationalAlignmentFor(moduleRoute: string, scenarioId: string)
     const scenario = getMedicalSurgicalNursingScenario(scenarioId);
     if (!scenario) return [];
     const steps = new Set<string>(ncjmmMappings([scenario]).flatMap((mapping) => mapping.steps));
-    return NCSBN_NCJMM.domains.filter((step) => steps.has(step.id)).map((step) => ({
-      '@type': 'AlignmentObject',
-      alignmentType: 'teaches',
-      educationalFramework: `${NCSBN_NCJMM.name} (${NCSBN_NCJMM.version})`,
-      targetName: step.label,
-      targetUrl: NCSBN_NCJMM.url,
-    }));
+    return [
+      ...NCSBN_NCJMM.domains.filter((step) => steps.has(step.id)).map((step) => ({
+        '@type': 'AlignmentObject',
+        alignmentType: 'teaches',
+        educationalFramework: `${NCSBN_NCJMM.name} (${NCSBN_NCJMM.version})`,
+        targetName: step.label,
+        targetUrl: NCSBN_NCJMM.url,
+      })),
+      // And the authored Client Needs mapping from the same test plan.
+      ...mappedDomainsFor(moduleRoute, scenarioId).map((mapped) => ({
+        '@type': 'AlignmentObject',
+        alignmentType: 'teaches',
+        educationalFramework: `${mapped.framework.name} (${mapped.framework.version})`,
+        targetName: mapped.domain.label,
+        targetUrl: mapped.framework.url,
+      })),
+    ];
   }
   return mappedDomainsFor(moduleRoute, scenarioId).map((mapped) => ({
     '@type': 'AlignmentObject',

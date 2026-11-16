@@ -93,8 +93,9 @@ toward and see which lessons touch each of its categories, grouped by category, 
 reading was taken and when it is due to be checked again. All 256 of 256 lessons
 carry a mapping, and from here an unmapped lesson fails the build. What stays incomplete is the
 other direction: most of what each framework contains is touched by nothing here, so every
-uncovered domain is listed with the reason it is uncovered. Two of the twelve readings are
-examination blueprints and so appear in the filter, and nothing on either surface predicts
+uncovered domain is listed with the reason it is uncovered. Three of the thirteen readings are
+examination blueprints and so appear in the filter, including the NCLEX-RN client-needs
+categories a nursing student plans a week around, and nothing on either surface predicts
 anything about an examination.
 
 **Claims are sourced and correctable.** Crisis protocols trace to their issuing bodies,

@@ -170,6 +170,21 @@
   lessons keep parents present and informed without ever asking a learner to deliver serious news;
   and three of the surgery reading's eighteen subcompetencies are about operating, two of which a
   screen-based lesson cannot touch at all.
+  **The NCLEX-RN client-needs categories are now a reading of their own**, which takes the record
+  count to twelve and the blueprint filter to three. They come from the same document as the
+  clinical judgment reading, and recording them separately is what the document itself does:
+  clinical judgment is an integrated process measured through case studies, and Client Needs is
+  the content framework every item is assigned to. Only the second is something a learner can
+  prepare against category by category, which is the capability's own example - selecting the
+  NCLEX-RN Test Plan and the category Physiological Adaptation - and a test now runs exactly that
+  selection.
+  Unlike the clinical judgment mapping, this one is authored rather than derived: a lesson's
+  category is about its SUBJECT, and the six verbs cannot tell a deterioration score from a
+  delirium screen. Three of the eight categories are covered by nothing, and the one that matters
+  is named in the filter rather than left as an empty list - no lesson in the module gives a
+  medicine, so Pharmacological and Parenteral Therapies, the largest single subcategory on the
+  examination, is untouched. The item percentages the test plan assigns are deliberately not
+  recorded anywhere: covering a category in nine lessons is not coverage of that share of a paper.
   The gate this line asks for now exists and is catalogue-wide:
   `tests/unit/catalogue-mapping-gate.test.ts` fails the build on any unmapped lesson in any
   module, holds that every available module carries a mapping, and holds that every mapped domain

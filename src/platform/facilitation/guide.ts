@@ -120,8 +120,18 @@ function errorAndRecoveryItems(entry: FacilitatedScenario): GuideItem[] {
 
 /** Framework domains this scenario is mapped to, with the objectives that carry each. */
 function frameworkItems({ moduleRoute, scenario }: FacilitatedScenario): GuideItem[] {
-  if (moduleRoute === 'medical-surgical-nursing') return ncjmmItems(scenario);
   const statement = new Map(scenario.metadata.objectives.map((objective) => [objective.id, objective.statement]));
+  // Nursing carries two mappings: one derived from each objective's leading
+  // verb, and one authored per lesson. Both belong in the guide.
+  if (moduleRoute === 'medical-surgical-nursing') {
+    const derived = ncjmmItems(scenario);
+    const authored = mappedDomainsFor(moduleRoute, scenario.metadata.id).map((mapped) => ({
+      label: `${mapped.framework.shortLabel}: ${mapped.domain.label}`,
+      text: mapped.objectiveIds.map((id) => statement.get(id) ?? id).join('; '),
+    }));
+    // The shared disclaimer stays last, whatever is added above it.
+    return [...derived.slice(0, -1), ...authored, derived.at(-1)!];
+  }
   const items = mappedDomainsFor(moduleRoute, scenario.metadata.id).map((mapped) => ({
     label: `${mapped.framework.shortLabel}: ${mapped.domain.label}`,
     text: mapped.objectiveIds.map((id) => statement.get(id) ?? id).join('; '),

@@ -13,6 +13,8 @@
  * objective, and check the verb against the step.
  */
 import type { FrameworkRecord } from '@platform/curriculum/framework-records';
+import type { ScenarioMapping } from '@platform/curriculum/mapping';
+import { NCSBN_NCLEX_CLIENT_NEEDS } from '@platform/curriculum/nclex-client-needs';
 import type { Scenario } from '@anesthesia/scenarios/types';
 
 export const NCSBN_NCJMM: FrameworkRecord = {
@@ -115,3 +117,70 @@ export function ncjmmCoverage(
     return { step, label: domain.label, status, note };
   });
 }
+
+/**
+ * The same test plan's other half: the Client Needs categories every item on
+ * the examination is assigned to (framework-mapping-expansion → scenario
+ * mappings).
+ *
+ * The clinical judgment mapping above is DERIVED from each objective's leading
+ * verb. This one is authored, because a lesson's Client Needs category is
+ * about its SUBJECT and no verb can tell you that: a deterioration score and a
+ * delirium screen are the same six verbs and different categories.
+ *
+ * The convention, stated so it can be checked:
+ *
+ * - An objective that escalates, records or hands on → Management of Care.
+ *   That is what those three do in this module: they decide who owns a
+ *   decision, what is written down and what travels to the next shift.
+ * - An objective that reads the evidence - reconcile, recognise, review the
+ *   boundaries - takes the lesson's own subject category: the deterioration
+ *   score and the counted rate are Reduction of Risk Potential, the delirium
+ *   screen is Psychosocial Integrity, the pain scale is Basic Care and
+ *   Comfort, the stroke clock and the oxygen target are Physiological
+ *   Adaptation.
+ *
+ * Three of the eight are covered by nothing, and the reasons are below. The
+ * one worth naming: no lesson in this module gives a medicine, so
+ * Pharmacological and Parenteral Therapies - the largest single subcategory on
+ * the examination - is untouched here. A student reading the coverage should
+ * see that first.
+ */
+export const NCLEX_CLIENT_NEEDS_UNCOVERED: Readonly<Record<string, string>> = {
+  'safety-and-infection-prevention-and-control': 'No lesson here turns on the environment, the equipment or an organism.',
+  'health-promotion-and-maintenance': 'Every lesson is one shift; none is about prevention or health over time.',
+  'pharmacological-and-parenteral-therapies': 'No lesson in this module gives a medicine or runs an infusion. This is the largest single subcategory on the examination and nothing here touches it.',
+};
+
+const FRAMEWORK_ID = NCSBN_NCLEX_CLIENT_NEEDS.id;
+
+export const NCLEX_CLIENT_NEEDS_MAPPINGS: readonly ScenarioMapping[] = [
+  // --- low-score-what-the-threshold-does-not-exclude ---
+  { scenarioId: 'low-score-what-the-threshold-does-not-exclude', frameworkId: FRAMEWORK_ID, domainId: 'reduction-of-risk-potential', objectiveIds: ['reconcile-medical-surgical-nursing-low-score-observations-that-are-correct', 'recognize-medical-surgical-nursing-low-score-a-screen-is-not-a-rule-out', 'review-medical-surgical-nursing-low-score-boundaries-and-their-certainty'] },
+  { scenarioId: 'low-score-what-the-threshold-does-not-exclude', frameworkId: FRAMEWORK_ID, domainId: 'management-of-care', objectiveIds: ['activate-medical-surgical-nursing-low-score-escalate-on-concern-not-threshold', 'record-medical-surgical-nursing-low-score-a-family-report-as-evidence', 'handoff-medical-surgical-nursing-low-score-a-concern-that-outlived-the-shift'] },
+  // --- counted-rate-a-number-nobody-counted ---
+  { scenarioId: 'counted-rate-a-number-nobody-counted', frameworkId: FRAMEWORK_ID, domainId: 'reduction-of-risk-potential', objectiveIds: ['reconcile-medical-surgical-nursing-counted-rate-a-trend-read-as-a-distribution', 'recognize-medical-surgical-nursing-counted-rate-the-measurement-is-the-finding', 'review-medical-surgical-nursing-counted-rate-boundaries-and-their-certainty'] },
+  { scenarioId: 'counted-rate-a-number-nobody-counted', frameworkId: FRAMEWORK_ID, domainId: 'management-of-care', objectiveIds: ['record-medical-surgical-nursing-counted-rate-a-discrepancy-left-unreconciled', 'activate-medical-surgical-nursing-counted-rate-escalation-on-the-counted-value', 'handoff-medical-surgical-nursing-counted-rate-a-record-that-disagrees-with-itself'] },
+  // --- paired-reading-a-number-wrong-in-one-direction ---
+  { scenarioId: 'paired-reading-a-number-wrong-in-one-direction', frameworkId: FRAMEWORK_ID, domainId: 'reduction-of-risk-potential', objectiveIds: ['reconcile-medical-surgical-nursing-paired-reading-a-reading-recorded-as-a-reading', 'recognize-medical-surgical-nursing-paired-reading-error-with-a-direction', 'review-medical-surgical-nursing-paired-reading-boundaries-and-their-certainty'] },
+  { scenarioId: 'paired-reading-a-number-wrong-in-one-direction', frameworkId: FRAMEWORK_ID, domainId: 'physiological-adaptation', objectiveIds: ['reconcile-medical-surgical-nursing-paired-reading-a-reading-recorded-as-a-reading', 'recognize-medical-surgical-nursing-paired-reading-error-with-a-direction', 'review-medical-surgical-nursing-paired-reading-boundaries-and-their-certainty'] },
+  { scenarioId: 'paired-reading-a-number-wrong-in-one-direction', frameworkId: FRAMEWORK_ID, domainId: 'management-of-care', objectiveIds: ['record-medical-surgical-nursing-paired-reading-what-the-gap-is-not', 'activate-medical-surgical-nursing-paired-reading-escalation-on-the-arterial-value', 'handoff-medical-surgical-nursing-paired-reading-a-chart-that-reads-reassuringly'] },
+  // --- afferent-limb-a-threshold-met-and-a-call-not-made ---
+  { scenarioId: 'afferent-limb-a-threshold-met-and-a-call-not-made', frameworkId: FRAMEWORK_ID, domainId: 'reduction-of-risk-potential', objectiveIds: ['reconcile-medical-surgical-nursing-afferent-limb-criteria-already-met', 'recognize-medical-surgical-nursing-afferent-limb-obstacles-that-are-not-clinical', 'review-medical-surgical-nursing-afferent-limb-boundaries-and-their-certainty'] },
+  { scenarioId: 'afferent-limb-a-threshold-met-and-a-call-not-made', frameworkId: FRAMEWORK_ID, domainId: 'management-of-care', objectiveIds: ['activate-medical-surgical-nursing-afferent-limb-a-call-on-the-threshold', 'record-medical-surgical-nursing-afferent-limb-a-concern-stated-to-a-person', 'handoff-medical-surgical-nursing-afferent-limb-a-call-made-on-a-threshold'] },
+  // --- quiet-patient-a-screen-that-was-never-done ---
+  { scenarioId: 'quiet-patient-a-screen-that-was-never-done', frameworkId: FRAMEWORK_ID, domainId: 'psychosocial-integrity', objectiveIds: ['reconcile-medical-surgical-nursing-quiet-patient-impressions-are-not-results', 'recognize-medical-surgical-nursing-quiet-patient-the-screen-is-what-changed', 'review-medical-surgical-nursing-quiet-patient-boundaries-and-their-certainty'] },
+  { scenarioId: 'quiet-patient-a-screen-that-was-never-done', frameworkId: FRAMEWORK_ID, domainId: 'management-of-care', objectiveIds: ['record-medical-surgical-nursing-quiet-patient-a-result-recorded-as-a-result', 'activate-medical-surgical-nursing-quiet-patient-escalation-on-a-positive-screen', 'handoff-medical-surgical-nursing-quiet-patient-a-record-with-a-specific-gap'] },
+  // --- proxy-scale-a-number-without-a-standard ---
+  { scenarioId: 'proxy-scale-a-number-without-a-standard', frameworkId: FRAMEWORK_ID, domainId: 'basic-care-and-comfort', objectiveIds: ['reconcile-medical-surgical-nursing-proxy-scale-an-attempt-that-came-first', 'recognize-medical-surgical-nursing-proxy-scale-a-total-is-not-an-intensity', 'review-medical-surgical-nursing-proxy-scale-boundaries-and-their-certainty'] },
+  { scenarioId: 'proxy-scale-a-number-without-a-standard', frameworkId: FRAMEWORK_ID, domainId: 'management-of-care', objectiveIds: ['record-medical-surgical-nursing-proxy-scale-what-a-low-total-cannot-license', 'activate-medical-surgical-nursing-proxy-scale-a-proxy-who-knows-the-person', 'handoff-medical-surgical-nursing-proxy-scale-a-number-handed-over-as-what-it-is'] },
+  // --- last-known-well-a-time-nobody-can-supply ---
+  { scenarioId: 'last-known-well-a-time-nobody-can-supply', frameworkId: FRAMEWORK_ID, domainId: 'physiological-adaptation', objectiveIds: ['reconcile-medical-surgical-nursing-last-known-well-a-bound-and-not-an-onset', 'recognize-medical-surgical-nursing-last-known-well-an-uncertain-account-kept-uncertain', 'review-medical-surgical-nursing-last-known-well-boundaries-and-their-certainty'] },
+  { scenarioId: 'last-known-well-a-time-nobody-can-supply', frameworkId: FRAMEWORK_ID, domainId: 'management-of-care', objectiveIds: ['activate-medical-surgical-nursing-last-known-well-on-the-deficit-not-the-clock', 'record-medical-surgical-nursing-last-known-well-what-the-unknown-changes', 'handoff-medical-surgical-nursing-last-known-well-an-empty-field-handed-over-empty'] },
+  // --- oxygen-target-scale-a-score-that-should-be-lower ---
+  { scenarioId: 'oxygen-target-scale-a-score-that-should-be-lower', frameworkId: FRAMEWORK_ID, domainId: 'physiological-adaptation', objectiveIds: ['reconcile-medical-surgical-nursing-oxygen-target-scale-two-documents-before-one-verdict', 'recognize-medical-surgical-nursing-oxygen-target-scale-a-number-compared-with-the-wrong-range', 'review-medical-surgical-nursing-oxygen-target-scale-boundaries-and-their-certainty'] },
+  { scenarioId: 'oxygen-target-scale-a-score-that-should-be-lower', frameworkId: FRAMEWORK_ID, domainId: 'reduction-of-risk-potential', objectiveIds: ['reconcile-medical-surgical-nursing-oxygen-target-scale-two-documents-before-one-verdict', 'recognize-medical-surgical-nursing-oxygen-target-scale-a-number-compared-with-the-wrong-range', 'review-medical-surgical-nursing-oxygen-target-scale-boundaries-and-their-certainty'] },
+  { scenarioId: 'oxygen-target-scale-a-score-that-should-be-lower', frameworkId: FRAMEWORK_ID, domainId: 'management-of-care', objectiveIds: ['record-medical-surgical-nursing-oxygen-target-scale-what-a-corrected-score-does-not-supply', 'activate-medical-surgical-nursing-oxygen-target-scale-a-decision-that-is-not-the-wards-to-make', 'handoff-medical-surgical-nursing-oxygen-target-scale-a-corrected-score-handed-over-as-corrected'] },
+  // --- lost-contingency-a-plan-that-was-not-said ---
+  { scenarioId: 'lost-contingency-a-plan-that-was-not-said', frameworkId: FRAMEWORK_ID, domainId: 'management-of-care', objectiveIds: ['reconcile-medical-surgical-nursing-lost-contingency-what-was-said-against-what-is-written', 'recognize-medical-surgical-nursing-lost-contingency-a-gap-the-handover-created', 'record-medical-surgical-nursing-lost-contingency-reconstructed-not-authored', 'activate-medical-surgical-nursing-lost-contingency-a-plan-returned-to-its-owner', 'review-medical-surgical-nursing-lost-contingency-boundaries-and-their-certainty', 'handoff-medical-surgical-nursing-lost-contingency-said-out-loud-before-it-is-needed'] },
+];
