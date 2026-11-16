@@ -93,17 +93,37 @@
   subcompetencies, so each lesson is assigned its period by its own words rather than inferred,
   and a test holds that every lesson carries exactly one: carrying the wrong one would be a claim
   about when the emergency happened.
+  **Six of the seven, and the one that covers the most ground.** The ACGME's Internal Medicine
+  Milestones are now recorded, with cardiology mapped to them. This reading is shared rather than
+  per-module on purpose: eight modules - cardiology, respiratory medicine, renal and electrolyte,
+  endocrine and metabolic, infectious disease, oncology, critical care and toxicology - are
+  internal medicine by subject, and a programme assesses against that document rather than against
+  eight subspecialty readings this project invented. Each of those modules joins the same reading
+  as its mapping is authored; cardiology is the first.
+  Two findings from reading it. Its well-being subcompetency carries an asterisk whose footnote
+  says the subcompetency "is not intended to evaluate a resident's well-being", so the label omits
+  the marker and the description carries the point - dropping the marker silently would have
+  changed what the title claims. And it separates inpatient from outpatient management, which
+  makes each lesson's DECLARED ENVIRONMENT the deciding fact rather than the module's subject:
+  sixteen cardiology lessons are declared `clinic` and one `icu`, and a test holds the mapping to
+  that. The same question will decide the other seven modules differently.
+  A guard worth recording: the generator that writes these mappings refuses an objective whose
+  prefix the convention does not place. Running it over respiratory medicine and critical care
+  stopped on `coordinate-` and `calculate-`, which is the evidence that a module's convention is
+  authored rather than copied.
 - [x] Build check: a verbatim item longer than a short name fails; `review_by` ≤ 24 months. `tests/unit/framework-records.test.ts`.
 
 ## 2. Scenario mappings
 
 - [ ] Map every scenario in every module to at least one applicable framework; list unmapped by
   name in the curriculum view and fail the build on an unmapped scenario once authoring is done.
-  Six of sixteen modules are mapped: anaesthesia to all four of its readings, nursing to the
-  NCJMM through its verb convention, and emergency medicine, paediatrics, neurology and obstetrics
-  each to their own ACGME milestone set - 119 of 256 lessons. Each module after the first touched
-  only the five wiring points the generalisation established, which is the evidence that it
-  worked. The remaining ten modules still have no reading that applies to them, which
+  Seven of sixteen modules are mapped: anaesthesia to all four of its readings, nursing to the
+  NCJMM through its verb convention, emergency medicine, paediatrics, neurology and obstetrics
+  each to their own ACGME milestone set, and cardiology to the internal medicine one - 136 of 256
+  lessons. Each module after the first touched only the five wiring points the generalisation
+  established, which is the evidence that it worked. Seven of the remaining nine modules are
+  internal medicine by subject and will join the reading cardiology just opened; the last two,
+  neonatology and surgery and trauma, still have no reading that applies to them, which
   is the constraint this line runs into rather than a backlog: mapping a neonatology lesson to an
   emergency medicine subcompetency would be the kind of claim this change exists to avoid.
   What changed with emergency medicine is that the machinery is no longer anaesthesia's. The four
@@ -117,7 +137,7 @@
   either file learning about a second module.
   The build still fails only on an unmapped ANAESTHESIA lesson. Emergency medicine has its own
   equivalent - a test that no lesson is unmapped and that every objective is placed at least once,
-  per mapped module - and the whole-catalogue gate the line asks for waits on the other ten
+  per mapped module - and the whole-catalogue gate the line asks for waits on the other nine
   modules having something to map to.
 - [x] Map every nursing scenario's objectives to NCJMM functions with named evidence; build check.
   `src/modules/medical-surgical-nursing/curriculum.ts` records NCSBN's six step names verbatim

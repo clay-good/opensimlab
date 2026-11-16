@@ -13,6 +13,7 @@
  */
 import { FRAMEWORKS } from '@anesthesia/curriculum/frameworks';
 import { ACGME_EMERGENCY_MEDICINE_MILESTONES } from './acgme-emergency-medicine';
+import { ACGME_INTERNAL_MEDICINE_MILESTONES } from './acgme-internal-medicine';
 import { ACGME_NEUROLOGY_MILESTONES } from './acgme-neurology';
 import { ACGME_OBSTETRICS_GYNECOLOGY_MILESTONES } from './acgme-obstetrics-gynecology';
 import { ACGME_PEDIATRICS_MILESTONES } from './acgme-pediatrics';
@@ -22,6 +23,7 @@ import type { FrameworkRecord } from './framework-records';
 export const FRAMEWORK_READINGS: readonly FrameworkRecord[] = [
   ...FRAMEWORKS,
   ACGME_EMERGENCY_MEDICINE_MILESTONES,
+  ACGME_INTERNAL_MEDICINE_MILESTONES,
   ACGME_NEUROLOGY_MILESTONES,
   ACGME_OBSTETRICS_GYNECOLOGY_MILESTONES,
   ACGME_PEDIATRICS_MILESTONES,

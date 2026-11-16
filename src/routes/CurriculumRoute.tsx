@@ -36,6 +36,10 @@ import { OBSTETRICS_SCENARIOS } from '../modules/obstetrics/scenarios';
 import {
   OBSTETRICS_FRAMEWORKS, OBSTETRICS_SCENARIO_MAPPINGS,
 } from '../modules/obstetrics/curriculum';
+import { CARDIOLOGY_SCENARIOS } from '../modules/cardiology/scenarios';
+import {
+  CARDIOLOGY_FRAMEWORKS, CARDIOLOGY_SCENARIO_MAPPINGS,
+} from '../modules/cardiology/curriculum';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { t } from '@platform/i18n/messages';
 import '@platform/i18n/messages-educator';
@@ -71,6 +75,13 @@ const MAPPED_MODULES: readonly CurriculumModule[] = [
     frameworks: OBSTETRICS_FRAMEWORKS,
     scenarios: OBSTETRICS_SCENARIOS,
     mappings: OBSTETRICS_SCENARIO_MAPPINGS,
+  },
+  {
+    moduleRoute: 'cardiology',
+    displayName: 'Cardiology',
+    frameworks: CARDIOLOGY_FRAMEWORKS,
+    scenarios: CARDIOLOGY_SCENARIOS,
+    mappings: CARDIOLOGY_SCENARIO_MAPPINGS,
   },
 ];
 

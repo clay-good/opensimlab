@@ -1662,6 +1662,31 @@ export const SOURCES: readonly Source[] = [
     currency: { lastAmended: '2021-08-01', checkedAt: '2026-11-16' },
   },
   {
+    id: 'acgme-internal-medicine-milestones',
+    authors: 'Accreditation Council for Graduate Medical Education',
+    title: 'Internal Medicine Milestones',
+    publication: 'Accreditation Council for Graduate Medical Education',
+    year: 2020,
+    locator: 'Version 2.1; second revision November 2020, implementation 1 July 2021. '
+      + 'Subcompetency headings of the ACGME Report Worksheet',
+    usedFor: 'The twenty-one subcompetency titles the internal-medicine modules are mapped '
+      + 'against, one reading per objective. Cardiology is mapped; the other internal-medicine '
+      + 'modules join the same reading as each is authored. Titles are the ACGME\u2019s own; the '
+      + 'descriptions beneath them are this project\u2019s summary.',
+    verifiedAgainst: 'The document itself, retrieved from the locator above and read page by '
+      + 'page. It carries the same scope statement and educational-use permission as the other '
+      + 'ACGME readings. Two things were found by reading rather than assumed. Its well-being '
+      + 'subcompetency carries an asterisk, and the footnote behind it says the subcompetency '
+      + '"is not intended to evaluate a resident\u2019s well-being" - dropping the marker without '
+      + 'the footnote would have changed what the title claims, so the label omits the marker '
+      + 'and the description carries the point. And its management subcompetencies separate '
+      + 'inpatient from outpatient, which is what makes each lesson\u2019s declared environment the '
+      + 'deciding fact rather than the module\u2019s subject: sixteen cardiology lessons are '
+      + 'declared `clinic` and one `icu`, and a test holds the mapping to that.',
+    verifiedOn: '2026-11-16',
+    currency: { lastAmended: '2020-11-01', checkedAt: '2026-11-16' },
+  },
+  {
     id: 'nbcrna-nce-content-outline',
     authors: 'National Board of Certification and Recertification for Nurse Anesthetists',
     title: 'National Certification Examination content outline',
