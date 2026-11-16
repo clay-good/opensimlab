@@ -13,11 +13,13 @@
  */
 import { FRAMEWORKS } from '@anesthesia/curriculum/frameworks';
 import { ACGME_EMERGENCY_MEDICINE_MILESTONES } from './acgme-emergency-medicine';
+import { ACGME_PEDIATRICS_MILESTONES } from './acgme-pediatrics';
 import { NCSBN_NCJMM } from '../../modules/medical-surgical-nursing/curriculum';
 import type { FrameworkRecord } from './framework-records';
 
 export const FRAMEWORK_READINGS: readonly FrameworkRecord[] = [
   ...FRAMEWORKS,
   ACGME_EMERGENCY_MEDICINE_MILESTONES,
+  ACGME_PEDIATRICS_MILESTONES,
   NCSBN_NCJMM,
 ];

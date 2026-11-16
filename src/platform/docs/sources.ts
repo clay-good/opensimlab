@@ -1589,6 +1589,31 @@ export const SOURCES: readonly Source[] = [
     currency: { lastAmended: '2021-02-01', checkedAt: '2026-11-16' },
   },
   {
+    id: 'acgme-pediatrics-milestones',
+    authors: 'Accreditation Council for Graduate Medical Education',
+    title: 'Pediatrics Milestones',
+    publication: 'Accreditation Council for Graduate Medical Education',
+    year: 2021,
+    locator: 'Version 2.1; second revision March 2021, implementation 1 July 2021. '
+      + 'Subcompetency headings of the ACGME Report Worksheet',
+    usedFor: 'The twenty-two subcompetency titles the paediatrics module\u2019s sixteen lessons are '
+      + 'mapped against, one reading per objective. Titles are the ACGME\u2019s own; the '
+      + 'descriptions beneath them are this project\u2019s summary.',
+    verifiedAgainst: 'The document itself, retrieved from the locator above and read page by '
+      + 'page, as its emergency medicine counterpart was. It carries the same scope statement, '
+      + 'in the same words - the Milestones are "designed only for use in evaluation of residents '
+      + 'in the context of their participation in ACGME-accredited residency programs" and are '
+      + 'not "designed to be relevant in any other context" - and the same educational-use '
+      + 'permission in its copyright line. What differs is the division of the subcompetencies, '
+      + 'and the difference changes mappings rather than wording: paediatrics separates history '
+      + 'from physical examination, coordination of care from transitions in care, and '
+      + 'professional behavior from ethical principles, where emergency medicine does not. The '
+      + 'reading follows this document\u2019s divisions rather than reusing the other\u2019s shape, and '
+      + 'omits the five level descriptors for the same reason.',
+    verifiedOn: '2026-11-16',
+    currency: { lastAmended: '2021-03-01', checkedAt: '2026-11-16' },
+  },
+  {
     id: 'nbcrna-nce-content-outline',
     authors: 'National Board of Certification and Recertification for Nurse Anesthetists',
     title: 'National Certification Examination content outline',

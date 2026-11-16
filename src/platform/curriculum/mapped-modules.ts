@@ -18,6 +18,9 @@ import { SCENARIO_MAPPINGS } from '@anesthesia/curriculum/mapping';
 import {
   EMERGENCY_MEDICINE_FRAMEWORKS, EMERGENCY_MEDICINE_SCENARIO_MAPPINGS,
 } from '../../modules/emergency-medicine/curriculum';
+import {
+  PEDIATRICS_FRAMEWORKS, PEDIATRICS_SCENARIO_MAPPINGS,
+} from '../../modules/pediatrics/curriculum';
 import type { FrameworkDomainRecord, FrameworkRecord } from './framework-records';
 import type { ScenarioMapping } from './mapping';
 
@@ -31,6 +34,7 @@ const BY_ROUTE: Readonly<Record<string, MappedModule>> = {
   'emergency-medicine': {
     frameworks: EMERGENCY_MEDICINE_FRAMEWORKS, mappings: EMERGENCY_MEDICINE_SCENARIO_MAPPINGS,
   },
+  pediatrics: { frameworks: PEDIATRICS_FRAMEWORKS, mappings: PEDIATRICS_SCENARIO_MAPPINGS },
 };
 
 /** The module routes that carry an authored mapping table. */

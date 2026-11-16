@@ -59,15 +59,31 @@
   appraises published evidence, reflects on the learner's own growth, tests professional behaviour,
   accountability or well-being, or holds a conversation with a patient or a family. The set is
   pinned in both directions.
+  **Three of the seven.** The ACGME's Pediatrics Milestones followed, with all 16 paediatric
+  lessons mapped. Reading that document found the thing worth knowing before mapping a third
+  specialty: the scope statement and the educational-use permission are word for word the emergency
+  medicine ones, but the DIVISIONS are not. Paediatrics separates history from physical
+  examination, coordination of care from transitions in care, and professional behaviour from
+  ethical principles, where emergency medicine separates none of the three. So a reading cannot be
+  copied from its neighbour and relabelled: the paediatric lessons' authored shape - reconcile,
+  recognise, hand to a qualified team, hold threads open, look again, hand over - lands in six
+  different subcompetencies here, and the convention is written against that shape.
+  Eight of its twenty-two are mapped by nothing, and it is a different eight: professional
+  behaviour and accountability are uncovered here as in emergency medicine, but ethical principles
+  IS covered, by the two safeguarding objectives that turn on what may be concluded and what may be
+  shared. Nine objectives name the caregiver as part of the work and carry the family-communication
+  subcompetency; they are listed by name rather than inferred from the module's subject.
 - [x] Build check: a verbatim item longer than a short name fails; `review_by` ≤ 24 months. `tests/unit/framework-records.test.ts`.
 
 ## 2. Scenario mappings
 
 - [ ] Map every scenario in every module to at least one applicable framework; list unmapped by
   name in the curriculum view and fail the build on an unmapped scenario once authoring is done.
-  Three of sixteen modules are mapped: anaesthesia to all four of its readings, nursing to the
-  NCJMM through its verb convention, and now emergency medicine to the ACGME's EM Milestones - 73
-  of 256 lessons. The remaining thirteen modules still have no reading that applies to them, which
+  Four of sixteen modules are mapped: anaesthesia to all four of its readings, nursing to the
+  NCJMM through its verb convention, emergency medicine to the ACGME's EM Milestones, and
+  paediatrics to the ACGME's Pediatrics Milestones - 89 of 256 lessons. Adding paediatrics touched
+  only the five wiring points the previous module established, which is the evidence that the
+  generalisation worked. The remaining twelve modules still have no reading that applies to them, which
   is the constraint this line runs into rather than a backlog: mapping a neonatology lesson to an
   emergency medicine subcompetency would be the kind of claim this change exists to avoid.
   What changed with emergency medicine is that the machinery is no longer anaesthesia's. The four
@@ -80,9 +96,9 @@
   25 EM guides fill their framework section and the 25 EM briefings carry their alignment without
   either file learning about a second module.
   The build still fails only on an unmapped ANAESTHESIA lesson. Emergency medicine has its own
-  equivalent - a test that no EM lesson is unmapped and that every objective is placed at least
-  once - and the whole-catalogue gate the line asks for waits on the other thirteen modules having
-  something to map to.
+  equivalent - a test that no lesson is unmapped and that every objective is placed at least once,
+  per mapped module - and the whole-catalogue gate the line asks for waits on the other twelve
+  modules having something to map to.
 - [x] Map every nursing scenario's objectives to NCJMM functions with named evidence; build check.
   `src/modules/medical-surgical-nursing/curriculum.ts` records NCSBN's six step names verbatim
   from the 2026 NCLEX-RN Test Plan (PDF page 8), with this project's own descriptions because the

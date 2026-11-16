@@ -60,6 +60,7 @@ describe('framework records', () => {
     'aamc-core-epas': 'aamc-core-epas-toolkits',
     'ncsbn-ncjmm': 'ncsbn-nclex-rn-test-plan-2026',
     'acgme-emergency-medicine': 'acgme-emergency-medicine-milestones',
+    'acgme-pediatrics': 'acgme-pediatrics-milestones',
   };
 
   it('registers every framework reading as a source, checked no earlier than the reading', () => {

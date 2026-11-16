@@ -30,8 +30,8 @@ describe('Requirement: Learners Can Filter The Catalog By Examination Blueprint'
     const notBlueprints = FRAMEWORK_READINGS.map((reading) => reading.id)
       .filter((id) => !BLUEPRINT_IDS.includes(id));
     expect([...notBlueprints].sort()).toEqual([
-      'acgme-anesthesiology-milestones-2', 'acgme-emergency-medicine', 'aamc-core-epas',
-      'coa-standards',
+      'acgme-anesthesiology-milestones-2', 'acgme-emergency-medicine', 'acgme-pediatrics',
+      'aamc-core-epas', 'coa-standards',
     ].sort());
   });
 

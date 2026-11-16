@@ -24,6 +24,10 @@ import { EMERGENCY_MEDICINE_SCENARIOS } from '../modules/emergency-medicine/scen
 import {
   EMERGENCY_MEDICINE_FRAMEWORKS, EMERGENCY_MEDICINE_SCENARIO_MAPPINGS,
 } from '../modules/emergency-medicine/curriculum';
+import { PEDIATRICS_SCENARIOS } from '../modules/pediatrics/scenarios';
+import {
+  PEDIATRICS_FRAMEWORKS, PEDIATRICS_SCENARIO_MAPPINGS,
+} from '../modules/pediatrics/curriculum';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { t } from '@platform/i18n/messages';
 import '@platform/i18n/messages-educator';
@@ -38,6 +42,13 @@ const MAPPED_MODULES: readonly CurriculumModule[] = [
     frameworks: EMERGENCY_MEDICINE_FRAMEWORKS,
     scenarios: EMERGENCY_MEDICINE_SCENARIOS,
     mappings: EMERGENCY_MEDICINE_SCENARIO_MAPPINGS,
+  },
+  {
+    moduleRoute: 'pediatrics',
+    displayName: 'Pediatrics',
+    frameworks: PEDIATRICS_FRAMEWORKS,
+    scenarios: PEDIATRICS_SCENARIOS,
+    mappings: PEDIATRICS_SCENARIO_MAPPINGS,
   },
 ];
 
