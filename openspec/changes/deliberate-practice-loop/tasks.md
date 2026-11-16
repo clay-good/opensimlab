@@ -97,6 +97,17 @@ its own, none changes the engine, and none produces a score.
   authored path into the order - exactly the claim the equivalent-paths requirement exists to
   prevent. It needs a declaration before it needs code.
 - [ ] Offer every declared equivalent-path transcript as a selectable reference.
+  Blocked on the same thing order agreement is blocked on, and worth stating once for both. The
+  requirement this serves says "WHEN regional guidance or expert review identifies multiple
+  acceptable action sequences" - and nothing in the catalogue declares one. The scenario schema
+  has no field for an equivalent path, and the three transcripts each lesson ships are an expert
+  path, the error the lesson exists to make visible, and the recovery from it: none of those is a
+  second acceptable way through.
+  So the selectable reference needs an authored declaration before it needs code, and inventing
+  the alternatives here would be worse than leaving the control out - it would turn this project's
+  guess into the second right answer. What exists today is honest about being one path: the
+  overlay's own introduction says the reference run is one way through the lesson and not the only
+  one.
 - [x] Architecture test: no sum, mean, score, or distance figure is exported by the overlay
   module; snapshot the line format. `tests/arch/expert-overlay-has-no-score.test.ts` holds three
   things: no export whose name is a score, total or distance; no aggregation in the module's own
