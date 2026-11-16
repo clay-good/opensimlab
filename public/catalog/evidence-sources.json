@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 425,
+  "sourceCount": 426,
   "sources": [
     {
       "id": "rapid-cycle-deliberate-practice-ilcor-2024",
@@ -1814,6 +1814,21 @@
       "verifiedOn": "2026-11-16",
       "currency": {
         "lastAmended": "2020-12-01",
+        "checkedAt": "2026-11-16"
+      }
+    },
+    {
+      "id": "acgme-obstetrics-gynecology-milestones",
+      "authors": "Accreditation Council for Graduate Medical Education",
+      "title": "Obstetrics and Gynecology Milestones",
+      "publication": "Accreditation Council for Graduate Medical Education",
+      "year": 2021,
+      "locator": "Version 2.0; second revision August 2021, implementation July 2022. Subcompetency headings of the ACGME Report Worksheet",
+      "usedFor": "The thirty-two subcompetency titles the obstetrics module’s fifteen lessons are mapped against, one reading per objective. Titles are the ACGME’s own; the descriptions beneath them are this project’s summary.",
+      "verifiedAgainst": "The document itself, retrieved from the locator above and read page by page. It carries the same scope statement and educational-use permission as the other three ACGME readings. Two things about it shaped the mapping. Its thirty-two subcompetencies separate the antepartum, intrapartum and postpartum periods, so each lesson is assigned its period by its own words rather than inferred, and a test holds that every lesson carries exactly one. And more than a third of the document is gynaecological surgery and ambulatory care that this module has no lesson for, so half the reading is uncovered; that is recorded in the record’s own note rather than left for a reader to discover in the coverage table.",
+      "verifiedOn": "2026-11-16",
+      "currency": {
+        "lastAmended": "2021-08-01",
         "checkedAt": "2026-11-16"
       }
     },

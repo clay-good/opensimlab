@@ -83,17 +83,27 @@
   management, because all fifteen are declared ward lessons. Nine of the twenty-seven are
   uncovered, including determination of death by neurologic criteria, which no lesson reaches and
   none would be a defensible place to practise.
+  **Five of the seven.** The ACGME's Obstetrics and Gynecology Milestones followed, with all 15
+  obstetrics lessons mapped. This reading is the one where the honest result is a gap: thirty-two
+  subcompetencies, sixteen covered and sixteen not, and the uncovered half is almost entirely
+  gynaecology - endoscopy, laparoscopy, open surgery, family planning, ambulatory care,
+  first-trimester bleeding. The module is obstetric emergencies. Rather than leave a reader to
+  discover that in the coverage table, the record's own note says it, and a test holds the count.
+  The document separates the antepartum, intrapartum and postpartum periods into three
+  subcompetencies, so each lesson is assigned its period by its own words rather than inferred,
+  and a test holds that every lesson carries exactly one: carrying the wrong one would be a claim
+  about when the emergency happened.
 - [x] Build check: a verbatim item longer than a short name fails; `review_by` ≤ 24 months. `tests/unit/framework-records.test.ts`.
 
 ## 2. Scenario mappings
 
 - [ ] Map every scenario in every module to at least one applicable framework; list unmapped by
   name in the curriculum view and fail the build on an unmapped scenario once authoring is done.
-  Five of sixteen modules are mapped: anaesthesia to all four of its readings, nursing to the
-  NCJMM through its verb convention, and emergency medicine, paediatrics and neurology each to
-  their own ACGME milestone set - 104 of 256 lessons. Each module after the first touched only the
-  five wiring points the generalisation established, which is the evidence that it worked. The
-  remaining eleven modules still have no reading that applies to them, which
+  Six of sixteen modules are mapped: anaesthesia to all four of its readings, nursing to the
+  NCJMM through its verb convention, and emergency medicine, paediatrics, neurology and obstetrics
+  each to their own ACGME milestone set - 119 of 256 lessons. Each module after the first touched
+  only the five wiring points the generalisation established, which is the evidence that it
+  worked. The remaining ten modules still have no reading that applies to them, which
   is the constraint this line runs into rather than a backlog: mapping a neonatology lesson to an
   emergency medicine subcompetency would be the kind of claim this change exists to avoid.
   What changed with emergency medicine is that the machinery is no longer anaesthesia's. The four
@@ -107,7 +117,7 @@
   either file learning about a second module.
   The build still fails only on an unmapped ANAESTHESIA lesson. Emergency medicine has its own
   equivalent - a test that no lesson is unmapped and that every objective is placed at least once,
-  per mapped module - and the whole-catalogue gate the line asks for waits on the other eleven
+  per mapped module - and the whole-catalogue gate the line asks for waits on the other ten
   modules having something to map to.
 - [x] Map every nursing scenario's objectives to NCJMM functions with named evidence; build check.
   `src/modules/medical-surgical-nursing/curriculum.ts` records NCSBN's six step names verbatim

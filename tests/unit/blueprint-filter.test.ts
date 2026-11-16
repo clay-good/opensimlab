@@ -31,7 +31,7 @@ describe('Requirement: Learners Can Filter The Catalog By Examination Blueprint'
       .filter((id) => !BLUEPRINT_IDS.includes(id));
     expect([...notBlueprints].sort()).toEqual([
       'acgme-anesthesiology-milestones-2', 'acgme-emergency-medicine', 'acgme-neurology',
-      'acgme-pediatrics', 'aamc-core-epas', 'coa-standards',
+      'acgme-obstetrics-gynecology', 'acgme-pediatrics', 'aamc-core-epas', 'coa-standards',
     ].sort());
   });
 

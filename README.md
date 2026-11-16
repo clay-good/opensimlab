@@ -80,7 +80,8 @@ and the guides are deliberately outside the offline precache.
 
 **Mappings name the document they read, and the lessons they cannot cover.** Each lesson's
 objectives are mapped to published framework domains — the NBCRNA certification content outline,
-the COA standards, the ACGME anaesthesiology, emergency medicine, paediatrics and neurology milestones, the
+the COA standards, the ACGME anaesthesiology, emergency medicine, paediatrics, neurology and obstetrics
+milestones, the
 AAMC Core EPAs, and the NCSBN clinical judgment model — as this project's own reading, which no
 body has reviewed or endorsed, and each carrying whatever its own document says about the uses it
 was designed for. Program directors read the coverage table at `/curriculum`, where a domain no
@@ -88,8 +89,8 @@ lesson touches is listed as uncovered rather than dropped, and export the whole 
 Learners read the same data the other way round at
 [`/preparing-for`](https://opensimlab.com/preparing-for): pick the examination you are working
 toward and see which lessons touch each of its categories, grouped by category, with the date that
-reading was taken and when it is due to be checked again. Honestly incomplete: 104 of 256 lessons
-carry a mapping, two of the eight readings are examination blueprints and so appear in the filter,
+reading was taken and when it is due to be checked again. Honestly incomplete: 119 of 256 lessons
+carry a mapping, two of the nine readings are examination blueprints and so appear in the filter,
 and nothing on either surface predicts anything about an examination.
 
 **Claims are sourced and correctable.** Crisis protocols trace to their issuing bodies,

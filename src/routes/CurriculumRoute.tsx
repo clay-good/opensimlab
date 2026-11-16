@@ -32,6 +32,10 @@ import { NEUROLOGY_SCENARIOS } from '../modules/neurology/scenarios';
 import {
   NEUROLOGY_FRAMEWORKS, NEUROLOGY_SCENARIO_MAPPINGS,
 } from '../modules/neurology/curriculum';
+import { OBSTETRICS_SCENARIOS } from '../modules/obstetrics/scenarios';
+import {
+  OBSTETRICS_FRAMEWORKS, OBSTETRICS_SCENARIO_MAPPINGS,
+} from '../modules/obstetrics/curriculum';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { t } from '@platform/i18n/messages';
 import '@platform/i18n/messages-educator';
@@ -60,6 +64,13 @@ const MAPPED_MODULES: readonly CurriculumModule[] = [
     frameworks: NEUROLOGY_FRAMEWORKS,
     scenarios: NEUROLOGY_SCENARIOS,
     mappings: NEUROLOGY_SCENARIO_MAPPINGS,
+  },
+  {
+    moduleRoute: 'obstetrics',
+    displayName: 'Obstetrics',
+    frameworks: OBSTETRICS_FRAMEWORKS,
+    scenarios: OBSTETRICS_SCENARIOS,
+    mappings: OBSTETRICS_SCENARIO_MAPPINGS,
   },
 ];
 
