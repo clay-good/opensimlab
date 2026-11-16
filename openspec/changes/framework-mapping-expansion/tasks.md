@@ -107,6 +107,21 @@
   makes each lesson's DECLARED ENVIRONMENT the deciding fact rather than the module's subject:
   sixteen cardiology lessons are declared `clinic` and one `icu`, and a test holds the mapping to
   that. The same question will decide the other seven modules differently.
+  **What is left of this line, and why it is not authoring.** Seven of the readings this line asks
+  for are recorded: the five ACGME milestone sets, the AAMC Core EPAs and the NCSBN clinical
+  judgment model, plus three the line did not name but the capability does - the NCLEX-RN
+  client-needs categories, the neonatal-perinatal and surgery milestone sets, and the USMLE
+  content outline's systems. Twelve readings in all.
+  The two outstanding are both the RCoA's: the 2021 Stage 1 domains and key capabilities, and the
+  Primary FRCA syllabus. Both are published on rcoa.ac.uk, and rcoa.ac.uk returns 403 to automated
+  retrieval - the curriculum PDF, the learning-syllabus pages and the assessment guidance alike. A
+  web search returns summaries of their contents, and that is exactly what this project does not
+  accept: every other reading here was transcribed from the document itself, and the register
+  records what each was checked against. Writing a record from a search snippet would make this
+  the one reading nobody read.
+  So it waits on somebody who can open the document in a browser. The anaesthesia module already
+  maps to four readings, so nothing is unmapped while it waits; what is missing is the one a UK
+  trainee would recognise.
   A guard worth recording: the generator that writes these mappings refuses an objective whose
   prefix the convention does not place. Running it over respiratory medicine and critical care
   stopped on `coordinate-` and `calculate-`, which is the evidence that a module's convention is
