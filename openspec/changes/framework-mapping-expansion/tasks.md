@@ -44,19 +44,45 @@
   words. Under-claiming fidelity is the safe direction, and the note carries the truth.
   A new body's URL also has to join `documentationHosts` in `tests/arch/boundaries.test.ts`, which
   is the gate that caught this one.
+  **Two of the seven are now done.** The ACGME's Emergency Medicine Milestones joined next, in
+  `src/platform/curriculum/acgme-emergency-medicine.ts`, with all 25 emergency medicine lessons
+  mapped to it. Reading the document rather than recalling it decided the shape of the record: its
+  second page says the Milestones "are designed only for use in evaluation of residents in the
+  context of their participation in ACGME-accredited residency programs" and are not "designed to
+  be relevant in any other context". A simulator is another context. So the reading carries that
+  sentence wherever it is shown, claims subject-matter overlap and nothing else, and omits the five
+  level descriptors entirely - a lesson cannot place a learner on a developmental scale, and
+  recording the levels would have invited exactly that reading. A test holds both the statement and
+  the absence of levels.
+  Eight of the twenty-two subcompetencies are mapped by nothing, each with its reason recorded next
+  to it: no lesson runs a quality-improvement project, works a health system's constraints,
+  appraises published evidence, reflects on the learner's own growth, tests professional behaviour,
+  accountability or well-being, or holds a conversation with a patient or a family. The set is
+  pinned in both directions.
 - [x] Build check: a verbatim item longer than a short name fails; `review_by` ≤ 24 months. `tests/unit/framework-records.test.ts`.
 
 ## 2. Scenario mappings
 
 - [ ] Map every scenario in every module to at least one applicable framework; list unmapped by
   name in the curriculum view and fail the build on an unmapped scenario once authoring is done.
-  The anaesthesia module is mapped to all four of its frameworks, including the new cross-specialty
-  one. The other 217 lessons in fifteen modules are mapped to none, and the build already fails on
-  an unmapped ANAESTHESIA scenario - `unmappedScenarios()` and the coverage test both read the
-  anaesthesia catalogue only. Widening either to the whole catalogue is what this line asks for,
-  and it cannot happen before those modules have a framework that applies to them: mapping a
-  nursing lesson to an anaesthesia certification outline would be the kind of claim this change
-  exists to avoid.
+  Three of sixteen modules are mapped: anaesthesia to all four of its readings, nursing to the
+  NCJMM through its verb convention, and now emergency medicine to the ACGME's EM Milestones - 73
+  of 256 lessons. The remaining thirteen modules still have no reading that applies to them, which
+  is the constraint this line runs into rather than a backlog: mapping a neonatology lesson to an
+  emergency medicine subcompetency would be the kind of claim this change exists to avoid.
+  What changed with emergency medicine is that the machinery is no longer anaesthesia's. The four
+  functions that compute coverage, unmapped lessons, dangling mappings and the CSV now take their
+  data as arguments and live in `src/platform/curriculum/mapping.ts`; the anaesthesia module keeps
+  its public API by delegating to them. The curriculum view gained a module chooser before its
+  framework chooser, because a reading belongs to a module and offering EM subcompetencies over an
+  anaesthesia lesson list would read as a claim that one maps to the other. The facilitator guide
+  and the briefing's structured data ask one shared lookup instead of naming anaesthesia, so the
+  25 EM guides fill their framework section and the 25 EM briefings carry their alignment without
+  either file learning about a second module.
+  The build still fails only on an unmapped ANAESTHESIA lesson. Emergency medicine has its own
+  equivalent - a test that no EM lesson is unmapped and that every objective is placed at least
+  once - and the whole-catalogue gate the line asks for waits on the other thirteen modules having
+  something to map to.
 - [x] Map every nursing scenario's objectives to NCJMM functions with named evidence; build check.
   `src/modules/medical-surgical-nursing/curriculum.ts` records NCSBN's six step names verbatim
   from the 2026 NCLEX-RN Test Plan (PDF page 8), with this project's own descriptions because the

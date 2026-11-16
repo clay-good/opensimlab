@@ -14,6 +14,7 @@ import {
   getBlueprint, overdueBlueprints, readBlueprintQuery,
 } from '@platform/curriculum/blueprints';
 import { frameworkRecordProblems } from '@platform/curriculum/framework-records';
+import { FRAMEWORK_READINGS } from '@platform/curriculum/readings';
 import { ROUTES } from '@routes/routes';
 
 const NBCRNA = 'nbcrna-nce';
@@ -23,10 +24,15 @@ describe('Requirement: Learners Can Filter The Catalog By Examination Blueprint'
   it('offers the examination readings and no reading of something else', () => {
     expect([...BLUEPRINT_IDS].sort()).toEqual([NBCRNA, NCJMM]);
     // Accreditation standards and milestone sets describe a programme or a
-    // trainee, never a paper a learner sits. They belong on /curriculum.
-    for (const forbidden of ['coa-standards', 'acgme-milestones', 'aamc-core-epas']) {
-      expect(BLUEPRINT_IDS).not.toContain(forbidden);
-    }
+    // trainee, never a paper a learner sits. They belong on /curriculum, and
+    // naming them by their real ids is what makes this a guard rather than a
+    // sentence: every reading this build ships is either a blueprint or here.
+    const notBlueprints = FRAMEWORK_READINGS.map((reading) => reading.id)
+      .filter((id) => !BLUEPRINT_IDS.includes(id));
+    expect([...notBlueprints].sort()).toEqual([
+      'acgme-anesthesiology-milestones-2', 'acgme-emergency-medicine', 'aamc-core-epas',
+      'coa-standards',
+    ].sort());
   });
 
   it('keeps every blueprint a well-formed framework reading', () => {

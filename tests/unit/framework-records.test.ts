@@ -3,7 +3,7 @@ import { createElement } from 'react';
 import { describe, expect, it } from 'vitest';
 import { DocumentRoute } from '@routes/DocumentRoute';
 import { FRAMEWORKS } from '@anesthesia/curriculum/frameworks';
-import { NCSBN_NCJMM } from '../../src/modules/medical-surgical-nursing/curriculum';
+import { FRAMEWORK_READINGS } from '@platform/curriculum/readings';
 import { SOURCES } from '@platform/docs/sources';
 import { mappingCsv } from '@anesthesia/curriculum/mapping';
 import {
@@ -59,10 +59,11 @@ describe('framework records', () => {
     'acgme-anesthesiology-milestones-2': 'acgme-anesthesiology-milestones-2',
     'aamc-core-epas': 'aamc-core-epas-toolkits',
     'ncsbn-ncjmm': 'ncsbn-nclex-rn-test-plan-2026',
+    'acgme-emergency-medicine': 'acgme-emergency-medicine-milestones',
   };
 
   it('registers every framework reading as a source, checked no earlier than the reading', () => {
-    const readings = [...FRAMEWORKS, NCSBN_NCJMM];
+    const readings = FRAMEWORK_READINGS;
     expect(readings.map((reading) => reading.id).sort()).toEqual(Object.keys(REGISTERED).sort());
     for (const reading of readings) {
       const source = SOURCES.find((entry) => entry.id === REGISTERED[reading.id]);
@@ -79,7 +80,7 @@ describe('framework records', () => {
    * names are reproduced verbatim, so the credit travels with them.
    */
   it('carries the credit the NCSBN document requires wherever its names are reproduced', () => {
-    expect(NCSBN_NCJMM.note)
+    expect(FRAMEWORK_READINGS.find((reading) => reading.id === 'ncsbn-ncjmm')!.note)
       .toContain('Portions copyrighted by the National Council of State Boards of Nursing, Inc. All rights reserved.');
   });
 

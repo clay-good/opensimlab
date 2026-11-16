@@ -2,6 +2,10 @@ import { describe, expect, it } from 'vitest';
 import { educationalAlignmentFor, learningResourceJsonLd, structuredDataFor } from '@platform/docs/structured-data';
 import { SCENARIO_MAPPINGS } from '@anesthesia/curriculum/mapping';
 import { FRAMEWORKS } from '@anesthesia/curriculum/frameworks';
+import { EMERGENCY_MEDICINE_SCENARIOS } from '../../src/modules/emergency-medicine/scenarios';
+import {
+  EMERGENCY_MEDICINE_FRAMEWORKS, EMERGENCY_MEDICINE_SCENARIO_MAPPINGS,
+} from '../../src/modules/emergency-medicine/curriculum';
 
 describe('educational alignment in structured data', () => {
   const mapped = [...new Set(SCENARIO_MAPPINGS.map((mapping) => mapping.scenarioId))];
@@ -13,6 +17,25 @@ describe('educational alignment in structured data', () => {
       for (const entry of alignment) {
         expect(entry).toMatchObject({ '@type': 'AlignmentObject', alignmentType: 'teaches' });
         expect(FRAMEWORKS.map((framework) => framework.url)).toContain(entry.targetUrl);
+      }
+    }
+  });
+
+  /**
+   * The second mapped module reaches this surface through the same lookup, so
+   * an emergency medicine briefing carries its subcompetencies the way an
+   * anaesthesia briefing carries its content areas. Before the lookup was
+   * shared, every module but anaesthesia returned an empty alignment.
+   */
+  it('aligns the emergency medicine lessons to their subcompetencies', () => {
+    for (const scenario of EMERGENCY_MEDICINE_SCENARIOS) {
+      const alignment = educationalAlignmentFor('emergency-medicine', scenario.metadata.id);
+      expect(alignment.length, scenario.metadata.id).toBe(EMERGENCY_MEDICINE_SCENARIO_MAPPINGS
+        .filter((mapping) => mapping.scenarioId === scenario.metadata.id).length);
+      for (const entry of alignment) {
+        expect(entry).toMatchObject({ '@type': 'AlignmentObject', alignmentType: 'teaches' });
+        expect(EMERGENCY_MEDICINE_FRAMEWORKS.map((framework) => framework.url))
+          .toContain(entry.targetUrl);
       }
     }
   });

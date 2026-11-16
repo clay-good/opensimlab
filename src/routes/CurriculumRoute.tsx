@@ -2,32 +2,59 @@
  * The curriculum coverage view, for a program director
  * (platform/adoption → Curriculum Mapping To Recognized Frameworks).
  *
- * Filterable by framework, exportable as CSV, and honest about what it does not
- * cover: a domain no scenario touches is listed as uncovered rather than
- * dropped, because a coverage table that quietly omits its gaps is worse than
- * no table.
+ * Filterable by module and by framework, exportable as CSV, and honest about
+ * what it does not cover: a domain no scenario touches is listed as uncovered
+ * rather than dropped, because a coverage table that quietly omits its gaps is
+ * worse than no table.
+ *
+ * Two modules carry a mapping. The module chooser comes first because a reading
+ * belongs to a module: offering the ACGME's emergency medicine subcompetencies
+ * while an anaesthesia lesson list was on screen would read as a claim that the
+ * one maps to the other.
  */
 
 import { useMemo, useState } from 'react';
 import { Badge, Button, SegmentedControl, SiteBar } from '@platform/ui';
-import { FRAMEWORKS, MAPPING_DISCLAIMER } from '@anesthesia/curriculum/frameworks';
+import { MAPPING_DISCLAIMER } from '@anesthesia/curriculum/frameworks';
+import { ANESTHESIA_CURRICULUM } from '@anesthesia/curriculum/mapping';
 import {
-  SCENARIO_MAPPINGS, coverageFor, mappingCsv, unmappedScenarios,
-} from '@anesthesia/curriculum/mapping';
+  coverageOf, curriculumCsv, unmappedIn, type CurriculumModule,
+} from '@platform/curriculum/mapping';
+import { EMERGENCY_MEDICINE_SCENARIOS } from '../modules/emergency-medicine/scenarios';
+import {
+  EMERGENCY_MEDICINE_FRAMEWORKS, EMERGENCY_MEDICINE_SCENARIO_MAPPINGS,
+} from '../modules/emergency-medicine/curriculum';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { t } from '@platform/i18n/messages';
 import '@platform/i18n/messages-educator';
 import { EDUCATOR_PAGES } from './educator-pages';
 
+/** The modules that carry a mapping, in the order the chooser offers them. */
+const MAPPED_MODULES: readonly CurriculumModule[] = [
+  ANESTHESIA_CURRICULUM,
+  {
+    moduleRoute: 'emergency-medicine',
+    displayName: 'Emergency medicine',
+    frameworks: EMERGENCY_MEDICINE_FRAMEWORKS,
+    scenarios: EMERGENCY_MEDICINE_SCENARIOS,
+    mappings: EMERGENCY_MEDICINE_SCENARIO_MAPPINGS,
+  },
+];
+
 export function CurriculumRoute() {
-  const [frameworkId, setFrameworkId] = useState(FRAMEWORKS[0]!.id);
-  const framework = FRAMEWORKS.find((entry) => entry.id === frameworkId)!;
-  const coverage = useMemo(() => coverageFor(framework), [framework]);
-  const unmapped = useMemo(() => unmappedScenarios(), []);
+  const [moduleRoute, setModuleRoute] = useState(MAPPED_MODULES[0]!.moduleRoute);
+  const module = MAPPED_MODULES.find((entry) => entry.moduleRoute === moduleRoute)!;
+  const [frameworkId, setFrameworkId] = useState(module.frameworks[0]!.id);
+  const framework = module.frameworks.find((entry) => entry.id === frameworkId)
+    ?? module.frameworks[0]!;
+  const coverage = useMemo(
+    () => coverageOf(framework, module.scenarios, module.mappings), [framework, module],
+  );
+  const unmapped = useMemo(() => unmappedIn(module.scenarios, module.mappings), [module]);
   const covered = coverage.filter((entry) => entry.scenarios.length > 0).length;
 
   const download = () => {
-    const blob = new Blob([mappingCsv()], { type: 'text/csv' });
+    const blob = new Blob([curriculumCsv(MAPPED_MODULES)], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement('a');
     anchor.href = url;
@@ -45,10 +72,24 @@ export function CurriculumRoute() {
         <p className="reading__aside">{MAPPING_DISCLAIMER}</p>
 
         <SegmentedControl<string>
+          label={t('curriculum.module')}
+          value={moduleRoute}
+          onChange={(value) => {
+            setModuleRoute(value);
+            setFrameworkId(MAPPED_MODULES.find((entry) => entry.moduleRoute === value)!
+              .frameworks[0]!.id);
+          }}
+          options={MAPPED_MODULES.map((entry) => ({
+            value: entry.moduleRoute,
+            label: entry.displayName,
+          }))}
+        />
+
+        <SegmentedControl<string>
           label={t('curriculum.framework')}
-          value={frameworkId}
+          value={framework.id}
           onChange={setFrameworkId}
-          options={FRAMEWORKS.map((entry) => ({
+          options={module.frameworks.map((entry) => ({
             value: entry.id,
             label: entry.shortLabel,
             srLabel: entry.name,
@@ -97,14 +138,14 @@ export function CurriculumRoute() {
                   ) : (
                     <ul className="curriculum__scenarios">
                       {scenarios.map((scenario) => {
-                        const mapping = SCENARIO_MAPPINGS.find(
+                        const mapping = module.mappings.find(
                           (entry) => entry.frameworkId === framework.id
                             && entry.domainId === domain.id
                             && entry.scenarioId === scenario.metadata.id,
                         );
                         return (
                           <li key={scenario.metadata.id}>
-                            <a href={`/anesthesia/scenario/${scenario.metadata.id}`}>
+                            <a href={`/${module.moduleRoute}/scenario/${scenario.metadata.id}`}>
                               {scenario.metadata.title}
                             </a>
                             <br />

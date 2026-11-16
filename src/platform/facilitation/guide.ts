@@ -11,8 +11,8 @@
  */
 import type { Scenario } from '@anesthesia/scenarios/types';
 import { MATURITY_LABELS } from '@platform/governance/publication';
-import { MAPPING_DISCLAIMER, getFramework } from '@anesthesia/curriculum/frameworks';
-import { SCENARIO_MAPPINGS } from '@anesthesia/curriculum/mapping';
+import { MAPPING_DISCLAIMER } from '@anesthesia/curriculum/frameworks';
+import { mappedDomainsFor } from '@platform/curriculum/mapped-modules';
 import {
   NCJMM_NOT_EXERCISED_REASON, NCSBN_NCJMM, ncjmmMappings,
 } from '../../modules/medical-surgical-nursing/curriculum';
@@ -121,19 +121,11 @@ function errorAndRecoveryItems(entry: FacilitatedScenario): GuideItem[] {
 /** Framework domains this scenario is mapped to, with the objectives that carry each. */
 function frameworkItems({ moduleRoute, scenario }: FacilitatedScenario): GuideItem[] {
   if (moduleRoute === 'medical-surgical-nursing') return ncjmmItems(scenario);
-  if (moduleRoute !== 'anesthesia') return [];
   const statement = new Map(scenario.metadata.objectives.map((objective) => [objective.id, objective.statement]));
-  const items = SCENARIO_MAPPINGS
-    .filter((mapping) => mapping.scenarioId === scenario.metadata.id)
-    .flatMap((mapping) => {
-      const framework = getFramework(mapping.frameworkId);
-      const domain = framework?.domains.find((candidate) => candidate.id === mapping.domainId);
-      if (framework === undefined || domain === undefined) return [];
-      return [{
-        label: `${framework.shortLabel}: ${domain.label}`,
-        text: mapping.objectiveIds.map((id) => statement.get(id) ?? id).join('; '),
-      }];
-    });
+  const items = mappedDomainsFor(moduleRoute, scenario.metadata.id).map((mapped) => ({
+    label: `${mapped.framework.shortLabel}: ${mapped.domain.label}`,
+    text: mapped.objectiveIds.map((id) => statement.get(id) ?? id).join('; '),
+  }));
   return items.length === 0 ? [] : [...items, { text: MAPPING_DISCLAIMER }];
 }
 

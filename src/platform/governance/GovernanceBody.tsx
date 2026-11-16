@@ -4,7 +4,7 @@ import '@platform/i18n/messages-documents';
 import { EDITORIAL_BOARD, HONEST_STATUS, reviewableItems } from './records';
 import { reportCoverage } from './review-gate';
 import { APP_VERSION } from './status';
-import { FRAMEWORKS } from '@anesthesia/curriculum/frameworks';
+import { FRAMEWORK_READINGS } from '@platform/curriculum/readings';
 import { FRAMEWORK_REVIEW_MONTHS, frameworkToday, overdueFrameworks } from '@platform/curriculum/framework-records';
 
 /**
@@ -128,16 +128,16 @@ export function GovernanceBody() {
  */
 function FrameworkReadings() {
   const today = frameworkToday(APP_VERSION);
-  const overdue = new Set(overdueFrameworks(FRAMEWORKS, today).map((framework) => framework.id));
+  const overdue = new Set(overdueFrameworks(FRAMEWORK_READINGS, today).map((framework) => framework.id));
   return (
     <>
       <h2>{t('gov.fw-heading')}</h2>
       <p>
         {t('gov.fw-intro', { months: FRAMEWORK_REVIEW_MONTHS })}{' '}
-        <span className="numeric">{overdue.size}</span> {t('gov.fw-overdue', { total: FRAMEWORKS.length })}
+        <span className="numeric">{overdue.size}</span> {t('gov.fw-overdue', { total: FRAMEWORK_READINGS.length })}
       </p>
       <ul>
-        {FRAMEWORKS.map((framework) => (
+        {FRAMEWORK_READINGS.map((framework) => (
           <li key={framework.id}>
             {t(overdue.has(framework.id) ? 'gov.fw-item-overdue' : 'gov.fw-item', {
               name: framework.name,

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "sourceCount": 422,
+  "sourceCount": 423,
   "sources": [
     {
       "id": "rapid-cycle-deliberate-practice-ilcor-2024",
@@ -1771,6 +1771,21 @@
       "usedFor": "The subcompetencies a screen-based simulator could plausibly contribute evidence toward, for anesthesiology residency programmes.",
       "verifiedAgainst": "Inconclusive on the date. The document carries a 2020 copyright, the paper describing it is 2021, and the effective date for programmes was 2022. The interface therefore names the VERSION only and asserts no year. Needs someone who can establish the correct designation.",
       "verifiedOn": "2026-08-20"
+    },
+    {
+      "id": "acgme-emergency-medicine-milestones",
+      "authors": "Accreditation Council for Graduate Medical Education; Beeson M, Carter W, Cooney R, Edgar L, Leuck JA, Lober V, McGee D, Murano T, Phillips D, Ring H, Starr R (work group)",
+      "title": "Emergency Medicine Milestones",
+      "publication": "Accreditation Council for Graduate Medical Education",
+      "year": 2021,
+      "locator": "Version 2.1; second revision February 2021, implementation 1 July 2021. Subcompetency headings of the ACGME Report Worksheet",
+      "usedFor": "The twenty-two subcompetency titles the emergency medicine module’s twenty-five lessons are mapped against, one reading per objective. Titles are the ACGME’s own; the descriptions beneath them are this project’s summary.",
+      "verifiedAgainst": "The document itself, retrieved from the locator above and read page by page. The cover gives the implementation and revision dates and the copyright line, which grants third parties the right to use the Milestones on a non-exclusive basis for educational purposes; each worksheet page gives one subcompetency heading, transcribed verbatim. The finding that shaped the reading is on the document’s second page: the ACGME states that the Milestones \"are designed only for use in evaluation of residents in the context of their participation in ACGME-accredited residency programs\" and that they are not \"designed to be relevant in any other context\". A simulator is another context, so the reading carries that sentence, claims only subject-matter overlap, and omits the five level descriptors entirely - a lesson cannot place a learner on a developmental scale, and recording the levels would invite exactly that reading.",
+      "verifiedOn": "2026-11-16",
+      "currency": {
+        "lastAmended": "2021-02-01",
+        "checkedAt": "2026-11-16"
+      }
     },
     {
       "id": "nbcrna-nce-content-outline",

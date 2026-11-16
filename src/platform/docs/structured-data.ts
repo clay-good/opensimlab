@@ -30,8 +30,7 @@ import { getSurgeryTraumaScenario } from '../../modules/surgery-trauma/scenarios
 import { ONE_LINE_DESCRIPTION } from '@landing/content';
 import { ROUTES, SITE_NAME, SITE_ORIGIN, canonicalUrl } from '@routes/routes';
 import { moduleProse } from '@platform/modules/module-prose';
-import { getFramework } from '@anesthesia/curriculum/frameworks';
-import { SCENARIO_MAPPINGS } from '@anesthesia/curriculum/mapping';
+import { mappedDomainsFor } from '@platform/curriculum/mapped-modules';
 import { NCSBN_NCJMM, ncjmmMappings } from '../../modules/medical-surgical-nursing/curriculum';
 
 /**
@@ -54,19 +53,13 @@ export function educationalAlignmentFor(moduleRoute: string, scenarioId: string)
       targetUrl: NCSBN_NCJMM.url,
     }));
   }
-  if (moduleRoute !== 'anesthesia') return [];
-  return SCENARIO_MAPPINGS.filter((mapping) => mapping.scenarioId === scenarioId).flatMap((mapping) => {
-    const framework = getFramework(mapping.frameworkId);
-    const domain = framework?.domains.find((candidate) => candidate.id === mapping.domainId);
-    if (!framework || !domain) return [];
-    return [{
-      '@type': 'AlignmentObject',
-      alignmentType: 'teaches',
-      educationalFramework: `${framework.name} (${framework.version})`,
-      targetName: domain.label,
-      targetUrl: framework.url,
-    }];
-  });
+  return mappedDomainsFor(moduleRoute, scenarioId).map((mapped) => ({
+    '@type': 'AlignmentObject',
+    alignmentType: 'teaches',
+    educationalFramework: `${mapped.framework.name} (${mapped.framework.version})`,
+    targetName: mapped.domain.label,
+    targetUrl: mapped.framework.url,
+  }));
 }
 
 export type JsonLd = Record<string, unknown>;

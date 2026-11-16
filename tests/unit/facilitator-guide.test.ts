@@ -6,7 +6,7 @@ import { ROUTES, routeFor } from '@routes/routes';
 import { socialImageUrl } from '@routes/site-metadata';
 import { MODULES } from '@platform/modules/registry';
 import { MAPPING_DISCLAIMER } from '@anesthesia/curriculum/frameworks';
-import { SCENARIO_MAPPINGS } from '@anesthesia/curriculum/mapping';
+import { mappedDomainsFor } from '@platform/curriculum/mapped-modules';
 import {
   absentGuideSections, facilitatorGuide, GUIDE_TEMPLATES,
 } from '@platform/facilitation/guide';
@@ -58,8 +58,10 @@ describe('facilitator guide', () => {
   it('maps a mapped scenario to its framework domains with the disclaimer, and only then', () => {
     for (const entry of FACILITATED_SCENARIOS) {
       const section = facilitatorGuide(entry).find((candidate) => candidate.id === 'frameworks')!;
-      const mapped = entry.moduleRoute === 'medical-surgical-nursing' || (entry.moduleRoute === 'anesthesia'
-        && SCENARIO_MAPPINGS.some((mapping) => mapping.scenarioId === entry.scenario.metadata.id));
+      // Nursing derives its mapping from every objective's leading verb, so every
+      // lesson has one; the other mapped modules author a table per lesson.
+      const mapped = entry.moduleRoute === 'medical-surgical-nursing'
+        || mappedDomainsFor(entry.moduleRoute, entry.scenario.metadata.id).length > 0;
       expect(section.status, entry.scenario.metadata.id).toBe(mapped ? 'present' : 'absent');
       if (section.status === 'present') expect(section.items.at(-1)?.text).toBe(MAPPING_DISCLAIMER);
     }

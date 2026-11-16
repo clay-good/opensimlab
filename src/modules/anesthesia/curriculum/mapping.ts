@@ -10,19 +10,14 @@
 
 import { SCENARIOS } from '../scenarios';
 import type { Scenario } from '../scenarios/types';
-import { FRAMEWORKS, type Framework, type FrameworkDomain } from './frameworks';
+import { FRAMEWORKS, type Framework } from './frameworks';
+import {
+  coverageOf, curriculumCsv, danglingIn, unmappedIn,
+  type CurriculumModule, type DomainCoverage, type ScenarioMapping,
+} from '@platform/curriculum/mapping';
 
-/** One scenario's claim on one framework domain. */
-export interface ScenarioMapping {
-  readonly scenarioId: string;
-  readonly frameworkId: string;
-  readonly domainId: string;
-  /**
-   * Which of the scenario's own objectives carry this domain. Naming them keeps
-   * the mapping falsifiable: a reader can open the scenario and check.
-   */
-  readonly objectiveIds: readonly string[];
-}
+export type { DomainCoverage, ScenarioMapping };
+
 
 export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
   // --- Routine induction ---------------------------------------------------
@@ -1427,99 +1422,34 @@ export const SCENARIO_MAPPINGS: readonly ScenarioMapping[] = [
   // --- postoperative-handoff ---
   { scenarioId: 'postoperative-handoff', frameworkId: 'aamc-core-epas', domainId: 'epa-8-handover', objectiveIds: ['confirm-handoff-readiness', 'share-handoff-critical-content', 'assign-handoff-risks-and-ownership', 'close-loop-and-accept-transfer'] },
 ];
-
-export interface DomainCoverage {
-  readonly domain: FrameworkDomain;
-  readonly scenarios: readonly Scenario[];
-}
+/** This module's lessons, readings and mappings, as every shared surface reads them. */
+export const ANESTHESIA_CURRICULUM: CurriculumModule = {
+  moduleRoute: 'anesthesia',
+  displayName: 'Anesthesia',
+  get frameworks() { return FRAMEWORKS; },
+  get scenarios() { return SCENARIOS; },
+  get mappings() { return SCENARIO_MAPPINGS; },
+};
 
 /** Every domain in a framework, covered or not. Uncovered domains are kept. */
 export function coverageFor(framework: Framework): DomainCoverage[] {
-  return framework.domains.map((domain) => ({
-    domain,
-    scenarios: SCENARIOS.filter((scenario) => SCENARIO_MAPPINGS.some(
-      (mapping) => mapping.frameworkId === framework.id
-        && mapping.domainId === domain.id
-        && mapping.scenarioId === scenario.metadata.id,
-    )),
-  }));
+  return coverageOf(framework, SCENARIOS, SCENARIO_MAPPINGS);
 }
 
 /** Scenarios with no mapping at all, reported rather than omitted. */
 export function unmappedScenarios(): Scenario[] {
-  return SCENARIOS.filter(
-    (scenario) => !SCENARIO_MAPPINGS.some((mapping) => mapping.scenarioId === scenario.metadata.id),
-  );
+  return unmappedIn(SCENARIOS, SCENARIO_MAPPINGS);
 }
 
-/** Mappings naming a scenario, framework or domain that does not exist. */
+/** Mappings naming a scenario, framework, domain or objective that does not exist. */
 export function danglingMappings(): ScenarioMapping[] {
-  return SCENARIO_MAPPINGS.filter((mapping) => {
-    const framework = FRAMEWORKS.find((entry) => entry.id === mapping.frameworkId);
-    const scenario = SCENARIOS.find((entry) => entry.metadata.id === mapping.scenarioId);
-    if (!framework || !scenario) return true;
-    if (!framework.domains.some((domain) => domain.id === mapping.domainId)) return true;
-    const objectiveIds = new Set(scenario.metadata.objectives.map((objective) => objective.id));
-    return mapping.objectiveIds.some((id) => !objectiveIds.has(id));
-  });
-}
-
-/** One CSV cell, quoted so a comma or a quote inside it cannot break the row. */
-function cell(value: string): string {
-  return `"${value.replace(/"/g, '""')}"`;
+  return danglingIn(FRAMEWORKS, SCENARIOS, SCENARIO_MAPPINGS);
 }
 
 /**
- * The mapping as CSV, for a programme's own documentation.
- *
- * The disclaimer is the first row rather than a footnote, because a spreadsheet
- * gets pasted into documents where the surrounding page does not travel with it.
+ * This module's mapping as CSV. The whole catalogue's export lives on the
+ * curriculum route, which passes every mapped module to the same builder.
  */
 export function mappingCsv(): string {
-  const rows: string[] = [
-    cell(`NOTE: ${'Open Sim Lab curriculum mapping. '
-      + 'These mappings are Open Sim Lab\'s own reading of published framework documents. '
-      + 'No accrediting or certifying body has reviewed, endorsed or recognised them. '
-      + 'Time spent in this simulator does not count toward any case requirement, clinical '
-      + 'hour or supervised experience.'}`),
-    [
-      'framework', 'framework_body', 'framework_version', 'domain', 'domain_label',
-      'scenario', 'scenario_title', 'difficulty', 'estimated_minutes', 'objectives',
-    ].map(cell).join(','),
-  ];
-
-  for (const framework of FRAMEWORKS) {
-    for (const { domain, scenarios } of coverageFor(framework)) {
-      if (scenarios.length === 0) {
-        rows.push([
-          framework.id, framework.body, framework.version, domain.id, domain.label,
-          '', 'NO SCENARIO COVERS THIS DOMAIN', '', '', '',
-        ].map(cell).join(','));
-        continue;
-      }
-      for (const scenario of scenarios) {
-        const mapping = SCENARIO_MAPPINGS.find(
-          (entry) => entry.frameworkId === framework.id
-            && entry.domainId === domain.id
-            && entry.scenarioId === scenario.metadata.id,
-        );
-        rows.push([
-          framework.id, framework.body, framework.version, domain.id, domain.label,
-          scenario.metadata.id, scenario.metadata.title, scenario.metadata.difficulty,
-          String(scenario.metadata.estimatedMinutes),
-          (mapping?.objectiveIds ?? []).join('; '),
-        ].map(cell).join(','));
-      }
-    }
-  }
-
-  for (const scenario of unmappedScenarios()) {
-    rows.push([
-      '', '', '', '', 'UNMAPPED',
-      scenario.metadata.id, scenario.metadata.title, scenario.metadata.difficulty,
-      String(scenario.metadata.estimatedMinutes), '',
-    ].map(cell).join(','));
-  }
-
-  return `${rows.join('\n')}\n`;
+  return curriculumCsv([ANESTHESIA_CURRICULUM]);
 }

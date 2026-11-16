@@ -8,8 +8,8 @@ import { describe, expect, it } from 'vitest';
 import { availableModules } from '@platform/modules/registry';
 import { FACILITATED_SCENARIOS } from '@platform/facilitation/scenario-catalog';
 import { READY_MODULE_COUNT, READY_SCENARIO_COUNT } from '@landing/content';
-import { SCENARIO_MAPPINGS } from '@anesthesia/curriculum/mapping';
 import { BLUEPRINTS } from '@platform/curriculum/blueprints';
+import { mappedDomainsFor } from '@platform/curriculum/mapped-modules';
 
 const readme = readFileSync('README.md', 'utf8');
 const rows = [...readme.matchAll(/^\| ([^|]+?) \| (\d+) \| `\/([a-z-]+)` \|$/gm)]
@@ -28,11 +28,15 @@ describe('the README module table', () => {
 
   it('states how many lessons actually carry a framework mapping', () => {
     const mapped = new Set([
-      ...SCENARIO_MAPPINGS.map((mapping) => mapping.scenarioId),
+      ...FACILITATED_SCENARIOS
+        .filter((entry) => mappedDomainsFor(entry.moduleRoute, entry.scenario.metadata.id).length > 0)
+        .map((entry) => entry.scenario.metadata.id),
+      // Nursing's mapping is derived from its objectives rather than authored,
+      // so it reaches the count through the blueprint it feeds.
       ...BLUEPRINTS.flatMap((blueprint) => blueprint.categories
         .flatMap((category) => category.lessons.map((lesson) => lesson.scenarioId))),
     ]);
-    const claim = /^(\d+) of (\d+) lessons carry a mapping/m.exec(readme);
+    const claim = /(\d+) of (\d+) lessons\s+carry a mapping/.exec(readme);
     expect(Number(claim?.[1])).toBe(mapped.size);
     expect(Number(claim?.[2])).toBe(READY_SCENARIO_COUNT);
   });

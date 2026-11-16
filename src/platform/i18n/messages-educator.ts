@@ -93,6 +93,7 @@ export const EDUCATOR_MESSAGES = {
   'guide.when': { class: 'educator', text: 'When {when}' },
   'educator.review-submissions': { class: 'educator', text: 'Review submissions' },
   'curriculum.heading': { class: 'educator', text: 'Curriculum coverage' },
+  'curriculum.module': { class: 'educator', text: 'Module' },
   'curriculum.framework': { class: 'educator', text: 'Framework' },
   'curriculum.framework-meta': { class: 'educator', text: '{body} · {version} · applies to {appliesTo}' },
   'curriculum.transcribed': { class: 'educator', text: 'Transcribed' },
