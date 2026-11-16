@@ -64,6 +64,8 @@ describe('framework records', () => {
     'acgme-neurology': 'acgme-neurology-milestones',
     'acgme-obstetrics-gynecology': 'acgme-obstetrics-gynecology-milestones',
     'acgme-internal-medicine': 'acgme-internal-medicine-milestones',
+    'acgme-neonatal-perinatal': 'acgme-neonatal-perinatal-milestones',
+    'acgme-surgery': 'acgme-surgery-milestones',
   };
 
   it('registers every framework reading as a source, checked no earlier than the reading', () => {

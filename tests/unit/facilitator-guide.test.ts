@@ -80,9 +80,16 @@ describe('facilitator guide', () => {
     }
   });
 
+  /**
+   * Framework mapping left this list on 2026-11-16, when the last two modules
+   * were mapped: all 256 guides now fill that section. The two that remain are
+   * the two whose field is authored per lesson and is deliberately sparse - a
+   * content note exists only where a lesson's own course would distress
+   * somebody, and pause points are placed lesson by lesson by educators.
+   */
   it('leaves no section absent across the catalogue but the ones with no field yet', () => {
     const everAbsent = new Set(FACILITATED_SCENARIOS.flatMap((entry) => absentGuideSections(entry)));
-    expect([...everAbsent].sort()).toEqual(['content-note', 'frameworks', 'pause-points']);
+    expect([...everAbsent].sort()).toEqual(['content-note', 'pause-points']);
   });
 
   it('renders every section, absent ones as absent, with nothing collapsed', () => {

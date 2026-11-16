@@ -148,7 +148,7 @@
       },
       {
         "path": "src/platform/docs/sources.ts",
-        "sha256": "480cc929bebb164ab8214a7db77741545d51d0f0abffacf6c3bb0a8256221fa4"
+        "sha256": "97c80e5a5c698ece469999c8ea73a49453d69ac0cadf525133cd128b3c143d7c"
       },
       {
         "path": "src/platform/governance/publication.ts",
@@ -389,7 +389,7 @@
       },
       {
         "path": "src/platform/docs/sources.ts",
-        "sha256": "480cc929bebb164ab8214a7db77741545d51d0f0abffacf6c3bb0a8256221fa4"
+        "sha256": "97c80e5a5c698ece469999c8ea73a49453d69ac0cadf525133cd128b3c143d7c"
       },
       {
         "path": "src/platform/governance/publication.ts",
@@ -666,7 +666,7 @@
       },
       {
         "path": "src/platform/docs/sources.ts",
-        "sha256": "480cc929bebb164ab8214a7db77741545d51d0f0abffacf6c3bb0a8256221fa4"
+        "sha256": "97c80e5a5c698ece469999c8ea73a49453d69ac0cadf525133cd128b3c143d7c"
       },
       {
         "path": "src/platform/governance/publication.ts",

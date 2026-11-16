@@ -51,6 +51,12 @@ import {
 import {
   ENDOCRINE_METABOLIC_FRAMEWORKS, ENDOCRINE_METABOLIC_SCENARIO_MAPPINGS,
 } from '../../modules/endocrine-metabolic/curriculum';
+import {
+  NEONATOLOGY_FRAMEWORKS, NEONATOLOGY_SCENARIO_MAPPINGS,
+} from '../../modules/neonatology/curriculum';
+import {
+  SURGERY_TRAUMA_FRAMEWORKS, SURGERY_TRAUMA_SCENARIO_MAPPINGS,
+} from '../../modules/surgery-trauma/curriculum';
 import type { FrameworkDomainRecord, FrameworkRecord } from './framework-records';
 import type { ScenarioMapping } from './mapping';
 
@@ -84,6 +90,10 @@ const BY_ROUTE: Readonly<Record<string, MappedModule>> = {
   },
   'endocrine-metabolic': {
     frameworks: ENDOCRINE_METABOLIC_FRAMEWORKS, mappings: ENDOCRINE_METABOLIC_SCENARIO_MAPPINGS,
+  },
+  neonatology: { frameworks: NEONATOLOGY_FRAMEWORKS, mappings: NEONATOLOGY_SCENARIO_MAPPINGS },
+  'surgery-trauma': {
+    frameworks: SURGERY_TRAUMA_FRAMEWORKS, mappings: SURGERY_TRAUMA_SCENARIO_MAPPINGS,
   },
 };
 

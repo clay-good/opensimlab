@@ -1687,6 +1687,51 @@ export const SOURCES: readonly Source[] = [
     currency: { lastAmended: '2020-11-01', checkedAt: '2026-11-16' },
   },
   {
+    id: 'acgme-neonatal-perinatal-milestones',
+    authors: 'Accreditation Council for Graduate Medical Education',
+    title: 'Neonatal-Perinatal Medicine Milestones',
+    publication: 'Accreditation Council for Graduate Medical Education',
+    year: 2023,
+    locator: 'Version 2.1; second revision April 2023, implementation July 2023. '
+      + 'Subcompetency headings of the ACGME Report Worksheet',
+    usedFor: 'The twenty-six subcompetency titles the neonatology module\u2019s eleven lessons are '
+      + 'mapped against, one reading per objective. Titles are the ACGME\u2019s own; the '
+      + 'descriptions beneath them are this project\u2019s summary.',
+    verifiedAgainst: 'The document itself, retrieved from the locator above and read page by '
+      + 'page. It carries the same scope statement and educational-use permission as the other '
+      + 'ACGME readings. It is a subspecialty set rather than a residency one, which is why the '
+      + 'neonatology module maps here and not to the paediatrics reading: a programme assessing '
+      + 'neonatal fellows uses this document, and the paediatrics milestones contain no '
+      + 'emergency stabilization of a newborn. The division that decided a mapping: this reading '
+      + 'separates family-centred communication from complex communication around serious news, '
+      + 'and the eleven lessons keep parents present and informed without ever asking a learner '
+      + 'to deliver serious news, so the second is recorded as uncovered.',
+    verifiedOn: '2026-11-16',
+    currency: { lastAmended: '2023-04-01', checkedAt: '2026-11-16' },
+  },
+  {
+    id: 'acgme-surgery-milestones',
+    authors: 'Accreditation Council for Graduate Medical Education',
+    title: 'Surgery Milestones',
+    publication: 'Accreditation Council for Graduate Medical Education',
+    year: 2019,
+    locator: 'Version 2.1; second revision January 2019. Subcompetency headings of the ACGME '
+      + 'Report Worksheet',
+    usedFor: 'The eighteen subcompetency titles the surgery and trauma module\u2019s ten lessons are '
+      + 'mapped against, one reading per objective. Titles are the ACGME\u2019s own; the '
+      + 'descriptions beneath them are this project\u2019s summary.',
+    verifiedAgainst: 'The document itself, retrieved from the locator above and read page by '
+      + 'page. It carries the same scope statement and educational-use permission as the other '
+      + 'ACGME readings, and its copyright line reads 2019 rather than an implementation year, '
+      + 'which is why this record\u2019s year differs from its siblings\u2019. Three of its eighteen '
+      + 'subcompetencies are about operating; the module is about surgical decisions and all ten '
+      + 'of its lessons are ward lessons, so performance of procedures and technical skills are '
+      + 'recorded as covered by nothing and unable to be otherwise. That is stated in the '
+      + 'record\u2019s own note rather than left to the coverage table.',
+    verifiedOn: '2026-11-16',
+    currency: { lastAmended: '2019-01-01', checkedAt: '2026-11-16' },
+  },
+  {
     id: 'nbcrna-nce-content-outline',
     authors: 'National Board of Certification and Recertification for Nurse Anesthetists',
     title: 'National Certification Examination content outline',

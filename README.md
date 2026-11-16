@@ -80,18 +80,22 @@ and the guides are deliberately outside the offline precache.
 
 **Mappings name the document they read, and the lessons they cannot cover.** Each lesson's
 objectives are mapped to published framework domains — the NBCRNA certification content outline,
-the COA standards, the ACGME anaesthesiology, emergency medicine, paediatrics, neurology, obstetrics and
-internal medicine milestones, the
-AAMC Core EPAs, and the NCSBN clinical judgment model — as this project's own reading, which no
-body has reviewed or endorsed, and each carrying whatever its own document says about the uses it
-was designed for. Program directors read the coverage table at `/curriculum`, where a domain no
+the COA standards, seven ACGME milestone sets, the AAMC Core EPAs, and the NCSBN clinical
+judgment model — as this project's own reading, which no body has reviewed or endorsed, and each
+carrying whatever its own document says about the uses it was designed for. The ACGME's, for
+instance, say they are "designed only for use in evaluation of residents" in accredited
+programmes and are not "designed to be relevant in any other context", so those readings claim
+subject-matter overlap and nothing else, and record no milestone levels at all. Program directors read the coverage table at `/curriculum`, where a domain no
 lesson touches is listed as uncovered rather than dropped, and export the whole mapping as CSV.
 Learners read the same data the other way round at
 [`/preparing-for`](https://opensimlab.com/preparing-for): pick the examination you are working
 toward and see which lessons touch each of its categories, grouped by category, with the date that
-reading was taken and when it is due to be checked again. Honestly incomplete: 235 of 256 lessons
-carry a mapping, two of the ten readings are examination blueprints and so appear in the filter,
-and nothing on either surface predicts anything about an examination.
+reading was taken and when it is due to be checked again. All 256 of 256 lessons
+carry a mapping, and from here an unmapped lesson fails the build. What stays incomplete is the
+other direction: most of what each framework contains is touched by nothing here, so every
+uncovered domain is listed with the reason it is uncovered. Two of the twelve readings are
+examination blueprints and so appear in the filter, and nothing on either surface predicts
+anything about an examination.
 
 **Claims are sourced and correctable.** Crisis protocols trace to their issuing bodies,
 physiology is checked against published benchmarks, the limitations register is public,

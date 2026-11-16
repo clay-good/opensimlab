@@ -68,6 +68,14 @@ import { ENDOCRINE_METABOLIC_SCENARIOS } from '../modules/endocrine-metabolic/sc
 import {
   ENDOCRINE_METABOLIC_FRAMEWORKS, ENDOCRINE_METABOLIC_SCENARIO_MAPPINGS,
 } from '../modules/endocrine-metabolic/curriculum';
+import { NEONATOLOGY_SCENARIOS } from '../modules/neonatology/scenarios';
+import {
+  NEONATOLOGY_FRAMEWORKS, NEONATOLOGY_SCENARIO_MAPPINGS,
+} from '../modules/neonatology/curriculum';
+import { SURGERY_TRAUMA_SCENARIOS } from '../modules/surgery-trauma/scenarios';
+import {
+  SURGERY_TRAUMA_FRAMEWORKS, SURGERY_TRAUMA_SCENARIO_MAPPINGS,
+} from '../modules/surgery-trauma/curriculum';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { t } from '@platform/i18n/messages';
 import '@platform/i18n/messages-educator';
@@ -159,6 +167,20 @@ const MAPPED_MODULES: readonly CurriculumModule[] = [
     frameworks: ENDOCRINE_METABOLIC_FRAMEWORKS,
     scenarios: ENDOCRINE_METABOLIC_SCENARIOS,
     mappings: ENDOCRINE_METABOLIC_SCENARIO_MAPPINGS,
+  },
+  {
+    moduleRoute: 'neonatology',
+    displayName: 'Neonatology',
+    frameworks: NEONATOLOGY_FRAMEWORKS,
+    scenarios: NEONATOLOGY_SCENARIOS,
+    mappings: NEONATOLOGY_SCENARIO_MAPPINGS,
+  },
+  {
+    moduleRoute: 'surgery-trauma',
+    displayName: 'Surgery + trauma',
+    frameworks: SURGERY_TRAUMA_FRAMEWORKS,
+    scenarios: SURGERY_TRAUMA_SCENARIOS,
+    mappings: SURGERY_TRAUMA_SCENARIO_MAPPINGS,
   },
 ];
 

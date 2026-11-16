@@ -159,22 +159,36 @@
 
 ## 2. Scenario mappings
 
-- [ ] Map every scenario in every module to at least one applicable framework; list unmapped by
+- [x] Map every scenario in every module to at least one applicable framework; list unmapped by
   name in the curriculum view and fail the build on an unmapped scenario once authoring is done.
-  Fourteen of sixteen modules are mapped: anaesthesia to all four of its readings, nursing to the
+  **Done: all sixteen modules, all 256 lessons.** Neonatology took the ACGME's Neonatal-Perinatal
+  Medicine Milestones rather than the paediatrics set, because a programme assessing neonatal
+  fellows uses that document and the paediatrics milestones contain no emergency stabilization of
+  a newborn; surgery and trauma took the Surgery Milestones. Two findings from those last two
+  readings, both recorded as uncovered reasons rather than quietly resolved: the neonatal reading
+  separates family-centred communication from complex communication around serious news, and these
+  lessons keep parents present and informed without ever asking a learner to deliver serious news;
+  and three of the surgery reading's eighteen subcompetencies are about operating, two of which a
+  screen-based lesson cannot touch at all.
+  The gate this line asks for now exists and is catalogue-wide:
+  `tests/unit/catalogue-mapping-gate.test.ts` fails the build on any unmapped lesson in any
+  module, holds that every available module carries a mapping, and holds that every mapped domain
+  resolves against a reading this build ships. Nursing reaches the same gate by its own mechanism:
+  its mapping is derived from each objective's leading verb, and the convention throws on an
+  objective it cannot place.
+  Sixteen of sixteen modules are mapped: anaesthesia to all four of its readings, nursing to the
   NCJMM through its verb convention, emergency medicine, paediatrics, neurology and obstetrics
   each to their own ACGME milestone set, and cardiology and respiratory medicine to the internal
   medicine one, and critical care, infectious disease, oncology, toxicology, renal and
-  electrolyte, and endocrine and metabolic to it as well - 235 of 256 lessons. The eight
-  internal-medicine modules are done. Counting those needed a fix
+  electrolyte, and endocrine and metabolic to it as well, neonatology to the neonatal-perinatal
+  set, and surgery and trauma to the surgery set - 256 of 256 lessons. Counting those needed a fix
   worth recording: the README count keyed on scenario id alone, and emergency medicine and
   critical care each ship a lesson called `status-epilepticus`, so the catalogue reported one
   mapped lesson fewer than it had. It keys on module and id now.
   Each module after the first touched only the five wiring points the generalisation
-  established, which is the evidence that it worked. The last two, neonatology and surgery and
-  trauma, still have no reading that applies to them, which
-  is the constraint this line runs into rather than a backlog: mapping a neonatology lesson to an
-  emergency medicine subcompetency would be the kind of claim this change exists to avoid.
+  established, which is the evidence that it worked. What remains incomplete is the other
+  direction, and it is not authoring: most of what each framework contains is touched by no lesson
+  here, and every uncovered domain carries the reason it is uncovered rather than a promise.
   What changed with emergency medicine is that the machinery is no longer anaesthesia's. The four
   functions that compute coverage, unmapped lessons, dangling mappings and the CSV now take their
   data as arguments and live in `src/platform/curriculum/mapping.ts`; the anaesthesia module keeps
@@ -184,10 +198,8 @@
   and the briefing's structured data ask one shared lookup instead of naming anaesthesia, so the
   25 EM guides fill their framework section and the 25 EM briefings carry their alignment without
   either file learning about a second module.
-  The build still fails only on an unmapped ANAESTHESIA lesson. Emergency medicine has its own
-  equivalent - a test that no lesson is unmapped and that every objective is placed at least once,
-  per mapped module - and the whole-catalogue gate the line asks for waits on the last two
-  modules having something to map to.
+  Every mapped module also has its own test holding that no lesson is unmapped and that every
+  objective is placed at least once, so a failure names the module as well as the lesson.
 - [x] Map every nursing scenario's objectives to NCJMM functions with named evidence; build check.
   `src/modules/medical-surgical-nursing/curriculum.ts` records NCSBN's six step names verbatim
   from the 2026 NCLEX-RN Test Plan (PDF page 8), with this project's own descriptions because the
