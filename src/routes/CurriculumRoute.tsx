@@ -40,6 +40,10 @@ import { CARDIOLOGY_SCENARIOS } from '../modules/cardiology/scenarios';
 import {
   CARDIOLOGY_FRAMEWORKS, CARDIOLOGY_SCENARIO_MAPPINGS,
 } from '../modules/cardiology/curriculum';
+import { RESPIRATORY_MEDICINE_SCENARIOS } from '../modules/respiratory-medicine/scenarios';
+import {
+  RESPIRATORY_MEDICINE_FRAMEWORKS, RESPIRATORY_MEDICINE_SCENARIO_MAPPINGS,
+} from '../modules/respiratory-medicine/curriculum';
 import { NOT_FOR_CLINICAL_USE } from '@platform/transcript/transcript';
 import { t } from '@platform/i18n/messages';
 import '@platform/i18n/messages-educator';
@@ -82,6 +86,13 @@ const MAPPED_MODULES: readonly CurriculumModule[] = [
     frameworks: CARDIOLOGY_FRAMEWORKS,
     scenarios: CARDIOLOGY_SCENARIOS,
     mappings: CARDIOLOGY_SCENARIO_MAPPINGS,
+  },
+  {
+    moduleRoute: 'respiratory-medicine',
+    displayName: 'Respiratory medicine',
+    frameworks: RESPIRATORY_MEDICINE_FRAMEWORKS,
+    scenarios: RESPIRATORY_MEDICINE_SCENARIOS,
+    mappings: RESPIRATORY_MEDICINE_SCENARIO_MAPPINGS,
   },
 ];
 

@@ -111,18 +111,31 @@
   prefix the convention does not place. Running it over respiratory medicine and critical care
   stopped on `coordinate-` and `calculate-`, which is the evidence that a module's convention is
   authored rather than copied.
+  Respiratory medicine joined the internal medicine reading next, and answered the setting question
+  the other way: all fifteen of its lessons are declared `icu`, so a lesson that directs care
+  directs it inpatient and none claims outpatient, where sixteen of cardiology's seventeen claimed
+  outpatient from the same reading. Its convention needed four additions, which is what the
+  generator's refusal was pointing at: `coordinate-` an onward plan is navigation and a
+  conversation with the patient rather than outpatient care; `corroborate-` a signal while
+  supporting the patient is examination acted on at once; `select-` a support mode is therapeutic
+  knowledge; and `escalate-` behaves as `activate-` does.
+  One finding worth keeping: eight of the fifteen lessons direct no care at all. They reconcile,
+  review, coordinate and hand over, which is what a module of reassessment lessons does, so none
+  of the eight carries a management subcompetency - giving one to a lesson that changes nothing
+  would claim the learner changed it. The eight are named in the test, so a later management
+  objective cannot join them silently.
 - [x] Build check: a verbatim item longer than a short name fails; `review_by` ≤ 24 months. `tests/unit/framework-records.test.ts`.
 
 ## 2. Scenario mappings
 
 - [ ] Map every scenario in every module to at least one applicable framework; list unmapped by
   name in the curriculum view and fail the build on an unmapped scenario once authoring is done.
-  Seven of sixteen modules are mapped: anaesthesia to all four of its readings, nursing to the
+  Eight of sixteen modules are mapped: anaesthesia to all four of its readings, nursing to the
   NCJMM through its verb convention, emergency medicine, paediatrics, neurology and obstetrics
-  each to their own ACGME milestone set, and cardiology to the internal medicine one - 136 of 256
-  lessons. Each module after the first touched only the five wiring points the generalisation
-  established, which is the evidence that it worked. Seven of the remaining nine modules are
-  internal medicine by subject and will join the reading cardiology just opened; the last two,
+  each to their own ACGME milestone set, and cardiology and respiratory medicine to the internal
+  medicine one - 151 of 256 lessons. Each module after the first touched only the five wiring points the generalisation
+  established, which is the evidence that it worked. Six of the remaining eight modules are
+  internal medicine by subject and will join the reading cardiology opened; the last two,
   neonatology and surgery and trauma, still have no reading that applies to them, which
   is the constraint this line runs into rather than a backlog: mapping a neonatology lesson to an
   emergency medicine subcompetency would be the kind of claim this change exists to avoid.
@@ -137,7 +150,7 @@
   either file learning about a second module.
   The build still fails only on an unmapped ANAESTHESIA lesson. Emergency medicine has its own
   equivalent - a test that no lesson is unmapped and that every objective is placed at least once,
-  per mapped module - and the whole-catalogue gate the line asks for waits on the other nine
+  per mapped module - and the whole-catalogue gate the line asks for waits on the other eight
   modules having something to map to.
 - [x] Map every nursing scenario's objectives to NCJMM functions with named evidence; build check.
   `src/modules/medical-surgical-nursing/curriculum.ts` records NCSBN's six step names verbatim

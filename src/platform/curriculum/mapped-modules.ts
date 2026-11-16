@@ -30,6 +30,9 @@ import {
 import {
   CARDIOLOGY_FRAMEWORKS, CARDIOLOGY_SCENARIO_MAPPINGS,
 } from '../../modules/cardiology/curriculum';
+import {
+  RESPIRATORY_MEDICINE_FRAMEWORKS, RESPIRATORY_MEDICINE_SCENARIO_MAPPINGS,
+} from '../../modules/respiratory-medicine/curriculum';
 import type { FrameworkDomainRecord, FrameworkRecord } from './framework-records';
 import type { ScenarioMapping } from './mapping';
 
@@ -47,6 +50,9 @@ const BY_ROUTE: Readonly<Record<string, MappedModule>> = {
   neurology: { frameworks: NEUROLOGY_FRAMEWORKS, mappings: NEUROLOGY_SCENARIO_MAPPINGS },
   obstetrics: { frameworks: OBSTETRICS_FRAMEWORKS, mappings: OBSTETRICS_SCENARIO_MAPPINGS },
   cardiology: { frameworks: CARDIOLOGY_FRAMEWORKS, mappings: CARDIOLOGY_SCENARIO_MAPPINGS },
+  'respiratory-medicine': {
+    frameworks: RESPIRATORY_MEDICINE_FRAMEWORKS, mappings: RESPIRATORY_MEDICINE_SCENARIO_MAPPINGS,
+  },
 };
 
 /** The module routes that carry an authored mapping table. */
