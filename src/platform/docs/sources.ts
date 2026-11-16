@@ -1734,6 +1734,29 @@ export const SOURCES: readonly Source[] = [
     currency: { lastAmended: '2019-01-01', checkedAt: '2026-11-16' },
   },
   {
+    id: 'usmle-content-outline-2026',
+    authors: 'Federation of State Medical Boards of the United States and NBME',
+    title: 'USMLE Content Outline',
+    publication: 'United States Medical Licensing Examination',
+    year: 2026,
+    locator: 'For Public Release: USMLE Content Outline (2026). Table of contents, listing the '
+      + 'eighteen system sections',
+    usedFor: 'The eighteen system section names the "preparing for" page offers a Step candidate, '
+      + 'with every lesson in the fifteen physician-facing modules assigned to the system its own '
+      + 'subject belongs to. Section names are the outline\u2019s own; the descriptions beneath them '
+      + 'are this project\u2019s words.',
+    verifiedAgainst: 'The document itself, retrieved from the locator above and read. Two things '
+      + 'decided what is recorded. Its copyright line reads "all rights reserved" with no '
+      + 'educational-use permission of the kind the ACGME documents grant, so only the eighteen '
+      + 'section names from the table of contents are reproduced and nothing from the forty-two '
+      + 'pages of topics beneath them. And the outline states that it is common to every Step and '
+      + 'that each Step emphasises different parts of it, which is why neither this record nor '
+      + 'the filter carries any weighting: coverage of a section here says nothing about that '
+      + 'section\u2019s weight on any examination.',
+    verifiedOn: '2026-11-16',
+    currency: { lastAmended: '2026-01-01', checkedAt: '2026-11-16' },
+  },
+  {
     id: 'nbcrna-nce-content-outline',
     authors: 'National Board of Certification and Recertification for Nurse Anesthetists',
     title: 'National Certification Examination content outline',

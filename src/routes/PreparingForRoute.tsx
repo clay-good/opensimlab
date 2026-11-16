@@ -128,14 +128,14 @@ export function PreparingForRoute({ query: initial }: PreparingForRouteProps) {
                 ) : (
                   <ul className="curriculum__scenarios">
                     {category.lessons.map((lesson) => (
-                      <li key={lesson.scenarioId}>
+                      <li key={`${lesson.moduleRoute}/${lesson.scenarioId}`}>
                         <a href={lesson.href}>{lesson.title}</a>{' '}
                         <MaturityMarker
                           status={lesson.maturity}
                           subjectKind="scenario"
                           subjectId={lesson.scenarioId}
                           contentVersion={lesson.version}
-                          moduleId={blueprint.moduleRoute}
+                          moduleId={lesson.moduleRoute}
                           compact
                         />
                         <br />

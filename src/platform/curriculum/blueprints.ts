@@ -26,10 +26,14 @@ import {
   NCLEX_CLIENT_NEEDS_UNCOVERED, ncjmmMappings, type NcjmmStep,
 } from '../../modules/medical-surgical-nursing/curriculum';
 import { NCSBN_NCLEX_CLIENT_NEEDS } from './nclex-client-needs';
+import { USMLE_CONTENT_OUTLINE } from './usmle-content-outline';
+import { SCENARIO_SYSTEMS } from './usmle-systems';
 
 /** One lesson under one blueprint category. */
 export interface BlueprintLesson {
   readonly scenarioId: string;
+  /** The module this lesson lives in: a blueprint may span several. */
+  readonly moduleRoute: string;
   readonly title: string;
   readonly estimatedMinutes: number;
   readonly maturity: ContentMaturity;
@@ -55,8 +59,11 @@ export interface BlueprintCategory {
 
 export interface Blueprint {
   readonly record: FrameworkRecord;
-  /** The module route whose lessons this reading covers. */
-  readonly moduleRoute: string;
+  /**
+   * The module whose lessons this reading covers, where it covers one. The
+   * USMLE systems blueprint spans fifteen, so its lessons carry their own.
+   */
+  readonly moduleRoute?: string;
   readonly categories: readonly BlueprintCategory[];
 }
 
@@ -72,6 +79,7 @@ function lessonsFor(moduleRoute: string): Map<string, BlueprintLesson> {
       maturity: metadata.maturity,
       version: metadata.version,
       href: `/${moduleRoute}/scenario/${metadata.id}`,
+      moduleRoute,
       via: [],
     });
   }
@@ -163,11 +171,45 @@ function clientNeedsBlueprint(): Blueprint {
 }
 
 /**
+ * Every lesson in the fifteen physician-facing modules under the system it
+ * belongs to. The only blueprint here that spans modules, because the
+ * examination it belongs to does.
+ */
+function usmleSystemsBlueprint(): Blueprint {
+  const lessons = new Map<string, BlueprintLesson>();
+  for (const route of new Set(SCENARIO_SYSTEMS.map((entry) => entry.moduleRoute))) {
+    for (const [id, lesson] of lessonsFor(route)) lessons.set(`${route}/${id}`, lesson);
+  }
+  return {
+    record: USMLE_CONTENT_OUTLINE,
+    categories: USMLE_CONTENT_OUTLINE.domains.map((domain) => ({
+      id: domain.id,
+      label: domain.label,
+      description: domain.description,
+      emptyReason: USMLE_SYSTEM_UNCOVERED[domain.id] ?? '',
+      lessons: SCENARIO_SYSTEMS
+        .filter((entry) => entry.systemId === domain.id)
+        .flatMap((entry) => {
+          const lesson = lessons.get(`${entry.moduleRoute}/${entry.scenarioId}`);
+          // A system claim is about the whole lesson, so it cites no objective.
+          return lesson ? [{ ...lesson, via: [] }] : [];
+        }),
+    })),
+  };
+}
+
+/** Sections of the outline this catalogue has no lesson for, and why. */
+export const USMLE_SYSTEM_UNCOVERED: Readonly<Record<string, string>> = {
+  'female-and-transgender-reproductive-system-and-breast': 'This catalogue has no gynaecology or breast lesson; its pregnancy lessons sit under Pregnancy, Childbirth, & the Puerperium.',
+  'male-and-transgender-reproductive-system': 'This catalogue has no lesson in this system at all.',
+};
+
+/**
  * Every examination blueprint a learner can select, built once. A new reading of
  * an examination outline joins by being added here; nothing else changes.
  */
 export const BLUEPRINTS: readonly Blueprint[] = [
-  nbcrnaBlueprint(), ncjmmBlueprint(), clientNeedsBlueprint(),
+  nbcrnaBlueprint(), ncjmmBlueprint(), clientNeedsBlueprint(), usmleSystemsBlueprint(),
 ];
 
 export const BLUEPRINT_IDS: readonly string[] = BLUEPRINTS.map((blueprint) => blueprint.record.id);

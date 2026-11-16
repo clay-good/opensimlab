@@ -38,7 +38,7 @@ describe('the README module table', () => {
       // so it reaches the count through the blueprint it feeds.
       ...BLUEPRINTS.flatMap((blueprint) => blueprint.categories
         .flatMap((category) => category.lessons
-          .map((lesson) => `${blueprint.moduleRoute}/${lesson.scenarioId}`))),
+          .map((lesson) => `${lesson.moduleRoute}/${lesson.scenarioId}`))),
     ]);
     const claim = /(\d+) of (\d+) lessons\s+carry a mapping/.exec(readme);
     expect(Number(claim?.[1])).toBe(mapped.size);

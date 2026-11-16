@@ -20,6 +20,7 @@ import { ACGME_NEUROLOGY_MILESTONES } from './acgme-neurology';
 import { ACGME_OBSTETRICS_GYNECOLOGY_MILESTONES } from './acgme-obstetrics-gynecology';
 import { ACGME_PEDIATRICS_MILESTONES } from './acgme-pediatrics';
 import { NCSBN_NCLEX_CLIENT_NEEDS } from './nclex-client-needs';
+import { USMLE_CONTENT_OUTLINE } from './usmle-content-outline';
 import { NCSBN_NCJMM } from '../../modules/medical-surgical-nursing/curriculum';
 import type { FrameworkRecord } from './framework-records';
 
@@ -34,4 +35,5 @@ export const FRAMEWORK_READINGS: readonly FrameworkRecord[] = [
   ACGME_PEDIATRICS_MILESTONES,
   NCSBN_NCJMM,
   NCSBN_NCLEX_CLIENT_NEEDS,
+  USMLE_CONTENT_OUTLINE,
 ];

@@ -185,6 +185,24 @@
   medicine, so Pharmacological and Parenteral Therapies, the largest single subcategory on the
   examination, is untouched. The item percentages the test plan assigns are deliberately not
   recorded anywhere: covering a category in nine lessons is not coverage of that share of a paper.
+  **The USMLE content outline's eighteen systems are the fourth blueprint**, and the only one that
+  spans the catalogue: every lesson in the fifteen physician-facing modules is assigned to the
+  system its own subject belongs to, 247 of them, leaving only the two reproductive-system
+  sections uncovered. Nursing is deliberately absent - the USMLE is a physician examination, and
+  that module has two readings from the test plan its learners actually sit.
+  Two things about that document decided what is recorded. Its copyright line reads "all rights
+  reserved" with no educational-use permission of the kind the ACGME grants, so only the eighteen
+  section names from the table of contents are reproduced and nothing of the forty-two pages
+  beneath them. And the outline says it is common to every Step and that each Step emphasises
+  different parts of it, so neither the record nor the filter carries a weighting.
+  This mapping is deliberately NOT a framework mapping. A lesson's system is a fact about the
+  whole lesson - the auto-PEEP lesson is respiratory in its entirety - so it cites no objective,
+  and it stays out of the facilitator guide and the briefing's structured data, which carry
+  per-objective alignment. Supporting a blueprint that spans modules also found a real defect:
+  blueprint lessons were keyed by scenario id alone, and emergency medicine and critical care each
+  ship a `status-epilepticus` lesson, which would have collided in the page's list keys and in the
+  maturity record each one links to. Lessons carry their own module now, and a test holds the two
+  apart.
   The gate this line asks for now exists and is catalogue-wide:
   `tests/unit/catalogue-mapping-gate.test.ts` fails the build on any unmapped lesson in any
   module, holds that every available module carries a mapping, and holds that every mapped domain

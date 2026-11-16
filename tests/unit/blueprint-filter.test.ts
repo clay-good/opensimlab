@@ -15,15 +15,18 @@ import {
 } from '@platform/curriculum/blueprints';
 import { frameworkRecordProblems } from '@platform/curriculum/framework-records';
 import { FRAMEWORK_READINGS } from '@platform/curriculum/readings';
+import { SCENARIO_SYSTEMS } from '@platform/curriculum/usmle-systems';
+import { FACILITATED_SCENARIOS } from '@platform/facilitation/scenario-catalog';
 import { ROUTES } from '@routes/routes';
 
 const NBCRNA = 'nbcrna-nce';
 const NCJMM = 'ncsbn-ncjmm';
 const CLIENT_NEEDS = 'ncsbn-nclex-client-needs';
+const USMLE = 'usmle-content-outline';
 
 describe('Requirement: Learners Can Filter The Catalog By Examination Blueprint', () => {
   it('offers the examination readings and no reading of something else', () => {
-    expect([...BLUEPRINT_IDS].sort()).toEqual([NBCRNA, NCJMM, CLIENT_NEEDS].sort());
+    expect([...BLUEPRINT_IDS].sort()).toEqual([NBCRNA, NCJMM, CLIENT_NEEDS, USMLE].sort());
     // Accreditation standards and milestone sets describe a programme or a
     // trainee, never a paper a learner sits. They belong on /curriculum, and
     // naming them by their real ids is what makes this a guard rather than a
@@ -102,13 +105,34 @@ describe('Requirement: Learners Can Filter The Catalog By Examination Blueprint'
     expect(all.some((category) => category.lessons.length > 0)).toBe(true);
   });
 
+  /**
+   * Keyed by module and id, not id alone: the USMLE blueprint spans fifteen
+   * modules, and emergency medicine and critical care each ship a lesson called
+   * `status-epilepticus`. Both belong under the nervous system, and both are
+   * different lessons.
+   */
   it('names a lesson once per category it is mapped to, never twice in one', () => {
     for (const blueprint of BLUEPRINTS) {
       for (const category of blueprint.categories) {
-        const ids = category.lessons.map((lesson) => lesson.scenarioId);
-        expect(new Set(ids).size, `${blueprint.record.id}/${category.id}`).toBe(ids.length);
+        const keys = category.lessons.map((lesson) => `${lesson.moduleRoute}/${lesson.scenarioId}`);
+        expect(new Set(keys).size, `${blueprint.record.id}/${category.id}`).toBe(keys.length);
       }
     }
+  });
+
+  /**
+   * The only blueprint that spans modules. Its lessons carry their own module,
+   * which is what keeps two lessons of the same name apart - on the page, in
+   * their links, and in the maturity record each one points at.
+   */
+  it('keeps the two status-epilepticus lessons apart under the nervous system', () => {
+    const [nervous] = blueprintSelection({
+      blueprint: USMLE, category: 'nervous-system-and-special-senses',
+    });
+    const named = nervous!.lessons.filter((lesson) => lesson.scenarioId === 'status-epilepticus');
+    expect(named.map((lesson) => lesson.moduleRoute).sort())
+      .toEqual(['critical-care', 'emergency-medicine']);
+    expect(new Set(named.map((lesson) => lesson.href)).size).toBe(2);
   });
 });
 
@@ -159,6 +183,66 @@ describe('Scenario: The blueprint version is visible', () => {
     for (const blueprint of BLUEPRINTS) {
       expect(blueprint.record.body.length).toBeGreaterThan(0);
       expect(blueprint.record.version).toMatch(/\d{4}|outline/i);
+    }
+  });
+});
+
+/**
+ * framework-mapping-expansion → the USMLE systems blueprint.
+ *
+ * The one blueprint that covers the whole physician-facing catalogue, and the
+ * one whose claim is about a lesson rather than an objective: the auto-PEEP
+ * lesson is respiratory in its entirety, and splitting that across its
+ * objectives would invent a precision the claim does not have.
+ */
+describe('the USMLE systems blueprint', () => {
+  const USMLE_ID = 'usmle-content-outline';
+
+  it('assigns every lesson in every physician-facing module', () => {
+    const assigned = new Set(SCENARIO_SYSTEMS.map((entry) => `${entry.moduleRoute}/${entry.scenarioId}`));
+    const unassigned = FACILITATED_SCENARIOS
+      .filter((entry) => entry.moduleRoute !== 'medical-surgical-nursing')
+      .map((entry) => `${entry.moduleRoute}/${entry.scenario.metadata.id}`)
+      .filter((key) => !assigned.has(key));
+    expect(unassigned, 'these lessons have no system').toEqual([]);
+    expect(assigned.size).toBe(247);
+  });
+
+  /** The USMLE is a physician examination; nursing has the test plan its learners sit. */
+  it('leaves the nursing module out', () => {
+    expect(SCENARIO_SYSTEMS.some((entry) => entry.moduleRoute === 'medical-surgical-nursing'))
+      .toBe(false);
+  });
+
+  it('names no system the outline does not have, and no lesson that does not exist', () => {
+    const systems = new Set(getBlueprint(USMLE_ID)!.categories.map((category) => category.id));
+    const lessons = new Set(FACILITATED_SCENARIOS
+      .map((entry) => `${entry.moduleRoute}/${entry.scenario.metadata.id}`));
+    for (const entry of SCENARIO_SYSTEMS) {
+      expect(systems, entry.systemId).toContain(entry.systemId);
+      expect(lessons, `${entry.moduleRoute}/${entry.scenarioId}`)
+        .toContain(`${entry.moduleRoute}/${entry.scenarioId}`);
+    }
+  });
+
+  /**
+   * Two sections are covered by nothing, and both are sections this catalogue
+   * has no lesson for rather than gaps in the mapping.
+   */
+  it('says which two sections nothing here touches', () => {
+    const empty = getBlueprint(USMLE_ID)!.categories
+      .filter((category) => category.lessons.length === 0);
+    expect(empty.map((category) => category.id).sort()).toEqual([
+      'female-and-transgender-reproductive-system-and-breast',
+      'male-and-transgender-reproductive-system',
+    ]);
+    for (const category of empty) expect(category.emptyReason.length).toBeGreaterThan(20);
+  });
+
+  /** A system claim is about the whole lesson, so it cites no objective. */
+  it('cites no objective, because the claim is about the lesson', () => {
+    for (const category of getBlueprint(USMLE_ID)!.categories) {
+      for (const lesson of category.lessons) expect(lesson.via).toEqual([]);
     }
   });
 });

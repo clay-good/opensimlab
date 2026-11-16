@@ -60,6 +60,7 @@ describe('framework records', () => {
     'aamc-core-epas': 'aamc-core-epas-toolkits',
     'ncsbn-ncjmm': 'ncsbn-nclex-rn-test-plan-2026',
     'ncsbn-nclex-client-needs': 'ncsbn-nclex-rn-test-plan-2026',
+    'usmle-content-outline': 'usmle-content-outline-2026',
     'acgme-emergency-medicine': 'acgme-emergency-medicine-milestones',
     'acgme-pediatrics': 'acgme-pediatrics-milestones',
     'acgme-neurology': 'acgme-neurology-milestones',
