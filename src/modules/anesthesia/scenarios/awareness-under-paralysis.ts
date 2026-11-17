@@ -165,6 +165,16 @@ export const AWARENESS_UNDER_PARALYSIS: Scenario = {
       sourceLocator: 'Pandit 2014, NAP5 accidental awareness during general anaesthesia, intravenous technique findings',
       cycleCap: 4,
     },
+    {
+      // The inspection finds it; this is the half that fixes it, and the line
+      // can only be reconnected by the action that names reconnection.
+      id: 'reconnect-hypnotic-line-within-ninety-seconds', objectiveId: 'restore-hypnotic-delivery',
+      atTick: 1800, windowTicks: 900, actionType: 'hypnotic-line',
+      actionPayload: { action: 'reconnect' },
+      directive: 'The hypnotic is not reaching her: reconnect the line and restore delivery. Within 90 seconds of the disconnection here.',
+      sourceLocator: 'Nimmo et al. 2019, guidelines for the safe practice of total intravenous anaesthesia, infusion-line integrity',
+      cycleCap: 4,
+    },
   ],
   debrief: {
     rubric: [

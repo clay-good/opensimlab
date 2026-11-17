@@ -149,15 +149,48 @@ describe('rapid-cycle coverage of timed protocol steps', () => {
     }
   });
 
-  it('counts the steps it does not yet rehearse, rather than implying it rehearses them all', () => {
-    // Per-lesson coverage is complete; per-objective coverage is not, and saying so here is
-    // the point. Some measures combine conditions one action cannot represent (a help call
-    // AND 100% oxygen), and some steps share an action type with no payload to separate them.
-    const timed = ALL_SCENARIOS.flatMap(timedSteps).length;
+  /**
+   * What is left, by name and with the reason each one is left.
+   *
+   * This used to be a count with a sentence about why some measures are hard.
+   * A count cannot be checked: it says nothing about WHICH steps are missing,
+   * so a step that becomes rehearsable stays unrehearsed and a step that should
+   * never be rehearsed looks like a backlog item. Every remaining measure is
+   * here with the reason it cannot be a fixed-tick, single-action cycle, and
+   * the reason has to stay true.
+   */
+  const NOT_REHEARSABLE: Readonly<Record<string, string>> = {
+    'perioperative-anaphylaxis-after-antibiotic:support-anaphylaxis-circulation':
+      'The measure is a cumulative volume - at least 1,000 mL within 120 seconds - and a point '
+      + 'matches one action\'s fields for equality. A learner giving two 500 mL boluses meets the '
+      + 'objective and would be told by the cycle that they had missed it.',
+    'early-malignant-hyperthermia-during-volatile-anesthesia:stop-trigger-and-hyperventilate':
+      'Its moment is the first modeled rigidity, which begins whenever the learner\'s own volatile '
+      + 'reaches the patient, so no fixed tick restores it. It needs an event-relative point.',
+    'early-malignant-hyperthermia-during-volatile-anesthesia:give-initial-dantrolene':
+      'Same lesson, same reason: the window runs from a moment the learner\'s own actions set.',
+    'high-spinal-after-epidural-top-up:support-high-spinal-breathing':
+      'The measure is a threshold - at least 95% inspired oxygen with active delivery - and the '
+      + 'matcher tests equality, so a learner on 96% would land the objective and miss the cycle.',
+    'high-spinal-after-epidural-top-up:support-high-spinal-circulation':
+      'Two actions in one measure: a crystalloid bolus in a range AND a listed ephedrine bolus. '
+      + 'A point lands on one action, and either half alone would close it falsely.',
+    'dilutional-coagulopathy:reassess-coagulation-response':
+      'Its window runs from the learner\'s own plasma, so no scheduled tick restores it, and what '
+      + 'it measures is the panel\'s result rather than the panel being sent.',
+  };
+
+  it('names every timed step it does not rehearse, and why', () => {
     const rehearsed = new Set(ALL_SCENARIOS.flatMap((scenario) =>
       (scenario.rapidCycle ?? []).map((point) => `${scenario.metadata.id}:${point.objectiveId}`)));
-    expect(timed).toBeGreaterThan(rehearsed.size);
-    expect(rehearsed.size).toBe(24);
+    const uncovered = ALL_SCENARIOS.flatMap((scenario) => timedSteps(scenario)
+      .map((objective) => `${scenario.metadata.id}:${objective.id}`))
+      .filter((key) => !rehearsed.has(key));
+    expect(uncovered.sort()).toEqual(Object.keys(NOT_REHEARSABLE).sort());
+    for (const reason of Object.values(NOT_REHEARSABLE)) {
+      expect(reason.length).toBeGreaterThan(80);
+    }
+    expect(rehearsed.size).toBe(34);
   });
 });
 

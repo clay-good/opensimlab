@@ -100,6 +100,15 @@ export const ARTERIAL_PRESSURE_TRANSDUCER_ARTIFACT: Scenario = {
       sourceLocator: 'ASA Standards for Basic Anesthetic Monitoring, 2020 revision, blood-pressure monitoring',
       cycleCap: 4,
     },
+    {
+      // The cuff check says which number to believe; this is the correction.
+      id: 'level-and-zero-within-sixty-seconds', objectiveId: 'correct-transducer-level',
+      atTick: 600, windowTicks: 600, actionType: 'arterial-line',
+      actionPayload: { action: 'level-zero' },
+      directive: 'The transducer sits 20 cm high, so the arterial number is low: level it to the phlebostatic axis and zero it. Within 60 seconds here.',
+      sourceLocator: 'Saugel et al. 2020, how to measure blood pressure using an arterial catheter, levelling and zeroing',
+      cycleCap: 4,
+    },
   ],
   debrief: { rubric: [
     {

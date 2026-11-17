@@ -117,6 +117,22 @@ export const PNEUMOTHORAX_UNDER_POSITIVE_PRESSURE: Scenario = {
       sourceLocator: 'Resuscitation Council UK special circumstances, October 27, 2025: tension pneumothorax',
       cycleCap: 4,
     },
+    {
+      id: 'assess-bilateral-ventilation-within-thirty-seconds', objectiveId: 'assess-pneumothorax-pattern',
+      atTick: 600, windowTicks: 300, actionType: 'pneumothorax-response',
+      actionPayload: { action: 'assess-bilateral-ventilation' },
+      directive: 'Airway pressure is up and one side is quiet: check bilateral ventilation before anything else. Within 30 seconds of the event here.',
+      sourceLocator: 'Association of Anaesthetists Quick Reference Handbook, June 2023, 2-3 increased airway pressure',
+      cycleCap: 4,
+    },
+    {
+      id: 'oxygenate-pneumothorax-within-sixty-seconds', objectiveId: 'support-pneumothorax-oxygenation',
+      atTick: 600, windowTicks: 600, actionType: 'ventilator',
+      actionPayload: { fio2: 1, delivering: true },
+      directive: 'Deliver breaths on 100% oxygen while the decompression is arranged. Within 60 seconds of the event here.',
+      sourceLocator: 'Association of Anaesthetists Quick Reference Handbook, June 2023, 2-2 hypoxia/desaturation/cyanosis',
+      cycleCap: 4,
+    },
   ],
   debrief: { rubric: [
     {

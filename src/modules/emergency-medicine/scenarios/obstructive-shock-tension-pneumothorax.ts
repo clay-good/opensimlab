@@ -84,6 +84,23 @@ export const OBSTRUCTIVE_SHOCK_TENSION_PNEUMOTHORAX: Scenario = {
       directive: 'Nothing else will empty this chest: record left-chest decompression now, without waiting for imaging. Within 60 seconds here.',
       sourceLocator: 'European Resuscitation Council Guidelines 2025, special circumstances: tension pneumothorax',
       cycleCap: 4 },
+    { id: 'assess-bilateral-ventilation-within-thirty-seconds', objectiveId: 'assess-obstructive-pleural-shock',
+      atTick: 1, windowTicks: 300, actionType: 'pneumothorax-response',
+      // The same action type decompresses, so the payload is what keeps a cycle
+      // on the assessment from closing on the treatment that follows it.
+      actionPayload: { action: 'assess-bilateral-ventilation' },
+      directive: 'Hypoxia and shock with one quiet side: check bilateral ventilation and name the pattern. Within 30 seconds here.',
+      sourceLocator: 'European Resuscitation Council Guidelines 2025, special circumstances: tension pneumothorax',
+      cycleCap: 4 },
+    { id: 'oxygen-within-sixty-seconds', objectiveId: 'support-obstructive-pleural-oxygenation',
+      atTick: 1, windowTicks: 600, actionType: 'ventilator',
+      // This lesson's objective asks for the fraction alone, where the
+      // anaesthesia lessons ask for delivery with it, so the matcher is the
+      // fraction alone: a cycle must measure what its own lesson measures.
+      actionPayload: { fio2: 1 },
+      directive: 'Record high-concentration oxygen while definitive decompression is arranged. Within 60 seconds here.',
+      sourceLocator: 'European Resuscitation Council Guidelines 2025, special circumstances: tension pneumothorax',
+      cycleCap: 4 },
   ],
   debrief: { rubric: [
     { id: 'obstructive-pleural-assessment', objectiveId: 'assess-obstructive-pleural-shock', question: 'Which trauma, breathing, oxygenation, and circulation findings formed the dangerous pattern?' },

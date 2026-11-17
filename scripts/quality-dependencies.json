@@ -257,7 +257,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Prebrief.tsx",
-        "sha256": "90b4f08b7290acfc97a8ec4dad12cdc6e475c43c605aed106ae0fc73d949d48a"
+        "sha256": "8cfacf17f799f132958221cd7b3a4bcc09f0609679fea36554bd6b34adee8e9c"
       },
       {
         "path": "src/modules/endocrine-metabolic/HyponatremiaCorrectionTray.tsx",
@@ -526,7 +526,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Prebrief.tsx",
-        "sha256": "90b4f08b7290acfc97a8ec4dad12cdc6e475c43c605aed106ae0fc73d949d48a"
+        "sha256": "8cfacf17f799f132958221cd7b3a4bcc09f0609679fea36554bd6b34adee8e9c"
       },
       {
         "path": "src/modules/anesthesia/ui/accessibility.ts",

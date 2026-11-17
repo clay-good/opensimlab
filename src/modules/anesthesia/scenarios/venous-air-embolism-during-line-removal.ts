@@ -105,6 +105,25 @@ export const VENOUS_AIR_EMBOLISM_DURING_LINE_REMOVAL: Scenario = {
       sourceLocator: 'Association of Anaesthetists Quick Reference Handbook, June 2023, 3-5 circulatory embolus',
       cycleCap: 4,
     },
+    {
+      id: 'call-venous-air-help-within-thirty-seconds', objectiveId: 'escalate-venous-air-pattern',
+      atTick: 600, windowTicks: 300, actionType: 'call-for-help',
+      actionPayload: { context: 'venous-air-embolism' },
+      directive: 'This pattern is an embolus until proven otherwise: call for help and name it. Within 30 seconds of the event here.',
+      sourceLocator: 'Association of Anaesthetists Quick Reference Handbook, June 2023, 3-5 circulatory embolus',
+      cycleCap: 4,
+    },
+    {
+      // The objective names an exact fraction and active delivery, so the
+      // matcher is those two fields and nothing else: a learner who also sets a
+      // tidal volume still lands the step.
+      id: 'oxygenate-venous-air-within-sixty-seconds', objectiveId: 'support-venous-air-oxygenation',
+      atTick: 600, windowTicks: 600, actionType: 'ventilator',
+      actionPayload: { fio2: 1, delivering: true },
+      directive: 'Take the nitrous out of the circuit and deliver breaths on 100% oxygen. Within 60 seconds of the event here.',
+      sourceLocator: 'Association of Anaesthetists Quick Reference Handbook, June 2023, 3-5 circulatory embolus',
+      cycleCap: 4,
+    },
   ],
   debrief: { rubric: [
     {

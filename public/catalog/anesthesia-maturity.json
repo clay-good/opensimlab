@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "anesthesia",
-  "recordCount": 74,
+  "recordCount": 82,
   "records": [
     {
       "recordId": "scenario:routine-induction@0.1.0",
@@ -608,6 +608,17 @@
       ]
     },
     {
+      "recordId": "tutor-rule:awareness-under-paralysis-reconnect-hypnotic-line-within-ninety-seconds@0.1.0",
+      "subjectKind": "tutor-rule",
+      "subjectId": "awareness-under-paralysis-reconnect-hypnotic-line-within-ninety-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#awareness-under-paralysis@0.1.0",
+        "Nimmo et al. 2019, guidelines for the safe practice of total intravenous anaesthesia, infusion-line integrity"
+      ]
+    },
+    {
       "recordId": "tutor-rule:laryngospasm-after-airway-stimulation-maneuver-within-thirty-seconds@0.1.0",
       "subjectKind": "tutor-rule",
       "subjectId": "laryngospasm-after-airway-stimulation-maneuver-within-thirty-seconds",
@@ -616,6 +627,17 @@
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#laryngospasm-after-airway-stimulation@0.1.0",
         "Visvanathan 2005, crisis management during anaesthesia: laryngospasm, immediate management"
+      ]
+    },
+    {
+      "recordId": "tutor-rule:laryngospasm-after-airway-stimulation-deepen-within-forty-five-seconds@0.1.0",
+      "subjectKind": "tutor-rule",
+      "subjectId": "laryngospasm-after-airway-stimulation-deepen-within-forty-five-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#laryngospasm-after-airway-stimulation@0.1.0",
+        "Visvanathan et al. 2005, crisis management during anaesthesia: laryngospasm, deepening anaesthesia"
       ]
     },
     {
@@ -685,6 +707,28 @@
       ]
     },
     {
+      "recordId": "tutor-rule:venous-air-embolism-during-line-removal-call-venous-air-help-within-thirty-seconds@0.1.0",
+      "subjectKind": "tutor-rule",
+      "subjectId": "venous-air-embolism-during-line-removal-call-venous-air-help-within-thirty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#venous-air-embolism-during-line-removal@0.1.0",
+        "Association of Anaesthetists Quick Reference Handbook, June 2023, 3-5 circulatory embolus"
+      ]
+    },
+    {
+      "recordId": "tutor-rule:venous-air-embolism-during-line-removal-oxygenate-venous-air-within-sixty-seconds@0.1.0",
+      "subjectKind": "tutor-rule",
+      "subjectId": "venous-air-embolism-during-line-removal-oxygenate-venous-air-within-sixty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#venous-air-embolism-during-line-removal@0.1.0",
+        "Association of Anaesthetists Quick Reference Handbook, June 2023, 3-5 circulatory embolus"
+      ]
+    },
+    {
       "recordId": "tutor-rule:capnography-sampling-line-obstruction-cross-check-within-thirty-seconds@0.1.0",
       "subjectKind": "tutor-rule",
       "subjectId": "capnography-sampling-line-obstruction-cross-check-within-thirty-seconds",
@@ -693,6 +737,17 @@
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#capnography-sampling-line-obstruction@0.1.0",
         "Association of Anaesthetists, Recommendations for standards of monitoring during anaesthesia and recovery 2021"
+      ]
+    },
+    {
+      "recordId": "tutor-rule:capnography-sampling-line-obstruction-restore-sample-path-within-sixty-seconds@0.1.0",
+      "subjectKind": "tutor-rule",
+      "subjectId": "capnography-sampling-line-obstruction-restore-sample-path-within-sixty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#capnography-sampling-line-obstruction@0.1.0",
+        "Klein et al. Recommendations for standards of monitoring during anaesthesia and recovery 2021. Anaesthesia 2021;76:1212-23"
       ]
     },
     {
@@ -715,6 +770,17 @@
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#arterial-pressure-transducer-artifact@0.1.0",
         "ASA Standards for Basic Anesthetic Monitoring, 2020 revision, blood-pressure monitoring"
+      ]
+    },
+    {
+      "recordId": "tutor-rule:arterial-pressure-transducer-artifact-level-and-zero-within-sixty-seconds@0.1.0",
+      "subjectKind": "tutor-rule",
+      "subjectId": "arterial-pressure-transducer-artifact-level-and-zero-within-sixty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#arterial-pressure-transducer-artifact@0.1.0",
+        "Saugel et al. 2020, how to measure blood pressure using an arterial catheter, levelling and zeroing"
       ]
     },
     {
@@ -781,6 +847,28 @@
       "evidence": [
         "/catalog/anesthesia-completion-audit.json#pneumothorax-under-positive-pressure@0.1.0",
         "Resuscitation Council UK special circumstances, October 27, 2025: tension pneumothorax"
+      ]
+    },
+    {
+      "recordId": "tutor-rule:pneumothorax-under-positive-pressure-assess-bilateral-ventilation-within-thirty-seconds@0.1.0",
+      "subjectKind": "tutor-rule",
+      "subjectId": "pneumothorax-under-positive-pressure-assess-bilateral-ventilation-within-thirty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#pneumothorax-under-positive-pressure@0.1.0",
+        "Association of Anaesthetists Quick Reference Handbook, June 2023, 2-3 increased airway pressure"
+      ]
+    },
+    {
+      "recordId": "tutor-rule:pneumothorax-under-positive-pressure-oxygenate-pneumothorax-within-sixty-seconds@0.1.0",
+      "subjectKind": "tutor-rule",
+      "subjectId": "pneumothorax-under-positive-pressure-oxygenate-pneumothorax-within-sixty-seconds",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "/catalog/anesthesia-completion-audit.json#pneumothorax-under-positive-pressure@0.1.0",
+        "Association of Anaesthetists Quick Reference Handbook, June 2023, 2-2 hypoxia/desaturation/cyanosis"
       ]
     },
     {

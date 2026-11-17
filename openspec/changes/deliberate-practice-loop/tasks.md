@@ -193,8 +193,29 @@ its own, none changes the engine, and none produces a score.
   learners; it needs an event-relative decision point (for example "90 seconds after the first
   modeled rigidity") the format does not have. Status epilepticus, in both modules, measures its
   objectives by sequence rather than by a clock, so there is no authored window to rehearse
-  against; giving it one would be inventing a measure the lesson does not make. The remaining 41
-  timed measures across 17 anesthesia and emergency-medicine lessons are ordinary authoring work.
+  against; giving it one would be inventing a measure the lesson does not make.
+  **Thirty-four points now, and the remaining six are named rather than counted.** Ten more were
+  authored in one pass: the sample-path reconnection in the capnography lesson, the hypnotic-line
+  reconnection in awareness under paralysis, the propofol deepening in laryngospasm, the help call
+  and the oxygen in venous air embolism, the level-and-zero in the arterial artifact, the
+  bilateral-ventilation check and the oxygen in the anaesthesia pneumothorax lesson, and the same
+  two in emergency medicine's. Each one's declared action lands inside its declared window on its
+  own lesson's expert path, which is what the coverage test checks rather than taking the author's
+  word.
+  Two of them taught the same lesson twice. The laryngospasm point matches the DRUG and not the
+  dose, because its objective says in its own text that it is an action proxy, and a cycle
+  demanding one amount would fail a correct dose. And the two pneumothorax lessons ask for oxygen
+  differently - anaesthesia's wants a fraction of 1.0 with active delivery, emergency medicine's
+  wants the fraction alone - so their matchers differ. A cycle has to measure what its own lesson
+  measures, not what its neighbour does.
+  What is left is six measures, each pinned by name in the coverage test with the reason it cannot
+  be a fixed-tick single-action cycle: two cumulative or threshold volumes where the matcher tests
+  equality and a correct learner would be told they missed, one measure that needs two actions,
+  one whose window runs from the learner's own plasma rather than a scheduled tick, and malignant
+  hyperthermia's two, whose moment the learner's own volatile sets. That list replaced a bare
+  count, because a count cannot be checked: it says nothing about which steps are missing, so a
+  step that becomes rehearsable stays unrehearsed and a step that never should be looks like a
+  backlog item.
 - [ ] Build test: every timed-protocol objective has at least one rapid-cycle decision point.
   Not yet: 12 of the 47 timed measures in the catalogue are rehearsed, so a build gate would fail
   every build. Eleven lessons with timed measures remain, and the inventory behind them is in this

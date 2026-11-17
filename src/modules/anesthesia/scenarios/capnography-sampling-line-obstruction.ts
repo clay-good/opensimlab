@@ -109,6 +109,17 @@ export const CAPNOGRAPHY_SAMPLING_LINE_OBSTRUCTION: Scenario = {
       sourceLocator: 'Association of Anaesthetists, Recommendations for standards of monitoring during anaesthesia and recovery 2021',
       cycleCap: 4,
     },
+    {
+      // The second half of the same minute, and the reason it is its own point:
+      // the cross-check and the reconnection are the same action type, so the
+      // payload is what keeps a cycle on one of them from closing on the other.
+      id: 'restore-sample-path-within-sixty-seconds', objectiveId: 'restore-capnography-sampling',
+      atTick: 1200, windowTicks: 600, actionType: 'capnography-line',
+      actionPayload: { action: 'reconnect' },
+      directive: 'Ventilation confirmed, so the fault is the sample path: reconnect it and get the trace back. Within 60 seconds of losing it here.',
+      sourceLocator: 'Klein et al. Recommendations for standards of monitoring during anaesthesia and recovery 2021. Anaesthesia 2021;76:1212-23',
+      cycleCap: 4,
+    },
   ],
   debrief: { rubric: [
     {

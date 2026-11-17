@@ -153,6 +153,16 @@ export const LARYNGOSPASM_AFTER_AIRWAY_STIMULATION: Scenario = {
       sourceLocator: 'Visvanathan 2005, crisis management during anaesthesia: laryngospasm, immediate management',
       cycleCap: 4,
     },
+    {
+      // Matched on the drug, not the dose: the objective is an action proxy and
+      // says so, and a cycle demanding one amount would fail a correct dose.
+      id: 'deepen-within-forty-five-seconds', objectiveId: 'deepen-during-laryngospasm',
+      atTick: 2400, windowTicks: 450, actionType: 'bolus',
+      actionPayload: { drugId: 'propofol' },
+      directive: 'The cords are shut and the manoeuvres are on: deepen with propofol. Within 45 seconds of closure here.',
+      sourceLocator: 'Visvanathan et al. 2005, crisis management during anaesthesia: laryngospasm, deepening anaesthesia',
+      cycleCap: 4,
+    },
   ],
   debrief: {
     rubric: [

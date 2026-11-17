@@ -139,7 +139,10 @@ describe('exact-version maturity records', () => {
       + medicalSurgicalNursingCatalog.recordCount + oncologyCatalog.recordCount
       + surgeryTraumaCatalog.recordCount)
       .toBe(reviewableItems().length);
-    expect(catalog.recordCount).toBe(74);
+    // 82 since ten more rapid-cycle directives were authored, eight of them in
+    // this module: every directive line is a `tutor-rule` subject at its
+    // lesson's own version, so authoring one adds a record here.
+    expect(catalog.recordCount).toBe(82);
     expect(catalog.records.filter((record) => record.subjectKind === 'scenario')
       .every((record) => record.status === 'preview')).toBe(true);
     // One state for everything published. Non-scenario content used to sit in
