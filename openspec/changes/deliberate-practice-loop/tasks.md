@@ -233,6 +233,10 @@ its own, none changes the engine, and none produces a score.
   learner's own words typed in the moment, nothing in the build can tell whether one of them names
   a patient, a colleague or themselves, and the warning says exactly that. Showing them the file
   before it exists is the only honest check available.
+  One thing followed from that shape: the review page now unwraps the file. A learner who hands in
+  the session with their notes in it should get a review rather than a parse error teaching them
+  to find the right file by trial and error, and the notes inside are still read by nothing - a
+  test holds the parser to taking the transcript out and touching nothing else.
 - [x] Extend the report-context structural exclusion test to notes. `tests/unit/reasoning-notes.test.ts`
   holds that the transcript, the reporting package, and the report-context collector never
   reference the notes store, and the debrief receives notes as a prop rather than reading session

@@ -15,6 +15,9 @@ import { transcriptScenario, TRANSCRIPT_MODULE_IDS } from './transcript-scenario
 import { MAX_REPLAY_TICKS, type RunReplay } from './replay';
 import { findStacking } from './analysis';
 import { objectiveFindings } from '../ui/Debrief';
+import {
+  SESSION_WITH_NOTES_KIND, type SessionWithNotes,
+} from '@platform/session/reasoning-notes';
 import type { ObjectiveFinding } from './analysis';
 import { PREOXYGENATION_END_TIDAL_TARGET } from '../engine';
 
@@ -50,7 +53,14 @@ export function parseTranscript(text: string, label: string): Transcript {
   } catch {
     throw new UnreadableTranscript(`${label} is not a readable file. It should be the JSON file the simulator exported.`);
   }
-  const candidate = value as Partial<Transcript>;
+  // A learner may hand in the session exported WITH their own notes, which
+  // wraps the transcript rather than extending it. Unwrap it and replay the
+  // transcript inside: refusing the file would teach learners to hand in the
+  // right file by trial and error. The notes themselves are not read here and
+  // are not read anywhere - `tests/unit/reasoning-notes.test.ts` holds that.
+  const wrapper = value as Partial<SessionWithNotes<unknown>>;
+  const candidate = (wrapper?.kind === SESSION_WITH_NOTES_KIND
+    ? wrapper.transcript : value) as Partial<Transcript>;
   if (candidate?.format !== 'opensimlab.transcript') {
     throw new UnreadableTranscript(`${label} is not an Open Sim Lab transcript.`);
   }

@@ -162,7 +162,7 @@ export const SESSION_MESSAGES = {
   'debrief.export': { class: 'interface', text: 'Export the transcript' },
   'debrief.export-notes': { class: 'interface', text: 'Export with your notes\u2026' },
   'debrief.export-notes-title': { class: 'interface', text: 'What this file will contain' },
-  'debrief.export-notes-intro': { class: 'interface', text: 'This file is the session you just ran, with the notes you wrote during it. The transcript inside it is identical to the one the other button writes; these notes are the only addition.' },
+  'debrief.export-notes-intro': { class: 'interface', text: 'This file is the session you just ran, with the notes you wrote during it. The transcript inside it is identical to the one the other button writes, so an educator can open either file; these notes are the only addition, and nothing reads them.' },
   'debrief.export-notes-warning': { class: 'interface', text: 'These are your own words, written in the moment, and nothing here checks them. If one of them names a patient, a colleague or you, it will be in the file. Read them above before you write it.' },
   'debrief.export-notes-confirm': { class: 'interface', text: 'Write the file' },
   'debrief.export-notes-cancel': { class: 'interface', text: 'Not now' },

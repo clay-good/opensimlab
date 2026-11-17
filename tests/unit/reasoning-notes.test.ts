@@ -4,6 +4,7 @@ import {
   REASONING_NOTE_LIMIT, SESSION_WITH_NOTES_KIND, actionAtNote, normalizeReasoningNote,
   sessionWithNotes, useReasoningNotes,
 } from '@platform/session/reasoning-notes';
+import { parseTranscript } from '@anesthesia/debrief/analyse-transcript';
 
 describe('reasoning notes', () => {
   beforeEach(() => useReasoningNotes.getState().clear());
@@ -98,5 +99,51 @@ describe('the one file notes may leave the device in', () => {
     // And the plain transcript export still writes a transcript and nothing else.
     const plain = route.slice(route.indexOf('const exportTranscript ='));
     expect(plain.slice(0, plain.indexOf('}, [session]);'))).not.toMatch(/reasoningNotes|sessionWithNotes/);
+  });
+});
+
+/**
+ * deliberate-practice-loop → a learner may hand in either file.
+ *
+ * The session-with-notes export wraps the transcript. A learner who hands that
+ * file to an instructor should get a review, not a parse error teaching them to
+ * find the right file by trial and error. The notes inside it are still read by
+ * nothing.
+ */
+describe('the review page accepts either file', () => {
+  const transcript = {
+    format: 'opensimlab.transcript',
+    scenarioId: 'routine-induction',
+    moduleId: 'anesthesia',
+    ticks: 100,
+    actions: [],
+    seed: 42,
+    practiceRegion: 'US',
+    versions: { engine: '0.1.0', contentVersion: '0.1.0', modelSetRevision: '1' },
+  };
+
+  it('reads the plain transcript and the wrapped one to the same transcript', () => {
+    const plain = parseTranscript(JSON.stringify(transcript), 'plain.json');
+    const wrapped = parseTranscript(
+      JSON.stringify(sessionWithNotes(transcript, [{ tick: 50, text: 'why I waited' }])),
+      'with-notes.json',
+    );
+    expect(wrapped).toEqual(plain);
+  });
+
+  it('still refuses a file that is neither', () => {
+    expect(() => parseTranscript(JSON.stringify({ kind: 'something-else' }), 'other.json')).toThrow();
+    expect(() => parseTranscript(JSON.stringify({
+      kind: SESSION_WITH_NOTES_KIND, transcript: { format: 'not-ours' }, reasoningNotes: [],
+    }), 'wrong-inside.json')).toThrow();
+  });
+
+  /** Nothing in the review path reads a note, including from a file that has them. */
+  it('reads no note out of the wrapped file', () => {
+    const source = readFileSync('src/modules/anesthesia/debrief/analyse-transcript.ts', 'utf8');
+    const parser = source.slice(source.indexOf('export function parseTranscript'));
+    const body = parser.slice(0, parser.indexOf('\n}\n'));
+    expect(body).not.toMatch(/reasoningNotes\s*[.[]/);
+    expect(body).toContain('wrapper.transcript');
   });
 });
