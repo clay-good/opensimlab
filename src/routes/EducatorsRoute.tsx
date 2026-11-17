@@ -174,6 +174,10 @@ export function EducatorsRoute() {
         <p><strong>{t('edu.practice-progress-lead')}</strong> {t('edu.practice-progress')}</p>
         <p>{t('edu.practice-progress-not')}</p>
 
+        <p className="field__label">{t('edu.practice-overlay-lead')}</p>
+        <p>{t('edu.practice-overlay')}</p>
+        <p>{t('edu.practice-overlay-not')}</p>
+
         <h2>{t('edu.documents-heading')}</h2>
         <ul>
           <li><a href="/validation">{t('edu.doc-validation')}</a>: {t('edu.doc-validation-note')}</li>

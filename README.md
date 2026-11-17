@@ -61,6 +61,23 @@ practice history — carries both statements with it: that this is not for clini
 no clinician has reviewed it. A file that leaves the interface leaves the labels behind, so it
 says so itself.
 
+**The debrief compares your run with a reference one, and refuses to score either.** After a
+closed-loop lesson, the transcript it ships with is replayed on *your* patient — your seed, your
+region — and drawn beside what you did: four parameters, both runs' actions on one timeline, and
+one line per objective saying when each run met it. Where the replay is no longer the same
+patient within a measured tolerance, it says which parameter moved and draws nothing rather than
+putting two people on one axis. There is no total anywhere and there will not be one: two runs
+can differ for reasons that are not better or worse, and a single number hides every one of them.
+Each objective also gets a question built from what the model attributed the change to at the
+moment it was measured — a question, never a verdict, and one that says what the model
+attributed rather than what you caused.
+
+**What you wrote during a run is yours to keep or not.** Notes you type in the moment stay out of
+the transcript, out of the reporting package and out of the progress file, which is what lets
+each of those move without a preview. They leave the device only through one export that shows
+you every word first, because nothing here can tell whether a note names a patient, a colleague
+or you.
+
 **The pharmacology is ours.** Model parameters are transcribed by hand from the primary
 literature, each carrying its citation and the range it is valid over. Nothing is fetched
 at build or run time, and tests assert published reference values so a mistyped digit

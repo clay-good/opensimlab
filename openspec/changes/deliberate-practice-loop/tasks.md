@@ -315,11 +315,13 @@ its own, none changes the engine, and none produces a score.
 
 - [x] Document each mechanism in the educator pages with what it is for and what it does not
   claim; add the ILCOR 2024 and Chamberland 2015 citations to the sources register.
-  `/for-educators` carries "The practice mechanisms, and what each one does not claim": the four
-  that exist (rapid-cycle rehearsal, reasoning notes, spaced return, the progress file), each with
-  a paragraph of what it does and a paragraph of what it refuses to claim, and a first line saying
-  that the blind draw and the expert overlay are designed and not built, so nothing in the
-  interface offers them. Both citations are in the register, verified through NCBI E-utilities on
+  `/for-educators` carries "The practice mechanisms, and what each one does not claim": the five
+  that exist (rapid-cycle rehearsal, reasoning notes, spaced return, the progress file, and the
+  reference-run overlay), each with a paragraph of what it does and a paragraph of what it refuses
+  to claim, and a first line saying that the blind draw is designed and not built, so nothing in
+  the interface offers it. The overlay's own paragraph was written when it shipped rather than
+  left for later: a page that lists what each mechanism refuses to claim is exactly the page that
+  goes stale first. Both citations are in the register, verified through NCBI E-utilities on
   2026-10-27: the ILCOR review (PMID 38757054) as nine simulated studies at very low certainty
   with no patient outcome, and Chamberland 2015 (PMID 25626750) with the honest note that the
   group which gained most heard worked examples and answered prompts, and the note field does
