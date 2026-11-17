@@ -14,3 +14,6 @@ coverage/
 # Preview images are rasterised from the committed SVGs by `npm run og`.
 # The PNG is a build artifact; the SVG beside it is the source.
 public/og/*.png
+
+# openlore analysis artifacts
+.openlore/
