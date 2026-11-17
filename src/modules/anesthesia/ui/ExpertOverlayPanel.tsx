@@ -25,6 +25,9 @@ import {
   expertOverlay, expertPathFor, type ExpertOverlay, type OverlayParameter,
 } from '@anesthesia/debrief/expert-overlay';
 import { t } from '@platform/i18n/messages';
+// This panel's words live in the session group, and a surface that uses a key
+// imports the group that defines it.
+import '@platform/i18n/messages-session';
 import { objectiveFindings } from './Debrief';
 
 export interface ExpertOverlayPanelProps {

@@ -45,10 +45,22 @@
   share their briefing's preview image instead of adding 256 more, and print without the site
   bar. Linked from the live briefing, the prerendered briefing, and a new "Running a scenario
   with a group" section on `/for-educators`.
-- [ ] Generate PEARLS-phase prompts per objective from attribution; snapshot-test the structure.
-  Partly done: reactions, description, and summary are fixed templates, and analysis asks each
-  debrief-rubric question under its objective, tested for every scenario. Prompts generated from
-  attribution of the learner's own run remain.
+- [x] Generate PEARLS-phase prompts per objective from attribution; snapshot-test the structure.
+  Both halves now exist. The facilitator guide asks each lesson's authored debrief question under
+  its objective, which is the same for every learner because it is about the lesson. The debrief
+  now adds the other half: one prompt per objective built from what the MODEL attributed the
+  change to at the moment that objective was measured, so the question is about the run that just
+  happened.
+  Four rules are the reason these are generated rather than written, and each is a test:
+  - A prompt names one behaviour and one consequence and asks a question. It never says well,
+    better, worse, correct, or score.
+  - It states what the model ATTRIBUTED, never what the learner caused. The engine ranks its own
+    terms; "because you gave propofol" would assert a cause the attribution does not claim.
+  - A term from one of this project's teaching models says so in the prompt itself, because
+    whether a number comes from a published model or from one written here changes how far the
+    learner should take the reasoning.
+  - An objective whose moment the model attributed nothing to gets the open question rather than
+    an invented one. Silence is a fact about the run.
 - [x] Catalog gate: report every scenario with an absent guide field. `npm run gate` prints the
   guide count and each absent section's scenario count. It reports and does not block, because
   the page already says the section is absent.

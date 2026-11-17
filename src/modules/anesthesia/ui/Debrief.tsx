@@ -16,6 +16,7 @@ import { Badge, Button, CitationLink, Modal, Panel } from '@platform/ui';
 import { TranscriptScrubber } from './TranscriptScrubber';
 import { Timeline } from '@platform/ui';
 import { ExpertOverlayPanel } from './ExpertOverlayPanel';
+import { pearlsAnalysisPrompts } from '@anesthesia/debrief/pearls-prompts';
 import { formatElapsed, TICKS_PER_SECOND } from '@platform/clock/simulation-clock';
 import type { Attribution, EngineEvent, LearnerAction } from '@platform/kernel/protocol';
 import type { HistorySample } from '@platform/session/session-store';
@@ -425,6 +426,22 @@ export function Debrief(props: DebriefProps) {
               ))}
             </Panel>
           )}
+
+          <Panel title={t('pearls.heading')}>
+            <p className="field__hint">{t('pearls.intro')}</p>
+            <ul>
+              {pearlsAnalysisPrompts(findings, props.attributionByTick).map((prompt) => (
+                <li key={prompt.objectiveId}>
+                  <strong>{prompt.statement}</strong>
+                  <br />
+                  {prompt.prompt}
+                  {prompt.teachingModel && (
+                    <> <Badge kind="teaching">{t('pearls.teaching-badge')}</Badge></>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </Panel>
 
           <ExpertOverlayPanel
             scenario={props.scenario}
