@@ -1,6 +1,13 @@
 /**
- * The prebriefing screen (learning/pedagogy → Every scenario has a prebrief,
- * per the INACSL Healthcare Simulation Standards of Best Practice).
+ * The prebriefing screen (learning/pedagogy → Every scenario has a prebrief).
+ *
+ * This comment used to attribute the requirement to the INACSL healthcare
+ * simulation standards. It does not now: those standards are in no entry of
+ * this project's sources register, their publisher refuses an automated fetch
+ * and is not indexed where every other citation here is verified, so nobody
+ * here has read them. The prebrief stays, because the requirement is this
+ * project's own and is stated in its own capability; what was removed is an
+ * attribution nobody could check.
  *
  * It orients the learner to the environment, the controls, the patient, the
  * objectives, and the fiction contract — that this is a simulation and errors here

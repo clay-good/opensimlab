@@ -199,5 +199,11 @@
   So: do not write this page's standards claims until someone with journal access can establish
   the current edition and its composition, and add the register entry at the same time. Naming a
   standard the project has not read is the thing this register exists to prevent, and the page is
-  worth less than the claim is worth getting wrong. The two existing comments should be corrected
-  or qualified in the same pass.
+  worth less than the claim is worth getting wrong.
+  The two existing comments are corrected now rather than left waiting on the page. Neither names
+  the 2021 edition any more: `guide.ts` says the section order follows those standards and that
+  nobody here has read the edition that specifies it, with the reason and what a person with
+  journal access would need to establish; `Prebrief.tsx` drops the attribution entirely, because
+  the requirement that every scenario has a prebrief is this project's own capability and does not
+  need somebody else's standard to stand on. Nothing about either surface changed - what changed
+  is that neither asserts a document nobody here has opened.

@@ -3,8 +3,21 @@
  * (learning/facilitation → facilitator guide).
  *
  * Every line below comes from a field the scenario already declares, in the
- * order the INACSL Healthcare Simulation Standards of Best Practice (2021) give
- * simulation design, prebriefing and debriefing. The only prose this module
+ * order simulation design, prebriefing and debriefing are usually given.
+ *
+ * That order follows the INACSL healthcare simulation standards, and this
+ * comment used to name their 2021 edition. It no longer does, because nobody
+ * here has read that edition: the journal that publishes them refuses an
+ * automated fetch and is not indexed where this project's register verifies
+ * every other citation, and what can be seen of the 2025 literature suggests
+ * the 2021 composition has been superseded. The sources register has no entry
+ * for them, and naming an edition this project has not read is the thing that
+ * register exists to prevent. The order is unchanged; the claim about which
+ * document specifies it waits on somebody with journal access. See the
+ * facilitator-toolkit change's documentation task for what that person needs
+ * to establish.
+ *
+ * The only prose this module
  * owns is the fixed templates in `GUIDE_TEMPLATES`, and a test holds them free
  * of clinical claims. A section whose field is missing renders as absent, with
  * the reason, so a guide can never read as more complete than its scenario.
