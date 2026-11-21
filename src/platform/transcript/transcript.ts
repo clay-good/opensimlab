@@ -72,6 +72,18 @@ export interface Transcript {
    * Present only when one fired. A pause changes no state, so replay ignores it.
    */
   readonly facilitatorPauses?: readonly { readonly id: string; readonly tick: number }[];
+  /**
+   * Present only when an instructor opened this run at a bookmark. The actions
+   * before `tick` are the named reference transcript's, not the learner's; they
+   * are kept in `actions` because replay needs them, and this says whose they are.
+   */
+  readonly openedAtBookmark?: OpenedAtBookmark;
+}
+
+export interface OpenedAtBookmark {
+  readonly id: string;
+  readonly transcript: 'expert' | 'common-error' | 'recovery';
+  readonly tick: number;
 }
 
 export interface TranscriptDraft {
@@ -88,6 +100,7 @@ export class TranscriptRecorder {
   private readonly actions: LearnerAction[] = [];
   private readonly pauses: { id: string; tick: number }[] = [];
   private ticks = 0;
+  private bookmark: OpenedAtBookmark | null = null;
 
   constructor(private readonly draft: TranscriptDraft, initialActions: readonly LearnerAction[] = []) {
     this.actions.push(...initialActions);
@@ -104,6 +117,11 @@ export class TranscriptRecorder {
   /** Record a classroom pause point once; it is a marker, not an input. */
   markPause(id: string, tick: number): void {
     if (!this.pauses.some((pause) => pause.id === id)) this.pauses.push({ id, tick });
+  }
+
+  /** Say that the actions before the bookmark's tick came from a reference transcript. */
+  markOpenedAtBookmark(bookmark: OpenedAtBookmark): void {
+    this.bookmark = bookmark;
   }
 
   /** Create an independent branch containing only actions before the decision tick. */
@@ -127,6 +145,7 @@ export class TranscriptRecorder {
       ticks: this.ticks,
       stateTraceHash,
       ...(this.pauses.length === 0 ? {} : { facilitatorPauses: [...this.pauses] }),
+      ...(this.bookmark === null ? {} : { openedAtBookmark: this.bookmark }),
     };
   }
 }

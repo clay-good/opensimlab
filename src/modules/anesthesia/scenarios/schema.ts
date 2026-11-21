@@ -312,7 +312,7 @@ export const SCENARIO_SCHEMA: SchemaNode = {
         properties: {
           id: { type: 'string', description: 'Stable bookmark identifier.', pattern: '^[a-z0-9-]+$' },
           label: STRING_FIELD('What the room will be looking at, at most 80 characters.', 5),
-          atTick: { type: 'integer', description: 'The tick to hand over at; the transcript\'s actions before it are replayed.', minimum: 0 },
+          atTick: { type: 'integer', description: 'The tick to hand over at; the transcript\'s actions before it are replayed.', minimum: 1 },
           transcript: { type: 'string', description: 'The reference transcript replayed to reach it.', enum: ['expert', 'common-error', 'recovery'] },
         },
       },

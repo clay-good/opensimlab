@@ -14,7 +14,12 @@ const SOURCES: readonly NarrationSource[] = ['beat', 'tutor', 'alarm', 'summary'
 
 export interface SessionPreferencesProps {
   readonly note: { readonly draft: string; readonly saved: string; readonly onDraft: (text: string) => void; readonly onSave: () => void };
-  readonly classroom: { readonly on: boolean; readonly pausePoints: number; readonly onChange: (next: boolean) => void };
+  readonly classroom: {
+    readonly on: boolean; readonly pausePoints: number; readonly onChange: (next: boolean) => void;
+    /** The scenario's bookmarks, offered only in classroom mode. */
+    readonly bookmarks?: readonly { readonly id: string; readonly label: string }[];
+    readonly onOpenBookmark?: (id: string) => void;
+  };
   readonly presentation: { readonly on: boolean; readonly onChange: (next: boolean) => void };
   readonly vibration: { readonly on: boolean; readonly supported: boolean; readonly onChange: (next: boolean) => void };
   readonly narration: {
@@ -47,6 +52,17 @@ export function SessionPreferences({ note, classroom, presentation, vibration, n
         <p className="field__hint" id="classroom-hint">
           {t(classroom.pausePoints > 0 ? 'prefs.classroom.hint' : 'prefs.classroom.hint-none')}
         </p>
+        {classroom.on && (classroom.bookmarks?.length ?? 0) > 0 && classroom.onOpenBookmark && (
+          <fieldset className="field">
+            <legend className="field__label">{t('prefs.bookmarks.label')}</legend>
+            <p className="field__hint">{t('prefs.bookmarks.hint')}</p>
+            {classroom.bookmarks!.map((bookmark) => (
+              <Button key={bookmark.id} compact variant="ghost" onClick={() => classroom.onOpenBookmark!(bookmark.id)}>
+                {bookmark.label}
+              </Button>
+            ))}
+          </fieldset>
+        )}
         <Toggle checked={presentation.on} describedBy="presentation-hint" onChange={presentation.onChange}
           label={t(presentation.on ? 'prefs.presentation.on' : 'prefs.presentation.off')} />
         <p className="field__hint" id="presentation-hint">{t('prefs.presentation.hint')}</p>

@@ -11,7 +11,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   WORKER_PROTOCOL_VERSION, assertProtocolVersion,
-  type FromWorkerMessage, type StateMessage, type ToWorkerMessage,
+  type FromWorkerMessage, type LearnerAction, type StateMessage, type ToWorkerMessage,
 } from '@platform/kernel/protocol';
 import { AnesthesiaEngine, ENGINE_VERSION, type Scenario } from '@anesthesia/engine';
 import { MODEL_SET_REVISION } from '@anesthesia/pharmacology/registry';
@@ -352,6 +352,39 @@ describe('The worker protocol, the store, and the interface values', () => {
     useSession.getState().resetSession();
     expect((await useSession.getState().exportTranscript()).actions).toEqual([]);
     expect(useSession.getState().rehearsalBranch).toBeNull();
+  });
+
+  it('opens at a bookmark: replays the reference actions before it, hands over paused, and says whose they were', async () => {
+    begin();
+    const reference: LearnerAction[] = [
+      { tick: 5, type: 'bolus', payload: { drugId: 'propofol', amount: 50, unit: 'mg' } },
+      { tick: 30, type: 'ventilator', payload: { delivering: true, mode: 'volume-control', fio2: 0.5 } },
+    ];
+    useSession.getState().openAtBookmark({ id: 'after-induction', transcript: 'expert', tick: 20 }, reference);
+    const opened = useSession.getState();
+    expect(opened.tick).toBe(20);
+    expect(opened.transport).toBe('paused');
+    expect(opened.phase).toBe('running');
+    expect(opened.rehearsalBranch).toBeNull();
+    // The in-process worker replays and then emits, so the room sees the patient at the bookmark.
+    expect(opened.state).not.toBeNull();
+    expect(opened.concentrations.some((entry) => entry.drugId === 'propofol')).toBe(true);
+
+    useSession.getState().act({ type: 'ventilator', payload: { delivering: true, mode: 'volume-control', fio2: 1 } });
+    const transcript = await useSession.getState().exportTranscript();
+    expect(transcript.actions.map((action) => [action.tick, action.type])).toEqual([[5, 'bolus'], [20, 'ventilator']]);
+    expect(transcript.openedAtBookmark).toEqual({ id: 'after-induction', transcript: 'expert', tick: 20 });
+
+    useSession.getState().resetSession();
+    expect((await useSession.getState().exportTranscript()).openedAtBookmark).toBeUndefined();
+  });
+
+  it('refuses a bookmark at tick 0 or with a malformed id rather than guessing', () => {
+    begin();
+    useSession.getState().openAtBookmark({ id: 'start', transcript: 'expert', tick: 0 }, []);
+    useSession.getState().openAtBookmark({ id: 'Bad Id', transcript: 'expert', tick: 10 }, []);
+    expect(useSession.getState().tick).toBe(0);
+    expect(useSession.getState().phase).toBe('briefing');
   });
 
   it('Scenario: Worker failure degrades safely', async () => {

@@ -14,7 +14,7 @@ import type {
   Attribution, DrugConcentration, EngineAlarm, EngineEvent, EquipmentSnapshot, LearnerAction, StateMessage,
 } from '@platform/kernel/protocol';
 import {
-  TranscriptRecorder, type Transcript, type TranscriptDraft, type TranscriptVersions,
+  TranscriptRecorder, type OpenedAtBookmark, type Transcript, type TranscriptDraft, type TranscriptVersions,
 } from '@platform/transcript/transcript';
 import { hashStateTrace } from '@platform/transcript/hash';
 import { SolverClient, type SolverInit } from './solver-client';
@@ -90,6 +90,11 @@ export interface SessionState {
   readonly setSpeed: (speed: SpeedMultiplier) => void;
   readonly resetSession: () => void;
   readonly rehearseFromDecisionPoint: (pointId: string, decisionTick: number) => void;
+  /**
+   * Classroom mode: start again from a bookmark, replaying the named reference
+   * transcript's actions before its tick and handing over there, paused.
+   */
+  readonly openAtBookmark: (bookmark: OpenedAtBookmark, actions: readonly LearnerAction[]) => void;
   readonly act: (action: Omit<LearnerAction, 'tick'>) => void;
   readonly frame: (elapsedMs: number) => void;
   readonly markLogRead: () => void;
@@ -270,6 +275,33 @@ export const useSession = create<SessionState>((set, get) => ({
       unreadLog: false, catchUpNotice: false, equipment: null,
       rehearsalBranch: { pointId, decisionTick, parentTicks },
     });
+  },
+
+  openAtBookmark(bookmark, actions) {
+    const draft = internals.transcriptDraft;
+    if (!draft || !internals.client || !internals.init
+      || !/^[a-z0-9-]+$/.test(bookmark.id)
+      || !Number.isInteger(bookmark.tick) || bookmark.tick < 1) return;
+    // The same replay a rehearsal branch uses, with a reference transcript in
+    // place of the learner's own: no new engine path, so it inherits determinism.
+    const recorder = new TranscriptRecorder(draft, actions.filter((action) => action.tick < bookmark.tick));
+    recorder.markOpenedAtBookmark(bookmark);
+    recorder.setTicks(bookmark.tick);
+    internals.recorder = recorder;
+    internals.parentTranscript = null;
+    internals.clock.restore(bookmark.tick);
+    internals.eventLog.clear();
+    internals.trace = [];
+    // Clear BEFORE asking for the replay, as `begin` does: a worker can answer
+    // synchronously, and clearing afterwards would erase the state it reported.
+    set({
+      tick: bookmark.tick, elapsed: internals.clock.snapshot().elapsed,
+      transport: 'paused', phase: 'running', history: [], log: [], state: null,
+      alarms: [], warnings: [], waveformBlocks: [], concentrations: [], attribution: [],
+      unreadLog: false, catchUpNotice: false, equipment: null,
+      rehearsalBranch: null,
+    });
+    internals.client.resumeFromTranscript(recorder.build('pending'));
   },
 
   act(action) {

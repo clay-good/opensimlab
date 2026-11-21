@@ -41,4 +41,15 @@ describe('session preferences', () => {
     for (const text of ['What to read', 'Worked-example steps', 'Tutor prompts', 'Alarm announcements',
       'State summary on request', 'I use a screen reader', 'Alex (en-US)']) expect(markup).toContain(text);
   });
+
+  it('offers bookmarks only in classroom mode, and only where the scenario declares them', () => {
+    const bookmarks = [{ id: 'vf-before-any-action', label: 'VF has just appeared and nothing has been done yet' }];
+    const off = render({ classroom: { on: false, pausePoints: 2, onChange: () => {}, bookmarks, onOpenBookmark: () => {} } });
+    expect(off).not.toContain('Open at a bookmark');
+    const none = render({ classroom: { on: true, pausePoints: 2, onChange: () => {}, bookmarks: [], onOpenBookmark: () => {} } });
+    expect(none).not.toContain('Open at a bookmark');
+    const on = render({ classroom: { on: true, pausePoints: 2, onChange: () => {}, bookmarks, onOpenBookmark: () => {} } });
+    expect(on).toContain('Open at a bookmark');
+    expect(on).toContain(bookmarks[0]!.label);
+  });
 });

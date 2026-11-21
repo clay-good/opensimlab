@@ -91,9 +91,11 @@ timeline, the debrief questions, and the lesson's three checked-in reference tra
 expert does, the error the lesson exists to make visible, and a path that recovers from it. Each
 also exports a **run sheet** — plain text or JSON — for running the lesson on a mannequin or on
 paper, with the model's own vital signs at each state for the 39 closed-loop labs. A classroom
-mode forces the unassisted setting and enables authored pause points.
-Honestly incomplete: 2 of 256 lessons declare pause points, bookmarks are designed and not built,
-and the guides are deliberately outside the offline precache.
+mode forces the unassisted setting, enables authored pause points, and offers the lesson's
+**bookmarks**: named moments on its reference transcripts that restart the room there, paused,
+with a notice saying the actions before it were the reference run's and not the room's.
+Honestly incomplete: 2 of 256 lessons declare pause points and bookmarks, and the guides are
+deliberately outside the offline precache.
 
 **Mappings name the document they read, and the lessons they cannot cover.** Each lesson's
 objectives are mapped to published framework domains — the NBCRNA certification content outline,

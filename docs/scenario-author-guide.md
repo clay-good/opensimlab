@@ -93,9 +93,12 @@ instructor can open the room at, rather than describe. Each has an `id`, a `labe
 characters saying what the room will be looking at, the `atTick` to hand over at, and the
 `transcript` it sits on (`expert`, `common-error`, or `recovery`). Reaching a bookmark replays
 that transcript's actions before `atTick`, so the label should describe that state. Bookmarks
-appear in the facilitator guide; `validateScenario` refuses a duplicated id, a label over 80
-characters, or a transcript that does not exist, and `tests/unit/bookmarks.test.ts` refuses a
-bookmark past the last action of the transcript it names.
+appear in the facilitator guide and, in classroom mode, in the session menu. `validateScenario`
+refuses a duplicated id, a label over 80 characters, a tick below 1, or a transcript that does not
+exist. A lesson that declares bookmarks also needs an entry in
+`src/platform/facilitation/bookmark-actions.ts` that loads its fixtures as engine actions;
+`tests/unit/bookmarks.test.ts` fails without one, and refuses a bookmark past the last action of
+the transcript it names.
 
 ## Declare rapid-cycle decision points (optional)
 

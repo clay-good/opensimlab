@@ -110,6 +110,18 @@
   choosing the moment worth opening a room at is an educator's call, lesson by lesson.
 - [ ] Implement jump-to-bookmark on the rehearsal-branch mechanism with fixture transcripts;
   measure replay time on the reference device and record it.
+  Built; the reference-device measurement is still owed. In classroom mode the session menu lists
+  the lesson's bookmarks. Choosing one calls the store's `openAtBookmark`, which replays the named
+  fixture's actions before the tick through the same worker replay a rehearsal branch uses and
+  hands over paused. A notice says the actions before that moment were the reference run's, and
+  the exported transcript carries `openedAtBookmark` so a review can tell them apart from the
+  room's (`tests/integration/session.test.ts`). Fixtures load through
+  `src/platform/facilitation/bookmark-actions.ts`, one dynamic import per bookmarked lesson, so none
+  reaches the shared cockpit chunk. Measured on 2026-11-21 on an Apple M4 development machine,
+  not the reference device: at most 86 ms to replay 900 ticks to a bookmark, against a 2-second
+  budget. `tests/unit/bookmarks.test.ts` holds every bookmark to that budget on whatever runs the
+  suite. The figure that matters, on the mid-range 2020 Android handset, waits on the same device
+  as mvp-anesthesia-alpha 2.1.
 - [x] Implement the transcript scrubber with keyboard operation and live-region announcement.
   `src/modules/anesthesia/ui/TranscriptScrubber.tsx`, under the debrief's timeline. A completed
   run already had marks a reader could click; what it had no way to do was stop between them, so
@@ -190,9 +202,9 @@
 - [ ] Add a "Running this in a room" page to the educator documentation describing classroom
   mode, pause points, bookmarks, the guide, and the run sheet, with the INACSL standards each
   element supports and which standards still need a human facilitator.
-  Four of the five now exist to describe: classroom mode, pause points, the facilitator guide and
-  the run sheet. Bookmarks exist as declared moments in the guide, but jumping to one does not
-  yet (section 3).
+  All five now exist to describe: classroom mode, pause points, the facilitator guide, the run
+  sheet, and bookmarks (declared in the guide and opened from the session menu in classroom mode,
+  section 3).
   The INACSL half is blocked on sourcing, and the block is worth stating because it also puts a
   question over two lines already in the codebase. `src/platform/facilitation/guide.ts` and
   `ui/Prebrief.tsx` both name "the INACSL Healthcare Simulation Standards of Best Practice

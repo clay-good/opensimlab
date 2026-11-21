@@ -133,14 +133,15 @@ import type { RhythmId } from '@anesthesia/waveforms/types';
 import type { SonificationEngine } from '@platform/audio/sonification';
 import { HapticEngine, hapticsSupported } from '@platform/audio/haptics';
 import { duePausePoint } from '@platform/facilitation/pause-points';
+import { loadBookmarkActions } from '@platform/facilitation/bookmark-actions';
 import { RapidCyclePanel } from './RapidCyclePanel';
 import { PausePointPanel } from './PausePointPanel';
 import { SessionPreferences } from './SessionPreferences';
-import { t } from '@platform/i18n/messages';
+import { t, type MessageKey } from '@platform/i18n/messages';
 import { ClinicalContentMarker } from '@platform/i18n/ClinicalContentMarker';
 import '@platform/i18n/messages-session';
 import { useReasoningNotes } from '@platform/session/reasoning-notes';
-import type { ScenarioPausePoint, ScenarioRapidCycle } from '../scenarios/types';
+import type { BookmarkTranscript, ScenarioPausePoint, ScenarioRapidCycle } from '../scenarios/types';
 import type { RapidCycleStatus } from '../catalog/rapid-cycle';
 import {
   DEFAULT_NARRATION_SETTINGS, NarrationEngine, isNarrationSettings,
@@ -1453,6 +1454,29 @@ export function Cockpit({
     session.markPausePoint(due.id);
   }, [classroom, session.transport, session.tick, session.state, scenario.pausePoints, session]);
 
+  // Bookmarks: the instructor opens the room at a declared moment on one of
+  // the lesson's reference runs. The notice says whose actions came first.
+  const [openedBookmark, setOpenedBookmark] = useState<{ label: string; tick: number; transcript: BookmarkTranscript } | null>(null);
+  const [bookmarkUnavailable, setBookmarkUnavailable] = useState(false);
+  useEffect(() => {
+    if (session.phase === 'briefing' || session.rehearsalBranch !== null) setOpenedBookmark(null);
+  }, [session.phase, session.rehearsalBranch]);
+  const openBookmark = (id: string) => {
+    const bookmark = scenario.bookmarks?.find((candidate) => candidate.id === id);
+    if (!bookmark) return;
+    void loadBookmarkActions(moduleId, scenario.metadata.id, bookmark.transcript).then((actions) => {
+      if (actions === null) { setBookmarkUnavailable(true); return; }
+      setBookmarkUnavailable(false);
+      // Pause points before the bookmark belong to a part of the run the room skipped.
+      firedPauses.current = new Set((scenario.pausePoints ?? [])
+        .filter((point) => point.atTick !== undefined && point.atTick < bookmark.atTick).map((point) => point.id));
+      setPausePoint(null);
+      session.openAtBookmark({ id: bookmark.id, transcript: bookmark.transcript, tick: bookmark.atTick }, actions);
+      setOpenedBookmark({ label: bookmark.label, tick: bookmark.atTick, transcript: bookmark.transcript });
+      setShortcutsOpen(false);
+    });
+  };
+
   // Vibration mirrors the tone: the same unsilenced alarm, stopped at once on
   // silence, on pause, or when the learner turns it off.
   useEffect(() => {
@@ -1798,6 +1822,27 @@ export function Cockpit({
         />
       </div>
 
+      {openedBookmark && (
+        <div className="rehearsal-branch" role="status">
+          <span>
+            <strong>{t('cockpit.bookmark-title', { label: openedBookmark.label })}</strong>
+            <br />
+            {t('cockpit.bookmark', { time: formatElapsed(openedBookmark.tick),
+              transcript: t(`cockpit.bookmark.${openedBookmark.transcript}` as MessageKey) })}
+          </span>
+          <Button compact variant="ghost" onClick={() => setOpenedBookmark(null)}>
+            {t('tutor.dismiss')}
+          </Button>
+        </div>
+      )}
+      {bookmarkUnavailable && (
+        <div className="rehearsal-branch" role="alert">
+          <span>{t('cockpit.bookmark-unavailable')}</span>
+          <Button compact variant="ghost" onClick={() => setBookmarkUnavailable(false)}>
+            {t('tutor.dismiss')}
+          </Button>
+        </div>
+      )}
       {branchNoticeOpen && session.rehearsalBranch && rehearsalPoint && (
         <div className="rehearsal-branch" role="status">
           <span>
@@ -2257,7 +2302,8 @@ export function Cockpit({
               setNoteSaved(t('prefs.note.saved', { elapsed: session.elapsed }));
             }
           } }}
-          classroom={{ on: classroom, pausePoints: scenario.pausePoints?.length ?? 0, onChange: toggleClassroom }}
+          classroom={{ on: classroom, pausePoints: scenario.pausePoints?.length ?? 0, onChange: toggleClassroom,
+            bookmarks: scenario.bookmarks, onOpenBookmark: openBookmark }}
           presentation={{ on: presentation, onChange: setPresentation }}
           vibration={{ on: hapticsOn, supported: hapticsSupported(vibration), onChange: setHapticsOn }}
           narration={{ settings: narration, choice: voiceChoice, voice: narrationVoice, onChange: setNarration }}
