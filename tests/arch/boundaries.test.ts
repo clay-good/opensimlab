@@ -66,6 +66,21 @@ describe('Requirement: The Forward-Only Boundary Is Structural', () => {
     }
   });
 
+  it('Scenario: The sandbox is forward-only: a dose goes in, a curve comes out', async () => {
+    const sandbox = await import('@anesthesia/sandbox/pharmacology-sandbox');
+    for (const name of Object.keys(sandbox)) {
+      expect(name, `${name} looks like inverse control in the sandbox`)
+        .not.toMatch(/(Dose|Rate|Infusion)ForTarget|targetControlled|tci|doseFor|rateFor|quantileTarget|solve|target/i);
+    }
+    // No state field names a target, and no source file in the sandbox reaches for one.
+    const sandboxFiles = sourceFiles.filter((file) => file.path.includes('/sandbox/'));
+    expect(sandboxFiles.length).toBeGreaterThan(0);
+    for (const file of sandboxFiles) {
+      expect(file.text, `${file.path} contains target-solving logic`)
+        .not.toMatch(/targetConcentration|targetEffectSite|solveForDose|findDose|doseToReach|target\s*:/i);
+    }
+  });
+
   it('keeps any target-solving code outside the kernel directory', () => {
     const kernelFiles = sourceFiles.filter((file) => file.path.startsWith('src/platform/kernel/'));
     expect(kernelFiles.length).toBeGreaterThan(3);
