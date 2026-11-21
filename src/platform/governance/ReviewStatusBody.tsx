@@ -2,7 +2,8 @@ import { Badge, Disclosure, KeyFigure } from '@platform/ui';
 import { t } from '@platform/i18n/messages';
 import '@platform/i18n/messages-documents';
 import { HONEST_STATUS } from './records';
-import { itemKey, reviewStatusReport } from './review-status';
+import { itemKey, knowledgeByModule, reviewStatusReport } from './review-status';
+import { MODULES } from '@platform/modules/registry';
 
 /**
  * What is published, under what label, item by item.
@@ -43,6 +44,30 @@ export function ReviewStatusBody() {
           </li>
         ))}
       </ul>
+
+      <h2>{t('rs.knowledge-heading')}</h2>
+      <p className="field__hint">{t('rs.knowledge-hint')}</p>
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">{t('rs.knowledge-module')}</th>
+            <th scope="col">{t('rs.knowledge-explainers')}</th>
+            <th scope="col">{t('rs.knowledge-cards')}</th>
+            <th scope="col">{t('rs.knowledge-maturity')}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {knowledgeByModule().map((row) => (
+            <tr key={row.route}>
+              <th scope="row">{MODULES.find((module) => module.route === row.route)?.displayName ?? row.route}</th>
+              <td className="numeric">{row.explainers}</td>
+              <td className="numeric">{row.cards}</td>
+              <td>{row.maturities.length === 0 ? t('rs.knowledge-none')
+                : row.maturities.map((entry) => `${entry.label} (${entry.count})`).join(', ')}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
       <h2>{t('rs.every-heading')}</h2>
       <p className="field__hint">{t('rs.every-hint', { total: report.total })}</p>

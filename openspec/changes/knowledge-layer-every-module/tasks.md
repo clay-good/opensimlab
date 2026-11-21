@@ -23,7 +23,12 @@
   Dangling "show me" is checked: `tests/unit/explainer-show-me.test.ts` fails when an explainer's
   lesson does not exist or its sandbox state is one the sandbox would refuse. The other three
   checks wait on the explainers and cards section 2 authors.
-- [ ] List knowledge items on the review-status page by module with maturity labels.
+- [x] List knowledge items on the review-status page by module with maturity labels.
+  `/review-status` has a table of explainers and intervention cards for every available module,
+  with each maturity present and its count, and "None yet" where a module has none. Every module
+  is listed so a zero is stated rather than implied by absence. Today that is anesthesia's
+  explainers and cards and fifteen rows of "None yet", which is the section 2 authoring this
+  change still owes (`tests/unit/knowledge-by-module.test.ts`).
 
 ## 3. Sandbox
 

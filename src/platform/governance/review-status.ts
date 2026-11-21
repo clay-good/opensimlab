@@ -167,6 +167,35 @@ export function reviewStatusReport(): ReviewStatusReport {
   };
 }
 
+/** One module's knowledge items: explainers and intervention cards, by maturity. */
+export interface ModuleKnowledge {
+  readonly route: string;
+  readonly explainers: number;
+  readonly cards: number;
+  /** Maturity label and count, for each maturity at least one item has. */
+  readonly maturities: readonly { readonly label: string; readonly count: number }[];
+}
+
+/**
+ * The knowledge layer by module (knowledge-layer → list knowledge items on the
+ * review-status page by module). Every module is listed, including those with
+ * none yet, because a module missing from the list reads as one nobody looked
+ * at, and a zero says what is actually true.
+ */
+export function knowledgeByModule(items: readonly ReviewStatusItem[] = reviewStatusItems()): readonly ModuleKnowledge[] {
+  return MODULE_SCENARIOS.map(([route]) => {
+    const mine = items.filter((item) => item.route === route && (item.kind === 'explainer' || item.kind === 'drug-card'));
+    return {
+      route,
+      explainers: mine.filter((item) => item.kind === 'explainer').length,
+      cards: mine.filter((item) => item.kind === 'drug-card').length,
+      maturities: MATURITY_STATUSES
+        .map((status) => ({ label: MATURITY_LABELS[status], count: mine.filter((item) => item.status === status).length }))
+        .filter((entry) => entry.count > 0),
+    };
+  });
+}
+
 /**
  * Why the release should stop, if the honesty surface is not doing its job.
  *
