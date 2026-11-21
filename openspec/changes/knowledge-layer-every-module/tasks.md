@@ -115,3 +115,11 @@
 - [ ] Explainers and cards ship in the module's domain pack, not the shell; measure against the
   precache and interactive budgets in Brotli and record the headroom used.
 - [ ] Externalise all explainer and card strings into the translation catalogs.
+  Not done, deliberately, and worth deciding before anyone does it. The catalog's own rule
+  (`src/platform/i18n/catalog.ts`) is that clinical content never enters an interface catalog: it
+  stays English, marked by the clinical-content notice, until a clinically reviewed translation
+  exists. Explainer and card bodies are clinical, so externalising them today would relabel English
+  text as `clinical` keys and translate nothing. The words around them (the "reflects" line, the
+  sandbox link, the drawer controls) are already catalog keys. The useful version of this task
+  arrives with the first clinically reviewed locale, and it should move the bodies into a
+  per-locale clinical pack rather than the session group, which ships with every lesson's cockpit.
