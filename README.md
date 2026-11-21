@@ -97,8 +97,10 @@ and each input says whether it is held to a published result or is a teaching ca
 per-kilogram dose is converted once, by the chosen patient's weight, and held as that amount
 across compared weights. A circulation
 view takes a lesson's own patient, applies vasodilation, blood loss or a vasopressor, and draws
-the baroreflex's answer. Its labels are read from the engine's own teaching-term flags. Not yet:
-fluid and electrolyte inputs, which have no shared model to expose, and links from explainers.
+the baroreflex's answer. Its labels are read from the engine's own teaching-term flags. Three
+explainers open their sandbox view from the cockpit, and each view links back to the case its
+explainer demonstrates. Not yet: fluid and electrolyte inputs, which have no shared model to
+expose.
 
 **It can be run in a room, not only alone.** Every lesson has a printable
 [facilitator guide](https://opensimlab.com/facilitator/anesthesia/scenario/routine-induction) at

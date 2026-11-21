@@ -79,6 +79,7 @@ export const SANDBOX_MESSAGES = {
   'sandbox.peak': { class: 'interface', text: '{value} {unit} at {seconds} s' },
   'sandbox.none': { class: 'interface', text: 'None' },
   'sandbox.model-source': { class: 'interface', text: 'Model: {citation}, {locator}.' },
+  'sandbox.explained-in': { class: 'interface', text: 'The explainer "{title}" is about this, and a case demonstrates it:' },
   'sandbox.suggest': { class: 'interface', text: 'Where this pharmacology matters in a case:' },
 } as const satisfies Readonly<Record<string, SourceMessage>>;
 

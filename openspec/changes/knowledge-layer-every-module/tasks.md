@@ -20,6 +20,9 @@
   model detail where a published model exists.
 - [ ] Catalog gate: explainer floor, dangling "show me", agent without a card, card text failing
   the safety-scope rule.
+  Dangling "show me" is checked: `tests/unit/explainer-show-me.test.ts` fails when an explainer's
+  lesson does not exist or its sandbox state is one the sandbox would refuse. The other three
+  checks wait on the explainers and cards section 2 authors.
 - [ ] List knowledge items on the review-status page by module with maturity labels.
 
 ## 3. Sandbox
@@ -83,10 +86,12 @@
   moderately ill and obese adult against Benumof, Dagg and Benumof 1997 at the declared 20%
   tolerance. It also asserts that the result equals `timeToDesaturationMinutes`, so this is the
   benchmarked model and not a second one that happens to agree.
-- [ ] Reverse-link: the sandbox suggests the scenario an explainer demonstrates.
-  Half done. The sandbox suggests a lesson: the patient's own lesson if its formulary carries the
-  drug, otherwise the first lesson that does. Drawing the suggestion from explainer links waits on
-  explainers that link to a sandbox state, which section 2 has not authored.
+- [x] Reverse-link: the sandbox suggests the scenario an explainer demonstrates.
+  An explainer's "show me" may now carry a sandbox state as its URL query, and three do. Effect-site
+  lag opens the pharmacology view, safe apnoea time the breathing view, and vasodilation versus
+  hypovolaemia the circulation view. The cockpit's explainer drawer links there. Each sandbox view
+  finds the explainer pointing at it and links the lesson that explainer demonstrates, drawn from
+  the explainers rather than listed, so a new one appears on its own.
 
 ## 4. Offline, translation, and budget
 

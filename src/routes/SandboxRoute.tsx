@@ -13,6 +13,7 @@ import { SiteBar } from '@platform/ui/SiteBar';
 import { t, type MessageKey } from '@platform/i18n/messages';
 import '@platform/i18n/messages-sandbox';
 import { SCENARIOS } from '@anesthesia/scenarios';
+import { EXPLAINERS } from '@anesthesia/content/explainers';
 import { MODELS_BY_ID } from '@anesthesia/pharmacology/registry';
 import { CONFIDENCE_LABEL_TEXT } from '@anesthesia/pharmacology/envelope';
 import {
@@ -42,6 +43,25 @@ const doseChoices = (drugId: string) => [
 ];
 const doseKey = (choice: { dose: number; perKg?: boolean }) => `${choice.dose}${choice.perKg ? '/kg' : ''}`;
 const OFFERED_MODELS = [...MODELS_BY_ID.values()].filter((model) => doseChoices(model.drugId).length > 0);
+
+/**
+ * The reverse link: the explainer whose "show me" opens this sandbox view, and
+ * the lesson that explainer demonstrates. Drawn from the explainers rather than
+ * listed here, so a new explainer pointing at a view shows up on its own.
+ */
+function ExplainerLink({ view }: { view: 'pharmacology' | 'physiology' | 'circulation' }) {
+  const explainer = EXPLAINERS.find((candidate) => candidate.showMe.sandbox !== undefined
+    && (new URLSearchParams(candidate.showMe.sandbox).get('view') ?? 'pharmacology') === view);
+  if (!explainer) return null;
+  return (
+    <p>
+      {t('sandbox.explained-in', { title: explainer.title })}{' '}
+      <a href={`/anesthesia/scenario/${explainer.showMe.scenarioId}`}>
+        {TITLES.get(explainer.showMe.scenarioId) ?? explainer.showMe.scenarioId}
+      </a>
+    </p>
+  );
+}
 
 function initialState(): { state: SandboxState; problem: string | null } {
   const query = typeof location === 'undefined' ? '' : location.search;
@@ -413,6 +433,7 @@ export function SandboxRoute() {
           </a>
         </nav>
         {physiology ? <PhysiologySandbox /> : circulation ? <CirculationSandbox /> : <PharmacologySandbox />}
+        <ExplainerLink view={physiology ? 'physiology' : circulation ? 'circulation' : 'pharmacology'} />
       </main>
     </div>
   );

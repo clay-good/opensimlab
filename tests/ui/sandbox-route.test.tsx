@@ -81,5 +81,7 @@ describe('the pharmacology sandbox page', () => {
     const slowed = /heart rate (\d+) to (\d+)\/min/.exec(pressed)!;
     expect(Number(slowed[2])).toBeLessThan(Number(slowed[1]));
     expect(markup).toContain('href="/anesthesia/scenario/hypotension-after-induction"');
+    // The reverse link: the explainer that points here, and the case it demonstrates.
+    expect(body).toContain('Vasodilation is not hypovolaemia');
   });
 });

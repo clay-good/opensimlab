@@ -31,7 +31,17 @@ export interface Explainer {
   readonly body: string;
   readonly diagram: Diagram;
   /** The scenario or sandbox state that demonstrates it live. */
-  readonly showMe: { readonly scenarioId: string; readonly atTick?: number };
+  readonly showMe: {
+    readonly scenarioId: string;
+    readonly atTick?: number;
+    /**
+     * A sandbox state, as the URL query that opens it, showing the idea with
+     * no case around it. A string rather than a typed state so this module,
+     * which the cockpit loads, does not pull in the sandbox; the test that
+     * every "show me" resolves parses it.
+     */
+    readonly sandbox?: string;
+  };
   /** The guideline or source this reflects, with its year. */
   readonly reflects: string;
   /**
@@ -76,7 +86,7 @@ export const EXPLAINERS: readonly Explainer[] = [
       + 'effect-site peak is the time to peak effect for the active model. Watch it once and you '
       + 'will not need to be told again.',
     diagram: { kind: 'hysteresis', caption: 'Plasma concentration spikes and falls; effect-site concentration rises later to a lower peak.' },
-    showMe: { scenarioId: 'routine-induction' },
+    showMe: { scenarioId: 'routine-induction', sandbox: 'model=propofol-eleveld-2018&patient=routine-induction&dose=100&minutes=10' },
     reflects: 'Standard pharmacokinetic principle; the curves are drawn from the active published model.',
     simplifies:
       'Treats the effect site as one compartment with one rate constant. Real equilibration differs between drugs, between patients, and with cardiac output, and the curves here are the active model\u2019s rather than a measurement of any individual.',
@@ -105,7 +115,7 @@ export const EXPLAINERS: readonly Explainer[] = [
       + 'is the shape of the oxyhaemoglobin dissociation curve, and it is why 90% is the number '
       + 'people react to.',
     diagram: { kind: 'apnea-curve', caption: 'Saturation holds on a plateau, then falls steeply once it passes 90%.' },
-    showMe: { scenarioId: 'routine-induction' },
+    showMe: { scenarioId: 'routine-induction', sandbox: 'view=physiology&profile=healthy&fio2=1&pattern=apnea&minutes=10' },
     reflects: 'Benumof JL, Dagg R, Benumof R. Anesthesiology 1997;87:979-82 (PMID 9357902).',
     simplifies:
       'The reservoir argument assumes a patent airway and a healthy functional residual capacity. Obesity, pregnancy, small children and lung disease all shorten the time substantially, and no number here should be read as this patient\u2019s margin.',
@@ -155,7 +165,7 @@ export const EXPLAINERS: readonly Explainer[] = [
       + 'at volume. The Why panel will rank the contributors for you, but the point is to learn to '
       + 'read them yourself.',
     diagram: { kind: 'hysteresis', caption: 'The same mean pressure reached two ways responds differently to the same drug.' },
-    showMe: { scenarioId: 'routine-induction' },
+    showMe: { scenarioId: 'routine-induction', sandbox: 'view=circulation&lesson=routine-induction&vasodilation=1&loss=0&vasopressor=0&minutes=5' },
     reflects: 'Standard cardiovascular physiology.',
     simplifies:
       'Presents two clean causes of one number. Real hypotension is frequently both at once, plus rhythm, obstruction and pump failure, and the distinction is drawn here to make a teaching point rather than to be a diagnostic algorithm.',

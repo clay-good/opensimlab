@@ -2228,6 +2228,9 @@ export function Cockpit({
             ))}
             <p className="reading__aside">{getExplainer(explainerId).diagram.caption}</p>
             <p className="reading__aside">{t('cockpit.reflects', { what: getExplainer(explainerId).reflects })}</p>
+            {getExplainer(explainerId).showMe.sandbox && (
+              <p><a href={`/anesthesia/sandbox?${getExplainer(explainerId).showMe.sandbox!}`}>{t('cockpit.show-me-sandbox')}</a></p>
+            )}
             {onReportSource && (
               <Button compact variant="ghost" onClick={onReportSource}>{t('cockpit.report-source')}</Button>
             )}

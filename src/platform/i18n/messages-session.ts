@@ -289,6 +289,7 @@ export const SESSION_MESSAGES = {
   'briefing.take-over': { class: 'interface', text: 'You can take the controls at any point and carry on from where it got to.' },
   'cockpit.skip': { class: 'interface', text: 'Skip to the monitor' },
   'cockpit.branch-title': { class: 'interface', text: 'Targeted repetition · {label}' },
+  'cockpit.show-me-sandbox': { class: 'interface', text: 'Show me in the sandbox, without a case around it' },
   'cockpit.bookmark-title': { class: 'interface', text: 'Opened at a bookmark · {label}' },
   'cockpit.bookmark': { class: 'interface', text: 'Everything before {time} is the scenario\'s {transcript}, not this room\'s. From here the actions are yours.' },
   'cockpit.bookmark.expert': { class: 'interface', text: 'expert run' },
