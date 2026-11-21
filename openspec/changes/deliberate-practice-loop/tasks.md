@@ -334,7 +334,11 @@ its own, none changes the engine, and none produces a score.
   compatibility, and the absence of identifiers, device fields, and sub-day timestamps are in
   `tests/unit/practice-history.test.ts` and `tests/ui/practice-history-controls.test.tsx`.
   Recomputation under a newer competency map waits for a map; status today is the latest
-  outcome per objective. The no-network claim rests on the existing offline suite.
+  outcome per objective. Zero network requests now has its own test rather than resting on the
+  offline suite, which proves the app works without a network but not that this control never
+  reaches for one: `tests/ui/practice-history-controls.test.tsx` spies on fetch, XMLHttpRequest,
+  sendBeacon, WebSocket and EventSource through export, merge, replace and erase, and fails if
+  any is touched (checked by adding a fetch to the export handler, which it caught).
 
 ## 6. Documentation and labels
 
