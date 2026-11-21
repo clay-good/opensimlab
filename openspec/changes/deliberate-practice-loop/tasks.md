@@ -5,8 +5,14 @@ its own, none changes the engine, and none produces a score.
 
 ## 1. Blind draw
 
-- [ ] Add a draw operation to the catalog that selects from a pool (module, path, or all
+- [x] Add a draw operation to the catalog that selects from a pool (module, path, or all
   installed) using the session seed, with an "unseen only" filter defaulting on.
+  `src/modules/anesthesia/catalog/blind-draw.ts`, deliberately wired to no surface (see the next
+  item for why). The draw sorts the pool before choosing, so the same seed over the same set gives
+  the same lesson in any input order, and it returns the record a transcript needs to reproduce
+  it: the seed, the canonical pool and the filter. With "unseen only" on and nothing unseen left,
+  it returns nothing rather than quietly handing back a lesson the learner has done. It tells two
+  modules' lessons that share an id apart.
 - [ ] Define the withheld field set and the pre-start field set; render the pre-start briefing
   from the latter only. Record `blindDraw: { pool }` in the transcript.
   Blocked, and worth stating before anyone starts the draw: three of the five fields the design
@@ -42,7 +48,13 @@ its own, none changes the engine, and none produces a score.
   because the draw is the one surface where a learner has nothing else to judge by.
 - [ ] Test over every scenario with a recognition objective that no withheld field reaches the
   DOM, the accessible tree, the document title, or the URL before the reveal condition.
-- [ ] Test reproducibility of the draw from the transcript seed and pool.
+- [x] Test reproducibility of the draw from the transcript seed and pool.
+  `tests/unit/blind-draw.test.ts` rebuilds the pool from the draw's own record and gets the same
+  lesson, and checks that 4,000 seeds reach every lesson of a small pool roughly evenly. The same
+  file holds the pre-start briefing to an allow-list over all 256 lessons: content note, estimated
+  minutes and maturity, with no title, id, diagnosis, objective or module name in it. That is the
+  data half of the withheld-fields test above. The DOM, accessible-tree, title and URL half waits
+  on a surface to render, which waits on the content-note survey.
 
 ## 2. Expert overlay
 
