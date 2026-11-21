@@ -95,8 +95,10 @@ the respiratory profiles, then stops or keeps the breathing, and draws saturatio
 tension. The healthy, moderately ill and obese adults reproduce Benumof's published apnoea times,
 and each input says whether it is held to a published result or is a teaching calibration. A
 per-kilogram dose is converted once, by the chosen patient's weight, and held as that amount
-across compared weights. Not yet: the hemodynamic, fluid and electrolyte inputs, and links from
-explainers.
+across compared weights. A circulation
+view takes a lesson's own patient, applies vasodilation, blood loss or a vasopressor, and draws
+the baroreflex's answer. Its labels are read from the engine's own teaching-term flags. Not yet:
+fluid and electrolyte inputs, which have no shared model to expose, and links from explainers.
 
 **It can be run in a room, not only alone.** Every lesson has a printable
 [facilitator guide](https://opensimlab.com/facilitator/anesthesia/scenario/routine-induction) at

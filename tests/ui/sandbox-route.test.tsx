@@ -66,4 +66,20 @@ describe('the pharmacology sandbox page', () => {
     expect(text(page('?view=physiology&profile=term-pregnancy&fio2=1&pattern=apnea&minutes=10'))).toContain('Teaching calibration');
     expect(markup).toContain('href="/anesthesia/scenario/rapid-desaturation"');
   });
+
+  it('Scenario: the circulation view shows the baroreflex answering blood loss, labelled from the engine', () => {
+    const markup = page('?view=circulation&lesson=routine-induction&vasodilation=0&loss=20&vasopressor=0&minutes=5');
+    const body = text(markup);
+    expect(body).toContain('Circulation: the baroreflex');
+    expect((markup.match(/<svg[^>]*role="img"/g) ?? []).length).toBe(2);
+    const match = /heart rate (\d+) to (\d+)\/min/.exec(body)!;
+    expect(Number(match[2])).toBeGreaterThan(Number(match[1]));
+    expect(body).toContain('Not marked as a teaching term');
+    // A vasopressor on top raises the pressure past rest, and the same reflex slows the heart instead.
+    const pressed = text(page('?view=circulation&lesson=routine-induction&vasodilation=0&loss=20&vasopressor=1&minutes=5'));
+    expect(pressed).toContain('Teaching term');
+    const slowed = /heart rate (\d+) to (\d+)\/min/.exec(pressed)!;
+    expect(Number(slowed[2])).toBeLessThan(Number(slowed[1]));
+    expect(markup).toContain('href="/anesthesia/scenario/hypotension-after-induction"');
+  });
 });

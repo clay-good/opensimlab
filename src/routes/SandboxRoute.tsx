@@ -23,6 +23,10 @@ import {
   BREATHING_PATTERNS, FIO2_BASIS, parsePhysiologyQuery, PATTERN_BASIS, PHYSIOLOGY_MINUTES, physiologyQuery, PREOXYGENATION_FIO2,
   PREOXYGENATION_MINUTES, PROFILE_BASIS, PROFILE_IDS, runPhysiology, STOP_BELOW_SATURATION, type InputBasis, type PhysiologyState,
 } from '@anesthesia/sandbox/physiology-sandbox';
+import {
+  BLOOD_LOSS_PERCENT, CIRCULATION_MINUTES, circulationQuery, parseCirculationQuery, runCirculation, VASODILATION_LEVELS,
+  VASOPRESSOR_LEVELS, type CirculationInput, type CirculationState,
+} from '@anesthesia/sandbox/circulation-sandbox';
 
 const CATALOGUE = sandboxCatalogue(SCENARIOS);
 const DEFAULT_STATE: SandboxState = { modelId: 'propofol-eleveld-2018', patientId: 'routine-induction', dose: 100, minutes: 10 };
@@ -63,12 +67,14 @@ interface Line {
  * page outside the cockpit made the bundler split it out of the cockpit chunk,
  * which costs every lesson a little, and a still curve needs no canvas.
  */
-function SandboxPlot({ lines, xMax, yMax, label }: { lines: readonly Line[]; xMax: number; yMax: number; label: string }) {
+function SandboxPlot({ lines, xMax, yMax, yMin = 0, label }: {
+  lines: readonly Line[]; xMax: number; yMax: number; yMin?: number; label: string;
+}) {
   const width = 600;
   const height = 180;
   const pad = { left: 8, right: 8, top: 8, bottom: 8 };
   const x = (seconds: number) => pad.left + (seconds / xMax) * (width - pad.left - pad.right);
-  const y = (value: number) => height - pad.bottom - (value / yMax) * (height - pad.top - pad.bottom);
+  const y = (value: number) => height - pad.bottom - ((value - yMin) / Math.max(yMax - yMin, 1e-6)) * (height - pad.top - pad.bottom);
   return (
     <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label={label} style={{ width: '100%', height: 'auto' }}>
       {[0, 1, 2, 3, 4].map((row) => {
@@ -314,8 +320,81 @@ function PhysiologySandbox() {
   );
 }
 
+const CIRCULATION_DEFAULT: CirculationState = {
+  scenarioId: 'routine-induction', vasodilation: 0, bloodLossPercent: 20, vasopressor: 0, minutes: 5,
+};
+
+function CirculationSandbox() {
+  const [{ state, problem }, setView] = useState(() => {
+    const parsed = parseCirculationQuery(SCENARIOS, typeof location === 'undefined' ? '' : location.search);
+    return 'state' in parsed ? { state: parsed.state, problem: null } : { state: CIRCULATION_DEFAULT, problem: parsed.problem };
+  });
+  const run = useMemo(() => runCirculation(SCENARIOS, state), [state]);
+  const update = (next: CirculationState) => {
+    setView({ state: next, problem: null });
+    if (typeof history !== 'undefined') history.replaceState(null, '', `${location.pathname}?${circulationQuery(next)}`);
+  };
+  const label = (input: CirculationInput) => run.teaching[input] === undefined ? null
+    : <Badge kind={run.teaching[input] ? 'teaching' : 'default'}>{t(run.teaching[input] ? 'sandbox.term-teaching' : 'sandbox.term-engine')}</Badge>;
+  const levels = (values: readonly number[]) => values.map((value) => ({ value, label: `${Math.round(value * 100)}%` }));
+  const first = run.samples[0]!;
+  const last = run.samples.at(-1)!;
+  const trace = (which: 'meanArterialMmHg' | 'heartRateBpm', token: string): Line => ({
+    id: which, label: which, colorToken: token, dashed: false,
+    points: run.samples.map((sample) => [sample.minutes * 60, sample[which]] as const),
+  });
+  // A circulation changes by tens of percent, not from zero; an axis from zero would flatten it.
+  const yMax = (which: 'meanArterialMmHg' | 'heartRateBpm') => Math.max(...run.samples.map((sample) => sample[which])) * 1.1;
+  const yMin = (which: 'meanArterialMmHg' | 'heartRateBpm') => Math.min(...run.samples.map((sample) => sample[which])) * 0.9;
+  return (
+    <>
+      <p>{t('sandbox.circulation-intro')}</p>
+      {problem && <p role="alert">{t('sandbox.link-problem', { problem })}</p>}
+      <Panel title={t('sandbox.physiology-inputs')}>
+        <Select label={t('sandbox.lesson-patient')} value={state.scenarioId}
+          onChange={(event) => update({ ...state, scenarioId: event.target.value })}
+          options={SCENARIOS.map((scenario) => ({ value: scenario.metadata.id, label: scenario.metadata.title }))} />
+        <p className="field__label">{t('sandbox.vasodilation')} {label('vasodilation')}</p>
+        <SegmentedControl label={t('sandbox.vasodilation')} value={state.vasodilation}
+          onChange={(vasodilation) => update({ ...state, vasodilation })} options={levels(VASODILATION_LEVELS)} />
+        <p className="field__label">{t('sandbox.blood-loss')} {label('blood-loss')}</p>
+        <SegmentedControl label={t('sandbox.blood-loss')} value={state.bloodLossPercent}
+          onChange={(bloodLossPercent) => update({ ...state, bloodLossPercent })}
+          options={BLOOD_LOSS_PERCENT.map((value) => ({ value, label: `${value}%` }))} />
+        <p className="field__label">{t('sandbox.vasopressor')} {label('vasopressor')}</p>
+        <SegmentedControl label={t('sandbox.vasopressor')} value={state.vasopressor}
+          onChange={(vasopressor) => update({ ...state, vasopressor })} options={levels(VASOPRESSOR_LEVELS)} />
+        <p className="field__label">{t('sandbox.minutes')}</p>
+        <SegmentedControl label={t('sandbox.minutes')} value={state.minutes} onChange={(minutes) => update({ ...state, minutes })}
+          options={CIRCULATION_MINUTES.map((minutes) => ({ value: minutes, label: t('sandbox.minutes-option', { minutes }) }))} />
+      </Panel>
+      <section aria-labelledby="sandbox-map">
+        <h2 id="sandbox-map">{t('sandbox.map')}</h2>
+        <SandboxPlot lines={[trace('meanArterialMmHg', '--arterial')]} xMax={state.minutes * 60} yMax={yMax('meanArterialMmHg')} yMin={yMin('meanArterialMmHg')}
+          label={t('sandbox.plot-label-one', { what: t('sandbox.map'), minutes: state.minutes })} />
+      </section>
+      <section aria-labelledby="sandbox-hr">
+        <h2 id="sandbox-hr">{t('sandbox.hr')}</h2>
+        <SandboxPlot lines={[trace('heartRateBpm', '--ecg')]} xMax={state.minutes * 60} yMax={yMax('heartRateBpm')} yMin={yMin('heartRateBpm')}
+          label={t('sandbox.plot-label-one', { what: t('sandbox.hr'), minutes: state.minutes })} />
+      </section>
+      <p role="status">{t('sandbox.circulation-values', {
+        minutes: state.minutes,
+        map0: Math.round(first.meanArterialMmHg), map1: Math.round(last.meanArterialMmHg),
+        hr0: Math.round(first.heartRateBpm), hr1: Math.round(last.heartRateBpm),
+        sv0: Math.round(first.strokeVolumeMl), sv1: Math.round(last.strokeVolumeMl),
+        co0: first.cardiacOutputLPerMin.toFixed(1), co1: last.cardiacOutputLPerMin.toFixed(1),
+      })}</p>
+      <p className="field__hint">{t('sandbox.axis-note')} {t('sandbox.circulation-source')}</p>
+      <p>{t('sandbox.physiology-suggest')} <a href="/anesthesia/scenario/hypotension-after-induction">{t('sandbox.circulation-case')}</a></p>
+    </>
+  );
+}
+
 export function SandboxRoute() {
-  const physiology = typeof location !== 'undefined' && new URLSearchParams(location.search).get('view') === 'physiology';
+  const view = typeof location === 'undefined' ? null : new URLSearchParams(location.search).get('view');
+  const physiology = view === 'physiology';
+  const circulation = view === 'circulation';
   return (
     <div className="document">
       <SiteBar />
@@ -323,13 +402,17 @@ export function SandboxRoute() {
         <h1>{t('sandbox.heading')}</h1>
         <p className="field__hint">{t('sandbox.boundary')}</p>
         <nav aria-label={t('sandbox.views')}>
-          <a href="/anesthesia/sandbox" aria-current={physiology ? undefined : 'page'}>{t('sandbox.view-pharmacology')}</a>
+          <a href="/anesthesia/sandbox" aria-current={physiology || circulation ? undefined : 'page'}>{t('sandbox.view-pharmacology')}</a>
           {' · '}
           <a href={`/anesthesia/sandbox?${physiologyQuery(PHYSIOLOGY_DEFAULT)}`} aria-current={physiology ? 'page' : undefined}>
             {t('sandbox.view-physiology')}
           </a>
+          {' · '}
+          <a href={`/anesthesia/sandbox?${circulationQuery(CIRCULATION_DEFAULT)}`} aria-current={circulation ? 'page' : undefined}>
+            {t('sandbox.view-circulation')}
+          </a>
         </nav>
-        {physiology ? <PhysiologySandbox /> : <PharmacologySandbox />}
+        {physiology ? <PhysiologySandbox /> : circulation ? <CirculationSandbox /> : <PharmacologySandbox />}
       </main>
     </div>
   );

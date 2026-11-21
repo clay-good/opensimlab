@@ -51,7 +51,15 @@
   with weight and stop isolating one variable, and the page says so beside the conversion.
 - [ ] Add physiology inputs from the shared respiratory, hemodynamic, fluid, and electrolyte
   capabilities with a published/teaching label per input.
-  Respiratory is done; hemodynamic, fluid and electrolyte are not. The sandbox's physiology view
+  Respiratory and hemodynamic are done; fluid and electrolyte are not. The circulation view
+  (`?view=circulation`, `src/modules/anesthesia/sandbox/circulation-sandbox.ts`) takes one lesson's
+  authored patient baseline. At time zero it applies vasodilation, blood loss, a vasopressor or a
+  mix, and runs the engine's `stepHemodynamics`, so the baroreflex answers. Its labels are read
+  from the engine's own influence records rather than asserted: vasodilation and blood loss come
+  back "not marked as a teaching term", the vasopressor as a teaching term. The baroreflex is
+  left unblunted by anaesthetic depth, and the page says so rather than tying it silently to an
+  input.
+  Respiratory first: the sandbox's physiology view
   (`?view=physiology`, `src/modules/anesthesia/sandbox/physiology-sandbox.ts`) offers four inputs:
   the respiratory profile, the oxygen breathed for three minutes beforehand, then apnoea, normal
   breathing or half the tidal volume, and the duration. It runs the lessons' own gas exchange at
