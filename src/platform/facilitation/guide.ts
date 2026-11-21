@@ -227,6 +227,10 @@ export function facilitatorGuide(entry: FacilitatedScenario): readonly GuideSect
       label: point.atTick !== undefined ? (point.atTick === 0 ? t('guide.at-start') : t('guide.tick', { tick: point.atTick })) : t('guide.when', { when: point.when ?? '' }),
       text: t('guide.pause-item', { question: point.question, region: t(`region.${point.region}` as MessageKey) }),
     })), t('guide.absent.pause-points')),
+    present('bookmarks', t('guide.section.bookmarks'), (scenario.bookmarks ?? []).map((bookmark) => ({
+      label: bookmark.atTick === 0 ? t('guide.at-start') : t('guide.tick', { tick: bookmark.atTick }),
+      text: t('guide.bookmark-item', { label: bookmark.label, transcript: t(`guide.bookmark.${bookmark.transcript}` as MessageKey) }),
+    })), t('guide.absent.bookmarks')),
     present('limitations', t('guide.section.limitations'),
       (metadata.limitations ?? []).map((text) => ({ text })),
       t('guide.absent.limitations')),

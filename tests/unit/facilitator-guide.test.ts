@@ -15,7 +15,8 @@ import {
 } from '@platform/facilitation/scenario-catalog';
 
 const ORDER = ['at-a-glance', 'objectives', 'frameworks', 'patient', 'content-note', 'prebrief',
-  'timeline', 'expected-actions', 'error-and-recovery', 'debrief', 'pause-points', 'limitations',
+  'timeline', 'expected-actions', 'error-and-recovery', 'debrief', 'pause-points', 'bookmarks',
+  'limitations',
   'sources', 'provenance'];
 
 describe('facilitator guide', () => {
@@ -85,11 +86,12 @@ describe('facilitator guide', () => {
    * were mapped: all 256 guides now fill that section. The two that remain are
    * the two whose field is authored per lesson and is deliberately sparse - a
    * content note exists only where a lesson's own course would distress
-   * somebody, and pause points are placed lesson by lesson by educators.
+   * somebody, and pause points and bookmarks are placed lesson by lesson by
+   * educators.
    */
   it('leaves no section absent across the catalogue but the ones with no field yet', () => {
     const everAbsent = new Set(FACILITATED_SCENARIOS.flatMap((entry) => absentGuideSections(entry)));
-    expect([...everAbsent].sort()).toEqual(['content-note', 'pause-points']);
+    expect([...everAbsent].sort()).toEqual(['bookmarks', 'content-note', 'pause-points']);
   });
 
   it('renders every section, absent ones as absent, with nothing collapsed', () => {

@@ -177,6 +177,23 @@ export interface ScenarioPausePoint {
   readonly region: 'monitor' | 'analysis' | 'actions';
 }
 
+/** The checked-in reference transcripts a bookmark can name. */
+export type BookmarkTranscript = 'expert' | 'common-error' | 'recovery';
+
+/**
+ * A facilitator's bookmark (facilitator-toolkit → bookmarks). A named moment on
+ * one of the lesson's own reference transcripts, so an instructor can open the
+ * room at that state rather than describe it. Jumping replays that transcript's
+ * actions before `atTick` and hands over there, paused.
+ */
+export interface ScenarioBookmark {
+  readonly id: string;
+  /** At most 80 characters. What the room will be looking at, for the instructor. */
+  readonly label: string;
+  readonly atTick: number;
+  readonly transcript: BookmarkTranscript;
+}
+
 /**
  * A rapid-cycle decision point (deliberate-practice-loop → rapid-cycle
  * rehearsal). Declared, never inferred, and only for a timed protocol step:
@@ -219,6 +236,7 @@ export interface Scenario {
   readonly timeline: readonly TimelineEvent[];
   readonly replayPoints?: readonly ScenarioReplayPoint[];
   readonly pausePoints?: readonly ScenarioPausePoint[];
+  readonly bookmarks?: readonly ScenarioBookmark[];
   readonly rapidCycle?: readonly ScenarioRapidCycle[];
   readonly debrief: { readonly rubric: readonly RubricItem[] };
 }

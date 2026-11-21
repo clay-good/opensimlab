@@ -99,6 +99,15 @@
 
 - [ ] Add `bookmarks` to the scenario schema; author at least one per scenario on the expert
   transcript; build test that the transcript reaches each tick.
+  Schema and build test done; authoring started. `ScenarioBookmark` is `{ id, label, atTick,
+  transcript }`, validated for a unique id and a label of at most 80 characters, and listed in its
+  own facilitator-guide section. `tests/unit/bookmarks.test.ts` is the build test: each bookmark
+  must sit at or before the last action of the reference transcript it names, read from the
+  generated reference paths, because past that point the room would see a state no reference
+  path walked through. Both persistent VF lessons declare three each (VF before any action, and
+  the moment before the shock on the expert and on the common-error transcript). 254 lessons
+  remain and the gate counts them, for the same reason pause points stopped at two lessons:
+  choosing the moment worth opening a room at is an educator's call, lesson by lesson.
 - [ ] Implement jump-to-bookmark on the rehearsal-branch mechanism with fixture transcripts;
   measure replay time on the reference device and record it.
 - [x] Implement the transcript scrubber with keyboard operation and live-region announcement.
@@ -182,7 +191,8 @@
   mode, pause points, bookmarks, the guide, and the run sheet, with the INACSL standards each
   element supports and which standards still need a human facilitator.
   Four of the five now exist to describe: classroom mode, pause points, the facilitator guide and
-  the run sheet. Bookmarks do not (section 3).
+  the run sheet. Bookmarks exist as declared moments in the guide, but jumping to one does not
+  yet (section 3).
   The INACSL half is blocked on sourcing, and the block is worth stating because it also puts a
   question over two lines already in the codebase. `src/platform/facilitation/guide.ts` and
   `ui/Prebrief.tsx` both name "the INACSL Healthcare Simulation Standards of Best Practice

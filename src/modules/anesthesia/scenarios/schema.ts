@@ -304,6 +304,19 @@ export const SCENARIO_SCHEMA: SchemaNode = {
         },
       },
     },
+    bookmarks: {
+      type: 'array', description: 'Facilitator bookmarks: named moments on the lesson\'s reference transcripts.', minItems: 1,
+      items: {
+        type: 'object', description: 'One moment an instructor can jump to.',
+        required: ['id', 'label', 'atTick', 'transcript'],
+        properties: {
+          id: { type: 'string', description: 'Stable bookmark identifier.', pattern: '^[a-z0-9-]+$' },
+          label: STRING_FIELD('What the room will be looking at, at most 80 characters.', 5),
+          atTick: { type: 'integer', description: 'The tick to hand over at; the transcript\'s actions before it are replayed.', minimum: 0 },
+          transcript: { type: 'string', description: 'The reference transcript replayed to reach it.', enum: ['expert', 'common-error', 'recovery'] },
+        },
+      },
+    },
     debrief: {
       type: 'object', description: 'The debrief rubric.',
       required: ['rubric'],
@@ -597,6 +610,20 @@ export function validateScenarioSemantics(scenario: unknown): ValidationError[] 
     if (typeof point.question === 'string' && point.question.length > 200) {
       errors.push({ pointer: `${pointer}/question`, rule: 'maxLength',
         message: `Pause point "${String(point.id)}" asks a question longer than 200 characters.` });
+    }
+  });
+
+  const bookmarks = record.bookmarks as readonly Record<string, unknown>[] | undefined;
+  const bookmarkIds = new Set<string>();
+  (bookmarks ?? []).forEach((bookmark, index) => {
+    const pointer = `/bookmarks/${index}`;
+    if (bookmarkIds.has(String(bookmark.id))) {
+      errors.push({ pointer, rule: 'unique', message: `Bookmark "${String(bookmark.id)}" is declared twice.` });
+    }
+    bookmarkIds.add(String(bookmark.id));
+    if (typeof bookmark.label === 'string' && bookmark.label.length > 80) {
+      errors.push({ pointer: `${pointer}/label`, rule: 'maxLength',
+        message: `Bookmark "${String(bookmark.id)}" has a label longer than 80 characters.` });
     }
   });
 

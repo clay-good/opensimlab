@@ -103,6 +103,15 @@ export const PERSISTENT_VF_CARDIAC_ARREST: Scenario = {
     { id: 'before-reassessment', atTick: 2100, region: 'actions',
       question: 'Before the next rhythm check: what has the team done so far, and what is still to come?' },
   ],
+  // Bookmarks: the instructor opens the room at a moment rather than describing it.
+  bookmarks: [
+    { id: 'vf-before-any-action', atTick: 300, transcript: 'expert',
+      label: 'VF has just appeared and nothing has been done yet' },
+    { id: 'expert-before-shock', atTick: 900, transcript: 'expert',
+      label: 'Compressions running and epinephrine given; the shock is next' },
+    { id: 'error-before-shock', atTick: 900, transcript: 'common-error',
+      label: 'Compressions running, no epinephrine yet; the shock is next' },
+  ],
   rapidCycle: [
     {
       id: 'compressions-within-twenty-seconds', objectiveId: 'resume-arrest-compressions',

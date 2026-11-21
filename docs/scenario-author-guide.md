@@ -86,6 +86,17 @@ diagnosis the lesson leaves open. Pause points change nothing about the patient,
 in the scenario's facilitator guide; `validateScenario` refuses a duplicated id, both or neither
 of `atTick` and `when`, a predicate the grammar rejects, or a question over 200 characters.
 
+## Add bookmarks for a facilitator (optional)
+
+A scenario may declare `bookmarks`: named moments on its own reference transcripts that an
+instructor can open the room at, rather than describe. Each has an `id`, a `label` of at most 80
+characters saying what the room will be looking at, the `atTick` to hand over at, and the
+`transcript` it sits on (`expert`, `common-error`, or `recovery`). Reaching a bookmark replays
+that transcript's actions before `atTick`, so the label should describe that state. Bookmarks
+appear in the facilitator guide; `validateScenario` refuses a duplicated id, a label over 80
+characters, or a transcript that does not exist, and `tests/unit/bookmarks.test.ts` refuses a
+bookmark past the last action of the transcript it names.
+
 ## Declare rapid-cycle decision points (optional)
 
 A scenario may declare `rapidCycle` points for timed protocol steps only: a defibrillation, a
