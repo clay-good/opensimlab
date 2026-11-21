@@ -13,13 +13,25 @@
 
 ## 2. Knowledge sets per module
 
-- [ ] Add a `knowledge` declaration to the module contract: explainers, cards, Why templates.
+- [x] Add a `knowledge` declaration to the module contract: explainers, cards, Why templates.
+  `src/platform/knowledge/knowledge-sets.ts` declares one set per available module. Anesthesia's
+  holds what it ships. The other fifteen are declared empty rather than left out, so the gap is
+  a stated fact the gate can count.
 - [ ] Author at least six explainers per module (fifteen modules × six = ninety minimum), each
   ≤ 250 words with one diagram, one source locator, maturity, and a resolving "show me".
 - [ ] Author intervention cards for every shared-formulary agent in every module; link cards to
   model detail where a published model exists.
+  Measured, and the card half is smaller than it reads: today every formulary agent in the
+  catalogue already has a card. The fifteen state-transition modules declare no drug formulary,
+  so they have no shared-formulary agents, and every anesthesia agent has one.
+  `tests/unit/knowledge-sets.test.ts` pins that, so a new agent without a card is seen. Cards for
+  the non-drug interventions the design names (fluid bolus, blood component, oxygen by device,
+  pacing) wait on those modules declaring them as formulary agents.
 - [ ] Catalog gate: explainer floor, dangling "show me", agent without a card, card text failing
   the safety-scope rule.
+  `npm run gate` now reports the floor and the gaps on every run: modules below the six-explainer
+  floor, formulary agents without a card, and any "show me" outside its own module (today: 15 of
+  16, none, none). It reports rather than blocks, for the same reason the guide gaps do.
   Dangling "show me" is checked: `tests/unit/explainer-show-me.test.ts` fails when an explainer's
   lesson does not exist or its sandbox state is one the sandbox would refuse. The other three
   checks wait on the explainers and cards section 2 authors.

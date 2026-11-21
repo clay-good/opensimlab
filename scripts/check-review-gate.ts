@@ -24,6 +24,7 @@ import { ONCOLOGY_SCENARIOS } from '../src/modules/oncology/scenarios';
 import { SURGERY_TRAUMA_SCENARIOS } from '../src/modules/surgery-trauma/scenarios';
 import { buildScenarioQualityCatalogs } from '@platform/catalog/scenario-quality';
 import { absentGuideSections } from '@platform/facilitation/guide';
+import { EXPLAINER_FLOOR, knowledgeGaps } from '@platform/knowledge/knowledge-sets';
 import { catalogFloorBlockers, scenarioKey } from '@platform/catalog/catalog-growth';
 import { CORRECTIONS } from '@platform/docs/corrections';
 import { FACILITATED_SCENARIOS } from '@platform/facilitation/scenario-catalog';
@@ -380,6 +381,16 @@ const medicalSurgicalNursingQuality = qualityCatalogs.get('medical-surgical-nurs
   }
   process.stdout.write(`facilitator guides: ${FACILITATED_SCENARIOS.length}; absent sections: ${
     [...absentCounts].map(([id, count]) => `${id} ${count}`).join(', ') || 'none'}\n`);
+
+  // The knowledge layer's floor and gaps. Reported, not blocking: an empty set is
+  // stated on /review-status, and filling one is sourced clinical authoring.
+  const gaps = knowledgeGaps();
+  const short = gaps.filter((gap) => gap.explainersShort > 0);
+  const uncarded = gaps.flatMap((gap) => gap.agentsWithoutCard.map((agent) => `${gap.moduleId}:${agent}`));
+  const outside = gaps.flatMap((gap) => gap.showMeOutsideModule.map((id) => `${gap.moduleId}:${id}`));
+  process.stdout.write(`knowledge: ${short.length} of ${gaps.length} modules below the ${EXPLAINER_FLOOR}-explainer floor; `
+    + `formulary agents without a card: ${uncarded.length === 0 ? 'none' : uncarded.join(', ')}; `
+    + `"show me" outside its module: ${outside.length === 0 ? 'none' : outside.join(', ')}\n`);
 
   if (!release) {
     if (blocking.length > 0) {
