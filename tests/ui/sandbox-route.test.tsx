@@ -24,7 +24,8 @@ describe('the pharmacology sandbox page', () => {
   it('opens on a default bolus with both plots, the values in a table, the model\'s source and a case to go to', () => {
     const markup = page('');
     const body = text(markup);
-    expect(body).toContain('Pharmacology sandbox');
+    expect(body).toContain('Sandbox');
+    expect(body).toContain('Pharmacology');
     expect((markup.match(/<svg[^>]*role="img"/g) ?? []).length).toBe(2);
     expect(markup).toContain('<table>');
     expect(body).toContain('Model: Eleveld');
@@ -52,5 +53,17 @@ describe('the pharmacology sandbox page', () => {
     const body = text(page('?model=propofol-eleveld-2018&patient=routine-induction&dose=999&minutes=10'));
     expect(body).toContain('That link could not be opened');
     expect(body).toContain('999 mg is not a dose any lesson');
+  });
+
+  it('Scenario: the physiology view shows a healthy adult desaturating on Benumof\'s clock, and labels what it rests on', () => {
+    const markup = page('?view=physiology&profile=healthy&fio2=1&pattern=apnea&minutes=10');
+    const body = text(markup);
+    expect(body).toContain('Physiology: oxygen during apnoea');
+    expect((markup.match(/<svg[^>]*role="img"/g) ?? []).length).toBe(2);
+    const minutes = Number(/Saturation reached 90% after ([\d.]+) minutes/.exec(body)?.[1]);
+    expect(Math.abs(minutes - 8) / 8).toBeLessThanOrEqual(0.2);
+    expect(body).toContain('Held to a published result');
+    expect(text(page('?view=physiology&profile=term-pregnancy&fio2=1&pattern=apnea&minutes=10'))).toContain('Teaching calibration');
+    expect(markup).toContain('href="/anesthesia/scenario/rapid-desaturation"');
   });
 });

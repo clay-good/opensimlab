@@ -504,13 +504,13 @@ export const ROUTES: readonly RouteMetadata[] = [
   },
   {
     path: '/anesthesia/sandbox',
-    title: formatTitle('Pharmacology sandbox'),
+    title: formatTitle('Sandbox: pharmacology and physiology'),
     description:
-      'Give one bolus to a lesson\u2019s patient and watch plasma and effect-site concentration, or hold '
-      + 'the dose and vary age or weight. No case, no score.',
+      'Give a lesson\u2019s patient one bolus and watch the concentrations, or stop their breathing '
+      + 'and watch saturation fall. No case, no score, forward only.',
     indexable: false,
     structuredData: [],
-    heading: 'Pharmacology sandbox',
+    heading: 'Sandbox',
   },
   {
     path: '/translation-coverage',

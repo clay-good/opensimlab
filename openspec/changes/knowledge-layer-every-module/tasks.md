@@ -51,6 +51,17 @@
   variable.
 - [ ] Add physiology inputs from the shared respiratory, hemodynamic, fluid, and electrolyte
   capabilities with a published/teaching label per input.
+  Respiratory is done; hemodynamic, fluid and electrolyte are not. The sandbox's physiology view
+  (`?view=physiology`, `src/modules/anesthesia/sandbox/physiology-sandbox.ts`) offers four inputs:
+  the respiratory profile, the oxygen breathed for three minutes beforehand, then apnoea, normal
+  breathing or half the tidal volume, and the duration. It runs the lessons' own gas exchange at
+  the engine's tick. Each input carries its label. "Held to a published result" covers the three
+  Benumof profiles, apnoea, and inspired oxygen (the alveolar gas equation). "Teaching
+  calibration" covers term pregnancy and both breathing patterns, which run through the carbon
+  dioxide store's taught coefficient. A run stops below 50% saturation and says why: carried on,
+  the model drives oxygen to zero in a patient whose circulation it never lets fail. The other
+  three capabilities each need their own inputs, labels and stopping rule, and are left for
+  their own pass.
 - [x] Make sandbox state addressable by URL (model, preset, inputs only); test that the URL
   carries no transcript, progress, or identifier.
   `sandboxQuery` writes exactly `model`, `patient`, `dose`, `minutes` and `vary`.
@@ -59,7 +70,11 @@
 - [x] Extend the forward-only architecture test to the sandbox module; assert no target or
   dose-solving control exists. `tests/arch/boundaries.test.ts` enumerates the sandbox's exports
   and reads every file under a `sandbox/` directory for target-solving names.
-- [ ] Replay the sandbox healthy-adult apnea state through the Benumof benchmark test.
+- [x] Replay the sandbox healthy-adult apnea state through the Benumof benchmark test.
+  `tests/unit/physiology-sandbox.test.ts` runs the sandbox's apnoea state for the healthy,
+  moderately ill and obese adult against Benumof, Dagg and Benumof 1997 at the declared 20%
+  tolerance. It also asserts that the result equals `timeToDesaturationMinutes`, so this is the
+  benchmarked model and not a second one that happens to agree.
 - [ ] Reverse-link: the sandbox suggests the scenario an explainer demonstrates.
   Half done. The sandbox suggests a lesson: the patient's own lesson if its formulary carries the
   drug, otherwise the first lesson that does. Drawing the suggestion from explainer links waits on

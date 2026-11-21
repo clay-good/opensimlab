@@ -19,6 +19,10 @@ import {
   authoredValues, MAX_CURVES, parseSandboxQuery, SANDBOX_MINUTES, sandboxCatalogue, sandboxCurves, sandboxQuery,
   suggestedScenario, VARIED_COVARIATES, type SandboxState, type VariedCovariate,
 } from '@anesthesia/sandbox/pharmacology-sandbox';
+import {
+  BREATHING_PATTERNS, FIO2_BASIS, parsePhysiologyQuery, PATTERN_BASIS, PHYSIOLOGY_MINUTES, physiologyQuery, PREOXYGENATION_FIO2,
+  PREOXYGENATION_MINUTES, PROFILE_BASIS, PROFILE_IDS, runPhysiology, STOP_BELOW_SATURATION, type InputBasis, type PhysiologyState,
+} from '@anesthesia/sandbox/physiology-sandbox';
 
 const CATALOGUE = sandboxCatalogue(SCENARIOS);
 const DEFAULT_STATE: SandboxState = { modelId: 'propofol-eleveld-2018', patientId: 'routine-induction', dose: 100, minutes: 10 };
@@ -74,7 +78,7 @@ function SandboxPlot({ lines, xMax, yMax, label }: { lines: readonly Line[]; xMa
   );
 }
 
-export function SandboxRoute() {
+function PharmacologySandbox() {
   const [{ state, problem }, setView] = useState(initialState);
   const model = MODELS_BY_ID.get(state.modelId)!;
   const curves = useMemo(() => sandboxCurves(CATALOGUE, state), [state]);
@@ -127,12 +131,8 @@ export function SandboxRoute() {
   const hasEffectSite = effect.series.some((line) => line.points.length > 0);
 
   return (
-    <div className="document">
-      <SiteBar />
-      <main className="reading" id="main">
-        <h1>{t('sandbox.heading')}</h1>
+    <>
         <p>{t('sandbox.intro')}</p>
-        <p className="field__hint">{t('sandbox.boundary')}</p>
         {problem && <p role="alert">{t('sandbox.link-problem', { problem })}</p>}
 
         <Panel title={t('sandbox.inputs')}>
@@ -227,6 +227,88 @@ export function SandboxRoute() {
             <a href={`/anesthesia/scenario/${suggestion}`}>{TITLES.get(suggestion) ?? suggestion}</a>
           </p>
         )}
+    </>
+  );
+}
+
+const PHYSIOLOGY_DEFAULT: PhysiologyState = { profile: 'healthy', fio2: 1, pattern: 'apnea', minutes: 10 };
+const BASIS_KIND = { published: 'default', teaching: 'teaching' } as const;
+
+function PhysiologySandbox() {
+  const [{ state, problem }, setView] = useState(() => {
+    const parsed = parsePhysiologyQuery(typeof location === 'undefined' ? '' : location.search);
+    return 'state' in parsed ? { state: parsed.state, problem: null } : { state: PHYSIOLOGY_DEFAULT, problem: parsed.problem };
+  });
+  const run = useMemo(() => runPhysiology(state), [state]);
+  const update = (next: PhysiologyState) => {
+    setView({ state: next, problem: null });
+    if (typeof history !== 'undefined') history.replaceState(null, '', `${location.pathname}?${physiologyQuery(next)}`);
+  };
+  const basis = (kind: InputBasis) => <Badge kind={BASIS_KIND[kind]}>{t(`sandbox.basis-${kind}` as MessageKey)}</Badge>;
+  const line = (which: 'spo2Percent' | 'pao2MmHg', token: string): Line => ({
+    id: which, label: which, colorToken: token, dashed: false,
+    points: run.samples.map((sample) => [sample.minutes * 60, sample[which]] as const),
+  });
+  return (
+    <>
+      <p>{t('sandbox.physiology-intro', { minutes: PREOXYGENATION_MINUTES })}</p>
+      {problem && <p role="alert">{t('sandbox.link-problem', { problem })}</p>}
+      <Panel title={t('sandbox.physiology-inputs')}>
+        <p className="field__label">{t('sandbox.profile')} {basis(PROFILE_BASIS[state.profile])}</p>
+        <SegmentedControl label={t('sandbox.profile')} value={state.profile} onChange={(profile) => update({ ...state, profile })}
+          options={PROFILE_IDS.map((id) => ({ value: id, label: t(`sandbox.profile-${id}` as MessageKey) }))} />
+        <p className="field__label">{t('sandbox.fio2')} {basis(FIO2_BASIS)}</p>
+        <SegmentedControl label={t('sandbox.fio2')} value={state.fio2} onChange={(fio2) => update({ ...state, fio2 })}
+          options={PREOXYGENATION_FIO2.map((fio2) => ({ value: fio2, label: `${Math.round(fio2 * 100)}%` }))} />
+        <p className="field__label">{t('sandbox.pattern')} {basis(PATTERN_BASIS[state.pattern])}</p>
+        <SegmentedControl label={t('sandbox.pattern')} value={state.pattern} onChange={(pattern) => update({ ...state, pattern })}
+          options={BREATHING_PATTERNS.map((pattern) => ({ value: pattern, label: t(`sandbox.pattern-${pattern}` as MessageKey) }))} />
+        <p className="field__label">{t('sandbox.minutes')}</p>
+        <SegmentedControl label={t('sandbox.minutes')} value={state.minutes} onChange={(minutes) => update({ ...state, minutes })}
+          options={PHYSIOLOGY_MINUTES.map((minutes) => ({ value: minutes, label: t('sandbox.minutes-option', { minutes }) }))} />
+      </Panel>
+      <section aria-labelledby="sandbox-spo2">
+        <h2 id="sandbox-spo2">{t('sandbox.spo2')}</h2>
+        <SandboxPlot lines={[line('spo2Percent', '--spo2')]} xMax={state.minutes * 60} yMax={100}
+          label={t('sandbox.plot-label-one', { what: t('sandbox.spo2'), minutes: state.minutes })} />
+      </section>
+      <section aria-labelledby="sandbox-pao2">
+        <h2 id="sandbox-pao2">{t('sandbox.pao2')}</h2>
+        <SandboxPlot lines={[line('pao2MmHg', '--arterial')]} xMax={state.minutes * 60}
+          yMax={Math.max(...run.samples.map((sample) => sample.pao2MmHg), 1) * 1.1}
+          label={t('sandbox.plot-label-one', { what: t('sandbox.pao2'), minutes: state.minutes })} />
+      </section>
+      <p role="status">
+        {run.minutesTo90 === null
+          ? t('sandbox.no-desaturation', { minutes: state.minutes })
+          : t('sandbox.to-90', { minutes: run.minutesTo90.toFixed(1) })}
+        {' '}{t(run.stoppedAt === null ? 'sandbox.end-values' : 'sandbox.stopped', {
+          spo2: run.samples.at(-1)!.spo2Percent.toFixed(1), pao2: Math.round(run.samples.at(-1)!.pao2MmHg),
+          paco2: Math.round(run.samples.at(-1)!.paco2MmHg),
+          minutes: run.stoppedAt === null ? state.minutes : run.stoppedAt.toFixed(1), floor: STOP_BELOW_SATURATION })}
+      </p>
+      <p className="field__hint">{t('sandbox.physiology-source')}</p>
+      <p>{t('sandbox.physiology-suggest')} <a href="/anesthesia/scenario/rapid-desaturation">{t('sandbox.physiology-case')}</a></p>
+    </>
+  );
+}
+
+export function SandboxRoute() {
+  const physiology = typeof location !== 'undefined' && new URLSearchParams(location.search).get('view') === 'physiology';
+  return (
+    <div className="document">
+      <SiteBar />
+      <main className="reading" id="main">
+        <h1>{t('sandbox.heading')}</h1>
+        <p className="field__hint">{t('sandbox.boundary')}</p>
+        <nav aria-label={t('sandbox.views')}>
+          <a href="/anesthesia/sandbox" aria-current={physiology ? undefined : 'page'}>{t('sandbox.view-pharmacology')}</a>
+          {' · '}
+          <a href={`/anesthesia/sandbox?${physiologyQuery(PHYSIOLOGY_DEFAULT)}`} aria-current={physiology ? 'page' : undefined}>
+            {t('sandbox.view-physiology')}
+          </a>
+        </nav>
+        {physiology ? <PhysiologySandbox /> : <PharmacologySandbox />}
       </main>
     </div>
   );
