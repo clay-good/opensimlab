@@ -18,6 +18,7 @@ export const SANDBOX_MESSAGES = {
   'sandbox.patient-label': { class: 'interface', text: 'Patient' },
   'sandbox.patient': { class: 'interface', text: '{age} y, {sex}, {weight} kg, {height} cm' },
   'sandbox.dose': { class: 'interface', text: 'Bolus ({unit})' },
+  'sandbox.per-kg': { class: 'interface', text: '{dose} {unit}/kg for this {weight} kg patient is {amount} {unit}. Every curve gets that same {amount} {unit}, so varying weight changes the patient and not the dose.' },
   'sandbox.minutes': { class: 'interface', text: 'Show' },
   'sandbox.minutes-option': { class: 'interface', text: '{minutes} min' },
   'sandbox.vary': { class: 'interface', text: 'Hold the dose and vary' },

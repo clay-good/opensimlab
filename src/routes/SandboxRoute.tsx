@@ -16,7 +16,7 @@ import { SCENARIOS } from '@anesthesia/scenarios';
 import { MODELS_BY_ID } from '@anesthesia/pharmacology/registry';
 import { CONFIDENCE_LABEL_TEXT } from '@anesthesia/pharmacology/envelope';
 import {
-  authoredValues, MAX_CURVES, parseSandboxQuery, SANDBOX_MINUTES, sandboxCatalogue, sandboxCurves, sandboxQuery,
+  absoluteDose, authoredValues, MAX_CURVES, parseSandboxQuery, SANDBOX_MINUTES, sandboxCatalogue, sandboxCurves, sandboxQuery,
   suggestedScenario, VARIED_COVARIATES, type SandboxState, type VariedCovariate,
 } from '@anesthesia/sandbox/pharmacology-sandbox';
 import {
@@ -31,7 +31,13 @@ const CURVE_TOKENS = ['--ecg', '--arterial', '--spo2', '--capno'] as const;
 const DIMMED_TOKEN = '--text-tertiary';
 const TITLES = new Map(SCENARIOS.map((scenario) => [scenario.metadata.id, scenario.metadata.title]));
 /** Models a learner can give: those with at least one authored absolute dose. */
-const OFFERED_MODELS = [...MODELS_BY_ID.values()].filter((model) => (CATALOGUE.doses[model.drugId]?.length ?? 0) > 0);
+/** Every dose a drug's lessons offer, absolute and per kilogram, as one list of choices. */
+const doseChoices = (drugId: string) => [
+  ...(CATALOGUE.doses[drugId] ?? []).map((dose) => ({ dose, perKg: false })),
+  ...(CATALOGUE.perKgDoses[drugId] ?? []).map((dose) => ({ dose, perKg: true })),
+];
+const doseKey = (choice: { dose: number; perKg?: boolean }) => `${choice.dose}${choice.perKg ? '/kg' : ''}`;
+const OFFERED_MODELS = [...MODELS_BY_ID.values()].filter((model) => doseChoices(model.drugId).length > 0);
 
 function initialState(): { state: SandboxState; problem: string | null } {
   const query = typeof location === 'undefined' ? '' : location.search;
@@ -90,8 +96,11 @@ function PharmacologySandbox() {
   };
   const chooseModel = (modelId: string) => {
     const chosen = MODELS_BY_ID.get(modelId)!;
-    const doses = CATALOGUE.doses[chosen.drugId] ?? [];
-    update({ ...state, modelId, dose: doses.includes(state.dose) ? state.dose : doses[0]! });
+    const choices = doseChoices(chosen.drugId);
+    const kept = choices.find((choice) => doseKey(choice) === doseKey({ dose: state.dose, perKg: state.perKg === true }));
+    const { perKg: _perKg, ...rest } = state;
+    const next = kept ?? choices[0]!;
+    update({ ...rest, modelId, dose: next.dose, ...(next.perKg ? { perKg: true as const } : {}) });
   };
   const chooseVary = (covariate: VariedCovariate | 'none') => {
     if (covariate === 'none') { const { vary: _vary, ...rest } = state; update(rest); return; }
@@ -143,9 +152,21 @@ function PharmacologySandbox() {
             options={CATALOGUE.patients.map((patient) => ({ value: patient.id,
               label: `${describePatient(patient.covariates)} · ${TITLES.get(patient.id) ?? patient.id}` }))} />
           <p className="field__label">{t('sandbox.dose', { unit: model.doseUnit })}</p>
-          <SegmentedControl label={t('sandbox.dose', { unit: model.doseUnit })} value={state.dose}
-            onChange={(dose) => update({ ...state, dose })}
-            options={(CATALOGUE.doses[model.drugId] ?? []).map((dose) => ({ value: dose, label: `${dose} ${model.doseUnit}` }))} />
+          <SegmentedControl label={t('sandbox.dose', { unit: model.doseUnit })}
+            value={doseKey({ dose: state.dose, perKg: state.perKg === true })}
+            onChange={(key) => {
+              const choice = doseChoices(model.drugId).find((candidate) => doseKey(candidate) === key)!;
+              const { perKg: _perKg, ...rest } = state;
+              update({ ...rest, dose: choice.dose, ...(choice.perKg ? { perKg: true as const } : {}) });
+            }}
+            options={doseChoices(model.drugId).map((choice) => ({ value: doseKey(choice),
+              label: `${choice.dose} ${model.doseUnit}${choice.perKg ? '/kg' : ''}` }))} />
+          {state.perKg && (
+            <p className="field__hint" role="status">
+              {t('sandbox.per-kg', { dose: state.dose, unit: model.doseUnit, amount: absoluteDose(CATALOGUE, state),
+                weight: CATALOGUE.patients.find((patient) => patient.id === state.patientId)!.covariates.weightKg })}
+            </p>
+          )}
           <p className="field__label">{t('sandbox.minutes')}</p>
           <SegmentedControl label={t('sandbox.minutes')} value={state.minutes}
             onChange={(minutes) => update({ ...state, minutes })}
@@ -184,7 +205,7 @@ function PharmacologySandbox() {
         ) : <p>{t('sandbox.no-effect-site')}</p>}
 
         <table>
-          <caption>{t('sandbox.table-caption', { dose: state.dose, unit: model.doseUnit, minutes: state.minutes })}</caption>
+          <caption>{t('sandbox.table-caption', { dose: absoluteDose(CATALOGUE, state), unit: model.doseUnit, minutes: state.minutes })}</caption>
           <thead>
             <tr>
               <th scope="col">{t('sandbox.col-patient')}</th>

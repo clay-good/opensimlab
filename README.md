@@ -93,9 +93,10 @@ envelope verdict, and an out-of-range curve is drawn dimmed and dashed rather th
 state lives in the URL. A physiology view does the same for breathing. It preoxygenates one of
 the respiratory profiles, then stops or keeps the breathing, and draws saturation and oxygen
 tension. The healthy, moderately ill and obese adults reproduce Benumof's published apnoea times,
-and each input says whether it is held to a published result or is a teaching calibration. Not
-yet: rocuronium (no lesson gives it as an absolute dose), the hemodynamic, fluid and electrolyte
-inputs, and links from explainers.
+and each input says whether it is held to a published result or is a teaching calibration. A
+per-kilogram dose is converted once, by the chosen patient's weight, and held as that amount
+across compared weights. Not yet: the hemodynamic, fluid and electrolyte inputs, and links from
+explainers.
 
 **It can be run in a room, not only alone.** Every lesson has a printable
 [facilitator guide](https://opensimlab.com/facilitator/anesthesia/scenario/routine-induction) at

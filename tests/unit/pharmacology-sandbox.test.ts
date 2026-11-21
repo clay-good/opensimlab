@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { SCENARIOS } from '@anesthesia/scenarios';
 import { MODELS_BY_ID } from '@anesthesia/pharmacology/registry';
 import {
-  authoredValues, bolusCurve, MAX_CURVES, parseSandboxQuery, sandboxCatalogue, sandboxCurves, sandboxQuery,
+  absoluteDose, authoredValues, bolusCurve, MAX_CURVES, parseSandboxQuery, sandboxCatalogue, sandboxCurves, sandboxQuery,
   sandboxStateProblem, suggestedScenario, type SandboxState,
 } from '@anesthesia/sandbox/pharmacology-sandbox';
 
@@ -115,5 +115,34 @@ describe('a sandbox state as a link', () => {
     expect(parseSandboxQuery(catalogue, sandboxQuery(base).replace('dose=100', 'dose=1e2'))).toHaveProperty('problem');
     expect(parseSandboxQuery(catalogue, `${sandboxQuery(base)}&vary=heightCm:170,180`)).toHaveProperty('problem');
     expect(parseSandboxQuery(catalogue, sandboxQuery(base).replace('dose=100', 'dose=5000'))).toHaveProperty('problem');
+  });
+});
+
+describe('per-kilogram doses', () => {
+  it('offers the per-kilogram doses the formularies author, including rocuronium\'s', () => {
+    expect(catalogue.perKgDoses['rocuronium']).toEqual(expect.arrayContaining([0.6, 1, 1.2]));
+    expect(catalogue.doses['rocuronium'] ?? []).toEqual([]);
+    expect(sandboxStateProblem(catalogue, { ...base, modelId: 'rocuronium-clinical-course-teaching', dose: 0.6, perKg: true })).toBeNull();
+    expect(sandboxStateProblem(catalogue, { ...base, modelId: 'rocuronium-clinical-course-teaching', dose: 0.7, perKg: true }))
+      .toMatch(/0.7 mg\/kg is not a dose/);
+  });
+
+  it('converts once, by the chosen patient, and holds that amount while weight varies', () => {
+    const weight = catalogue.patients.find((patient) => patient.id === 'routine-induction')!.covariates.weightKg;
+    const state: SandboxState = { ...base, dose: 2, perKg: true,
+      vary: { covariate: 'weightKg', values: [authoredValues(catalogue, 'weightKg')[0]!, authoredValues(catalogue, 'weightKg').at(-1)!] } };
+    expect(absoluteDose(catalogue, state)).toBeCloseTo(2 * weight, 1);
+    const curves = sandboxCurves(catalogue, state);
+    const model = MODELS_BY_ID.get(base.modelId)!;
+    // Each curve's first plasma sample is the SAME bolus over that patient's own V1.
+    for (const curve of curves) {
+      expect(curve.samples[0]!.plasma * model.parameters(curve.covariates).v1).toBeCloseTo(2 * weight, 1);
+    }
+  });
+
+  it('round-trips a per-kilogram link and refuses an unknown basis', () => {
+    const state: SandboxState = { ...base, modelId: 'rocuronium-clinical-course-teaching', dose: 0.6, perKg: true };
+    expect(parseSandboxQuery(catalogue, sandboxQuery(state))).toEqual({ state });
+    expect(parseSandboxQuery(catalogue, `${sandboxQuery(base)}&per=lb`)).toHaveProperty('problem');
   });
 });

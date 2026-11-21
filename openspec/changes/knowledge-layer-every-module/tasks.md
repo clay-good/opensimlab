@@ -26,7 +26,7 @@
 
 - [ ] Build the pharmacology sandbox as the capability specifies: any modeled drug, any in-envelope
   preset, hold/vary one covariate, overlay curves, envelope enforcement.
-  Built, apart from rocuronium (below). The page is `/anesthesia/sandbox`, linked from the
+  Built. The page is `/anesthesia/sandbox`, linked from the
   anesthesia lesson index. It has two SVG plots and a table that doubles as their key and
   carries the numbers for anyone not reading the plots. It lives under the anesthesia module and
   loads lazily from that chunk, and it is left out of the first-visit precache like the
@@ -45,10 +45,10 @@
   formularies offer, and for a varied covariate only values some authored patient has.
   `tests/unit/pharmacology-sandbox.test.ts` checks the spec's own example: the same bolus under
   Schnider gives an older patient a higher early plasma concentration.
-  One gap, stated rather than papered over: rocuronium has a model but no lesson offers it as an
-  absolute dose, only per kilogram, so the sandbox cannot give it yet. Holding a per-kilogram dose
-  "fixed" while weight varies would quietly vary the dose, which is the opposite of isolating one
-  variable.
+  Per-kilogram doses are offered too, which is what brought rocuronium in: no lesson gives it as an
+  absolute dose. A per-kilogram dose is converted once, by the chosen patient's weight, and that
+  absolute amount goes to every compared curve. Converting per curve would vary the dose along
+  with weight and stop isolating one variable, and the page says so beside the conversion.
 - [ ] Add physiology inputs from the shared respiratory, hemodynamic, fluid, and electrolyte
   capabilities with a published/teaching label per input.
   Respiratory is done; hemodynamic, fluid and electrolyte are not. The sandbox's physiology view

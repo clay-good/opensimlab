@@ -12,7 +12,7 @@
  *   a concentration and returns a dose, and the architecture test that keeps
  *   inverse control out of the kernel imports this module too.
  * - **Authored inputs only.** Patients are the anaesthesia lessons' own patients,
- *   doses are the absolute doses those lessons' formularies offer, and a varied
+ *   doses are the absolute or per-kilogram doses those lessons' formularies offer, and a varied
  *   covariate takes only values some authored patient has. There is no free-text
  *   or free-number field, so nothing a person types can describe a real patient.
  * - **The envelope is shown, not hidden.** Every curve carries its model's
@@ -50,6 +50,13 @@ export interface SandboxState {
   readonly modelId: string;
   readonly patientId: string;
   readonly dose: number;
+  /**
+   * The dose is per kilogram. It is converted once, by the CHOSEN patient's
+   * weight, and that absolute amount is what every curve gets: converting per
+   * curve would vary the dose along with weight, and the comparison would stop
+   * isolating one variable.
+   */
+  readonly perKg?: true;
   readonly minutes: number;
   /** Hold the dose and vary one covariate across these authored values. */
   readonly vary?: { readonly covariate: VariedCovariate; readonly values: readonly number[] };
@@ -66,6 +73,8 @@ export interface SandboxCatalogue {
   readonly patients: readonly SandboxPatient[];
   /** Absolute bolus doses the lessons' formularies offer, per drug, in the model's dose unit. */
   readonly doses: Readonly<Record<string, readonly number[]>>;
+  /** Per-kilogram bolus doses the formularies offer, per drug, in the model's dose unit per kg. */
+  readonly perKgDoses: Readonly<Record<string, readonly number[]>>;
   /** For each drug, the lessons whose formulary carries it. */
   readonly scenariosByDrug: Readonly<Record<string, readonly string[]>>;
 }
@@ -77,6 +86,7 @@ const patientKey = (covariates: Covariates) =>
 export function sandboxCatalogue(scenarios: readonly Scenario[]): SandboxCatalogue {
   const patients = new Map<string, { id: string; covariates: Covariates; scenarioIds: string[] }>();
   const doses: Record<string, Set<number>> = {};
+  const perKgDoses: Record<string, Set<number>> = {};
   const scenariosByDrug: Record<string, string[]> = {};
   for (const scenario of scenarios) {
     const { ageYears, sex, heightCm, weightKg } = scenario.patient;
@@ -90,13 +100,20 @@ export function sandboxCatalogue(scenarios: readonly Scenario[]): SandboxCatalog
       if (units.size === 0) continue;
       (scenariosByDrug[entry.drugId] ??= []).push(scenario.metadata.id);
       for (const preset of entry.presets) {
-        if (units.has(preset.unit) && preset.amount > 0) (doses[entry.drugId] ??= new Set()).add(preset.amount);
+        if (!(preset.amount > 0)) continue;
+        if (units.has(preset.unit)) (doses[entry.drugId] ??= new Set()).add(preset.amount);
+        else if (preset.unit.endsWith('/kg') && units.has(preset.unit.slice(0, -3))) {
+          (perKgDoses[entry.drugId] ??= new Set()).add(preset.amount);
+        }
       }
     }
   }
+  const sorted = (record: Record<string, Set<number>>) =>
+    Object.fromEntries(Object.entries(record).map(([drug, set]) => [drug, [...set].sort((a, b) => a - b)]));
   return {
     patients: [...patients.values()],
-    doses: Object.fromEntries(Object.entries(doses).map(([drug, set]) => [drug, [...set].sort((a, b) => a - b)])),
+    doses: sorted(doses),
+    perKgDoses: sorted(perKgDoses),
     scenariosByDrug: Object.fromEntries(Object.entries(scenariosByDrug).map(([drug, ids]) => [drug, [...new Set(ids)]])),
   };
 }
@@ -111,8 +128,9 @@ export function sandboxStateProblem(catalogue: SandboxCatalogue, state: SandboxS
   const model = MODELS_BY_ID.get(state.modelId);
   if (!model) return `No model "${state.modelId}".`;
   if (!catalogue.patients.some((patient) => patient.id === state.patientId)) return `No authored patient "${state.patientId}".`;
-  if (!(catalogue.doses[model.drugId] ?? []).includes(state.dose)) {
-    return `${String(state.dose)} ${model.doseUnit} is not a dose any lesson's formulary offers for ${model.drugName}.`;
+  const offered = state.perKg ? catalogue.perKgDoses[model.drugId] : catalogue.doses[model.drugId];
+  if (!(offered ?? []).includes(state.dose)) {
+    return `${String(state.dose)} ${model.doseUnit}${state.perKg ? '/kg' : ''} is not a dose any lesson's formulary offers for ${model.drugName}.`;
   }
   if (!SANDBOX_MINUTES.includes(state.minutes)) return `${String(state.minutes)} minutes is not an offered duration.`;
   if (state.vary) {
@@ -125,6 +143,14 @@ export function sandboxStateProblem(catalogue: SandboxCatalogue, state: SandboxS
     if (outside !== undefined) return `${String(outside)} is not a value any authored patient has.`;
   }
   return null;
+}
+
+/** The amount every curve gets, in the model's dose unit. */
+export function absoluteDose(catalogue: SandboxCatalogue, state: SandboxState): number {
+  if (!state.perKg) return state.dose;
+  const patient = catalogue.patients.find((candidate) => candidate.id === state.patientId);
+  if (!patient) throw new Error(`No authored patient "${state.patientId}".`);
+  return Math.round(state.dose * patient.covariates.weightKg * 10) / 10;
 }
 
 /** Concentrations after one bolus at time zero, sampled every SAMPLE_SECONDS. */
@@ -152,7 +178,8 @@ export function sandboxCurves(catalogue: SandboxCatalogue, state: SandboxState):
   const variants = state.vary
     ? state.vary.values.map((value) => ({ ...patient.covariates, [state.vary!.covariate]: value }))
     : [patient.covariates];
-  return variants.map((covariates) => bolusCurve(model, covariates, state.dose, state.minutes));
+  const dose = absoluteDose(catalogue, state);
+  return variants.map((covariates) => bolusCurve(model, covariates, dose, state.minutes));
 }
 
 /**
@@ -167,13 +194,14 @@ export function suggestedScenario(catalogue: SandboxCatalogue, state: SandboxSta
   return patient?.scenarioIds.find((id) => withDrug.includes(id)) ?? withDrug[0] ?? null;
 }
 
-const QUERY_KEYS = ['model', 'patient', 'dose', 'minutes', 'vary'] as const;
+const QUERY_KEYS = ['model', 'patient', 'dose', 'per', 'minutes', 'vary'] as const;
 
 /** The URL query for a state. It carries the inputs and nothing else. */
 export function sandboxQuery(state: SandboxState): string {
   const params = new URLSearchParams({
     model: state.modelId, patient: state.patientId, dose: String(state.dose), minutes: String(state.minutes),
   });
+  if (state.perKg) params.set('per', 'kg');
   if (state.vary) params.set('vary', `${state.vary.covariate}:${state.vary.values.join(',')}`);
   return params.toString();
 }
@@ -206,7 +234,11 @@ export function parseSandboxQuery(
     if (values.some(Number.isNaN)) return { problem: 'A varied value in the link is not a number.' };
     vary = { covariate: covariate as VariedCovariate, values };
   }
-  const state: SandboxState = { modelId, patientId, dose, minutes, ...(vary ? { vary } : {}) };
+  const per = params.get('per');
+  if (per !== null && per !== 'kg') return { problem: 'The link\'s dose basis is not one the sandbox reads.' };
+  const state: SandboxState = {
+    modelId, patientId, dose, ...(per === 'kg' ? { perKg: true as const } : {}), minutes, ...(vary ? { vary } : {}),
+  };
   const problem = sandboxStateProblem(catalogue, state);
   return problem ? { problem } : { state };
 }
