@@ -26,7 +26,17 @@
 
 - [ ] Build the pharmacology sandbox as the capability specifies: any modeled drug, any in-envelope
   preset, hold/vary one covariate, overlay curves, envelope enforcement.
-  The core is built; the page is not. `src/modules/anesthesia/sandbox/pharmacology-sandbox.ts`
+  Built, apart from rocuronium (below). The page is `/anesthesia/sandbox`, linked from the
+  anesthesia lesson index. It has two SVG plots and a table that doubles as their key and
+  carries the numbers for anyone not reading the plots. It lives under the anesthesia module and
+  loads lazily from that chunk, and it is left out of the first-visit precache like the
+  facilitator guide, because a noindex page cannot open offline on a first visit anyway.
+  Getting it in without growing every lesson took one structural change. The envelope evaluator
+  imported the whole model registry for a single constant, which tied it to a chunk every lesson
+  loads, so `MODEL_SET_REVISION` now lives in `pharmacology/model-set.ts`. The cockpit graph stays
+  at 573.8 KB gz against its 575 KB guard (573.3 before). Checked in headless Chrome on a plain
+  static host: no console errors, the curves draw, and the URL follows the controls.
+  `src/modules/anesthesia/sandbox/pharmacology-sandbox.ts`
   gives one bolus to one patient and returns plasma and effect-site curves sampled every 10 s,
   exact at each sample. It can also hold the bolus and vary age or weight across 2 to 4 values,
   each curve carrying its model's envelope verdict. An out-of-range curve is still drawn and labelled,
@@ -51,6 +61,9 @@
   and reads every file under a `sandbox/` directory for target-solving names.
 - [ ] Replay the sandbox healthy-adult apnea state through the Benumof benchmark test.
 - [ ] Reverse-link: the sandbox suggests the scenario an explainer demonstrates.
+  Half done. The sandbox suggests a lesson: the patient's own lesson if its formulary carries the
+  drug, otherwise the first lesson that does. Drawing the suggestion from explainer links waits on
+  explainers that link to a sandbox state, which section 2 has not authored.
 
 ## 4. Offline, translation, and budget
 

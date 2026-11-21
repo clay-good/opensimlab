@@ -26,11 +26,7 @@ export const MODELS: readonly PharmacologyModel[] = [
   ROCURONIUM_CLINICAL_COURSE_TEACHING,
 ];
 
-/**
- * The model-set revision. It changes whenever any parameter changes, and it is
- * recorded in every transcript so a session can be interpreted years later.
- */
-export const MODEL_SET_REVISION = '2026.08.2';
+export { MODEL_SET_REVISION } from './model-set';
 
 export const MODELS_BY_ID: ReadonlyMap<string, PharmacologyModel> = new Map(
   MODELS.map((model) => [model.id, model]),

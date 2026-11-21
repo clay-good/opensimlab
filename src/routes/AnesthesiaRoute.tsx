@@ -1281,6 +1281,7 @@ export function ScenarioIndex() {
         <p className="catalog-path__eyebrow">{t('route.eyebrow')}</p>
         <h1>{t('route.anesthesia-heading')}</h1>
         <p>{t('route.index-intro')}</p>
+        <p><a href="/anesthesia/sandbox">{t('route.sandbox-link')}</a></p>
         <SpacedReturnSuggestion />
         <ul className="scenario-index">
           {scenariosByDifficulty().map((entry) => (

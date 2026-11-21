@@ -83,6 +83,16 @@ literature, each carrying its citation and the range it is valid over. Nothing i
 at build or run time, and tests assert published reference values so a mistyped digit
 fails immediately.
 
+**The drugs can be explored without a case.** The
+[pharmacology sandbox](https://opensimlab.com/anesthesia/sandbox) at `/anesthesia/sandbox` gives
+one bolus to one of the anesthesia lessons' own patients and draws plasma and effect-site
+concentration. It can also hold the dose and vary age or weight across up to four values. Every
+input is a choice the lessons already authored, with nothing typed, so nothing can describe a real
+patient. It is forward-only: a dose goes in and a curve comes out. Each curve carries its model's
+envelope verdict, and an out-of-range curve is drawn dimmed and dashed rather than hidden. The
+state lives in the URL. Not yet: rocuronium (no lesson gives it as an absolute dose), the
+physiology inputs, and links from explainers.
+
 **It can be run in a room, not only alone.** Every lesson has a printable
 [facilitator guide](https://opensimlab.com/facilitator/anesthesia/scenario/routine-induction) at
 `/facilitator/<module>/scenario/<id>`, generated from the scenario rather than written beside it,

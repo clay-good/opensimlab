@@ -41,6 +41,13 @@ export const FIRST_VISIT_PRECACHE_EXCLUSIONS: readonly PrecacheExclusion[] = [
       + 'open one offline whether this chunk is there or not, and precaching it only buys the '
       + 'shell fallback for an educator surface that is already not offline-complete.',
   },
+  {
+    chunk: 'SandboxRoute',
+    reason: 'The pharmacology sandbox, which is exploration rather than a lesson. Its page is '
+      + 'noindex, so its prerendered HTML is not precached and a first visit cannot open it '
+      + 'offline whether this chunk is there or not. Every scenario stays offline-complete; a '
+      + 'learner who opens the sandbox online once has it in the runtime cache after that.',
+  },
 ];
 
 /** Is this built asset path one the first visit skips? */

@@ -503,6 +503,16 @@ export const ROUTES: readonly RouteMetadata[] = [
     heading: 'Frame budget harness',
   },
   {
+    path: '/anesthesia/sandbox',
+    title: formatTitle('Pharmacology sandbox'),
+    description:
+      'Give one bolus to a lesson\u2019s patient and watch plasma and effect-site concentration, or hold '
+      + 'the dose and vary age or weight. No case, no score.',
+    indexable: false,
+    structuredData: [],
+    heading: 'Pharmacology sandbox',
+  },
+  {
     path: '/translation-coverage',
     title: formatTitle('Translation coverage'),
     description:

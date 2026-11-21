@@ -51,10 +51,12 @@ const UNITS: Readonly<Record<OverlayParameter, string>> = {
 };
 
 const COLORS: Readonly<Record<OverlayParameter, string>> = {
-  heartRateBpm: '--vital-hr',
-  meanArterialMmHg: '--vital-bp',
-  spo2Percent: '--vital-spo2',
-  etco2MmHg: '--vital-etco2',
+  // The monitor's own trace tokens. These used to name `--vital-*` tokens that
+  // no stylesheet defines, so both runs fell back to the grid color.
+  heartRateBpm: '--ecg',
+  meanArterialMmHg: '--arterial',
+  spo2Percent: '--spo2',
+  etco2MmHg: '--capno',
 };
 
 export function ExpertOverlayPanel(props: ExpertOverlayPanelProps) {

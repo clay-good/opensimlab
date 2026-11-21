@@ -11,7 +11,7 @@
 
 import { bodyMassIndex, type Covariates } from './body-composition';
 import type { ConfidenceLabel, PharmacologyModel } from './types';
-import { MODEL_SET_REVISION } from './registry';
+import { MODEL_SET_REVISION } from './model-set';
 import { isTranscriptionVerified } from './verification';
 
 export interface EnvelopeViolation {

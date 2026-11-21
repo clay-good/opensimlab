@@ -16,6 +16,7 @@ import { translate } from './catalog';
 import type { DOCUMENT_MESSAGES } from './messages-documents';
 import type { EDUCATOR_MESSAGES } from './messages-educator';
 import type { SESSION_MESSAGES } from './messages-session';
+import type { SANDBOX_MESSAGES } from './messages-sandbox';
 
 export const CORE_MESSAGES = {
   'sitebar.skip': { class: 'interface', text: 'Skip to main content' },
@@ -215,7 +216,7 @@ export const CORE_MESSAGES = {
 } as const satisfies Readonly<Record<string, SourceMessage>>;
 
 export type MessageKey = keyof typeof CORE_MESSAGES | keyof typeof DOCUMENT_MESSAGES
-  | keyof typeof EDUCATOR_MESSAGES | keyof typeof SESSION_MESSAGES;
+  | keyof typeof EDUCATOR_MESSAGES | keyof typeof SESSION_MESSAGES | keyof typeof SANDBOX_MESSAGES;
 
 /** Every source message registered so far: the core, then each group a surface imported. */
 const REGISTERED: Record<string, SourceMessage> = { ...CORE_MESSAGES };

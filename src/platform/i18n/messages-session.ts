@@ -430,6 +430,7 @@ export const SESSION_MESSAGES = {
   'route.eyebrow': { class: 'interface', text: 'Your private practice lab' },
   'route.anesthesia-heading': { class: 'interface', text: 'Anesthesia simulator' },
   'route.index-intro': { class: 'interface', text: 'Each scenario is a patient and a problem. Start at the top if this is your first one.' },
+  'route.sandbox-link': { class: 'interface', text: 'Or explore the drugs without a case: the pharmacology sandbox' },
 } as const satisfies Readonly<Record<string, SourceMessage>>;
 
 registerMessages(SESSION_MESSAGES);
