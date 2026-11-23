@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "pediatrics",
-  "recordCount": 16,
+  "recordCount": 22,
   "records": [
     {
       "recordId": "scenario:pediatric-respiratory-distress@0.1.0",
@@ -177,6 +177,66 @@
       "evidence": [
         "/catalog/pediatrics-completion-audit.json#pediatric-injury-safeguarding-escalation@0.1.0",
         "/catalog/pediatrics-quality-audit.json#pediatric-injury-safeguarding-escalation@0.1.0"
+      ]
+    },
+    {
+      "recordId": "explanation:children-compensate-until-they-do-not@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "children-compensate-until-they-do-not",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/pediatrics/content/explainers.ts#children-compensate-until-they-do-not"
+      ]
+    },
+    {
+      "recordId": "explanation:a-slow-child-is-a-hypoxic-child@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "a-slow-child-is-a-hypoxic-child",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/pediatrics/content/explainers.ts#a-slow-child-is-a-hypoxic-child"
+      ]
+    },
+    {
+      "recordId": "explanation:work-of-breathing-is-the-measurement@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "work-of-breathing-is-the-measurement",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/pediatrics/content/explainers.ts#work-of-breathing-is-the-measurement"
+      ]
+    },
+    {
+      "recordId": "explanation:stridor-and-wheeze-name-different-airways@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "stridor-and-wheeze-name-different-airways",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/pediatrics/content/explainers.ts#stridor-and-wheeze-name-different-airways"
+      ]
+    },
+    {
+      "recordId": "explanation:in-pediatric-dka-the-brain-sets-the-pace@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "in-pediatric-dka-the-brain-sets-the-pace",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/pediatrics/content/explainers.ts#in-pediatric-dka-the-brain-sets-the-pace"
+      ]
+    },
+    {
+      "recordId": "explanation:check-the-glucose-in-every-seizing-child@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "check-the-glucose-in-every-seizing-child",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/pediatrics/content/explainers.ts#check-the-glucose-in-every-seizing-child"
       ]
     }
   ]

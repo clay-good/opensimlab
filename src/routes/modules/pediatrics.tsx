@@ -9,6 +9,7 @@ import { DEFAULT_PEDIATRICS_SCENARIO_ID, PEDIATRICS_SCENARIOS, getPediatricsScen
 import { PEDIATRICS_LIMITATIONS } from '@platform/docs/limitations/pediatrics';
 import { PEDIATRICS_TRAYS } from '../../modules/pediatrics/trays';
 import { PEDIATRICS_DEMONSTRATIONS } from '../../modules/pediatrics/demo/demonstrations';
+import { PEDIATRICS_EXPLAINERS } from '../../modules/pediatrics/content/explainers';
 
 const PEDIATRICS_CONFIG: ClinicalModuleConfig = {
   id: 'pediatrics', basePath: '/pediatrics', heading: 'Pediatrics simulator',
@@ -19,6 +20,7 @@ const PEDIATRICS_CONFIG: ClinicalModuleConfig = {
   scenarios: PEDIATRICS_SCENARIOS, defaultScenarioId: DEFAULT_PEDIATRICS_SCENARIO_ID,
   getScenario: getPediatricsScenario,
   demonstrations: PEDIATRICS_DEMONSTRATIONS,
+  explainers: PEDIATRICS_EXPLAINERS,
 };
 
 export function PediatricsRoute({ path }: { path: string }) {

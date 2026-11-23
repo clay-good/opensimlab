@@ -187,7 +187,9 @@ describe('Pediatrics module foundation', () => {
     const reports = json('public/catalog/scenario-report-catalog.json');
     expect(completion).toMatchObject({ moduleId: 'pediatrics', scenarioCount: 16 });
     expect(quality).toMatchObject({ scenarioCount: 16 });
-    expect(maturity).toMatchObject({ recordCount: 16 });
+    // Sixteen lessons and the module's six concept explainers, which are
+    // recorded in their own module's catalog rather than anesthesia's.
+    expect(maturity).toMatchObject({ recordCount: 22 });
     expect(reports.scenarios).toContainEqual(expect.objectContaining({
       moduleId: 'pediatrics', scenarioId: 'pediatric-respiratory-distress',
       contentVersion: '0.1.0', maturity: 'preview',

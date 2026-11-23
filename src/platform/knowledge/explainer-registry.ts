@@ -20,6 +20,7 @@ import { EMERGENCY_MEDICINE_EXPLAINERS } from '../../modules/emergency-medicine/
 import { CRITICAL_CARE_EXPLAINERS } from '../../modules/critical-care/content/explainers';
 import { CARDIOLOGY_EXPLAINERS } from '../../modules/cardiology/content/explainers';
 import { RESPIRATORY_MEDICINE_EXPLAINERS } from '../../modules/respiratory-medicine/content/explainers';
+import { PEDIATRICS_EXPLAINERS } from '../../modules/pediatrics/content/explainers';
 
 export interface ModuleExplainers {
   readonly moduleId: string;
@@ -67,6 +68,13 @@ export const MODULE_EXPLAINERS: readonly ModuleExplainers[] = [
     reviewDomain: 'respiratory-medicine',
     sourcePath: 'src/modules/respiratory-medicine/content/explainers.ts',
     explainers: RESPIRATORY_MEDICINE_EXPLAINERS,
+  },
+  {
+    moduleId: 'pediatrics',
+    route: 'pediatrics',
+    reviewDomain: 'pediatrics',
+    sourcePath: 'src/modules/pediatrics/content/explainers.ts',
+    explainers: PEDIATRICS_EXPLAINERS,
   },
 ];
 
