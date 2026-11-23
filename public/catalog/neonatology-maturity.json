@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "neonatology",
-  "recordCount": 11,
+  "recordCount": 17,
   "records": [
     {
       "recordId": "scenario:term-newborn-transition@0.1.0",
@@ -122,6 +122,66 @@
       "evidence": [
         "/catalog/neonatology-completion-audit.json#neonatal-tension-pneumothorax@0.1.0",
         "/catalog/neonatology-quality-audit.json#neonatal-tension-pneumothorax@0.1.0"
+      ]
+    },
+    {
+      "recordId": "explanation:the-newborn-emergency-is-the-lungs@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "the-newborn-emergency-is-the-lungs",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/neonatology/content/explainers.ts#the-newborn-emergency-is-the-lungs"
+      ]
+    },
+    {
+      "recordId": "explanation:before-anything-new-fix-the-ventilation@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "before-anything-new-fix-the-ventilation",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/neonatology/content/explainers.ts#before-anything-new-fix-the-ventilation"
+      ]
+    },
+    {
+      "recordId": "explanation:a-newborn-cools-faster-than-you-expect@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "a-newborn-cools-faster-than-you-expect",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/neonatology/content/explainers.ts#a-newborn-cools-faster-than-you-expect"
+      ]
+    },
+    {
+      "recordId": "explanation:newborn-glucose-has-no-single-number@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "newborn-glucose-has-no-single-number",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/neonatology/content/explainers.ts#newborn-glucose-has-no-single-number"
+      ]
+    },
+    {
+      "recordId": "explanation:newborn-sepsis-is-a-change-in-behaviour@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "newborn-sepsis-is-a-change-in-behaviour",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/neonatology/content/explainers.ts#newborn-sepsis-is-a-change-in-behaviour"
+      ]
+    },
+    {
+      "recordId": "explanation:a-handoff-carries-the-negatives-too@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "a-handoff-carries-the-negatives-too",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/neonatology/content/explainers.ts#a-handoff-carries-the-negatives-too"
       ]
     }
   ]

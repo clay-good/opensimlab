@@ -9,6 +9,7 @@ import { DEFAULT_NEONATOLOGY_SCENARIO_ID, NEONATOLOGY_SCENARIOS, getNeonatologyS
 import { NEONATOLOGY_LIMITATIONS } from '@platform/docs/limitations/neonatology';
 import { NEONATOLOGY_TRAYS } from '../../modules/neonatology/trays';
 import { NEONATOLOGY_DEMONSTRATIONS } from '../../modules/neonatology/demo/demonstrations';
+import { NEONATOLOGY_EXPLAINERS } from '../../modules/neonatology/content/explainers';
 
 const NEONATOLOGY_CONFIG: ClinicalModuleConfig = {
   id: 'neonatology', basePath: '/neonatology', heading: 'Neonatology simulator',
@@ -19,6 +20,7 @@ const NEONATOLOGY_CONFIG: ClinicalModuleConfig = {
   getScenario: getNeonatologyScenario,
   trays: NEONATOLOGY_TRAYS,
   demonstrations: NEONATOLOGY_DEMONSTRATIONS,
+  explainers: NEONATOLOGY_EXPLAINERS,
 };
 
 export function NeonatologyRoute({ path }: { path: string }) {

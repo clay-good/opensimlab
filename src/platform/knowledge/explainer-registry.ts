@@ -24,6 +24,7 @@ import { PEDIATRICS_EXPLAINERS } from '../../modules/pediatrics/content/explaine
 import { NEUROLOGY_EXPLAINERS } from '../../modules/neurology/content/explainers';
 import { TOXICOLOGY_EXPLAINERS } from '../../modules/toxicology/content/explainers';
 import { OBSTETRICS_EXPLAINERS } from '../../modules/obstetrics/content/explainers';
+import { NEONATOLOGY_EXPLAINERS } from '../../modules/neonatology/content/explainers';
 
 export interface ModuleExplainers {
   readonly moduleId: string;
@@ -99,6 +100,13 @@ export const MODULE_EXPLAINERS: readonly ModuleExplainers[] = [
     reviewDomain: 'obstetrics',
     sourcePath: 'src/modules/obstetrics/content/explainers.ts',
     explainers: OBSTETRICS_EXPLAINERS,
+  },
+  {
+    moduleId: 'neonatology',
+    route: 'neonatology',
+    reviewDomain: 'neonatology',
+    sourcePath: 'src/modules/neonatology/content/explainers.ts',
+    explainers: NEONATOLOGY_EXPLAINERS,
   },
 ];
 

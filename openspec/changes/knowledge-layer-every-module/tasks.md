@@ -20,7 +20,7 @@
   out, so the gap is a stated fact the gate can count.
 - [ ] Author at least six explainers per module (fifteen modules × six = ninety minimum), each
   ≤ 250 words with one diagram, one source locator, maturity, and a resolving "show me".
-  Nine of sixteen modules are at the floor: anesthesia's ten, emergency medicine's six
+  Ten of sixteen modules are at the floor: anesthesia's ten, emergency medicine's six
   (`src/modules/emergency-medicine/content/explainers.ts`) — perfusion against pressure, the
   tension pneumothorax as an obstruction to filling, calcium as protection rather than treatment,
   fluid and vasopressor as one decision, compressions as what makes a shock work, and
@@ -59,10 +59,15 @@
   an ordinary one, pregnancy changing the arrest and its clock, shoulder dystocia as a rehearsed
   sequence rather than an effort, cord prolapse as a perfusion emergency whose holding actions
   only buy time, and magnesium monitored on the patient rather than on a level.
+  Neonatology's six (`src/modules/neonatology/content/explainers.ts`) are the ninth module's:
+  almost every newborn emergency being the lungs, correcting the ventilation before adding
+  anything, how fast a newborn cools and by which route, newborn glucose having no single number,
+  sepsis presenting as a change in behaviour, and the handoff that has to carry the negatives and
+  the timings.
   What made this possible is that the contract and the registry are no longer anesthesia's: the
   types live in `src/platform/knowledge/explainer.ts`, every governance and review surface reads
   the registry, and the cockpit's Learn tab lists the running module's own set rather than
-  anesthesia's in all sixteen. The remaining seven modules are authoring, with the same per
+  anesthesia's in all sixteen. The remaining six modules are authoring, with the same per
   explainer rules enforced over the whole registry by `tests/unit/explainer-registry.test.ts`.
 - [ ] Author intervention cards for every shared-formulary agent in every module; link cards to
   model detail where a published model exists.
@@ -75,7 +80,7 @@
 - [ ] Catalog gate: explainer floor, dangling "show me", agent without a card, card text failing
   the safety-scope rule.
   `npm run gate` now reports the floor and the gaps on every run: modules below the six-explainer
-  floor, formulary agents without a card, and any "show me" outside its own module (today: 7 of
+  floor, formulary agents without a card, and any "show me" outside its own module (today: 6 of
   16, none, none). It reports rather than blocks, for the same reason the guide gaps do.
   Dangling "show me" is checked: `tests/unit/explainer-show-me.test.ts` fails when an explainer's
   lesson does not exist or its sandbox state is one the sandbox would refuse. The other three
@@ -85,8 +90,8 @@
   with each maturity present and its count, and "None yet" where a module has none. Every module
   is listed so a zero is stated rather than implied by absence. Today that is anesthesia's
   explainers and cards, six explainers each for emergency medicine, critical care, cardiology,
-  respiratory medicine, pediatrics, neurology, toxicology and obstetrics, and seven rows of
-  "None yet",
+  respiratory medicine, pediatrics, neurology, toxicology, obstetrics and neonatology, and six
+  rows of "None yet",
   which is the section 2 authoring this change still owes
   (`tests/unit/knowledge-by-module.test.ts`).
 
