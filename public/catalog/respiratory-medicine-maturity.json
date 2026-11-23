@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "respiratory-medicine",
-  "recordCount": 15,
+  "recordCount": 21,
   "records": [
     {
       "recordId": "scenario:acute-severe-asthma@0.1.0",
@@ -166,6 +166,66 @@
       "evidence": [
         "/catalog/respiratory-medicine-completion-audit.json#acute-tracheostomy-obstruction@0.1.0",
         "/catalog/respiratory-medicine-quality-audit.json#acute-tracheostomy-obstruction@0.1.0"
+      ]
+    },
+    {
+      "recordId": "explanation:oxygen-is-prescribed-to-a-range@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "oxygen-is-prescribed-to-a-range",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/respiratory-medicine/content/explainers.ts#oxygen-is-prescribed-to-a-range"
+      ]
+    },
+    {
+      "recordId": "explanation:noninvasive-support-needs-a-stopping-rule@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "noninvasive-support-needs-a-stopping-rule",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/respiratory-medicine/content/explainers.ts#noninvasive-support-needs-a-stopping-rule"
+      ]
+    },
+    {
+      "recordId": "explanation:high-flow-does-more-than-supply-oxygen@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "high-flow-does-more-than-supply-oxygen",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/respiratory-medicine/content/explainers.ts#high-flow-does-more-than-supply-oxygen"
+      ]
+    },
+    {
+      "recordId": "explanation:a-quiet-chest-in-asthma-is-worse@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "a-quiet-chest-in-asthma-is-worse",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/respiratory-medicine/content/explainers.ts#a-quiet-chest-in-asthma-is-worse"
+      ]
+    },
+    {
+      "recordId": "explanation:a-tracheostomy-patient-has-two-airways@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "a-tracheostomy-patient-has-two-airways",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/respiratory-medicine/content/explainers.ts#a-tracheostomy-patient-has-two-airways"
+      ]
+    },
+    {
+      "recordId": "explanation:neuromuscular-failure-is-a-pump-failure@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "neuromuscular-failure-is-a-pump-failure",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/respiratory-medicine/content/explainers.ts#neuromuscular-failure-is-a-pump-failure"
       ]
     }
   ]

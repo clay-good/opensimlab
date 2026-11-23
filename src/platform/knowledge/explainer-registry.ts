@@ -19,6 +19,7 @@ import { EXPLAINERS } from '@anesthesia/content/explainers';
 import { EMERGENCY_MEDICINE_EXPLAINERS } from '../../modules/emergency-medicine/content/explainers';
 import { CRITICAL_CARE_EXPLAINERS } from '../../modules/critical-care/content/explainers';
 import { CARDIOLOGY_EXPLAINERS } from '../../modules/cardiology/content/explainers';
+import { RESPIRATORY_MEDICINE_EXPLAINERS } from '../../modules/respiratory-medicine/content/explainers';
 
 export interface ModuleExplainers {
   readonly moduleId: string;
@@ -59,6 +60,13 @@ export const MODULE_EXPLAINERS: readonly ModuleExplainers[] = [
     reviewDomain: 'cardiology',
     sourcePath: 'src/modules/cardiology/content/explainers.ts',
     explainers: CARDIOLOGY_EXPLAINERS,
+  },
+  {
+    moduleId: 'respiratory-medicine',
+    route: 'respiratory-medicine',
+    reviewDomain: 'respiratory-medicine',
+    sourcePath: 'src/modules/respiratory-medicine/content/explainers.ts',
+    explainers: RESPIRATORY_MEDICINE_EXPLAINERS,
   },
 ];
 

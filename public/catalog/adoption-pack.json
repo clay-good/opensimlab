@@ -2792,6 +2792,60 @@
       "status": "preview",
       "reason": "preview",
       "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "respiratory-medicine",
+      "subjectKind": "explanation",
+      "subjectId": "oxygen-is-prescribed-to-a-range",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "respiratory-medicine",
+      "subjectKind": "explanation",
+      "subjectId": "noninvasive-support-needs-a-stopping-rule",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "respiratory-medicine",
+      "subjectKind": "explanation",
+      "subjectId": "high-flow-does-more-than-supply-oxygen",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "respiratory-medicine",
+      "subjectKind": "explanation",
+      "subjectId": "a-quiet-chest-in-asthma-is-worse",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "respiratory-medicine",
+      "subjectKind": "explanation",
+      "subjectId": "a-tracheostomy-patient-has-two-airways",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "respiratory-medicine",
+      "subjectKind": "explanation",
+      "subjectId": "neuromuscular-failure-is-a-pump-failure",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
     }
   ],
   "scenarios": [

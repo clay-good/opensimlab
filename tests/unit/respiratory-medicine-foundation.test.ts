@@ -225,7 +225,9 @@ describe('respiratory medicine module foundation', () => {
       moduleId: string; recordCount: number;
       records: Array<{ subjectKind: string; subjectId: string; status: string }>;
     };
-    expect(maturity).toMatchObject({ moduleId, recordCount: 15 });
+    // Fifteen lessons and the module's six concept explainers, which are
+    // recorded in their own module's catalog rather than anesthesia's.
+    expect(maturity).toMatchObject({ moduleId, recordCount: 21 });
     expect(maturity.records).toContainEqual(expect.objectContaining({
       subjectKind: 'scenario', subjectId: scenarioId, status: 'preview',
     }));

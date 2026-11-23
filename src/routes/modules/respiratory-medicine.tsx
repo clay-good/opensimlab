@@ -9,6 +9,7 @@ import { DEFAULT_RESPIRATORY_MEDICINE_SCENARIO_ID, RESPIRATORY_MEDICINE_SCENARIO
 import { RESPIRATORY_MEDICINE_LIMITATIONS } from '@platform/docs/limitations/respiratory-medicine';
 import { RESPIRATORY_MEDICINE_TRAYS } from '../../modules/respiratory-medicine/trays';
 import { RESPIRATORY_MEDICINE_DEMONSTRATIONS } from '../../modules/respiratory-medicine/demo/demonstrations';
+import { RESPIRATORY_MEDICINE_EXPLAINERS } from '../../modules/respiratory-medicine/content/explainers';
 
 const RESPIRATORY_MEDICINE_CONFIG: ClinicalModuleConfig = {
   id: 'respiratory-medicine', basePath: '/respiratory-medicine',
@@ -21,6 +22,7 @@ const RESPIRATORY_MEDICINE_CONFIG: ClinicalModuleConfig = {
   defaultScenarioId: DEFAULT_RESPIRATORY_MEDICINE_SCENARIO_ID,
   getScenario: getRespiratoryMedicineScenario,
   demonstrations: RESPIRATORY_MEDICINE_DEMONSTRATIONS,
+  explainers: RESPIRATORY_MEDICINE_EXPLAINERS,
 };
 
 export function RespiratoryMedicineRoute({ path }: { path: string }) {
