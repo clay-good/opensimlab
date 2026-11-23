@@ -68,10 +68,10 @@ describe('static adoption pack', () => {
     // authoring one more does not land here as a number to bump.
     expect(Object.keys(kinds).sort())
       .toEqual(['drug-card', 'explanation', 'practice-region', 'tutor-rule']);
-    // Forty explanations: anesthesia's ten, and six each for emergency medicine,
-    // critical care, cardiology, respiratory medicine and pediatrics. The pack spans
-    // every module's catalog, so a module authoring a set lands here as a number to bump.
-    expect(kinds).toMatchObject({ explanation: 40, 'drug-card': 3, 'practice-region': 2 });
+    // Forty-six explanations: anesthesia's ten, and six each for emergency medicine,
+    // critical care, cardiology, respiratory medicine, pediatrics and neurology. The
+    // pack spans every module's catalog, so a module authoring a set lands here.
+    expect(kinds).toMatchObject({ explanation: 46, 'drug-card': 3, 'practice-region': 2 });
     expect(kinds['tutor-rule']).toBeGreaterThan(0);
     for (const entry of committed.dependencies) {
       expect(entry).toMatchObject({ status: 'preview', reason: 'preview' });

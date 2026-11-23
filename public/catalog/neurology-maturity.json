@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "neurology",
-  "recordCount": 15,
+  "recordCount": 21,
   "records": [
     {
       "recordId": "scenario:minor-nondisabling-acute-ischemic-stroke@0.1.0",
@@ -166,6 +166,66 @@
       "evidence": [
         "/catalog/neurology-completion-audit.json#autonomic-dysreflexia-authored-trigger@0.1.0",
         "/catalog/neurology-quality-audit.json#autonomic-dysreflexia-authored-trigger@0.1.0"
+      ]
+    },
+    {
+      "recordId": "explanation:the-posterior-circulation-hides@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "the-posterior-circulation-hides",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/neurology/content/explainers.ts#the-posterior-circulation-hides"
+      ]
+    },
+    {
+      "recordId": "explanation:intracranial-pressure-is-a-cliff@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "intracranial-pressure-is-a-cliff",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/neurology/content/explainers.ts#intracranial-pressure-is-a-cliff"
+      ]
+    },
+    {
+      "recordId": "explanation:a-seizure-can-be-invisible@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "a-seizure-can-be-invisible",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/neurology/content/explainers.ts#a-seizure-can-be-invisible"
+      ]
+    },
+    {
+      "recordId": "explanation:in-meningitis-the-waiting-is-the-harm@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "in-meningitis-the-waiting-is-the-harm",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/neurology/content/explainers.ts#in-meningitis-the-waiting-is-the-harm"
+      ]
+    },
+    {
+      "recordId": "explanation:delirium-is-a-symptom-not-a-diagnosis@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "delirium-is-a-symptom-not-a-diagnosis",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/neurology/content/explainers.ts#delirium-is-a-symptom-not-a-diagnosis"
+      ]
+    },
+    {
+      "recordId": "explanation:cord-compression-is-a-closing-window@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "cord-compression-is-a-closing-window",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/neurology/content/explainers.ts#cord-compression-is-a-closing-window"
       ]
     }
   ]

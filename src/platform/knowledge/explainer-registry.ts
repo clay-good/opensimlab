@@ -21,6 +21,7 @@ import { CRITICAL_CARE_EXPLAINERS } from '../../modules/critical-care/content/ex
 import { CARDIOLOGY_EXPLAINERS } from '../../modules/cardiology/content/explainers';
 import { RESPIRATORY_MEDICINE_EXPLAINERS } from '../../modules/respiratory-medicine/content/explainers';
 import { PEDIATRICS_EXPLAINERS } from '../../modules/pediatrics/content/explainers';
+import { NEUROLOGY_EXPLAINERS } from '../../modules/neurology/content/explainers';
 
 export interface ModuleExplainers {
   readonly moduleId: string;
@@ -75,6 +76,13 @@ export const MODULE_EXPLAINERS: readonly ModuleExplainers[] = [
     reviewDomain: 'pediatrics',
     sourcePath: 'src/modules/pediatrics/content/explainers.ts',
     explainers: PEDIATRICS_EXPLAINERS,
+  },
+  {
+    moduleId: 'neurology',
+    route: 'neurology',
+    reviewDomain: 'neurology',
+    sourcePath: 'src/modules/neurology/content/explainers.ts',
+    explainers: NEUROLOGY_EXPLAINERS,
   },
 ];
 

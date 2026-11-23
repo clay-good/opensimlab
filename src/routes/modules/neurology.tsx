@@ -9,6 +9,7 @@ import { DEFAULT_NEUROLOGY_SCENARIO_ID, NEUROLOGY_SCENARIOS, getNeurologyScenari
 import { NEUROLOGY_LIMITATIONS } from '@platform/docs/limitations/neurology';
 import { NEUROLOGY_TRAYS } from '../../modules/neurology/trays';
 import { NEUROLOGY_DEMONSTRATIONS } from '../../modules/neurology/demo/demonstrations';
+import { NEUROLOGY_EXPLAINERS } from '../../modules/neurology/content/explainers';
 
 const NEUROLOGY_CONFIG: ClinicalModuleConfig = {
   id: 'neurology', basePath: '/neurology', heading: 'Neurology simulator',
@@ -19,6 +20,7 @@ const NEUROLOGY_CONFIG: ClinicalModuleConfig = {
   scenarios: NEUROLOGY_SCENARIOS, defaultScenarioId: DEFAULT_NEUROLOGY_SCENARIO_ID,
   getScenario: getNeurologyScenario,
   demonstrations: NEUROLOGY_DEMONSTRATIONS,
+  explainers: NEUROLOGY_EXPLAINERS,
 };
 
 export function NeurologyRoute({ path }: { path: string }) {
