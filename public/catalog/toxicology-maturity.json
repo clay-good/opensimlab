@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "toxicology",
-  "recordCount": 15,
+  "recordCount": 21,
   "records": [
     {
       "recordId": "scenario:methemoglobinemia-saturation-gap@0.1.0",
@@ -166,6 +166,66 @@
       "evidence": [
         "/catalog/toxicology-completion-audit.json#opioid-xylazine-persistent-sedation@0.1.0",
         "/catalog/toxicology-quality-audit.json#opioid-xylazine-persistent-sedation@0.1.0"
+      ]
+    },
+    {
+      "recordId": "explanation:in-acetaminophen-the-clock-is-the-patient@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "in-acetaminophen-the-clock-is-the-patient",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/toxicology/content/explainers.ts#in-acetaminophen-the-clock-is-the-patient"
+      ]
+    },
+    {
+      "recordId": "explanation:the-oximeter-cannot-see-carbon-monoxide@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "the-oximeter-cannot-see-carbon-monoxide",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/toxicology/content/explainers.ts#the-oximeter-cannot-see-carbon-monoxide"
+      ]
+    },
+    {
+      "recordId": "explanation:a-falling-salicylate-is-not-improvement@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "a-falling-salicylate-is-not-improvement",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/toxicology/content/explainers.ts#a-falling-salicylate-is-not-improvement"
+      ]
+    },
+    {
+      "recordId": "explanation:sodium-channel-blockade-is-read-on-the-ecg@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "sodium-channel-blockade-is-read-on-the-ecg",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/toxicology/content/explainers.ts#sodium-channel-blockade-is-read-on-the-ecg"
+      ]
+    },
+    {
+      "recordId": "explanation:toxidromes-sort-by-the-autonomic-pattern@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "toxidromes-sort-by-the-autonomic-pattern",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/toxicology/content/explainers.ts#toxidromes-sort-by-the-autonomic-pattern"
+      ]
+    },
+    {
+      "recordId": "explanation:in-digoxin-poisoning-potassium-is-the-signal@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "in-digoxin-poisoning-potassium-is-the-signal",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/toxicology/content/explainers.ts#in-digoxin-poisoning-potassium-is-the-signal"
       ]
     }
   ]

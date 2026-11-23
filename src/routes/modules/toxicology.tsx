@@ -9,6 +9,7 @@ import { DEFAULT_TOXICOLOGY_SCENARIO_ID, TOXICOLOGY_SCENARIOS, getToxicologyScen
 import { TOXICOLOGY_LIMITATIONS } from '@platform/docs/limitations/toxicology';
 import { TOXICOLOGY_TRAYS } from '../../modules/toxicology/trays';
 import { TOXICOLOGY_DEMONSTRATIONS } from '../../modules/toxicology/demo/demonstrations';
+import { TOXICOLOGY_EXPLAINERS } from '../../modules/toxicology/content/explainers';
 
 const TOXICOLOGY_CONFIG: ClinicalModuleConfig = {
   id: 'toxicology', basePath: '/toxicology', heading: 'Toxicology simulator',
@@ -19,6 +20,7 @@ const TOXICOLOGY_CONFIG: ClinicalModuleConfig = {
   getScenario: getToxicologyScenario,
   trays: TOXICOLOGY_TRAYS,
   demonstrations: TOXICOLOGY_DEMONSTRATIONS,
+  explainers: TOXICOLOGY_EXPLAINERS,
 };
 
 export function ToxicologyRoute({ path }: { path: string }) {
