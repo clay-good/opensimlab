@@ -23,6 +23,7 @@ import { RESPIRATORY_MEDICINE_EXPLAINERS } from '../../modules/respiratory-medic
 import { PEDIATRICS_EXPLAINERS } from '../../modules/pediatrics/content/explainers';
 import { NEUROLOGY_EXPLAINERS } from '../../modules/neurology/content/explainers';
 import { TOXICOLOGY_EXPLAINERS } from '../../modules/toxicology/content/explainers';
+import { OBSTETRICS_EXPLAINERS } from '../../modules/obstetrics/content/explainers';
 
 export interface ModuleExplainers {
   readonly moduleId: string;
@@ -91,6 +92,13 @@ export const MODULE_EXPLAINERS: readonly ModuleExplainers[] = [
     reviewDomain: 'toxicology',
     sourcePath: 'src/modules/toxicology/content/explainers.ts',
     explainers: TOXICOLOGY_EXPLAINERS,
+  },
+  {
+    moduleId: 'obstetrics',
+    route: 'obstetrics',
+    reviewDomain: 'obstetrics',
+    sourcePath: 'src/modules/obstetrics/content/explainers.ts',
+    explainers: OBSTETRICS_EXPLAINERS,
   },
 ];
 

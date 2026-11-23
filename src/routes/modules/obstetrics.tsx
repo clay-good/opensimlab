@@ -9,6 +9,7 @@ import { DEFAULT_OBSTETRICS_SCENARIO_ID, OBSTETRICS_SCENARIOS, getObstetricsScen
 import { OBSTETRICS_LIMITATIONS } from '@platform/docs/limitations/obstetrics';
 import { OBSTETRICS_TRAYS } from '../../modules/obstetrics/trays';
 import { OBSTETRICS_DEMONSTRATIONS } from '../../modules/obstetrics/demo/demonstrations';
+import { OBSTETRICS_EXPLAINERS } from '../../modules/obstetrics/content/explainers';
 
 const OBSTETRICS_CONFIG: ClinicalModuleConfig = {
   id: 'obstetrics', basePath: '/obstetrics', heading: 'Obstetrics simulator',
@@ -19,6 +20,7 @@ const OBSTETRICS_CONFIG: ClinicalModuleConfig = {
   scenarios: OBSTETRICS_SCENARIOS, defaultScenarioId: DEFAULT_OBSTETRICS_SCENARIO_ID,
   getScenario: getObstetricsScenario,
   demonstrations: OBSTETRICS_DEMONSTRATIONS,
+  explainers: OBSTETRICS_EXPLAINERS,
 };
 
 export function ObstetricsRoute({ path }: { path: string }) {

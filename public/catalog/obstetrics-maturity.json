@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "obstetrics",
-  "recordCount": 15,
+  "recordCount": 21,
   "records": [
     {
       "recordId": "scenario:postpartum-hemorrhage-uterine-atony@0.1.0",
@@ -166,6 +166,66 @@
       "evidence": [
         "/catalog/obstetrics-completion-audit.json#oxytocin-associated-uterine-tachysystole@0.1.0",
         "/catalog/obstetrics-quality-audit.json#oxytocin-associated-uterine-tachysystole@0.1.0"
+      ]
+    },
+    {
+      "recordId": "explanation:obstetric-blood-loss-is-underestimated@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "obstetric-blood-loss-is-underestimated",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/obstetrics/content/explainers.ts#obstetric-blood-loss-is-underestimated"
+      ]
+    },
+    {
+      "recordId": "explanation:eclampsia-is-not-an-ordinary-seizure@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "eclampsia-is-not-an-ordinary-seizure",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/obstetrics/content/explainers.ts#eclampsia-is-not-an-ordinary-seizure"
+      ]
+    },
+    {
+      "recordId": "explanation:pregnancy-changes-the-arrest@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "pregnancy-changes-the-arrest",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/obstetrics/content/explainers.ts#pregnancy-changes-the-arrest"
+      ]
+    },
+    {
+      "recordId": "explanation:shoulder-dystocia-is-a-rehearsed-sequence@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "shoulder-dystocia-is-a-rehearsed-sequence",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/obstetrics/content/explainers.ts#shoulder-dystocia-is-a-rehearsed-sequence"
+      ]
+    },
+    {
+      "recordId": "explanation:cord-prolapse-is-a-perfusion-emergency@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "cord-prolapse-is-a-perfusion-emergency",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/obstetrics/content/explainers.ts#cord-prolapse-is-a-perfusion-emergency"
+      ]
+    },
+    {
+      "recordId": "explanation:magnesium-is-monitored-on-the-patient@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "magnesium-is-monitored-on-the-patient",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/obstetrics/content/explainers.ts#magnesium-is-monitored-on-the-patient"
       ]
     }
   ]

@@ -3008,6 +3008,60 @@
       "status": "preview",
       "reason": "preview",
       "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "obstetrics",
+      "subjectKind": "explanation",
+      "subjectId": "obstetric-blood-loss-is-underestimated",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "obstetrics",
+      "subjectKind": "explanation",
+      "subjectId": "eclampsia-is-not-an-ordinary-seizure",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "obstetrics",
+      "subjectKind": "explanation",
+      "subjectId": "pregnancy-changes-the-arrest",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "obstetrics",
+      "subjectKind": "explanation",
+      "subjectId": "shoulder-dystocia-is-a-rehearsed-sequence",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "obstetrics",
+      "subjectKind": "explanation",
+      "subjectId": "cord-prolapse-is-a-perfusion-emergency",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "obstetrics",
+      "subjectKind": "explanation",
+      "subjectId": "magnesium-is-monitored-on-the-patient",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
     }
   ],
   "scenarios": [
