@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "cardiology",
-  "recordCount": 17,
+  "recordCount": 23,
   "records": [
     {
       "recordId": "scenario:stable-chest-pain-evaluation@0.1.1",
@@ -188,6 +188,66 @@
       "evidence": [
         "/catalog/cardiology-completion-audit.json#transcutaneous-pacing-mechanical-capture-reassessment@0.1.0",
         "/catalog/cardiology-quality-audit.json#transcutaneous-pacing-mechanical-capture-reassessment@0.1.0"
+      ]
+    },
+    {
+      "recordId": "explanation:electrical-capture-is-not-perfusion@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "electrical-capture-is-not-perfusion",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/cardiology/content/explainers.ts#electrical-capture-is-not-perfusion"
+      ]
+    },
+    {
+      "recordId": "explanation:wide-and-regular-is-ventricular-until-shown-otherwise@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "wide-and-regular-is-ventricular-until-shown-otherwise",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/cardiology/content/explainers.ts#wide-and-regular-is-ventricular-until-shown-otherwise"
+      ]
+    },
+    {
+      "recordId": "explanation:fast-af-in-an-ill-patient-is-often-a-symptom@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "fast-af-in-an-ill-patient-is-often-a-symptom",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/cardiology/content/explainers.ts#fast-af-in-an-ill-patient-is-often-a-symptom"
+      ]
+    },
+    {
+      "recordId": "explanation:the-right-ventricular-infarct-needs-its-preload@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "the-right-ventricular-infarct-needs-its-preload",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/cardiology/content/explainers.ts#the-right-ventricular-infarct-needs-its-preload"
+      ]
+    },
+    {
+      "recordId": "explanation:torsades-is-a-repolarisation-problem@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "torsades-is-a-repolarisation-problem",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/cardiology/content/explainers.ts#torsades-is-a-repolarisation-problem"
+      ]
+    },
+    {
+      "recordId": "explanation:a-hypertensive-emergency-is-defined-by-the-organ@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "a-hypertensive-emergency-is-defined-by-the-organ",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/cardiology/content/explainers.ts#a-hypertensive-emergency-is-defined-by-the-organ"
       ]
     }
   ]

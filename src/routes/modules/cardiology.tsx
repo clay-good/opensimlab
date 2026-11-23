@@ -9,6 +9,7 @@ import { CARDIOLOGY_SCENARIOS, DEFAULT_CARDIOLOGY_SCENARIO_ID, getCardiologyScen
 import { CARDIOLOGY_LIMITATIONS } from '@platform/docs/limitations/cardiology';
 import { CARDIOLOGY_TRAYS } from '../../modules/cardiology/trays';
 import { CARDIOLOGY_DEMONSTRATIONS } from '../../modules/cardiology/demo/demonstrations';
+import { CARDIOLOGY_EXPLAINERS } from '../../modules/cardiology/content/explainers';
 
 const CARDIOLOGY_CONFIG: ClinicalModuleConfig = {
   id: 'cardiology', basePath: '/cardiology', heading: 'Cardiology simulator',
@@ -19,6 +20,7 @@ const CARDIOLOGY_CONFIG: ClinicalModuleConfig = {
   scenarios: CARDIOLOGY_SCENARIOS, defaultScenarioId: DEFAULT_CARDIOLOGY_SCENARIO_ID,
   getScenario: getCardiologyScenario,
   demonstrations: CARDIOLOGY_DEMONSTRATIONS,
+  explainers: CARDIOLOGY_EXPLAINERS,
 };
 
 export function CardiologyRoute({ path }: { path: string }) {

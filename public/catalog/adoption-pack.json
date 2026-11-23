@@ -2738,6 +2738,60 @@
       "status": "preview",
       "reason": "preview",
       "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "cardiology",
+      "subjectKind": "explanation",
+      "subjectId": "electrical-capture-is-not-perfusion",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "cardiology",
+      "subjectKind": "explanation",
+      "subjectId": "wide-and-regular-is-ventricular-until-shown-otherwise",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "cardiology",
+      "subjectKind": "explanation",
+      "subjectId": "fast-af-in-an-ill-patient-is-often-a-symptom",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "cardiology",
+      "subjectKind": "explanation",
+      "subjectId": "the-right-ventricular-infarct-needs-its-preload",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "cardiology",
+      "subjectKind": "explanation",
+      "subjectId": "torsades-is-a-repolarisation-problem",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "cardiology",
+      "subjectKind": "explanation",
+      "subjectId": "a-hypertensive-emergency-is-defined-by-the-organ",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
     }
   ],
   "scenarios": [
