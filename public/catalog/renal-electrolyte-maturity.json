@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "renal-electrolyte",
-  "recordCount": 12,
+  "recordCount": 18,
   "records": [
     {
       "recordId": "scenario:hyperkalemia-cardioprotection-and-rebound@0.1.0",
@@ -133,6 +133,66 @@
       "evidence": [
         "/catalog/renal-electrolyte-completion-audit.json#proteinuria-a-ratio-that-doubled-and-a-patient-who-did-not@0.1.0",
         "/catalog/renal-electrolyte-quality-audit.json#proteinuria-a-ratio-that-doubled-and-a-patient-who-did-not@0.1.0"
+      ]
+    },
+    {
+      "recordId": "explanation:magnesium-gates-potassium-repletion@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "magnesium-gates-potassium-repletion",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/renal-electrolyte/content/explainers.ts#magnesium-gates-potassium-repletion"
+      ]
+    },
+    {
+      "recordId": "explanation:total-calcium-misleads-in-kidney-disease@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "total-calcium-misleads-in-kidney-disease",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/renal-electrolyte/content/explainers.ts#total-calcium-misleads-in-kidney-disease"
+      ]
+    },
+    {
+      "recordId": "explanation:a-rise-after-exposure-attributes-nothing@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "a-rise-after-exposure-attributes-nothing",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/renal-electrolyte/content/explainers.ts#a-rise-after-exposure-attributes-nothing"
+      ]
+    },
+    {
+      "recordId": "explanation:an-estimated-filtration-is-an-inference@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "an-estimated-filtration-is-an-inference",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/renal-electrolyte/content/explainers.ts#an-estimated-filtration-is-an-inference"
+      ]
+    },
+    {
+      "recordId": "explanation:a-surrogate-is-not-the-outcome@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "a-surrogate-is-not-the-outcome",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/renal-electrolyte/content/explainers.ts#a-surrogate-is-not-the-outcome"
+      ]
+    },
+    {
+      "recordId": "explanation:the-creatine-kinase-does-not-carry-the-risk@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "the-creatine-kinase-does-not-carry-the-risk",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/renal-electrolyte/content/explainers.ts#the-creatine-kinase-does-not-carry-the-risk"
       ]
     }
   ]

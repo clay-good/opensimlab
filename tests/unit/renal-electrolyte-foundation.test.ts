@@ -398,7 +398,9 @@ describe('Renal and electrolyte medicine module foundation', () => {
     expect(completion).toMatchObject({ moduleId: 'renal-electrolyte', scenarioCount: 12, completeScenarioCount: 0 });
     expect(completion.scenarios).toHaveLength(12);
     expect(quality).toMatchObject({ moduleId: 'renal-electrolyte', scenarioCount: 12, playableScenarioCount: 0 });
-    expect(maturity).toMatchObject({ moduleId: 'renal-electrolyte', recordCount: 12 });
+    // Twelve lessons and the module's six concept explainers, which are recorded
+    // in their own module's catalog rather than anesthesia's.
+    expect(maturity).toMatchObject({ moduleId: 'renal-electrolyte', recordCount: 18 });
     for (const { metadata } of RENAL_ELECTROLYTE_SCENARIOS) {
       expect(completion.scenarios).toContainEqual(expect.objectContaining({ scenarioId: metadata.id, moduleId: 'renal-electrolyte',
         contentVersion: metadata.version, maturity: 'preview', complete: false, fidelityClass: 'state_transition' }));

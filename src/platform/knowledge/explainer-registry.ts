@@ -26,6 +26,7 @@ import { TOXICOLOGY_EXPLAINERS } from '../../modules/toxicology/content/explaine
 import { OBSTETRICS_EXPLAINERS } from '../../modules/obstetrics/content/explainers';
 import { NEONATOLOGY_EXPLAINERS } from '../../modules/neonatology/content/explainers';
 import { ENDOCRINE_METABOLIC_EXPLAINERS } from '../../modules/endocrine-metabolic/content/explainers';
+import { RENAL_ELECTROLYTE_EXPLAINERS } from '../../modules/renal-electrolyte/content/explainers';
 
 export interface ModuleExplainers {
   readonly moduleId: string;
@@ -115,6 +116,13 @@ export const MODULE_EXPLAINERS: readonly ModuleExplainers[] = [
     reviewDomain: 'endocrine-metabolic',
     sourcePath: 'src/modules/endocrine-metabolic/content/explainers.ts',
     explainers: ENDOCRINE_METABOLIC_EXPLAINERS,
+  },
+  {
+    moduleId: 'renal-electrolyte',
+    route: 'renal-electrolyte',
+    reviewDomain: 'renal-electrolyte',
+    sourcePath: 'src/modules/renal-electrolyte/content/explainers.ts',
+    explainers: RENAL_ELECTROLYTE_EXPLAINERS,
   },
 ];
 
