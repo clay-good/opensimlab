@@ -2684,6 +2684,60 @@
       "status": "preview",
       "reason": "preview",
       "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "critical-care",
+      "subjectKind": "explanation",
+      "subjectId": "lung-protection-trades-numbers-for-lung",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "critical-care",
+      "subjectKind": "explanation",
+      "subjectId": "auto-peep-is-a-timing-problem",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "critical-care",
+      "subjectKind": "explanation",
+      "subjectId": "the-right-ventricle-fails-differently",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "critical-care",
+      "subjectKind": "explanation",
+      "subjectId": "dyssynchrony-is-two-clocks-disagreeing",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "critical-care",
+      "subjectKind": "explanation",
+      "subjectId": "oxygenation-and-ventilation-are-two-problems",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "critical-care",
+      "subjectKind": "explanation",
+      "subjectId": "intubation-removes-the-compensation",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
     }
   ],
   "scenarios": [

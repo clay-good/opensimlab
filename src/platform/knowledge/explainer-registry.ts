@@ -17,6 +17,7 @@
 import type { Explainer } from './explainer';
 import { EXPLAINERS } from '@anesthesia/content/explainers';
 import { EMERGENCY_MEDICINE_EXPLAINERS } from '../../modules/emergency-medicine/content/explainers';
+import { CRITICAL_CARE_EXPLAINERS } from '../../modules/critical-care/content/explainers';
 
 export interface ModuleExplainers {
   readonly moduleId: string;
@@ -43,6 +44,13 @@ export const MODULE_EXPLAINERS: readonly ModuleExplainers[] = [
     reviewDomain: 'emergency-medicine',
     sourcePath: 'src/modules/emergency-medicine/content/explainers.ts',
     explainers: EMERGENCY_MEDICINE_EXPLAINERS,
+  },
+  {
+    moduleId: 'critical-care',
+    route: 'critical-care',
+    reviewDomain: 'critical-care',
+    sourcePath: 'src/modules/critical-care/content/explainers.ts',
+    explainers: CRITICAL_CARE_EXPLAINERS,
   },
 ];
 

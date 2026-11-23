@@ -9,6 +9,7 @@ import { CRITICAL_CARE_SCENARIOS, DEFAULT_CRITICAL_CARE_SCENARIO_ID, getCritical
 import { CRITICAL_CARE_LIMITATIONS } from '@platform/docs/limitations/critical-care';
 import { CRITICAL_CARE_TRAYS } from '../../modules/critical-care/trays';
 import { CRITICAL_CARE_DEMONSTRATIONS } from '../../modules/critical-care/demo/demonstrations';
+import { CRITICAL_CARE_EXPLAINERS } from '../../modules/critical-care/content/explainers';
 
 const CRITICAL_CARE_CONFIG: ClinicalModuleConfig = {
   id: 'critical-care', basePath: '/critical-care', heading: 'Critical care simulator',
@@ -19,6 +20,7 @@ const CRITICAL_CARE_CONFIG: ClinicalModuleConfig = {
   scenarios: CRITICAL_CARE_SCENARIOS, defaultScenarioId: DEFAULT_CRITICAL_CARE_SCENARIO_ID,
   getScenario: getCriticalCareScenario,
   demonstrations: CRITICAL_CARE_DEMONSTRATIONS,
+  explainers: CRITICAL_CARE_EXPLAINERS,
 };
 
 export function CriticalCareRoute({ path }: { path: string }) {

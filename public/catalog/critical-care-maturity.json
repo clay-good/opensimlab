@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "critical-care",
-  "recordCount": 24,
+  "recordCount": 30,
   "records": [
     {
       "recordId": "scenario:ards-lung-protective-ventilation@0.1.0",
@@ -265,6 +265,66 @@
       "evidence": [
         "/catalog/critical-care-completion-audit.json#septic-shock-resuscitation@0.1.0",
         "/catalog/critical-care-quality-audit.json#septic-shock-resuscitation@0.1.0"
+      ]
+    },
+    {
+      "recordId": "explanation:lung-protection-trades-numbers-for-lung@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "lung-protection-trades-numbers-for-lung",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/critical-care/content/explainers.ts#lung-protection-trades-numbers-for-lung"
+      ]
+    },
+    {
+      "recordId": "explanation:auto-peep-is-a-timing-problem@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "auto-peep-is-a-timing-problem",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/critical-care/content/explainers.ts#auto-peep-is-a-timing-problem"
+      ]
+    },
+    {
+      "recordId": "explanation:the-right-ventricle-fails-differently@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "the-right-ventricle-fails-differently",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/critical-care/content/explainers.ts#the-right-ventricle-fails-differently"
+      ]
+    },
+    {
+      "recordId": "explanation:dyssynchrony-is-two-clocks-disagreeing@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "dyssynchrony-is-two-clocks-disagreeing",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/critical-care/content/explainers.ts#dyssynchrony-is-two-clocks-disagreeing"
+      ]
+    },
+    {
+      "recordId": "explanation:oxygenation-and-ventilation-are-two-problems@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "oxygenation-and-ventilation-are-two-problems",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/critical-care/content/explainers.ts#oxygenation-and-ventilation-are-two-problems"
+      ]
+    },
+    {
+      "recordId": "explanation:intubation-removes-the-compensation@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "intubation-removes-the-compensation",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/critical-care/content/explainers.ts#intubation-removes-the-compensation"
       ]
     }
   ]
