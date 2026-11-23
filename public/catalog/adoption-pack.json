@@ -3224,6 +3224,60 @@
       "status": "preview",
       "reason": "preview",
       "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "infectious-disease",
+      "subjectKind": "explanation",
+      "subjectId": "a-score-answers-the-question-it-was-built-for",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "infectious-disease",
+      "subjectKind": "explanation",
+      "subjectId": "a-score-cannot-exclude-what-it-was-not-built-to-exclude",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "infectious-disease",
+      "subjectKind": "explanation",
+      "subjectId": "a-definition-can-have-no-truth-value-yet",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "infectious-disease",
+      "subjectKind": "explanation",
+      "subjectId": "the-antimicrobial-clock-is-tiered",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "infectious-disease",
+      "subjectKind": "explanation",
+      "subjectId": "two-guidelines-can-disagree-and-both-stand",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "infectious-disease",
+      "subjectKind": "explanation",
+      "subjectId": "in-neutropenia-the-signs-are-missing",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
     }
   ],
   "scenarios": [

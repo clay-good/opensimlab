@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "infectious-disease",
-  "recordCount": 10,
+  "recordCount": 16,
   "records": [
     {
       "recordId": "scenario:meningococcal-sepsis-recognition-and-escalation@0.1.0",
@@ -111,6 +111,66 @@
       "evidence": [
         "/catalog/infectious-disease-completion-audit.json#meningitis-imaging-a-rule-that-does-not-agree@0.1.0",
         "/catalog/infectious-disease-quality-audit.json#meningitis-imaging-a-rule-that-does-not-agree@0.1.0"
+      ]
+    },
+    {
+      "recordId": "explanation:a-score-answers-the-question-it-was-built-for@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "a-score-answers-the-question-it-was-built-for",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/infectious-disease/content/explainers.ts#a-score-answers-the-question-it-was-built-for"
+      ]
+    },
+    {
+      "recordId": "explanation:a-score-cannot-exclude-what-it-was-not-built-to-exclude@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "a-score-cannot-exclude-what-it-was-not-built-to-exclude",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/infectious-disease/content/explainers.ts#a-score-cannot-exclude-what-it-was-not-built-to-exclude"
+      ]
+    },
+    {
+      "recordId": "explanation:a-definition-can-have-no-truth-value-yet@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "a-definition-can-have-no-truth-value-yet",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/infectious-disease/content/explainers.ts#a-definition-can-have-no-truth-value-yet"
+      ]
+    },
+    {
+      "recordId": "explanation:the-antimicrobial-clock-is-tiered@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "the-antimicrobial-clock-is-tiered",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/infectious-disease/content/explainers.ts#the-antimicrobial-clock-is-tiered"
+      ]
+    },
+    {
+      "recordId": "explanation:two-guidelines-can-disagree-and-both-stand@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "two-guidelines-can-disagree-and-both-stand",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/infectious-disease/content/explainers.ts#two-guidelines-can-disagree-and-both-stand"
+      ]
+    },
+    {
+      "recordId": "explanation:in-neutropenia-the-signs-are-missing@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "in-neutropenia-the-signs-are-missing",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/infectious-disease/content/explainers.ts#in-neutropenia-the-signs-are-missing"
       ]
     }
   ]

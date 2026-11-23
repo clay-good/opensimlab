@@ -8,6 +8,7 @@ import { ClinicalModuleRoute, type ClinicalModuleConfig } from '../AnesthesiaRou
 import { DEFAULT_INFECTIOUS_DISEASE_SCENARIO_ID, INFECTIOUS_DISEASE_SCENARIOS, getInfectiousDiseaseScenario } from '../../modules/infectious-disease/scenarios';
 import { INFECTIOUS_DISEASE_LIMITATIONS } from '@platform/docs/limitations/infectious-disease';
 import { INFECTIOUS_DISEASE_DEMONSTRATIONS } from '../../modules/infectious-disease/demo/demonstrations';
+import { INFECTIOUS_DISEASE_EXPLAINERS } from '../../modules/infectious-disease/content/explainers';
 import { INFECTIOUS_DISEASE_TRAYS } from '../../modules/infectious-disease/trays';
 
 const INFECTIOUS_DISEASE_CONFIG: ClinicalModuleConfig = {
@@ -20,6 +21,7 @@ const INFECTIOUS_DISEASE_CONFIG: ClinicalModuleConfig = {
   defaultScenarioId: DEFAULT_INFECTIOUS_DISEASE_SCENARIO_ID,
   getScenario: getInfectiousDiseaseScenario,
   demonstrations: INFECTIOUS_DISEASE_DEMONSTRATIONS,
+  explainers: INFECTIOUS_DISEASE_EXPLAINERS,
   trays: INFECTIOUS_DISEASE_TRAYS,
 };
 
