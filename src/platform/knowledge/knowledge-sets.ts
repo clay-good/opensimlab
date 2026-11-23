@@ -5,12 +5,13 @@
  *
  * One declaration per module, in one place, so the floor and the gaps are
  * something the gate can count rather than something a reader has to infer.
- * Anesthesia declares what it ships. The other fifteen declare empty sets, and
- * that is the point: an empty set is a stated fact, the gate reports it, and
- * filling it is clinical authoring with sources, not something to generate.
+ * The explainers come from the shared registry, so a module that authors a set
+ * is counted here by that alone. A module that has authored none declares an
+ * empty set, and that is the point: an empty set is a stated fact, the gate
+ * reports it, and filling it is clinical authoring with sources.
  */
-import { EXPLAINERS } from '@anesthesia/content/explainers';
 import { DRUG_CARDS } from '@anesthesia/content/drug-cards';
+import { explainersForModule } from './explainer-registry';
 import { FACILITATED_SCENARIOS } from '@platform/facilitation/scenario-catalog';
 import { availableModules } from '@platform/modules/registry';
 
@@ -26,14 +27,17 @@ export interface KnowledgeSet {
 /** The floor, not the target: no module should ship lessons with no explanation at all. */
 export const EXPLAINER_FLOOR = 6;
 
-const DECLARED: Readonly<Record<string, Omit<KnowledgeSet, 'moduleId'>>> = {
-  anesthesia: { explainers: EXPLAINERS, cards: DRUG_CARDS, whyTemplates: [] },
+/** The intervention cards each module declares, by module id. */
+const DECLARED_CARDS: Readonly<Record<string, readonly { readonly drugId: string }[]>> = {
+  anesthesia: DRUG_CARDS,
 };
 
 /** Every available module's knowledge set; a module with nothing declared has an empty one. */
 export const KNOWLEDGE_SETS: readonly KnowledgeSet[] = availableModules().map((module) => ({
   moduleId: module.id,
-  ...(DECLARED[module.id] ?? { explainers: [], cards: [], whyTemplates: [] }),
+  explainers: explainersForModule(module.id),
+  cards: DECLARED_CARDS[module.id] ?? [],
+  whyTemplates: [],
 }));
 
 export interface KnowledgeGap {

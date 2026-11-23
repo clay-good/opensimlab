@@ -19,7 +19,7 @@ import type { ContentMaturity } from '../catalog/maturity';
 import { MATURITY_STATUSES } from '../catalog/maturity';
 import { MATURITY_LABELS } from './publication';
 import { EDITORIAL_BOARD } from './records';
-import { EXPLAINERS } from '@anesthesia/content/explainers';
+import { allExplainers } from '@platform/knowledge/explainer-registry';
 import { DRUG_CARDS } from '@anesthesia/content/drug-cards';
 import { REGIONS } from '@anesthesia/region/profiles';
 import { SCENARIOS } from '@anesthesia/scenarios';
@@ -124,9 +124,9 @@ export function reviewStatusItems(): ReviewStatusItem[] {
       }
     }
   }
-  for (const explainer of EXPLAINERS) {
+  for (const { module, explainer } of allExplainers()) {
     items.push({
-      kind: 'explainer', id: explainer.id, title: explainer.title, route: 'anesthesia',
+      kind: 'explainer', id: explainer.id, title: explainer.title, route: module.route,
       contentVersion: explainer.review.contentVersion, status: explainer.maturity,
     });
   }

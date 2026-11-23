@@ -156,7 +156,7 @@
       },
       {
         "path": "src/platform/governance/records.ts",
-        "sha256": "f8a993962b69a5f4004f3ee735cdd2ebd5931f2b853f36bddb13fd415fac3f91"
+        "sha256": "e0af450a431cb890a87c5fd594304945e28e911937ce6b04aef9e632c1a6b205"
       },
       {
         "path": "src/platform/governance/review-gate.ts",
@@ -176,7 +176,7 @@
       },
       {
         "path": "src/routes/AnesthesiaRoute.tsx",
-        "sha256": "d9aea21ead15bc82b7b896c2302126c8a5bbe92583b715421bbb054aaebc5ff7"
+        "sha256": "0e00588e11396909b7c169b415c81a0ba2b19ed1e5537d8e53262d1c4500398d"
       },
       {
         "path": "tests/integration/demonstration-runs.test.tsx",
@@ -249,7 +249,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Cockpit.tsx",
-        "sha256": "6dddf157c89fe0efcec6afe64dc22548089a0dc250bf9949f94e1e204842c07a"
+        "sha256": "096e42b967dfddf63d3517420c8ac226e486e76ca4fc9e6c109b4a205e6497d9"
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
@@ -397,7 +397,7 @@
       },
       {
         "path": "src/platform/governance/records.ts",
-        "sha256": "f8a993962b69a5f4004f3ee735cdd2ebd5931f2b853f36bddb13fd415fac3f91"
+        "sha256": "e0af450a431cb890a87c5fd594304945e28e911937ce6b04aef9e632c1a6b205"
       },
       {
         "path": "src/platform/governance/review-gate.ts",
@@ -437,7 +437,7 @@
       },
       {
         "path": "src/routes/AnesthesiaRoute.tsx",
-        "sha256": "d9aea21ead15bc82b7b896c2302126c8a5bbe92583b715421bbb054aaebc5ff7"
+        "sha256": "0e00588e11396909b7c169b415c81a0ba2b19ed1e5537d8e53262d1c4500398d"
       },
       {
         "path": "tests/integration/hyponatremia-correction-runs.test.ts",
@@ -514,7 +514,7 @@
       },
       {
         "path": "src/modules/anesthesia/ui/Cockpit.tsx",
-        "sha256": "6dddf157c89fe0efcec6afe64dc22548089a0dc250bf9949f94e1e204842c07a"
+        "sha256": "096e42b967dfddf63d3517420c8ac226e486e76ca4fc9e6c109b4a205e6497d9"
       },
       {
         "path": "src/modules/anesthesia/ui/Debrief.tsx",
@@ -674,7 +674,7 @@
       },
       {
         "path": "src/platform/governance/records.ts",
-        "sha256": "f8a993962b69a5f4004f3ee735cdd2ebd5931f2b853f36bddb13fd415fac3f91"
+        "sha256": "e0af450a431cb890a87c5fd594304945e28e911937ce6b04aef9e632c1a6b205"
       },
       {
         "path": "src/platform/governance/review-gate.ts",
@@ -706,7 +706,7 @@
       },
       {
         "path": "src/routes/AnesthesiaRoute.tsx",
-        "sha256": "d9aea21ead15bc82b7b896c2302126c8a5bbe92583b715421bbb054aaebc5ff7"
+        "sha256": "0e00588e11396909b7c169b415c81a0ba2b19ed1e5537d8e53262d1c4500398d"
       },
       {
         "path": "tests/integration/avp-deficiency-demonstration-session.test.tsx",

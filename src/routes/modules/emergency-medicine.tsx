@@ -9,6 +9,7 @@ import { DEFAULT_EMERGENCY_MEDICINE_SCENARIO_ID, EMERGENCY_MEDICINE_SCENARIOS, g
 import { EMERGENCY_MEDICINE_LIMITATIONS } from '@platform/docs/limitations/emergency-medicine';
 import { EMERGENCY_MEDICINE_TRAYS } from '../../modules/emergency-medicine/trays';
 import { EMERGENCY_MEDICINE_DEMONSTRATIONS } from '../../modules/emergency-medicine/demo/demonstrations';
+import { EMERGENCY_MEDICINE_EXPLAINERS } from '../../modules/emergency-medicine/content/explainers';
 
 const EMERGENCY_MEDICINE_CONFIG: ClinicalModuleConfig = {
   id: 'emergency-medicine', basePath: '/emergency-medicine',
@@ -20,6 +21,7 @@ const EMERGENCY_MEDICINE_CONFIG: ClinicalModuleConfig = {
   defaultScenarioId: DEFAULT_EMERGENCY_MEDICINE_SCENARIO_ID,
   getScenario: getEmergencyMedicineScenario,
   demonstrations: EMERGENCY_MEDICINE_DEMONSTRATIONS,
+  explainers: EMERGENCY_MEDICINE_EXPLAINERS,
 };
 
 export function EmergencyMedicineRoute({ path }: { path: string }) {

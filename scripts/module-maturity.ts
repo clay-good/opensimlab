@@ -61,13 +61,15 @@ export const RAPID_CYCLE_SCENARIOS: readonly Scenario[] =
  * The published file and the copy the adoption pack reads used to be built by
  * two separate calls, and only the first passed anesthesia its extra subjects.
  * They go through here now, so a subject cannot reach one and miss the other.
+ * Each module asks for its own non-scenario subjects: its explainers go in its
+ * own catalog rather than anesthesia's.
  */
 export function moduleMaturity(
   completion: ScenarioCompletionCatalog,
   quality: ScenarioQualityCatalog,
 ): MaturityCatalog {
   return buildMaturityCatalog(completion, quality, [
-    ...completion.moduleId === 'anesthesia' ? additionalMaturitySubjects() : [],
+    ...additionalMaturitySubjects(completion.moduleId),
     ...rapidCycleMaturitySubjects(SCENARIOS_BY_MODULE[completion.moduleId] ?? [], completion.moduleId),
   ]);
 }

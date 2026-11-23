@@ -102,6 +102,15 @@ explainers open their sandbox view from the cockpit, and each view links back to
 explainer demonstrates. Not yet: fluid and electrolyte inputs, which have no shared model to
 expose.
 
+**The concepts behind a lesson are read beside it.** The cockpit's Learn tab lists the running
+module's own concept explainers — each under 250 words, with a figure caption, the guideline or
+publication it reflects, a statement of where it simplifies, and the lesson that demonstrates it.
+Anesthesia has ten, emergency medicine six. The other fourteen modules have authored none yet and
+show the shared physiology set until they do, which is a gap rather than a claim: `npm run gate`
+reports every module below the six-explainer floor by name, and the
+[review-status page](https://opensimlab.com/review-status) counts explainers and intervention
+cards per module, zeros included.
+
 **It can be run in a room, not only alone.** Every lesson has a printable
 [facilitator guide](https://opensimlab.com/facilitator/anesthesia/scenario/routine-induction) at
 `/facilitator/<module>/scenario/<id>`, generated from the scenario rather than written beside it,

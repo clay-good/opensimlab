@@ -6,65 +6,12 @@
  * clinical review and exact maturity records.
  */
 
-import type { ContentMaturity } from '@platform/catalog/maturity';
+import { UNSIGNED_REVIEW, type ClinicalReview, type Diagram, type Explainer } from '@platform/knowledge/explainer';
 
-export interface Diagram {
-  /** Inline SVG drawn from design tokens. No image file is fetched. */
-  readonly kind: 'hysteresis' | 'apnea-curve' | 'synergy-surface' | 'capnogram-phases';
-  readonly caption: string;
-}
+export type { ClinicalReview, Diagram, Explainer };
+export { wordCount } from '@platform/knowledge/explainer';
 
-export interface ClinicalReview {
-  readonly reviewer: string;
-  readonly credential: string;
-  readonly reviewedOn: string;
-  readonly reviewBy: string;
-  readonly contentVersion: string;
-  readonly sources: readonly string[];
-}
-
-export interface Explainer {
-  readonly id: string;
-  readonly maturity: ContentMaturity;
-  readonly title: string;
-  /** Under 250 words. The word count is asserted in the tests. */
-  readonly body: string;
-  readonly diagram: Diagram;
-  /** The scenario or sandbox state that demonstrates it live. */
-  readonly showMe: {
-    readonly scenarioId: string;
-    readonly atTick?: number;
-    /**
-     * A sandbox state, as the URL query that opens it, showing the idea with
-     * no case around it. A string rather than a typed state so this module,
-     * which the cockpit loads, does not pull in the sandbox; the test that
-     * every "show me" resolves parses it.
-     */
-    readonly sandbox?: string;
-  };
-  /** The guideline or source this reflects, with its year. */
-  readonly reflects: string;
-  /**
-   * Where this explanation simplifies, in the reader's own words.
-   *
-   * Every explainer here is under 250 words about something that is not simple,
-   * so each one leaves something out, and which thing it leaves out is the part a
-   * learner is most likely to over-apply. The publication gate requires this
-   * field for the same reason it requires scenario limitations: an explanation
-   * that does not say where it stops reads as though it does not stop.
-   */
-  readonly simplifies: string;
-  readonly review: ClinicalReview;
-}
-
-const UNSIGNED: ClinicalReview = {
-  reviewer: 'UNSIGNED',
-  credential: 'UNSIGNED',
-  reviewedOn: '1970-01-01',
-  reviewBy: '1970-01-01',
-  contentVersion: '0.1.0',
-  sources: [],
-};
+const UNSIGNED = UNSIGNED_REVIEW;
 
 export const EXPLAINERS: readonly Explainer[] = [
   {
@@ -366,7 +313,3 @@ export function getExplainer(id: string): Explainer {
   return explainer;
 }
 
-/** Word count, so the under-250-word rule is checkable. */
-export function wordCount(text: string): number {
-  return text.trim().split(/\s+/).filter(Boolean).length;
-}

@@ -11,7 +11,7 @@
 
 import { useMemo, useState } from 'react';
 import { Badge, Button, SiteBar } from '@platform/ui';
-import { EXPLAINERS } from '@anesthesia/content/explainers';
+import { allExplainers } from '@platform/knowledge/explainer-registry';
 import { DRUG_CARDS } from '@anesthesia/content/drug-cards';
 import { SCENARIOS } from '@anesthesia/scenarios';
 import { LIMITATIONS } from '@platform/docs/limitations';
@@ -49,12 +49,15 @@ function reviewableRows(): ReviewableRow[] {
       contentVersion: card.review.contentVersion,
     });
   }
-  for (const explainer of EXPLAINERS) {
+  // Every module's explainers, each linked to the lesson it says demonstrates
+  // it, so a reviewer reads the explanation where it is used rather than beside
+  // whichever scenario happened to be first.
+  for (const { module, explainer } of allExplainers()) {
     rows.push({
       key: `explainer:${explainer.id}`,
       label: explainer.title,
       kind: t('cr.kind-explainer'),
-      href: `/anesthesia/scenario/${SCENARIOS[0]!.metadata.id}?review=1`,
+      href: `/${module.route}/scenario/${explainer.showMe.scenarioId}?review=1`,
       contentVersion: explainer.review.contentVersion,
     });
   }

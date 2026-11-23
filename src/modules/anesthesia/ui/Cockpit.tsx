@@ -126,7 +126,8 @@ import {
 import { promptFor, promptStillEligible, type Prompt } from '../tutor/guidance';
 import { concentrationCsv } from './ConcentrationPanel';
 import { findStacking } from '@anesthesia/debrief/analysis';
-import { EXPLAINERS, getExplainer } from '@anesthesia/content/explainers';
+import { EXPLAINERS } from '@anesthesia/content/explainers';
+import { findExplainer, type Explainer } from '@platform/knowledge/explainer';
 import { getDrugCard } from '@anesthesia/content/drug-cards';
 import type { DrugConcentration } from '@platform/kernel/protocol';
 import type { RhythmId } from '@anesthesia/waveforms/types';
@@ -190,6 +191,15 @@ export interface CockpitProps {
   readonly demonstrations?: readonly LessonDemonstration[];
   /** This module's lesson trays, supplied by its route beside its worked examples. */
   readonly trays?: readonly LessonTray[];
+  /**
+   * This module's concept explainers, supplied by its route for the same reason
+   * its trays are: so a module's prose stays in that module's chunk.
+   *
+   * A module that has authored none keeps showing the shared physiology set,
+   * which is what the Learn tab has always shown in every module. The gate
+   * reports the gap rather than this panel hiding it.
+   */
+  readonly explainers?: readonly Explainer[];
   readonly moduleId?: 'anesthesia' | 'emergency-medicine' | 'critical-care' | 'cardiology' | 'respiratory-medicine' | 'pediatrics' | 'neurology' | 'toxicology' | 'obstetrics' | 'neonatology' | 'endocrine-metabolic' | 'renal-electrolyte' | 'infectious-disease' | 'medical-surgical-nursing' | 'oncology' | 'surgery-trauma';
 }
 
@@ -277,6 +287,7 @@ export function Cockpit({
   onSourceVisibilityChange, rapidCycle,
   demonstrations,
   trays,
+  explainers,
   moduleId = 'anesthesia',
 }: CockpitProps) {
   const session = useSession();
@@ -1199,6 +1210,15 @@ export function Cockpit({
   const [colorblindSafe] = useLocalPreference('colorblind-safe', false);
   const [whyField, setWhyField] = useState<StateField | null>(null);
   const [explainerId, setExplainerId] = useState<string | null>(null);
+  /** The set the Learn tab lists: this module's own, or the shared one until it has its own. */
+  const learnExplainers = explainers && explainers.length > 0 ? explainers : EXPLAINERS;
+  /**
+   * The explainer a drawer is open on. The Why panel's terms come from the
+   * shared physiology, so a term can name an explainer this module did not
+   * author; resolution falls back to the shared set rather than throwing.
+   */
+  const openExplainer = explainerId === null ? undefined
+    : findExplainer(learnExplainers, explainerId) ?? findExplainer(EXPLAINERS, explainerId);
   const [drugCardId, setDrugCardId] = useState<string | null>(null);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const updateAvailable = useUpdateAvailable();
@@ -1937,6 +1957,7 @@ export function Cockpit({
             'text/csv',
           )}
           onOpenExplainer={setExplainerId}
+          explainers={learnExplainers}
           onMarkLogRead={session.markLogRead}
         />
       </div>
@@ -2219,33 +2240,33 @@ export function Cockpit({
         onOpenDrugCard={setDrugCardId}
       />
 
-      <Drawer open={explainerId !== null} title={explainerId ? getExplainer(explainerId).title : ''} onClose={() => setExplainerId(null)}>
-        {explainerId && (
+      <Drawer open={openExplainer !== undefined} title={openExplainer?.title ?? ''} onClose={() => setExplainerId(null)}>
+        {openExplainer && (
           <div className="reading" style={{ padding: 0 }}>
             <ClinicalContentMarker />
-            {getExplainer(explainerId).body.split('\n\n').map((paragraph, index) => (
+            {openExplainer.body.split('\n\n').map((paragraph, index) => (
               <p key={index}>{paragraph}</p>
             ))}
-            <p className="reading__aside">{getExplainer(explainerId).diagram.caption}</p>
-            <p className="reading__aside">{t('cockpit.reflects', { what: getExplainer(explainerId).reflects })}</p>
-            {getExplainer(explainerId).showMe.sandbox && (
-              <p><a href={`/anesthesia/sandbox?${getExplainer(explainerId).showMe.sandbox!}`}>{t('cockpit.show-me-sandbox')}</a></p>
+            <p className="reading__aside">{openExplainer.diagram.caption}</p>
+            <p className="reading__aside">{t('cockpit.reflects', { what: openExplainer.reflects })}</p>
+            {openExplainer.showMe.sandbox && (
+              <p><a href={`/anesthesia/sandbox?${openExplainer.showMe.sandbox}`}>{t('cockpit.show-me-sandbox')}</a></p>
             )}
             {onReportSource && (
               <Button compact variant="ghost" onClick={onReportSource}>{t('cockpit.report-source')}</Button>
             )}
             <UnreviewedMarker
-              status={getExplainer(explainerId).maturity}
+              status={openExplainer.maturity}
               subjectKind="explanation"
-              subjectId={getExplainer(explainerId).id}
-              contentVersion={getExplainer(explainerId).review.contentVersion}
-              review={getExplainer(explainerId).review}
+              subjectId={openExplainer.id}
+              contentVersion={openExplainer.review.contentVersion}
+              review={openExplainer.review}
             />
             {reviewMode && (
               <FlagControl
-                itemKey={`explainer:${explainerId}`}
-                itemLabel={getExplainer(explainerId).title}
-                contentVersion={getExplainer(explainerId).review.contentVersion}
+                itemKey={`explainer:${openExplainer.id}`}
+                itemLabel={openExplainer.title}
+                contentVersion={openExplainer.review.contentVersion}
                 appVersion={APP_VERSION}
                 now={() => new Date().toISOString()}
               />

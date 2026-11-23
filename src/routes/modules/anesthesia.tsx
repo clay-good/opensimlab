@@ -9,12 +9,14 @@ import { ClinicalModuleRoute, type ClinicalModuleConfig } from '../AnesthesiaRou
 import { DEFAULT_SCENARIO_ID, getScenario, scenariosByDifficulty } from '@anesthesia/scenarios';
 import { ANESTHESIA_LIMITATIONS } from '@platform/docs/limitations/anesthesia';
 import { ANESTHESIA_TRAYS } from '@anesthesia/trays';
+import { EXPLAINERS } from '@anesthesia/content/explainers';
 
 const ANESTHESIA_CONFIG: ClinicalModuleConfig = {
   id: 'anesthesia', basePath: '/anesthesia', heading: 'Anesthesia simulator',
   limitations: ANESTHESIA_LIMITATIONS,
   catalogIntroduction: '', catalogStatus: '',
   trays: ANESTHESIA_TRAYS,
+  explainers: EXPLAINERS,
   scenarios: scenariosByDifficulty(), defaultScenarioId: DEFAULT_SCENARIO_ID, getScenario,
 };
 

@@ -136,6 +136,7 @@ import {
   type ReportContextScalar, type ReportSurface, type ScenarioReportRecentContext,
 } from '@platform/reporting/contracts';
 import type { Limitation } from '@platform/docs/limitations/types';
+import type { Explainer } from '@platform/knowledge/explainer';
 import { SITE_ORIGIN } from './site-metadata';
 import { t } from '@platform/i18n/messages';
 import '@platform/i18n/messages-session';
@@ -163,6 +164,13 @@ export interface ClinicalModuleConfig {
   readonly demonstrations?: readonly LessonDemonstration[];
   /** This module's lesson trays, carried for the same reason as its worked examples. */
   readonly trays?: readonly LessonTray[];
+  /**
+   * This module's concept explainers, carried for the same reason: the Learn tab
+   * lists the running module's own concepts, and a module's prose stays in that
+   * module's chunk. A module that has authored none supplies nothing and keeps
+   * showing the shared physiology set.
+   */
+  readonly explainers?: readonly Explainer[];
 }
 
 /**
@@ -1160,6 +1168,7 @@ export function ClinicalModuleRoute({ path, config }: { path: string; config: Cl
       moduleId={config.id}
       demonstrations={config.demonstrations}
       trays={config.trays}
+      explainers={config.explainers}
       onReportSource={() => requestReport('source')}
       onSourceVisibilityChange={setSourceOpen}
       {...(rapidCycleRun && rapidCycleState ? { rapidCycle: {

@@ -14,7 +14,7 @@ import type { Attribution, DrugConcentration, EngineEvent } from '@platform/kern
 import type { HistorySample } from '@platform/session/session-store';
 import type { Scenario } from '@anesthesia/engine';
 import { ConcentrationPanel } from './ConcentrationPanel';
-import { EXPLAINERS } from '@anesthesia/content/explainers';
+import type { Explainer } from '@platform/knowledge/explainer';
 import { ASA_MONITORING_EXPLAINER } from './tracks';
 import { HONEST_STATUS } from '@platform/governance/status';
 import { t } from '@platform/i18n/messages';
@@ -37,6 +37,8 @@ export interface AnalysisRegionProps {
   readonly selectedTick: number | null;
   readonly onExportCsv: () => void;
   readonly onOpenExplainer: (id: string) => void;
+  /** The concept explainers of the module being run, listed in the Learn tab. */
+  readonly explainers: readonly Explainer[];
   readonly onMarkLogRead: () => void;
   readonly initialTab?: AnalysisTab;
   readonly moduleId?: string;
@@ -109,7 +111,7 @@ export function AnalysisRegion(props: AnalysisRegionProps) {
         </TabPanel>
 
         <TabPanel id="learn" active={tab}>
-          <LearnPanel onOpen={props.onOpenExplainer} />
+          <LearnPanel explainers={props.explainers} onOpen={props.onOpenExplainer} />
         </TabPanel>
       </div>
     </div>
@@ -149,12 +151,12 @@ function PatientPanel({ scenario, moduleId }: { scenario: Scenario; moduleId?: s
   );
 }
 
-function LearnPanel({ onOpen }: { onOpen: (id: string) => void }) {
+function LearnPanel({ explainers, onOpen }: { explainers: readonly Explainer[]; onOpen: (id: string) => void }) {
   return (
     <div className="reading" style={{ padding: 0 }}>
       <h2>{t('learn.concepts')}</h2>
       <ul style={{ listStyle: 'none' }}>
-        {EXPLAINERS.map((explainer) => (
+        {explainers.map((explainer) => (
           <li key={explainer.id}>
             <Button variant="ghost" onClick={() => onOpen(explainer.id)}>{explainer.title}</Button>
           </li>

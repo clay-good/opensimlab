@@ -2579,6 +2579,60 @@
     },
     {
       "moduleId": "emergency-medicine",
+      "subjectKind": "explanation",
+      "subjectId": "shock-is-a-perfusion-problem",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "emergency-medicine",
+      "subjectKind": "explanation",
+      "subjectId": "tension-pneumothorax-obstructs-filling",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "emergency-medicine",
+      "subjectKind": "explanation",
+      "subjectId": "calcium-protects-without-lowering-potassium",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "emergency-medicine",
+      "subjectKind": "explanation",
+      "subjectId": "fluid-then-vasopressor-in-septic-shock",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "emergency-medicine",
+      "subjectKind": "explanation",
+      "subjectId": "compressions-make-the-shock-work",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "emergency-medicine",
+      "subjectKind": "explanation",
+      "subjectId": "normal-pressure-can-hide-hemorrhage",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "reason": "preview",
+      "detail": "Its status is \"Educational use only. Not clinically reviewed\". Only current clinically reviewed or institution-endorsed content counts toward reviewed coverage."
+    },
+    {
+      "moduleId": "emergency-medicine",
       "subjectKind": "tutor-rule",
       "subjectId": "obstructive-shock-tension-pneumothorax-help-within-thirty-seconds",
       "contentVersion": "0.1.0",

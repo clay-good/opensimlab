@@ -85,7 +85,7 @@ describe('COPD transition private-tutor surface', () => {
       scenario: SCENARIO, history: [], concentrations: [], attribution: [], log: [],
       unreadLog: false, tick: 0, timeToPeakSeconds: {}, stacking: [], wide: false,
       onSelectTick: () => {}, selectedTick: null, onExportCsv: () => {},
-      onOpenExplainer: () => {}, onMarkLogRead: () => {}, initialTab: 'patient',
+      onOpenExplainer: () => {}, explainers: [], onMarkLogRead: () => {}, initialTab: 'patient',
       moduleId: 'respiratory-medicine',
     }));
     expect(markup).toMatch(/role="tab"[^>]*aria-selected="true"[^>]*>Patient/);

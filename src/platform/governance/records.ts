@@ -7,7 +7,7 @@
  */
 
 import type { BoardMember, ReviewableItem } from './review-gate';
-import { EXPLAINERS } from '@anesthesia/content/explainers';
+import { allExplainers } from '@platform/knowledge/explainer-registry';
 import { DRUG_CARDS } from '@anesthesia/content/drug-cards';
 import { SCENARIOS } from '@anesthesia/scenarios';
 import { REGIONS } from '@anesthesia/region/profiles';
@@ -173,13 +173,16 @@ export function reviewableItems(): ReviewableItem[] {
       domains: ['surgery-trauma'] });
   }
 
-  for (const explainer of EXPLAINERS) {
+  // Every module's explainers, each under its own module's review domain. This
+  // read the anesthesia array alone, which would have left a second module's
+  // explanations unjudged by the gate that exists to catch exactly that.
+  for (const { module, explainer } of allExplainers()) {
     items.push({
       id: explainer.id,
       kind: 'explainer',
       contentVersion: explainer.review.contentVersion,
       review: explainer.review,
-      domains: ['adult-general-anaesthesia'],
+      domains: [module.reviewDomain],
     });
   }
 
@@ -232,14 +235,30 @@ export function reviewableItems(): ReviewableItem[] {
   return items;
 }
 
-/** Non-scenario content included in the same exact-version maturity catalog. */
-export function additionalMaturitySubjects(): MaturitySubjectInput[] {
+/**
+ * Non-scenario content included in the same exact-version maturity catalog.
+ *
+ * Per module, because a module's explainers belong in that module's catalog: all
+ * of this used to be appended to anesthesia's, which was harmless while
+ * anesthesia was the only module with any, and would have filed a second
+ * module's explanations under the first the moment one authored a set. The drug
+ * cards and practice regions are anesthesia's own content and stay there.
+ */
+export function additionalMaturitySubjects(moduleId = 'anesthesia'): MaturitySubjectInput[] {
   return [
-    ...EXPLAINERS.map((explainer): MaturitySubjectInput => ({
-      subjectKind: 'explanation', subjectId: explainer.id,
-      contentVersion: explainer.review.contentVersion, status: explainer.maturity,
-      evidence: [`src/modules/anesthesia/content/explainers.ts#${explainer.id}`],
-    })),
+    ...allExplainers()
+      .filter(({ module }) => module.moduleId === moduleId)
+      .map(({ module, explainer }): MaturitySubjectInput => ({
+        subjectKind: 'explanation', subjectId: explainer.id,
+        contentVersion: explainer.review.contentVersion, status: explainer.maturity,
+        evidence: [`${module.sourcePath}#${explainer.id}`],
+      })),
+    ...(moduleId === 'anesthesia' ? anesthesiaOwnSubjects() : []),
+  ];
+}
+
+function anesthesiaOwnSubjects(): MaturitySubjectInput[] {
+  return [
     ...DRUG_CARDS.map((card): MaturitySubjectInput => ({
       subjectKind: 'drug-card', subjectId: card.drugId,
       contentVersion: card.review.contentVersion, status: card.maturity,

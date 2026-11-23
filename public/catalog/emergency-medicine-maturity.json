@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "emergency-medicine",
-  "recordCount": 31,
+  "recordCount": 37,
   "records": [
     {
       "recordId": "scenario:undifferentiated-shock@0.1.0",
@@ -276,6 +276,66 @@
       "evidence": [
         "/catalog/emergency-medicine-completion-audit.json#acute-aortic-syndrome@0.1.0",
         "/catalog/emergency-medicine-quality-audit.json#acute-aortic-syndrome@0.1.0"
+      ]
+    },
+    {
+      "recordId": "explanation:shock-is-a-perfusion-problem@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "shock-is-a-perfusion-problem",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/emergency-medicine/content/explainers.ts#shock-is-a-perfusion-problem"
+      ]
+    },
+    {
+      "recordId": "explanation:tension-pneumothorax-obstructs-filling@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "tension-pneumothorax-obstructs-filling",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/emergency-medicine/content/explainers.ts#tension-pneumothorax-obstructs-filling"
+      ]
+    },
+    {
+      "recordId": "explanation:calcium-protects-without-lowering-potassium@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "calcium-protects-without-lowering-potassium",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/emergency-medicine/content/explainers.ts#calcium-protects-without-lowering-potassium"
+      ]
+    },
+    {
+      "recordId": "explanation:fluid-then-vasopressor-in-septic-shock@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "fluid-then-vasopressor-in-septic-shock",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/emergency-medicine/content/explainers.ts#fluid-then-vasopressor-in-septic-shock"
+      ]
+    },
+    {
+      "recordId": "explanation:compressions-make-the-shock-work@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "compressions-make-the-shock-work",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/emergency-medicine/content/explainers.ts#compressions-make-the-shock-work"
+      ]
+    },
+    {
+      "recordId": "explanation:normal-pressure-can-hide-hemorrhage@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "normal-pressure-can-hide-hemorrhage",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/emergency-medicine/content/explainers.ts#normal-pressure-can-hide-hemorrhage"
       ]
     },
     {

@@ -50,7 +50,7 @@ import { notesToMarkdown } from '@platform/governance/review-notes';
 import { practiceHistoryExport } from '@anesthesia/catalog/practice-history';
 import { ROUTES } from '@routes/routes';
 import { buildValidationReport } from '@platform/docs/validation-report';
-import { EXPLAINERS } from '@anesthesia/content/explainers';
+import { allExplainers } from '@platform/knowledge/explainer-registry';
 import { DRUG_CARDS } from '@anesthesia/content/drug-cards';
 import { REGIONS } from '@anesthesia/region/profiles';
 
@@ -76,7 +76,9 @@ function nonScenarioEvidenceInput(item: { kind: string; id: string }): NonScenar
       : {};
   }
   if (item.kind === 'explainer') {
-    const explainer = EXPLAINERS.find((entry) => entry.id === item.id);
+    // Every module's, not anesthesia's: looking in one module's array reported a
+    // second module's explainers as missing the source and limitation they state.
+    const explainer = allExplainers().find((entry) => entry.explainer.id === item.id)?.explainer;
     return explainer
       ? { reflects: explainer.reflects, simplifies: explainer.simplifies, body: explainer.body }
       : {};
