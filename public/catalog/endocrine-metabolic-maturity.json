@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "endocrine-metabolic",
-  "recordCount": 12,
+  "recordCount": 18,
   "records": [
     {
       "recordId": "scenario:dka-resolution-transition@0.1.0",
@@ -133,6 +133,66 @@
       "evidence": [
         "/catalog/endocrine-metabolic-completion-audit.json#perioperative-diabetes-insulin-continuity@0.1.0",
         "/catalog/endocrine-metabolic-quality-audit.json#perioperative-diabetes-insulin-continuity@0.1.0"
+      ]
+    },
+    {
+      "recordId": "explanation:in-adrenal-crisis-the-sample-waits-not-the-treatment@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "in-adrenal-crisis-the-sample-waits-not-the-treatment",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/endocrine-metabolic/content/explainers.ts#in-adrenal-crisis-the-sample-waits-not-the-treatment"
+      ]
+    },
+    {
+      "recordId": "explanation:ketoacidosis-resolves-on-ketones@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "ketoacidosis-resolves-on-ketones",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/endocrine-metabolic/content/explainers.ts#ketoacidosis-resolves-on-ketones"
+      ]
+    },
+    {
+      "recordId": "explanation:the-hyperosmolar-state-is-a-water-problem@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "the-hyperosmolar-state-is-a-water-problem",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/endocrine-metabolic/content/explainers.ts#the-hyperosmolar-state-is-a-water-problem"
+      ]
+    },
+    {
+      "recordId": "explanation:sodium-correction-has-a-speed-limit@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "sodium-correction-has-a-speed-limit",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/endocrine-metabolic/content/explainers.ts#sodium-correction-has-a-speed-limit"
+      ]
+    },
+    {
+      "recordId": "explanation:in-myxedema-the-steroid-comes-first@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "in-myxedema-the-steroid-comes-first",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/endocrine-metabolic/content/explainers.ts#in-myxedema-the-steroid-comes-first"
+      ]
+    },
+    {
+      "recordId": "explanation:refeeding-moves-electrolytes-into-cells@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "refeeding-moves-electrolytes-into-cells",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/endocrine-metabolic/content/explainers.ts#refeeding-moves-electrolytes-into-cells"
       ]
     }
   ]

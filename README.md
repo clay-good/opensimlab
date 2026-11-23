@@ -106,8 +106,8 @@ expose.
 module's own concept explainers — each under 250 words, with a figure caption, the guideline or
 publication it reflects, a statement of where it simplifies, and the lesson that demonstrates it.
 Anesthesia has ten; emergency medicine, critical care, cardiology, respiratory medicine,
-pediatrics, neurology, toxicology, obstetrics and neonatology six each. The other six modules
-have authored none yet and
+pediatrics, neurology, toxicology, obstetrics, neonatology and endocrine/metabolic six each. The
+other five modules have authored none yet and
 show the shared physiology set until they do, which is a gap rather than a claim: `npm run gate`
 reports every module below the six-explainer floor by name, and the
 [review-status page](https://opensimlab.com/review-status) counts explainers and intervention

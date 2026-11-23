@@ -42,7 +42,9 @@ describe('Endocrine and Metabolic Medicine module foundation', () => {
     const maturity = json('public/catalog/endocrine-metabolic-maturity.json');
     const reports = json('workers/reports/src/report-catalog.generated.json');
     expect(completion.scenarios).toHaveLength(12);
-    expect(maturity.recordCount).toBe(12);
+    // Twelve lessons and the module's six concept explainers, which are recorded
+    // in their own module's catalog rather than anesthesia's.
+    expect(maturity.recordCount).toBe(18);
     for (const { metadata } of ENDOCRINE_METABOLIC_SCENARIOS) {
       expect(reviewableItems()).toContainEqual(expect.objectContaining({ id: metadata.id, domains: ['endocrine-metabolic'] }));
       expect(completion.scenarios).toContainEqual(expect.objectContaining({ scenarioId: metadata.id, moduleId: 'endocrine-metabolic', maturity: 'preview' }));

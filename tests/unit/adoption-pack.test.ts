@@ -72,7 +72,7 @@ describe('static adoption pack', () => {
     // critical care, cardiology, respiratory medicine, pediatrics, neurology and
     // toxicology. The pack spans every module's catalog, so a module authoring a set
     // lands here as a number to bump.
-    expect(kinds).toMatchObject({ explanation: 64, 'drug-card': 3, 'practice-region': 2 });
+    expect(kinds).toMatchObject({ explanation: 70, 'drug-card': 3, 'practice-region': 2 });
     expect(kinds['tutor-rule']).toBeGreaterThan(0);
     for (const entry of committed.dependencies) {
       expect(entry).toMatchObject({ status: 'preview', reason: 'preview' });

@@ -25,6 +25,7 @@ import { NEUROLOGY_EXPLAINERS } from '../../modules/neurology/content/explainers
 import { TOXICOLOGY_EXPLAINERS } from '../../modules/toxicology/content/explainers';
 import { OBSTETRICS_EXPLAINERS } from '../../modules/obstetrics/content/explainers';
 import { NEONATOLOGY_EXPLAINERS } from '../../modules/neonatology/content/explainers';
+import { ENDOCRINE_METABOLIC_EXPLAINERS } from '../../modules/endocrine-metabolic/content/explainers';
 
 export interface ModuleExplainers {
   readonly moduleId: string;
@@ -107,6 +108,13 @@ export const MODULE_EXPLAINERS: readonly ModuleExplainers[] = [
     reviewDomain: 'neonatology',
     sourcePath: 'src/modules/neonatology/content/explainers.ts',
     explainers: NEONATOLOGY_EXPLAINERS,
+  },
+  {
+    moduleId: 'endocrine-metabolic',
+    route: 'endocrine-metabolic',
+    reviewDomain: 'endocrine-metabolic',
+    sourcePath: 'src/modules/endocrine-metabolic/content/explainers.ts',
+    explainers: ENDOCRINE_METABOLIC_EXPLAINERS,
   },
 ];
 
