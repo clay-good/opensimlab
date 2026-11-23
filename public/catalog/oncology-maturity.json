@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "oncology",
-  "recordCount": 11,
+  "recordCount": 17,
   "records": [
     {
       "recordId": "scenario:delayed-immune-event-a-drug-that-stopped-months-ago@0.1.0",
@@ -122,6 +122,66 @@
       "evidence": [
         "/catalog/oncology-completion-audit.json#easy-label-a-label-that-fits-too-easily@0.1.0",
         "/catalog/oncology-quality-audit.json#easy-label-a-label-that-fits-too-easily@0.1.0"
+      ]
+    },
+    {
+      "recordId": "explanation:a-laboratory-syndrome-is-not-the-syndrome@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "a-laboratory-syndrome-is-not-the-syndrome",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/oncology/content/explainers.ts#a-laboratory-syndrome-is-not-the-syndrome"
+      ]
+    },
+    {
+      "recordId": "explanation:a-base-rate-is-not-a-threshold@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "a-base-rate-is-not-a-threshold",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/oncology/content/explainers.ts#a-base-rate-is-not-a-threshold"
+      ]
+    },
+    {
+      "recordId": "explanation:a-rule-written-for-a-database@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "a-rule-written-for-a-database",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/oncology/content/explainers.ts#a-rule-written-for-a-database"
+      ]
+    },
+    {
+      "recordId": "explanation:a-label-that-fits-too-easily@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "a-label-that-fits-too-easily",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/oncology/content/explainers.ts#a-label-that-fits-too-easily"
+      ]
+    },
+    {
+      "recordId": "explanation:a-negative-genotype-covers-what-it-tested@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "a-negative-genotype-covers-what-it-tested",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/oncology/content/explainers.ts#a-negative-genotype-covers-what-it-tested"
+      ]
+    },
+    {
+      "recordId": "explanation:a-prognosis-is-asked-for-and-usually-optimistic@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "a-prognosis-is-asked-for-and-usually-optimistic",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/oncology/content/explainers.ts#a-prognosis-is-asked-for-and-usually-optimistic"
       ]
     }
   ]

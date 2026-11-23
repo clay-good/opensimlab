@@ -29,6 +29,7 @@ import { ENDOCRINE_METABOLIC_EXPLAINERS } from '../../modules/endocrine-metaboli
 import { RENAL_ELECTROLYTE_EXPLAINERS } from '../../modules/renal-electrolyte/content/explainers';
 import { INFECTIOUS_DISEASE_EXPLAINERS } from '../../modules/infectious-disease/content/explainers';
 import { MEDICAL_SURGICAL_NURSING_EXPLAINERS } from '../../modules/medical-surgical-nursing/content/explainers';
+import { ONCOLOGY_EXPLAINERS } from '../../modules/oncology/content/explainers';
 
 export interface ModuleExplainers {
   readonly moduleId: string;
@@ -139,6 +140,13 @@ export const MODULE_EXPLAINERS: readonly ModuleExplainers[] = [
     reviewDomain: 'medical-surgical-nursing',
     sourcePath: 'src/modules/medical-surgical-nursing/content/explainers.ts',
     explainers: MEDICAL_SURGICAL_NURSING_EXPLAINERS,
+  },
+  {
+    moduleId: 'oncology',
+    route: 'oncology',
+    reviewDomain: 'oncology',
+    sourcePath: 'src/modules/oncology/content/explainers.ts',
+    explainers: ONCOLOGY_EXPLAINERS,
   },
 ];
 

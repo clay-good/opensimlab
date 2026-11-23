@@ -8,6 +8,7 @@ import { ClinicalModuleRoute, type ClinicalModuleConfig } from '../AnesthesiaRou
 import { DEFAULT_ONCOLOGY_SCENARIO_ID, ONCOLOGY_SCENARIOS, getOncologyScenario } from '../../modules/oncology/scenarios';
 import { ONCOLOGY_LIMITATIONS } from '@platform/docs/limitations/oncology';
 import { ONCOLOGY_DEMONSTRATIONS } from '../../modules/oncology/demo/demonstrations';
+import { ONCOLOGY_EXPLAINERS } from '../../modules/oncology/content/explainers';
 import { ONCOLOGY_TRAYS } from '../../modules/oncology/trays';
 
 const ONCOLOGY_CONFIG: ClinicalModuleConfig = {
@@ -21,6 +22,7 @@ const ONCOLOGY_CONFIG: ClinicalModuleConfig = {
   defaultScenarioId: DEFAULT_ONCOLOGY_SCENARIO_ID,
   getScenario: getOncologyScenario,
   demonstrations: ONCOLOGY_DEMONSTRATIONS,
+  explainers: ONCOLOGY_EXPLAINERS,
   trays: ONCOLOGY_TRAYS,
 };
 
