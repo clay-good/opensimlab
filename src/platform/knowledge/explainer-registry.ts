@@ -28,6 +28,7 @@ import { NEONATOLOGY_EXPLAINERS } from '../../modules/neonatology/content/explai
 import { ENDOCRINE_METABOLIC_EXPLAINERS } from '../../modules/endocrine-metabolic/content/explainers';
 import { RENAL_ELECTROLYTE_EXPLAINERS } from '../../modules/renal-electrolyte/content/explainers';
 import { INFECTIOUS_DISEASE_EXPLAINERS } from '../../modules/infectious-disease/content/explainers';
+import { MEDICAL_SURGICAL_NURSING_EXPLAINERS } from '../../modules/medical-surgical-nursing/content/explainers';
 
 export interface ModuleExplainers {
   readonly moduleId: string;
@@ -131,6 +132,13 @@ export const MODULE_EXPLAINERS: readonly ModuleExplainers[] = [
     reviewDomain: 'infectious-disease',
     sourcePath: 'src/modules/infectious-disease/content/explainers.ts',
     explainers: INFECTIOUS_DISEASE_EXPLAINERS,
+  },
+  {
+    moduleId: 'medical-surgical-nursing',
+    route: 'medical-surgical-nursing',
+    reviewDomain: 'medical-surgical-nursing',
+    sourcePath: 'src/modules/medical-surgical-nursing/content/explainers.ts',
+    explainers: MEDICAL_SURGICAL_NURSING_EXPLAINERS,
   },
 ];
 

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "moduleId": "medical-surgical-nursing",
-  "recordCount": 9,
+  "recordCount": 15,
   "records": [
     {
       "recordId": "scenario:low-score-what-the-threshold-does-not-exclude@0.1.0",
@@ -100,6 +100,66 @@
       "evidence": [
         "/catalog/medical-surgical-nursing-completion-audit.json#lost-contingency-a-plan-that-was-not-said@0.1.0",
         "/catalog/medical-surgical-nursing-quality-audit.json#lost-contingency-a-plan-that-was-not-said@0.1.0"
+      ]
+    },
+    {
+      "recordId": "explanation:a-counted-rate-has-to-be-counted@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "a-counted-rate-has-to-be-counted",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/medical-surgical-nursing/content/explainers.ts#a-counted-rate-has-to-be-counted"
+      ]
+    },
+    {
+      "recordId": "explanation:a-low-score-does-not-exclude@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "a-low-score-does-not-exclude",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/medical-surgical-nursing/content/explainers.ts#a-low-score-does-not-exclude"
+      ]
+    },
+    {
+      "recordId": "explanation:the-afferent-limb-is-where-the-system-fails@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "the-afferent-limb-is-where-the-system-fails",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/medical-surgical-nursing/content/explainers.ts#the-afferent-limb-is-where-the-system-fails"
+      ]
+    },
+    {
+      "recordId": "explanation:a-behavioural-score-is-not-an-intensity-score@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "a-behavioural-score-is-not-an-intensity-score",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/medical-surgical-nursing/content/explainers.ts#a-behavioural-score-is-not-an-intensity-score"
+      ]
+    },
+    {
+      "recordId": "explanation:the-oxygen-scale-has-to-match-the-patient@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "the-oxygen-scale-has-to-match-the-patient",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/medical-surgical-nursing/content/explainers.ts#the-oxygen-scale-has-to-match-the-patient"
+      ]
+    },
+    {
+      "recordId": "explanation:a-contingency-not-said-aloud-is-lost@0.1.0",
+      "subjectKind": "explanation",
+      "subjectId": "a-contingency-not-said-aloud-is-lost",
+      "contentVersion": "0.1.0",
+      "status": "preview",
+      "evidence": [
+        "src/modules/medical-surgical-nursing/content/explainers.ts#a-contingency-not-said-aloud-is-lost"
       ]
     }
   ]

@@ -8,6 +8,7 @@ import { ClinicalModuleRoute, type ClinicalModuleConfig } from '../AnesthesiaRou
 import { DEFAULT_MEDICAL_SURGICAL_NURSING_SCENARIO_ID, MEDICAL_SURGICAL_NURSING_SCENARIOS, getMedicalSurgicalNursingScenario } from '../../modules/medical-surgical-nursing/scenarios';
 import { MEDICAL_SURGICAL_NURSING_LIMITATIONS } from '@platform/docs/limitations/medical-surgical-nursing';
 import { MEDICAL_SURGICAL_NURSING_DEMONSTRATIONS } from '../../modules/medical-surgical-nursing/demo/demonstrations';
+import { MEDICAL_SURGICAL_NURSING_EXPLAINERS } from '../../modules/medical-surgical-nursing/content/explainers';
 import { MEDICAL_SURGICAL_NURSING_TRAYS } from '../../modules/medical-surgical-nursing/trays';
 
 const MEDICAL_SURGICAL_NURSING_CONFIG: ClinicalModuleConfig = {
@@ -20,6 +21,7 @@ const MEDICAL_SURGICAL_NURSING_CONFIG: ClinicalModuleConfig = {
   defaultScenarioId: DEFAULT_MEDICAL_SURGICAL_NURSING_SCENARIO_ID,
   getScenario: getMedicalSurgicalNursingScenario,
   demonstrations: MEDICAL_SURGICAL_NURSING_DEMONSTRATIONS,
+  explainers: MEDICAL_SURGICAL_NURSING_EXPLAINERS,
   trays: MEDICAL_SURGICAL_NURSING_TRAYS,
 };
 
